@@ -1,12 +1,12 @@
 import { parseSchema } from "../../src/parsers/parseSchema.js";
-import { suite } from "../suite";
+import { describe, it, expect } from "vitest";
 
-suite("parseSchema", (test) => {
-  test("should be usable without providing refs", (assert) => {
-    assert(parseSchema({ type: "string" }), "z.string()");
+describe("parseSchema", () => {
+  it("should be usable without providing refs", () => {
+    expect(parseSchema({ type: "string" }), "z.string()").toBeTruthy();
   });
 
-  test("should return a seen and processed ref", (assert) => {
+  it("should return a seen and processed ref", () => {
     const seen = new Map();
     const schema = {
       type: "object",
@@ -16,23 +16,23 @@ suite("parseSchema", (test) => {
         }
       }
     };
-    assert(
+    expect(
       parseSchema(schema, { seen, path: [] })
-    );
-    assert(
+    ).toBeTruthy();
+    expect(
       parseSchema(schema, { seen, path: [] })
-    );
+    ).toBeTruthy();
   });
 
-  test("should be possible to describe a readonly schema", (assert) => {
-    assert(
+  it("should be possible to describe a readonly schema", () => {
+    expect(
       parseSchema({ type: "string", readOnly: true }),
       "z.string().readonly()",
-    );
+    ).toBeTruthy();
   });
 
-  test("should handle nullable", (assert) => {
-    assert(
+  it("should handle nullable", () => {
+    expect(
       parseSchema(
         {
           type: "string",
@@ -41,27 +41,27 @@ suite("parseSchema", (test) => {
         { path: [], seen: new Map() },
       ),
       'z.string().nullable()',
-    );
+    ).toBeTruthy();
   });
 
-  test("should handle enum", (assert) => {
-    assert(
+  it("should handle enum", () => {
+    expect(
       parseSchema({ enum: ["someValue", 57] }),
       `z.union([z.literal("someValue"), z.literal(57)])`,
-    );
+    ).toBeTruthy();
   });
 
-  test("should handle multiple type", (assert) => {
-    assert(
+  it("should handle multiple type", () => {
+    expect(
       parseSchema({ type: [
         "string", "number"
       ] }),
       `z.union([z.string(), z.number()])`,
-    );
+    ).toBeTruthy();
   });
 
-  test("should handle if-then-else type", (assert) => {
-    assert(
+  it("should handle if-then-else type", () => {
+    expect(
       parseSchema({
         if: {type: 'string'},
         then: {type: 'number'},
@@ -70,7 +70,7 @@ suite("parseSchema", (test) => {
       `z.union([z.number(), z.boolean()]).superRefine((value,ctx) => {
   const result = z.string().safeParse(value).success
     ? z.number().safeParse(value)
-    : z.boolean().safeParse(value);
+    : z.boolean().safeParse(value).toBeTruthy();
   if (!result.success) {
     result.error.errors.forEach((error) => ctx.addIssue(error))
   }
@@ -78,8 +78,8 @@ suite("parseSchema", (test) => {
     );
   });
 
-  test("should handle anyOf", (assert) => {
-    assert(
+  it("should handle anyOf", () => {
+    expect(
       parseSchema({ anyOf: [
         {
           type: "string",
@@ -87,10 +87,10 @@ suite("parseSchema", (test) => {
         { type: "number" },
       ] }),
       "z.union([z.string(), z.number()])",
-    );
+    ).toBeTruthy();
   });
 
-  test("should handle oneOf", (assert) => {
+  it("should handle oneOf", () => {
     assert(
       parseSchema({ oneOf: [
         {

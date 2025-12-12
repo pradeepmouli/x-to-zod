@@ -1,8 +1,8 @@
+import { describe, it, expect } from "vitest";
 import { parseSchema } from "../../src/parsers/parseSchema";
-import { suite } from "../suite";
 
-suite("parseMultipleType", (test) => {
-  test("should handle object with multitype properties with default", (assert) => {
+describe("parseMultipleType", () => {
+  it("should handle object with multitype properties with default", () => {
     const schema = {
       type: "object",
       properties: {
@@ -12,9 +12,8 @@ suite("parseMultipleType", (test) => {
         },
       },
     };
-    assert(
+    expect(
       parseSchema(schema, { path: [], seen: new Map() }),
-      `z.object({ "prop": z.union([z.string(), z.null()]).default(null) })`,
-    );
+    ).toBe(`z.object({ "prop": z.union([z.string(), z.null()]).default(null) })`);
   });
 });

@@ -6,17 +6,17 @@ import {
 import jsonSchemaToZod from "../src";
 import { suite } from "./suite";
 
-suite("jsonSchemaToZod", (test) => {
-  test("should accept json schema 7 and 4", (assert) => {
+describe("jsonSchemaToZod", () => {
+  it("should accept json schema 7 and 4", () => {
     const schema = { type: "string" } as unknown;
 
-    assert(jsonSchemaToZod(schema as JSONSchema4));
-    assert(jsonSchemaToZod(schema as JSONSchema6Definition));
-    assert(jsonSchemaToZod(schema as JSONSchema7Definition));
+    expect(jsonSchemaToZod(schema as JSONSchema4)).toBeTruthy();
+    expect(jsonSchemaToZod(schema as JSONSchema6Definition)).toBeTruthy();
+    expect(jsonSchemaToZod(schema as JSONSchema7Definition)).toBeTruthy();
   });
 
-  test("should produce a string of JS code creating a Zod schema from a simple JSON schema", (assert) => {
-    assert(
+  it("should produce a string of JS code creating a Zod schema from a simple JSON schema", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -27,11 +27,11 @@ suite("jsonSchemaToZod", (test) => {
 
 export default z.string()
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should be possible to skip the import line", (assert) => {
-    assert(
+  it("should be possible to skip the import line", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -40,11 +40,11 @@ export default z.string()
       ),
       `export default z.string()
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should be possible to add types", (assert) => {
-    assert(
+  it("should be possible to add types", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -56,11 +56,11 @@ export default z.string()
 export const mySchema = z.string()
 export type MySchema = z.infer<typeof mySchema>
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should be possible to add types with a custom name template", (assert) => {
-    assert(
+  it("should be possible to add types with a custom name template", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -72,10 +72,10 @@ export type MySchema = z.infer<typeof mySchema>
 export const mySchema = z.string()
 export type MyType = z.infer<typeof mySchema>
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should throw when given module cjs and type", (assert) => {
+  it("should throw when given module cjs and type", () => {
     let didThrow = false;
 
     try {
@@ -87,10 +87,10 @@ export type MyType = z.infer<typeof mySchema>
       didThrow = true;
     }
 
-    assert(didThrow);
+    expect(didThrow).toBeTruthy();
   });
 
-  test("should throw when given type but no name", (assert) => {
+  it("should throw when given type but no name", () => {
     let didThrow = false;
 
     try {
@@ -99,11 +99,11 @@ export type MyType = z.infer<typeof mySchema>
       didThrow = true;
     }
 
-    assert(didThrow);
+    expect(didThrow).toBeTruthy();
   });
 
-  test("should include defaults", (assert) => {
-    assert(
+  it("should include defaults", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -115,11 +115,11 @@ export type MyType = z.infer<typeof mySchema>
 
 export default z.string().default("foo")
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should include falsy defaults", (assert) => {
-    assert(
+  it("should include falsy defaults", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -131,11 +131,11 @@ export default z.string().default("foo")
 
 export default z.string().default("")
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should include falsy defaults", (assert) => {
-    assert(
+  it("should include falsy defaults", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -147,11 +147,11 @@ export default z.string().default("")
 
 export default z.literal("")
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("can exclude defaults", (assert) => {
-    assert(
+  it("can exclude defaults", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -163,11 +163,11 @@ export default z.literal("")
 
 export default z.string()
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should include describes", (assert) => {
-    assert(
+  it("should include describes", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -179,11 +179,11 @@ export default z.string()
 
 export default z.string().describe("foo")
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("can exclude describes", (assert) => {
-    assert(
+  it("can exclude describes", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "string",
@@ -195,11 +195,11 @@ export default z.string().describe("foo")
 
 export default z.string()
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("can include jsdocs", (assert) => {
-    assert(
+  it("can include jsdocs", () => {
+    expect(
       jsonSchemaToZod({
         type: "object",
         description: "Description for schema",
@@ -241,11 +241,11 @@ export default z.object({
 "nestedProp": z.string().describe("Description for nestedProp").optional(), 
 /**Description for nestedProp2*/
 "nestedProp2": z.string().describe("Description for nestedProp2").optional() }).describe("Description for object that is multiline\\nMore content\\n\\nAnd whitespace").optional() }).describe("Description for schema")
-`);
+`).toBeTruthy();
   });
 
-  test("will remove optionality if default is present", (assert) => {
-    assert(
+  it("will remove optionality if default is present", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "object",
@@ -262,11 +262,11 @@ export default z.object({
 
 export default z.object({ "prop": z.string().default("def") })
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("will handle falsy defaults", (assert) => {
-    assert(
+  it("will handle falsy defaults", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "boolean",
@@ -278,11 +278,11 @@ export default z.object({ "prop": z.string().default("def") })
 
 export default z.boolean().default(false)
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("will ignore undefined as default", (assert) => {
-    assert(
+  it("will ignore undefined as default", () => {
+    expect(
       jsonSchemaToZod(
         {
           type: "null",
@@ -294,10 +294,10 @@ export default z.boolean().default(false)
 
 export default z.null()
 `,
-    );
+    ).toBeTruthy();
   });
 
-  test("should be possible to define a custom parser", (assert) => {
+  it("should be possible to define a custom parser", () => {
     assert(
       jsonSchemaToZod(
         {
@@ -327,31 +327,31 @@ export default z.null()
     );
   });
 
-  test("can output with cjs and a name", (assert) => {
-    assert(jsonSchemaToZod({
+  it("can output with cjs and a name", () => {
+    expect(jsonSchemaToZod({
       type: "string"
     }, { module: "cjs", name: "someName" }), `const { z } = require("zod")
 
 module.exports = { "someName": z.string() }
-`);
+`).toBeTruthy();
   });
 
-  test("can output with cjs and no name", (assert) => {
-    assert(jsonSchemaToZod({
+  it("can output with cjs and no name", () => {
+    expect(jsonSchemaToZod({
       type: "string"
     }, { module: "cjs" }), `const { z } = require("zod")
 
 module.exports = z.string()
-`);
+`).toBeTruthy();
   });
 
-  test("can output with name only", (assert) => {
-    assert(jsonSchemaToZod({
+  it("can output with name only", () => {
+    expect(jsonSchemaToZod({
       type: "string"
-    }, { name: "someName" }), "const someName = z.string()");
+    }, { name: "someName" }), "const someName = z.string()").toBeTruthy();
   });
 
-  test("can exclude name", (assert) => {
-    assert(jsonSchemaToZod(true), "z.any()");
+  it("can exclude name", () => {
+    expect(jsonSchemaToZod(true), "z.any()").toBeTruthy();
   });
 });

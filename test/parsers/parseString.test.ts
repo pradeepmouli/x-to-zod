@@ -1,7 +1,7 @@
+import { describe, it, expect } from "vitest";
 import { parseString } from "../../src/parsers/parseString";
-import { suite } from "../suite";
 
-suite("parseString", (test) => {
+describe("parseString", () => {
   const run = (output: string, data: unknown) =>
     eval(
       `const {z} = require("zod"); ${output}.safeParse(${JSON.stringify(
@@ -9,7 +9,7 @@ suite("parseString", (test) => {
       )})`,
     );
 
-  test("DateTime format", (assert) => {
+  it("DateTime format", () => {
     const datetime = "2018-11-13T20:20:39Z";
 
     const code = parseString({
@@ -18,97 +18,88 @@ suite("parseString", (test) => {
       errorMessage: { format: "hello" },
     });
 
-    assert(code, 'z.string().datetime({ offset: true, message: "hello" })');
+    expect(code).toBe('z.string().datetime({ offset: true, message: "hello" })');
 
-    assert(run(code, datetime), { success: true, data: datetime });
+    expect(run(code, datetime)).toEqual({ success: true, data: datetime });
   });
 
-  test("email", (assert) => {
-    assert(
+  it("email", () => {
+    expect(
       parseString({
         type: "string",
         format: "email",
       }),
-      "z.string().email()",
-    );
+    ).toBe("z.string().email()");
   });
 
-  test("ip", (assert) => {
-    assert(
+  it("ip", () => {
+    expect(
       parseString({
         type: "string",
         format: "ip",
       }),
-      "z.string().ip()",
-    );
-    assert(
+    ).toBe("z.string().ip()");
+    expect(
       parseString({
         type: "string",
         format: "ipv6",
       }),
-      `z.string().ip({ version: "v6" })`,
-    );
+    ).toBe(`z.string().ip({ version: "v6" })`);
   });
 
-  test("uri", (assert) => {
-    assert(
+  it("uri", () => {
+    expect(
       parseString({
         type: "string",
         format: "uri",
       }),
-      `z.string().url()`,
-    );
+    ).toBe(`z.string().url()`);
   });
 
-  test("uuid", (assert) => {
-    assert(
+  it("uuid", () => {
+    expect(
       parseString({
         type: "string",
         format: "uuid",
       }),
-      `z.string().uuid()`,
-    );
+    ).toBe(`z.string().uuid()`);
   });
 
-  test("time", (assert) => {
-    assert(
+  it("time", () => {
+    expect(
       parseString({
         type: "string",
         format: "time",
       }),
-      `z.string().time()`,
-    );
+    ).toBe(`z.string().time()`);
   });
 
-  test("date", (assert) => {
-    assert(
+  it("date", () => {
+    expect(
       parseString({
         type: "string",
         format: "date",
       }),
-      `z.string().date()`,
-    );
+    ).toBe(`z.string().date()`);
   });
 
-  test("duration", (assert) => {
-    assert(
+  it("duration", () => {
+    expect(
       parseString({
         type: "string",
         format: "duration",
       }),
-      `z.string().duration()`,
-    );
+    ).toBe(`z.string().duration()`);
   });
 
-  test("base64", (assert) => {
-    assert(
+  it("base64", () => {
+    expect(
       parseString({
         type: "string",
         contentEncoding: "base64",
       }),
-      "z.string().base64()",
-    );
-    assert(
+    ).toBe("z.string().base64()");
+    expect(
       parseString({
         type: "string",
         contentEncoding: "base64",
@@ -116,16 +107,14 @@ suite("parseString", (test) => {
           contentEncoding: "x",
         },
       }),
-      'z.string().base64("x")',
-    );
-    assert(
+    ).toBe('z.string().base64("x")');
+    expect(
       parseString({
         type: "string",
         format: "binary",
       }),
-      "z.string().base64()",
-    );
-    assert(
+    ).toBe("z.string().base64()");
+    expect(
       parseString({
         type: "string",
         format: "binary",
@@ -133,12 +122,11 @@ suite("parseString", (test) => {
           format: "x",
         },
       }),
-      'z.string().base64("x")',
-    );
+    ).toBe('z.string().base64("x")');
   });
 
-  test("stringified JSON", (assert) => {
-    assert(
+  it("stringified JSON", () => {
+    expect(
       parseString({
         type: "string",
         contentMediaType: "application/json",
@@ -158,9 +146,8 @@ suite("parseString", (test) => {
           ]
         }
       }),
-      'z.string().transform((str, ctx) => { try { return JSON.parse(str); } catch (err) { ctx.addIssue({ code: "custom", message: "Invalid JSON" }); }}).pipe(z.object({ "name": z.string(), "age": z.number().int() }))',
-    );
-    assert(
+    ).toBe('z.string().transform((str, ctx) => { try { return JSON.parse(str); } catch (err) { ctx.addIssue({ code: "custom", message: "Invalid JSON" }); }}).pipe(z.object({ "name": z.string(), "age": z.number().int() }))');
+    expect(
       parseString({
         type: "string",
         contentMediaType: "application/json",
@@ -184,12 +171,11 @@ suite("parseString", (test) => {
           contentSchema: "y",
         },
       }),
-      'z.string().transform((str, ctx) => { try { return JSON.parse(str); } catch (err) { ctx.addIssue({ code: "custom", message: "Invalid JSON" }); }}, "x").pipe(z.object({ "name": z.string(), "age": z.number().int() }), "y")',
-    );
+    ).toBe('z.string().transform((str, ctx) => { try { return JSON.parse(str); } catch (err) { ctx.addIssue({ code: "custom", message: "Invalid JSON" }); }}, "x").pipe(z.object({ "name": z.string(), "age": z.number().int() }), "y")');
   });
 
-  test("should accept errorMessage", (assert) => {
-    assert(
+  it("should accept errorMessage", () => {
+    expect(
       parseString({
         type: "string",
         format: "ipv4",
@@ -203,7 +189,6 @@ suite("parseString", (test) => {
           maxLength: "nuts",
         },
       }),
-      'z.string().ip({ version: "v4", message: "ayy" }).regex(new RegExp("x"), "lmao").min(1, "deez").max(2, "nuts")',
-    );
+    ).toBe('z.string().ip({ version: "v4", message: "ayy" }).regex(new RegExp("x"), "lmao").min(1, "deez").max(2, "nuts")');
   });
 });

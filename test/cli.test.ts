@@ -1,25 +1,25 @@
+import { describe, it, expect } from "vitest";
 import { spawnSync } from 'node:child_process';
-import { suite } from "./suite";
 
-suite("cli", (test) => {
-  test("runs cli (help)", (assert) => {
+describe("cli", () => {
+  it("runs cli (help)", () => {
     const { stdout } = spawnSync('tsx', ['src/cli.ts', '-h'], {
       encoding: 'utf8'
     });
-    assert(stdout.includes('--input'));
+    expect(stdout.includes('--input')).toBeTruthy();
   });
 
-  test("runs cli (input only)", (assert) => {
+  it("runs cli (input only)", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '-i', 'test/all.json'
     ], {
       encoding: 'utf8'
     });
-    assert(!stderr);
+    expect(!stderr).toBeTruthy();
   });
 
-  test("runs cli (noImport)", (assert) => {
+  it("runs cli (noImport)", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '-i', 'test/all.json',
@@ -27,20 +27,20 @@ suite("cli", (test) => {
     ], {
       encoding: 'utf8'
     });
-    assert(!stderr);
+    expect(!stderr).toBeTruthy();
   });
 
-  test("runs cli (stdin only)", (assert) => {
+  it("runs cli (stdin only)", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts'
     ], {
       input: '{"type": "any"}',
       encoding: 'utf8'
     });
-    assert(!stderr);
+    expect(!stderr).toBeTruthy();
   });
 
-  test("runs cli (output)", (assert) => {
+  it("runs cli (output)", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '--output', 'test/output/output.js',
@@ -48,10 +48,10 @@ suite("cli", (test) => {
     ], {
       encoding: 'utf8'
     });
-    assert(!stderr);
+    expect(!stderr).toBeTruthy();
   });
 
-  test("runs cli (output with depth)", (assert) => {
+  it("runs cli (output with depth)", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '--output', 'test/output/output.js',
@@ -60,20 +60,20 @@ suite("cli", (test) => {
     ], {
       encoding: 'utf8'
     });
-    assert(!stderr);
+    expect(!stderr).toBeTruthy();
   });
 
-  test("cli should err with with missing input", (assert) => {
+  it("cli should err with with missing input", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '--output', 'test/output/output.js'
     ], {
       encoding: 'utf8'
     });
-    assert(stderr.includes('Unexpected end of JSON input'));
+    expect(stderr.includes('Unexpected end of JSON input')).toBeTruthy();
   });
 
-  test("cli should err with with bad depth", (assert) => {
+  it("cli should err with with bad depth", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '--output', 'test/output/output.js',
@@ -82,10 +82,10 @@ suite("cli", (test) => {
     ], {
       encoding: 'utf8'
     });
-    assert(stderr.includes('Value of argument depth must be a valid number'));
+    expect(stderr.includes('Value of argument depth must be a valid number')).toBeTruthy();
   });
 
-  test("cli should err with with missing depth", (assert) => {
+  it("cli should err with with missing depth", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '--output', 'test/output/output.js',
@@ -94,10 +94,10 @@ suite("cli", (test) => {
     ], {
       encoding: 'utf8'
     });
-    assert(stderr.includes('Expected a value for argument depth'));
+    expect(stderr.includes('Expected a value for argument depth')).toBeTruthy();
   });
 
-  test("cli should err with bad array value", (assert) => {
+  it("cli should err with bad array value", () => {
     const { stderr } = spawnSync('tsx', [
       'src/cli.ts',
       '--output', 'test/output/output.js',
@@ -106,6 +106,6 @@ suite("cli", (test) => {
     ], {
       encoding: 'utf8'
     });
-    assert(stderr.includes('Value of argument module must be one of esm,cjs,none'));
+    expect(stderr.includes('Value of argument module must be one of esm,cjs,none')).toBeTruthy();
   });
 });

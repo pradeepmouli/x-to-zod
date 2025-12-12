@@ -1,9 +1,9 @@
+import { describe, it, expect } from "vitest";
 import { parseArray } from "../../src/parsers/parseArray";
-import { suite } from "../suite";
 
-suite("parseArray", (test) => {
-  test("should create tuple with items array", (assert) => {
-    assert(
+describe("parseArray", () => {
+  it("should create tuple with items array", () => {
+    expect(
       parseArray(
         {
           type: 'array',
@@ -18,12 +18,11 @@ suite("parseArray", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      "z.tuple([z.string(),z.number()])",
-    );
+    ).toBe("z.tuple([z.string(),z.number()])");
   });
 
-  test("should create array with items object", (assert) => {
-    assert(
+  it("should create array with items object", () => {
+    expect(
       parseArray(
         {
           type: 'array',
@@ -33,12 +32,11 @@ suite("parseArray", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      "z.array(z.string())",
-    );
+    ).toBe("z.array(z.string())");
   });
 
-  test("should create max for maxItems", (assert) => {
-    assert(
+  it("should create max for maxItems", () => {
+    expect(
       parseArray(
         {
           type: 'array',
@@ -49,7 +47,6 @@ suite("parseArray", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      "z.array(z.string()).max(2)",
-    );
+    ).toBe("z.array(z.string()).max(2)");
   });
-})
+});

@@ -1,9 +1,9 @@
+import { describe, it, expect } from "vitest";
 import { parseNullable, parseSchema } from "../../src";
-import { suite } from "../suite";
 
-suite("parseNullable", (test) => {
-  test("parseSchema should not add default twice", (assert) => {
-    assert(
+describe("parseNullable", () => {
+  it("parseSchema should not add default twice", () => {
+    expect(
       parseSchema(
         {
           type: "string",
@@ -12,7 +12,6 @@ suite("parseNullable", (test) => {
         },
         { path: [], seen: new Map() },
       ),
-      'z.string().nullable().default(null)',
-    );
+    ).toBe('z.string().nullable().default(null)');
   });
 });

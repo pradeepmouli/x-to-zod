@@ -1,13 +1,13 @@
 import { jsonSchemaToZod } from "../src/jsonSchemaToZod.js";
 import { suite } from "./suite";
 
-suite("eval", (test) => {
-  test("is usable I guess", (assert) => {
+describe("eval", () => {
+  it("is usable I guess", () => {
     const zodSchema = eval(
       jsonSchemaToZod({ type: "string" }, { module: "cjs" }),
     );
 
-    assert(zodSchema.safeParse("Please just use Ajv instead"), {
+    expect(zodSchema.safeParse("Please just use Ajv instead")).toEqual({
       success: true,
       data: "Please just use Ajv instead",
     });
