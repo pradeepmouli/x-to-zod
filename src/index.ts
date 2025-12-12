@@ -1,3 +1,5 @@
+import { jsonSchemaToZod } from "./jsonSchemaToZod.js";
+
 export * from "./Types.js";
 export * from "./jsonSchemaToZod.js";
 export * from "./parsers/parseAllOf.js";
@@ -21,5 +23,5 @@ export * from "./utils/half.js";
 export * from "./utils/jsdocs.js";
 export * from "./utils/omit.js";
 export * from "./utils/withMessage.js";
-import { jsonSchemaToZod } from "./jsonSchemaToZod.js";
+
 export default jsonSchemaToZod;
