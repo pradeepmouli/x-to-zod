@@ -1,24 +1,32 @@
 import { JsonSchemaObject, Refs } from "../Types.js";
-import { withMessage } from "../utils/withMessage.js";
+import { buildArray, buildTuple, applyMinItems, applyMaxItems } from "../ZodBuilder/index.js";
 import { parseSchema } from "./parseSchema.js";
 
 export const parseArray = (schema: JsonSchemaObject & { type: "array" }, refs: Refs) => {
+  let r: string;
+
+  // Handle tuple (array of schemas) vs array (single schema)
   if (Array.isArray(schema.items)) {
-    return `z.tuple([${schema.items.map((v, i) =>
+    const itemSchemas = schema.items.map((v, i) =>
       parseSchema(v, { ...refs, path: [...refs.path, "items", i] }),
-    )}])`;
+    );
+    r = buildTuple(itemSchemas);
+  } else {
+    const itemSchema = !schema.items
+      ? "z.any()"
+      : parseSchema(schema.items, { ...refs, path: [...refs.path, "items"] });
+    r = buildArray(itemSchema);
   }
 
-  let r = !schema.items
-    ? "z.array(z.any())"
-    : `z.array(${parseSchema(schema.items, {
-        ...refs,
-        path: [...refs.path, "items"],
-      })})`;
+  // Apply minItems constraint
+  if (schema.minItems !== undefined) {
+    r = applyMinItems(r, schema.minItems, schema.errorMessage?.minItems);
+  }
 
-  r += withMessage(schema, "minItems", ({ json }) => [`.min(${json}`, ", ", ")"]);
-
-  r += withMessage(schema, "maxItems", ({ json }) => [`.max(${json}`, ", ", ")"]);
+  // Apply maxItems constraint
+  if (schema.maxItems !== undefined) {
+    r = applyMaxItems(r, schema.maxItems, schema.errorMessage?.maxItems);
+  }
 
   return r;
 };

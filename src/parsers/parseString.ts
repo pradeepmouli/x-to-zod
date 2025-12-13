@@ -1,66 +1,53 @@
 import { JsonSchemaObject } from "../Types.js";
-import { withMessage } from "../utils/withMessage.js";
+import {
+  buildString,
+  applyFormat,
+  applyPattern,
+  applyMinLength,
+  applyMaxLength,
+  applyBase64,
+  applyJsonTransform,
+  applyPipe,
+} from "../ZodBuilder/index.js";
 import { parseSchema } from "./parseSchema.js";
 
 export const parseString = (schema: JsonSchemaObject & { type: "string" }) => {
-  let r = "z.string()";
+  let r = buildString();
 
-  r += withMessage(schema, "format", ({ value }) => {
-    switch (value) {
-      case "email":
-        return [".email(", ")"];
-      case "ip":
-        return [".ip(", ")"];
-      case "ipv4":
-        return ['.ip({ version: "v4"', ", message: ", " })"];
-      case "ipv6":
-        return ['.ip({ version: "v6"', ", message: ", " })"];
-      case "uri":
-        return [".url(", ")"];
-      case "uuid":
-        return [".uuid(", ")"];
-      case "date-time":
-        return [".datetime({ offset: true", ", message: ", " })"];
-      case "time":
-        return [".time(", ")"];
-      case "date":
-        return [".date(", ")"];
-      case "binary":
-        return [".base64(", ")"];
-      case "duration":
-        return [".duration(", ")"];
+  // Apply format constraint
+  if (schema.format) {
+    r = applyFormat(r, schema.format, schema.errorMessage?.format);
+  }
+
+  // Apply pattern constraint
+  if (schema.pattern) {
+    r = applyPattern(r, schema.pattern, schema.errorMessage?.pattern);
+  }
+
+  // Apply minLength constraint
+  if (schema.minLength !== undefined) {
+    r = applyMinLength(r, schema.minLength, schema.errorMessage?.minLength);
+  }
+
+  // Apply maxLength constraint
+  if (schema.maxLength !== undefined) {
+    r = applyMaxLength(r, schema.maxLength, schema.errorMessage?.maxLength);
+  }
+
+  // Apply contentEncoding constraint
+  if (schema.contentEncoding === "base64") {
+    r = applyBase64(r, schema.errorMessage?.contentEncoding);
+  }
+
+  // Apply contentMediaType constraint
+  if (schema.contentMediaType === "application/json") {
+    r = applyJsonTransform(r, schema.errorMessage?.contentMediaType);
+
+    // Apply contentSchema pipe if present
+    if (schema.contentSchema && typeof schema.contentSchema === "object") {
+      const contentSchemaZod = parseSchema(schema.contentSchema);
+      r = applyPipe(r, contentSchemaZod, schema.errorMessage?.contentSchema);
     }
-  });
-
-  r += withMessage(schema, "pattern", ({ json }) => [`.regex(new RegExp(${json})`, ", ", ")"]);
-
-  r += withMessage(schema, "minLength", ({ json }) => [`.min(${json}`, ", ", ")"]);
-
-  r += withMessage(schema, "maxLength", ({ json }) => [`.max(${json}`, ", ", ")"]);
-
-  r += withMessage(schema, "contentEncoding", ({ value }) => {
-    if (value === "base64") {
-      return [".base64(", ")"];
-    }
-  });
-
-  const contentMediaType = withMessage(schema, "contentMediaType", ({ value }) => {
-    if (value === "application/json") {
-      return [
-        '.transform((str, ctx) => { try { return JSON.parse(str); } catch (err) { ctx.addIssue({ code: "custom", message: "Invalid JSON" }); }}',
-        ", ",
-        ")",
-      ];
-    }
-  });
-
-  if (contentMediaType != "") {
-    r += contentMediaType;
-    r += withMessage(schema, "contentSchema", ({ value }) => {
-      if (value && value instanceof Object) {
-        return [`.pipe(${parseSchema(value)}`, ", ", ")"];
-      }
-    });
   }
 
   return r;

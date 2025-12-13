@@ -1,49 +1,49 @@
 import { JsonSchemaObject } from "../Types.js";
-import { withMessage } from "../utils/withMessage.js";
+import {
+  buildNumber,
+  applyInt,
+  applyMultipleOf,
+  applyNumberMin,
+  applyNumberMax,
+} from "../ZodBuilder/index.js";
 
 export const parseNumber = (schema: JsonSchemaObject & { type: "number" | "integer" }) => {
-  let r = "z.number()";
+  let r = buildNumber();
 
+  // Apply integer constraint
   if (schema.type === "integer") {
-    r += withMessage(schema, "type", () => [".int(", ")"]);
-  } else {
-    r += withMessage(schema, "format", ({ value }) => {
-      if (value === "int64") {
-        return [".int(", ")"];
-      }
-    });
+    r = applyInt(r, schema.errorMessage?.type);
+  } else if (schema.format === "int64") {
+    r = applyInt(r, schema.errorMessage?.format);
   }
 
-  r += withMessage(schema, "multipleOf", ({ value, json }) => {
-    if (value === 1) {
-      if (r.startsWith("z.number().int(")) {
-        return;
-      }
+  // Apply multipleOf constraint
+  if (schema.multipleOf !== undefined) {
+    r = applyMultipleOf(r, schema.multipleOf, schema.errorMessage?.multipleOf);
+  }
 
-      return [".int(", ")"];
-    }
-
-    return [`.multipleOf(${json}`, ", ", ")"];
-  });
-
+  // Apply minimum constraint
   if (typeof schema.minimum === "number") {
-    if (schema.exclusiveMinimum === true) {
-      r += withMessage(schema, "minimum", ({ json }) => [`.gt(${json}`, ", ", ")"]);
-    } else {
-      r += withMessage(schema, "minimum", ({ json }) => [`.gte(${json}`, ", ", ")"]);
-    }
+    r = applyNumberMin(
+      r,
+      schema.minimum,
+      schema.exclusiveMinimum === true,
+      schema.errorMessage?.minimum,
+    );
   } else if (typeof schema.exclusiveMinimum === "number") {
-    r += withMessage(schema, "exclusiveMinimum", ({ json }) => [`.gt(${json}`, ", ", ")"]);
+    r = applyNumberMin(r, schema.exclusiveMinimum, true, schema.errorMessage?.exclusiveMinimum);
   }
 
+  // Apply maximum constraint
   if (typeof schema.maximum === "number") {
-    if (schema.exclusiveMaximum === true) {
-      r += withMessage(schema, "maximum", ({ json }) => [`.lt(${json}`, ", ", ")"]);
-    } else {
-      r += withMessage(schema, "maximum", ({ json }) => [`.lte(${json}`, ", ", ")"]);
-    }
+    r = applyNumberMax(
+      r,
+      schema.maximum,
+      schema.exclusiveMaximum === true,
+      schema.errorMessage?.maximum,
+    );
   } else if (typeof schema.exclusiveMaximum === "number") {
-    r += withMessage(schema, "exclusiveMaximum", ({ json }) => [`.lt(${json}`, ", ", ")"]);
+    r = applyNumberMax(r, schema.exclusiveMaximum, true, schema.errorMessage?.exclusiveMaximum);
   }
 
   return r;
