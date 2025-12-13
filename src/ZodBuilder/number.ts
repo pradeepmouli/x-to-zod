@@ -1,54 +1,69 @@
-import { JsonSchemaObject } from "../Types.js";
 import { withMessage } from "../utils/withMessage.js";
 
 /**
- * Build a Zod number schema string from JSON schema number constraints.
- * Preserves exact modifier order and error message formatting.
+ * Build a base Zod number schema string.
  */
-export function buildNumber(schema: JsonSchemaObject & { type: "number" | "integer" }): string {
-  let r = "z.number()";
+export function buildNumber(): string {
+  return "z.number()";
+}
 
-  if (schema.type === "integer") {
-    r += withMessage(schema, "type", () => [".int(", ")"]);
-  } else {
-    r += withMessage(schema, "format", ({ value }) => {
-      if (value === "int64") {
-        return [".int(", ")"];
-      }
-    });
+/**
+ * Apply integer constraint to a number schema.
+ */
+export function applyInt(zodStr: string, errorMessage?: string): string {
+  if (errorMessage) {
+    return `${zodStr}.int(${JSON.stringify(errorMessage)})`;
+  }
+  return `${zodStr}.int()`;
+}
+
+/**
+ * Apply multipleOf constraint to a number schema.
+ */
+export function applyMultipleOf(zodStr: string, value: number, errorMessage?: string): string {
+  // Special case: multipleOf 1 is equivalent to int
+  if (value === 1) {
+    // Avoid duplicate .int() if already present
+    if (zodStr.includes(".int(")) {
+      return zodStr;
+    }
+    return applyInt(zodStr, errorMessage);
   }
 
-  r += withMessage(schema, "multipleOf", ({ value, json }) => {
-    if (value === 1) {
-      if (r.startsWith("z.number().int(")) {
-        return;
-      }
-
-      return [".int(", ")"];
-    }
-
-    return [`.multipleOf(${json}`, ", ", ")"];
-  });
-
-  if (typeof schema.minimum === "number") {
-    if (schema.exclusiveMinimum === true) {
-      r += withMessage(schema, "minimum", ({ json }) => [`.gt(${json}`, ", ", ")"]);
-    } else {
-      r += withMessage(schema, "minimum", ({ json }) => [`.gte(${json}`, ", ", ")"]);
-    }
-  } else if (typeof schema.exclusiveMinimum === "number") {
-    r += withMessage(schema, "exclusiveMinimum", ({ json }) => [`.gt(${json}`, ", ", ")"]);
+  if (errorMessage) {
+    return `${zodStr}.multipleOf(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`;
   }
+  return `${zodStr}.multipleOf(${JSON.stringify(value)})`;
+}
 
-  if (typeof schema.maximum === "number") {
-    if (schema.exclusiveMaximum === true) {
-      r += withMessage(schema, "maximum", ({ json }) => [`.lt(${json}`, ", ", ")"]);
-    } else {
-      r += withMessage(schema, "maximum", ({ json }) => [`.lte(${json}`, ", ", ")"]);
-    }
-  } else if (typeof schema.exclusiveMaximum === "number") {
-    r += withMessage(schema, "exclusiveMaximum", ({ json }) => [`.lt(${json}`, ", ", ")"]);
+/**
+ * Apply minimum constraint to a number schema.
+ */
+export function applyMin(
+  zodStr: string,
+  value: number,
+  exclusive: boolean,
+  errorMessage?: string,
+): string {
+  const method = exclusive ? "gt" : "gte";
+  if (errorMessage) {
+    return `${zodStr}.${method}(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`;
   }
+  return `${zodStr}.${method}(${JSON.stringify(value)})`;
+}
 
-  return r;
+/**
+ * Apply maximum constraint to a number schema.
+ */
+export function applyMax(
+  zodStr: string,
+  value: number,
+  exclusive: boolean,
+  errorMessage?: string,
+): string {
+  const method = exclusive ? "lt" : "lte";
+  if (errorMessage) {
+    return `${zodStr}.${method}(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`;
+  }
+  return `${zodStr}.${method}(${JSON.stringify(value)})`;
 }
