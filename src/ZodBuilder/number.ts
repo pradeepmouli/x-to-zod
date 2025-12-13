@@ -1,4 +1,3 @@
-
 /**
  * Build a base Zod number schema string.
  */
