@@ -1,7 +1,7 @@
 import { Serializable } from "../Types.js";
 
 /**
- * Fluent ConstBuilder: wraps a Zod const/literal schema string and provides chainable methods.
+ * Fluent ConstBuilder: wraps a Zod literal schema string and provides chainable methods.
  */
 export class ConstBuilder {
   private code: string;

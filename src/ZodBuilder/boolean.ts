@@ -1,4 +1,5 @@
-/** * Fluent BooleanBuilder: wraps a Zod boolean schema string and provides chainable methods.
+/**
+ * Fluent BooleanBuilder: wraps a Zod boolean schema string and provides chainable methods.
  */
 export class BooleanBuilder {
   private code: string;
@@ -51,7 +52,8 @@ export class BooleanBuilder {
   }
 }
 
-/** * Build a Zod boolean schema string.
+/**
+ * Build a Zod boolean schema string.
  */
 export function buildBoolean(): string {
   return "z.boolean()";

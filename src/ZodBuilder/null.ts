@@ -1,4 +1,5 @@
-/** * Fluent NullBuilder: wraps a Zod null schema string and provides chainable methods.
+/**
+ * Fluent NullBuilder: wraps a Zod null schema string and provides chainable methods.
  */
 export class NullBuilder {
   private code: string;
@@ -13,24 +14,6 @@ export class NullBuilder {
   optional(): this {
     const { applyOptional } = require("./modifiers.js");
     this.code = applyOptional(this.code);
-    return this;
-  }
-
-  /**
-   * Apply nullable constraint.
-   */
-  nullable(): this {
-    const { applyNullable } = require("./modifiers.js");
-    this.code = applyNullable(this.code);
-    return this;
-  }
-
-  /**
-   * Apply default value.
-   */
-  default(value: any): this {
-    const { applyDefault } = require("./modifiers.js");
-    this.code = applyDefault(this.code, value);
     return this;
   }
 
@@ -51,7 +34,8 @@ export class NullBuilder {
   }
 }
 
-/** * Build a Zod null schema string.
+/**
+ * Build a Zod null schema string.
  */
 export function buildNull(): string {
   return "z.null()";

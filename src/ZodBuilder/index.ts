@@ -35,6 +35,7 @@ export {
   buildRecord,
   applyStrict,
   applyCatchall,
+  applyLoose,
   applyPassthrough,
   applySuperRefine,
   applyAnd,

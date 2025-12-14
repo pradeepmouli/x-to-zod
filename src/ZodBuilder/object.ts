@@ -25,10 +25,10 @@ export class ObjectBuilder {
   }
 
   /**
-   * Apply loose mode (allow additional properties). Zod v4 uses .loose() instead of .passthrough().
+   * Apply loose mode (allow additional properties). Uses .loose() for Zod v4.
    */
   loose(): this {
-    this.code = applyPassthrough(this.code);
+    this.code = applyLoose(this.code);
     return this;
   }
 
@@ -130,10 +130,19 @@ export function applyCatchall(zodStr: string, catchallSchemaZod: string): string
 }
 
 /**
- * Apply loose mode (allow additional properties). Zod v4 uses .loose().
+ * Apply loose mode (allow additional properties).
+ * In Zod v4, use .loose() instead of .passthrough().
+ */
+export function applyLoose(zodStr: string): string {
+  return `${zodStr}.loose()`;
+}
+
+/**
+ * Apply passthrough mode (deprecated; use applyLoose for Zod v4).
+ * Kept for backward compatibility with existing code.
  */
 export function applyPassthrough(zodStr: string): string {
-  return `${zodStr}.loose()`;
+  return `${zodStr}.passthrough()`;
 }
 
 /**
