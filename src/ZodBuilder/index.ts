@@ -1,9 +1,10 @@
 // Base builders (primitive data → Zod code)
-export { buildBoolean } from "./boolean.js";
-export { buildNull } from "./null.js";
-export { buildLiteral, buildConst } from "./const.js";
-export { buildEnum } from "./enum.js";
+export { BooleanBuilder, buildBoolean } from "./boolean.js";
+export { NullBuilder, buildNull } from "./null.js";
+export { ConstBuilder, buildLiteral, buildConst } from "./const.js";
+export { EnumBuilder, buildEnum } from "./enum.js";
 export {
+  NumberBuilder,
   buildNumber,
   applyInt,
   applyMultipleOf,
@@ -11,6 +12,7 @@ export {
   applyMax as applyNumberMax,
 } from "./number.js";
 export {
+  StringBuilder,
   buildString,
   applyFormat,
   applyPattern,
@@ -20,8 +22,15 @@ export {
   applyJsonTransform,
   applyPipe,
 } from "./string.js";
-export { buildArray, buildTuple, applyMinItems, applyMaxItems } from "./array.js";
 export {
+  ArrayBuilder,
+  buildArray,
+  buildTuple,
+  applyMinItems,
+  applyMaxItems,
+} from "./array.js";
+export {
+  ObjectBuilder,
   buildObject,
   buildRecord,
   applyStrict,
@@ -41,3 +50,13 @@ export {
   applyReadonly,
   applyCatch,
 } from "./modifiers.js";
+
+// Builder factories
+export function build() {
+  return {
+    number: () => {
+      const { NumberBuilder } = require("./number.js");
+      return new NumberBuilder();
+    },
+  };
+}

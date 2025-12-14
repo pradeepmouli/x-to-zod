@@ -1,4 +1,130 @@
 /**
+ * Fluent StringBuilder: wraps a Zod string schema string and provides chainable methods.
+ */
+export class StringBuilder {
+  private code: string;
+
+  constructor(code: string = "z.string()") {
+    this.code = code;
+  }
+
+  /**
+   * Apply format constraint.
+   */
+  format(format: string, errorMessage?: string): this {
+    this.code = applyFormat(this.code, format, errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply regex pattern constraint.
+   */
+  regex(pattern: string | RegExp, errorMessage?: string): this {
+    this.code = applyPattern(this.code, typeof pattern === "string" ? pattern : pattern.source, errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply minLength constraint.
+   */
+  min(value: number, errorMessage?: string): this {
+    this.code = applyMinLength(this.code, value, errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply maxLength constraint.
+   */
+  max(value: number, errorMessage?: string): this {
+    this.code = applyMaxLength(this.code, value, errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply email format.
+   */
+  email(errorMessage?: string): this {
+    this.code = applyFormat(this.code, "email", errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply uuid format.
+   */
+  uuid(errorMessage?: string): this {
+    this.code = applyFormat(this.code, "uuid", errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply base64 encoding constraint.
+   */
+  base64(errorMessage?: string): this {
+    this.code = applyBase64(this.code, errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply JSON transform.
+   */
+  json(errorMessage?: string): this {
+    this.code = applyJsonTransform(this.code, errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply pipe with parsed content schema.
+   */
+  pipe(contentSchemaZod: string, errorMessage?: string): this {
+    this.code = applyPipe(this.code, contentSchemaZod, errorMessage);
+    return this;
+  }
+
+  /**
+   * Apply optional constraint.
+   */
+  optional(): this {
+    const { applyOptional } = require("./modifiers.js");
+    this.code = applyOptional(this.code);
+    return this;
+  }
+
+  /**
+   * Apply nullable constraint.
+   */
+  nullable(): this {
+    const { applyNullable } = require("./modifiers.js");
+    this.code = applyNullable(this.code);
+    return this;
+  }
+
+  /**
+   * Apply default value.
+   */
+  default(value: any): this {
+    const { applyDefault } = require("./modifiers.js");
+    this.code = applyDefault(this.code, value);
+    return this;
+  }
+
+  /**
+   * Apply describe modifier.
+   */
+  describe(description: string): this {
+    const { applyDescribe } = require("./modifiers.js");
+    this.code = applyDescribe(this.code, description);
+    return this;
+  }
+
+  /**
+   * Unwrap and return the final Zod code string.
+   */
+  done(): string {
+    return this.code;
+  }
+}
+
+/**
  * Build a base Zod string schema string.
  */
 export function buildString(): string {

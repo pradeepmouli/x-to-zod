@@ -1,4 +1,98 @@
 /**
+ * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
+ */
+export class ObjectBuilder {
+  private code: string;
+
+  constructor(code: string) {
+    this.code = code;
+  }
+
+  /**
+   * Apply strict mode (no additional properties allowed).
+   */
+  strict(): this {
+    this.code = applyStrict(this.code);
+    return this;
+  }
+
+  /**
+   * Apply catchall schema for additional properties.
+   */
+  catchall(catchallSchemaZod: string): this {
+    this.code = applyCatchall(this.code, catchallSchemaZod);
+    return this;
+  }
+
+  /**
+   * Apply loose mode (allow additional properties). Zod v4 uses .loose() instead of .passthrough().
+   */
+  loose(): this {
+    this.code = applyPassthrough(this.code);
+    return this;
+  }
+
+  /**
+   * Apply superRefine for pattern properties validation.
+   */
+  superRefine(refineFn: string): this {
+    this.code = applySuperRefine(this.code, refineFn);
+    return this;
+  }
+
+  /**
+   * Apply and combinator (merge with another schema).
+   */
+  and(otherSchemaZod: string): this {
+    this.code = applyAnd(this.code, otherSchemaZod);
+    return this;
+  }
+
+  /**
+   * Apply optional constraint.
+   */
+  optional(): this {
+    const { applyOptional } = require("./modifiers.js");
+    this.code = applyOptional(this.code);
+    return this;
+  }
+
+  /**
+   * Apply nullable constraint.
+   */
+  nullable(): this {
+    const { applyNullable } = require("./modifiers.js");
+    this.code = applyNullable(this.code);
+    return this;
+  }
+
+  /**
+   * Apply default value.
+   */
+  default(value: any): this {
+    const { applyDefault } = require("./modifiers.js");
+    this.code = applyDefault(this.code, value);
+    return this;
+  }
+
+  /**
+   * Apply describe modifier.
+   */
+  describe(description: string): this {
+    const { applyDescribe } = require("./modifiers.js");
+    this.code = applyDescribe(this.code, description);
+    return this;
+  }
+
+  /**
+   * Unwrap and return the final Zod code string.
+   */
+  done(): string {
+    return this.code;
+  }
+}
+
+/**
  * Build a Zod object schema string from property definitions.
  * Properties should already have Zod schema strings as values.
  */
@@ -36,10 +130,10 @@ export function applyCatchall(zodStr: string, catchallSchemaZod: string): string
 }
 
 /**
- * Apply passthrough mode (allow additional properties).
+ * Apply loose mode (allow additional properties). Zod v4 uses .loose().
  */
 export function applyPassthrough(zodStr: string): string {
-  return `${zodStr}.passthrough()`;
+  return `${zodStr}.loose()`;
 }
 
 /**
