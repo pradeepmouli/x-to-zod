@@ -26,7 +26,7 @@ The internal `ZodBuilder` system uses a fluent interface pattern matching Zod's 
 ```typescript
 // Factory API (mirrors Zod)
 build.number()     → NumberBuilder
-build.string()     → StringBuilder  
+build.string()     → StringBuilder
 build.array(item)  → ArrayBuilder
 build.object(props) → ObjectBuilder
 build.enum(values) → EnumBuilder
@@ -54,7 +54,7 @@ build.number().int().max(10).optional().text()
 // Step 1: build.number() creates NumberBuilder with _baseText="z.number()"
 // Step 2: .int() sets _int=true, returns this (no code generation yet)
 // Step 3: .max(10) sets _max={value:10}, returns this
-// Step 4: .optional() sets _optional=true, returns this  
+// Step 4: .optional() sets _optional=true, returns this
 // Step 5: .text() generates: "z.number().int().max(10).optional()"
 ```
 
