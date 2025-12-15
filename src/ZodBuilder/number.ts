@@ -1,12 +1,12 @@
+import { BaseBuilder } from "./BaseBuilder.js";
+
 /**
  * Fluent NumberBuilder: wraps a Zod number schema string and provides chainable methods
  * that delegate to the existing apply* functions.
  */
-export class NumberBuilder {
-  private code: string;
-
+export class NumberBuilder extends BaseBuilder<NumberBuilder> {
   constructor() {
-    this.code = "z.number()";
+    super("z.number()");
   }
 
   /**

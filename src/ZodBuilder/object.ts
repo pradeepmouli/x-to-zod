@@ -1,18 +1,20 @@
+import { BaseBuilder } from "./BaseBuilder.js";
+
 /**
  * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
  */
-export class ObjectBuilder {
-  private code: string;
-
+export class ObjectBuilder extends BaseBuilder<ObjectBuilder> {
   constructor(properties: Record<string, string> = {}) {
+    let code: string;
     if (Object.keys(properties).length === 0) {
-      this.code = "z.object({})";
+      code = "z.object({})";
     } else {
       const propStrings = Object.entries(properties).map(
         ([key, zodStr]) => `${JSON.stringify(key)}: ${zodStr}`,
       );
-      this.code = `z.object({ ${propStrings.join(", ")} })`;
+      code = `z.object({ ${propStrings.join(", ")} })`;
     }
+    super(code);
   }
 
   /**
@@ -63,49 +65,6 @@ export class ObjectBuilder {
   and(otherSchemaZod: string): this {
     this.code = applyAnd(this.code, otherSchemaZod);
     return this;
-  }
-
-  /**
-   * Apply optional constraint.
-   */
-  optional(): this {
-    const { applyOptional } = require("./modifiers.js");
-    this.code = applyOptional(this.code);
-    return this;
-  }
-
-  /**
-   * Apply nullable constraint.
-   */
-  nullable(): this {
-    const { applyNullable } = require("./modifiers.js");
-    this.code = applyNullable(this.code);
-    return this;
-  }
-
-  /**
-   * Apply default value.
-   */
-  default(value: any): this {
-    const { applyDefault } = require("./modifiers.js");
-    this.code = applyDefault(this.code, value);
-    return this;
-  }
-
-  /**
-   * Apply describe modifier.
-   */
-  describe(description: string): this {
-    const { applyDescribe } = require("./modifiers.js");
-    this.code = applyDescribe(this.code, description);
-    return this;
-  }
-
-  /**
-   * Unwrap and return the final Zod code string.
-   */
-  done(): string {
-    return this.code;
   }
 }
 

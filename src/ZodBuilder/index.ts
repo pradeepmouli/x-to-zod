@@ -1,3 +1,6 @@
+// Base builder class
+export { BaseBuilder } from "./BaseBuilder.js";
+
 // Base builders (primitive data → Zod code)
 export { BooleanBuilder, buildBoolean } from "./boolean.js";
 export { NullBuilder, buildNull } from "./null.js";

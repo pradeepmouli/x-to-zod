@@ -1,11 +1,11 @@
+import { BaseBuilder } from "./BaseBuilder.js";
+
 /**
  * Fluent StringBuilder: wraps a Zod string schema string and provides chainable methods.
  */
-export class StringBuilder {
-  private code: string;
-
+export class StringBuilder extends BaseBuilder<StringBuilder> {
   constructor() {
-    this.code = "z.string()";
+    super("z.string()");
   }
 
   /**
