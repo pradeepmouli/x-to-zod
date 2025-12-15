@@ -4,7 +4,6 @@ import { BaseBuilder } from "./BaseBuilder.js";
  * Fluent StringBuilder: wraps a Zod string schema string and provides chainable methods.
  */
 export class StringBuilder extends BaseBuilder<StringBuilder> {
-
   _format?: { format: string; errorMessage?: string } = undefined;
   _pattern?: { pattern: string; errorMessage?: string } = undefined;
   _minLength?: { value: number; errorMessage?: string } = undefined;
@@ -29,7 +28,10 @@ export class StringBuilder extends BaseBuilder<StringBuilder> {
    * Apply regex pattern constraint.
    */
   regex(pattern: string | RegExp, errorMessage?: string): this {
-    this._pattern = { pattern: typeof pattern === "string" ? pattern : pattern.source, errorMessage };
+    this._pattern = {
+      pattern: typeof pattern === "string" ? pattern : pattern.source,
+      errorMessage,
+    };
     return this;
   }
 

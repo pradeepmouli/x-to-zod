@@ -1,10 +1,5 @@
 import { JsonSchemaObject, Refs } from "../Types.js";
-import {
-  build,
-  buildRecord,
-  ObjectBuilder,
-  applyOptional,
-} from "../ZodBuilder/index.js";
+import { build, buildRecord, ObjectBuilder, applyOptional } from "../ZodBuilder/index.js";
 import { addJsdocs } from "../utils/jsdocs.js";
 import { parseAnyOf } from "./parseAnyOf.js";
 import { parseOneOf } from "./parseOneOf.js";

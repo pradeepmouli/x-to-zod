@@ -4,12 +4,10 @@ import { BaseBuilder } from "./BaseBuilder.js";
  * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
  */
 export class ObjectBuilder extends BaseBuilder<ObjectBuilder> {
-
   readonly _properties: Record<string, string>;
   constructor(properties: Record<string, string> = {}) {
-
-    super('');
-	this._properties = properties;
+    super("");
+    this._properties = properties;
   }
 
   /**
@@ -23,11 +21,11 @@ export class ObjectBuilder extends BaseBuilder<ObjectBuilder> {
   }
 
   override text(): string {
-	if (this._baseText) {
-	  return super.text();
-	}
+    if (this._baseText) {
+      return super.text();
+    }
     this._baseText = buildObject(this._properties);
-	return super.text();
+    return super.text();
   }
 
   /**

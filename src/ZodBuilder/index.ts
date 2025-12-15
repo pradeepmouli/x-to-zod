@@ -25,13 +25,7 @@ export {
   applyJsonTransform,
   applyPipe,
 } from "./string.js";
-export {
-  ArrayBuilder,
-  buildArray,
-  buildTuple,
-  applyMinItems,
-  applyMaxItems,
-} from "./array.js";
+export { ArrayBuilder, buildArray, buildTuple, applyMinItems, applyMaxItems } from "./array.js";
 export {
   ObjectBuilder,
   buildObject,

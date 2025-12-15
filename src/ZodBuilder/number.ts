@@ -5,8 +5,7 @@ import { BaseBuilder } from "./BaseBuilder.js";
  * that delegate to the existing apply* functions.
  */
 export class NumberBuilder extends BaseBuilder<NumberBuilder> {
-
-  _int: boolean |{ errorMessage: string } = false;
+  _int: boolean | { errorMessage: string } = false;
   _multipleOf: number | { value: number; errorMessage?: string } | undefined = undefined;
 
   _min: { value: number; exclusive: boolean; errorMessage?: string } | undefined = undefined;
@@ -21,9 +20,9 @@ export class NumberBuilder extends BaseBuilder<NumberBuilder> {
    * Apply integer constraint.
    */
   int(errorMessage?: string): this {
-    if(this._int === false) {
-		this._int = errorMessage ? { errorMessage } : true;
-	}
+    if (this._int === false) {
+      this._int = errorMessage ? { errorMessage } : true;
+    }
     return this;
   }
 
@@ -31,10 +30,10 @@ export class NumberBuilder extends BaseBuilder<NumberBuilder> {
    * Apply multipleOf constraint.
    */
   multipleOf(value: number, errorMessage?: string): this {
-	this._multipleOf = { value, errorMessage };
-	if(this._int === false) {
-		this._int = true;
-	}
+    this._multipleOf = { value, errorMessage };
+    if (this._int === false) {
+      this._int = true;
+    }
     return this;
   }
 
@@ -42,9 +41,13 @@ export class NumberBuilder extends BaseBuilder<NumberBuilder> {
    * Apply minimum constraint (gte by default).
    */
   min(value: number, exclusive: boolean = false, errorMessage?: string): this {
-	if(this._min === undefined || this._min.value > value || (this._min.value === value && this._min.exclusive && !exclusive)) {
-		this._min = { value, exclusive, errorMessage };
-	}
+    if (
+      this._min === undefined ||
+      this._min.value > value ||
+      (this._min.value === value && this._min.exclusive && !exclusive)
+    ) {
+      this._min = { value, exclusive, errorMessage };
+    }
     return this;
   }
 
@@ -52,8 +55,12 @@ export class NumberBuilder extends BaseBuilder<NumberBuilder> {
    * Apply maximum constraint (lte by default).
    */
   max(value: number, exclusive: boolean = false, errorMessage?: string): this {
-	if(this._max === undefined || this._max.value < value || (this._max.value === value && this._max.exclusive && !exclusive))
-	this._max = { value, exclusive, errorMessage };
+    if (
+      this._max === undefined ||
+      this._max.value < value ||
+      (this._max.value === value && this._max.exclusive && !exclusive)
+    )
+      this._max = { value, exclusive, errorMessage };
 
     return this;
   }
@@ -70,39 +77,36 @@ export class NumberBuilder extends BaseBuilder<NumberBuilder> {
    * Apply default value.
    */
 
-
   /**
    * Apply describe modifier.
    */
-
 
   /**
    * Unwrap and return the final Zod code string.
    */
   text(): string {
     let result = this._baseText;
-	if(this._int !== false) {
-		if(typeof this._int === "object") {
-			result = applyInt(result, this._int.errorMessage);
-		} else {
-			result = applyInt(result);
-		}
-	}
-	if(this._multipleOf !== undefined) {
-		if(typeof this._multipleOf === "number") {
-			result = applyMultipleOf(result, this._multipleOf);
-		} else
-		result = applyMultipleOf(result, this._multipleOf.value, this._multipleOf.errorMessage);
-	}
-	if(this._min !== undefined) {
-		result = applyMin(result, this._min.value, this._min.exclusive, this._min.errorMessage);
-	}
-	if(this._max !== undefined) {
-		result = applyMax(result, this._max.value, this._max.exclusive, this._max.errorMessage);
-	}
-	this._baseText = result;
-	return super.text();
-
+    if (this._int !== false) {
+      if (typeof this._int === "object") {
+        result = applyInt(result, this._int.errorMessage);
+      } else {
+        result = applyInt(result);
+      }
+    }
+    if (this._multipleOf !== undefined) {
+      if (typeof this._multipleOf === "number") {
+        result = applyMultipleOf(result, this._multipleOf);
+      } else
+        result = applyMultipleOf(result, this._multipleOf.value, this._multipleOf.errorMessage);
+    }
+    if (this._min !== undefined) {
+      result = applyMin(result, this._min.value, this._min.exclusive, this._min.errorMessage);
+    }
+    if (this._max !== undefined) {
+      result = applyMax(result, this._max.value, this._max.exclusive, this._max.errorMessage);
+    }
+    this._baseText = result;
+    return super.text();
   }
 }
 

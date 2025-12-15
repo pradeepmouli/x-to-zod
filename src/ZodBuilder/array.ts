@@ -4,7 +4,6 @@ import { BaseBuilder } from "./BaseBuilder.js";
  * Fluent ArrayBuilder: wraps a Zod array schema string and provides chainable methods.
  */
 export class ArrayBuilder extends BaseBuilder<ArrayBuilder> {
-
   _minItems?: { value: number; errorMessage?: string } = undefined;
   _maxItems?: { value: number; errorMessage?: string } = undefined;
 
