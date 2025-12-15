@@ -3,6 +3,7 @@
 ## Entities
 
 ### `NumberBuilder`
+
 - Fields:
   - `code: string` — current Zod code string
 - Relationships:
@@ -11,6 +12,7 @@
   - `.int()`, `.min(n)`, `.max(n)`, `.optional()` mutate `code` via helper delegation; `.done()` returns final string
 
 ### `StringBuilder`
+
 - Fields:
   - `code: string`
 - Relationships:
@@ -19,6 +21,7 @@
   - `.min(n)`, `.max(n)`, `.regex()`, `.email()`, `.uuid()`, `.optional()`
 
 ### `ArrayBuilder`
+
 - Fields:
   - `code: string`
 - Relationships:
@@ -27,6 +30,7 @@
   - `.items(inner)`, `.min(n)`, `.max(n)`, `.nonempty()`, `.optional()`
 
 ### `ObjectBuilder`
+
 - Fields:
   - `code: string`
 - Relationships:
@@ -35,8 +39,10 @@
   - `.partial()`, `.passthrough()`, `.optional()`
 
 ## Validation Rules
+
 - Builders MUST produce identical code strings for given parser inputs compared to baseline.
 - Chain order MUST reflect parser decision order; no normalization in Phase 1.
 
 ## Notes
+
 - Builders are internal cohesion units; parsers remain pure and stateless.

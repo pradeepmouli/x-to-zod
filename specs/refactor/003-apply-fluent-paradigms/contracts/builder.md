@@ -71,5 +71,6 @@ interface ObjectBuilder {
 ```
 
 ## Notes
+
 - All methods MUST delegate to existing `apply*` helpers to preserve behavior.
 - `.done()` returns a string identical to current outputs for equivalent parser flows.

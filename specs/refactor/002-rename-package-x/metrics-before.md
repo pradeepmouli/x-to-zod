@@ -9,10 +9,12 @@
 ## Code Complexity
 
 ### Lines of Code
+
 Manual count needed (cloc not installed):
-      47
+47
 
 ### File Sizes
+
 ```
      858 test/parsers/parseObject.test.ts
      350 test/jsonSchemaToZod.test.ts
@@ -29,6 +31,7 @@ Manual count needed (cloc not installed):
 ## Test Coverage
 
 Coverage data not found. Run tests with coverage:
+
 ```bash
 npm run test:coverage  # or equivalent command
 ```
@@ -36,9 +39,11 @@ npm run test:coverage  # or equivalent command
 ## Performance
 
 ### Build Time
+
 - **Build Time**: 5 seconds
 
 ### Bundle Size
+
 - **Bundle Size**: Build directory not found (run build first)
 
 ## Dependencies
@@ -49,7 +54,7 @@ npm run test:coverage  # or equivalent command
 
 ## Test Suite
 
-- **Test Files**:       19
+- **Test Files**: 19
 - **Test Pass Rate**: Run `npm test` to verify 100%
 
 ## Git Statistics
@@ -61,4 +66,5 @@ npm run test:coverage  # or equivalent command
 Metrics captured before refactoring at Fri Dec 12 23:44:36 EST 2025.
 
 ---
-*Metrics captured using measure-metrics.sh*
+
+_Metrics captured using measure-metrics.sh_

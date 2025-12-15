@@ -12,6 +12,7 @@
 Refactored internal builder surfaces to be fluent and match Zod chaining semantics. Implemented factory API (`build.number()`, `build.string()`, etc.) returning fluent builder instances that delegate to existing modifier logic. All builders extend `BaseBuilder<T>` for shared modifier methods. Parsers now use fluent builders instead of calling `apply*` helpers directly. All 107 tests passing with identical outputs - behavior completely preserved.
 
 **Completed Implementation**:
+
 - ✅ BaseBuilder<T> abstract class with 8 shared modifiers
 - ✅ 8 concrete builder classes (Number, String, Array, Object, Boolean, Null, Enum, Const)
 - ✅ Zod-like factory API: `build.number()`, `build.string()`, `build.array()`, etc.
@@ -26,6 +27,7 @@ Refactored internal builder surfaces to be fluent and match Zod chaining semanti
 
 **Lazy Evaluation Pattern**:
 All builders follow a consistent pattern where:
+
 1. Constructor initializes `_baseText` with base schema (e.g., `"z.number()"`)
 2. Modifier methods store constraint metadata in private fields (e.g., `_min`, `_max`, `_format`)
 3. `.text()` method generates code by:
@@ -35,12 +37,14 @@ All builders follow a consistent pattern where:
 4. BaseBuilder.text() applies modifiers stored in its own fields (`_optional`, `_nullable`, etc.)
 
 **Smart Constraint Merging**:
+
 - Multiple calls to same modifier merge intelligently
 - `.min(5).min(10)` → keeps strictest (10)
 - `.max(20).max(15)` → keeps strictest (15)
 - `.int().multipleOf(3)` → multipleOf implies int, no duplication
 
 **Example Flow**:
+
 ```typescript
 // User code:
 build.number().int().max(10).optional()
@@ -77,7 +81,7 @@ build.number().int().max(10).optional()
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - Parser Architecture: Preserve stateless parsers; builders used within parsers MUST NOT introduce side effects
 - Dual-Module Export: No change to build outputs; ensure ESM/CJS remain identical
@@ -88,6 +92,7 @@ build.number().int().max(10).optional()
 **Status**: PASSED (Phase 0). Re-evaluate after Phase 1 design outputs.
 
 Gates to enforce during implementation:
+
 - Per-phase TDD: Before any code change in a phase, run tests and confirm green; after changes, rerun tests and compare outputs against snapshot
 - ESM/CJS parity: Build both targets and verify `postesm.js`/`postcjs.js` outputs remain unchanged
 - CLI parity: Run CLI with baseline sample schemas and verify outputs identical
@@ -154,5 +159,5 @@ test/
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| N/A | — | — |
+| --------- | ---------- | ------------------------------------ |
+| N/A       | —          | —                                    |
