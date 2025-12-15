@@ -2,10 +2,7 @@ import { JsonSchemaObject, Refs } from "../Types.js";
 import {
   buildObject,
   buildRecord,
-  applyStrict,
-  applyCatchall,
-  applySuperRefine,
-  applyAnd,
+  ObjectBuilder,
   applyOptional,
 } from "../ZodBuilder/index.js";
 import { addJsdocs } from "../utils/jsdocs.js";
@@ -90,11 +87,13 @@ export function parseObject(
         catchallSchemas.push(additionalPropertiesZod);
       }
 
+      const builder = new ObjectBuilder(result);
       if (catchallSchemas.length > 1) {
-        result = applyCatchall(result, `z.union([${catchallSchemas.join(", ")}])`);
+        builder.catchall(`z.union([${catchallSchemas.join(", ")}])`);
       } else if (catchallSchemas.length === 1) {
-        result = applyCatchall(result, catchallSchemas[0]);
+        builder.catchall(catchallSchemas[0]);
       }
+      result = builder.done();
     } else {
       // No properties, build a record
       const valueSchemas = Object.values(parsedPatternProps);
@@ -150,13 +149,14 @@ export function parseObject(
     refineFn += "}\n";
     refineFn += "}";
 
-    result = applySuperRefine(result, refineFn);
+    result = new ObjectBuilder(result).superRefine(refineFn).done();
   } else if (result && additionalPropertiesZod) {
     // No pattern properties, but we have additionalProperties
+    const builder = new ObjectBuilder(result);
     if (additionalPropertiesZod === "z.never()") {
-      result = applyStrict(result);
+      result = builder.strict().done();
     } else {
-      result = applyCatchall(result, additionalPropertiesZod);
+      result = builder.catchall(additionalPropertiesZod).done();
     }
   } else if (!result) {
     // No properties, no patternProperties
@@ -168,6 +168,8 @@ export function parseObject(
   }
 
   // Step 4: Handle combinators (anyOf, oneOf, allOf)
+  let builder = new ObjectBuilder(result);
+
   if (its.an.anyOf(objectSchema)) {
     const anyOfZod = parseAnyOf(
       {
@@ -182,7 +184,7 @@ export function parseObject(
       },
       refs,
     );
-    result = applyAnd(result, anyOfZod);
+    builder.and(anyOfZod);
   }
 
   if (its.a.oneOf(objectSchema)) {
@@ -199,7 +201,7 @@ export function parseObject(
       },
       refs,
     );
-    result = applyAnd(result, oneOfZod);
+    builder.and(oneOfZod);
   }
 
   if (its.an.allOf(objectSchema)) {
@@ -216,8 +218,8 @@ export function parseObject(
       },
       refs,
     );
-    result = applyAnd(result, allOfZod);
+    builder.and(allOfZod);
   }
 
-  return result;
+  return builder.done();
 }

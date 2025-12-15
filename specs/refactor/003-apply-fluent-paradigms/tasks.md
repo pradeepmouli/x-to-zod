@@ -41,7 +41,7 @@ Feature: Fluent Zod-like Builders for ZodBuilder
 ## Phase 6: Object/Boolean/Null/Enum/Const Builders
 
 - [X] T016 [P] Implement ObjectBuilder in src/ZodBuilder/object.ts
-- [ ] T017 [P] Integrate in src/parsers/parseObject.ts (deferred: complex logic)
+- [X] T017 [P] Integrate in src/parsers/parseObject.ts
 - [X] T018 [P] Implement BooleanBuilder in src/ZodBuilder/boolean.ts (methods parity)
 - [X] T019 [P] Implement NullBuilder in src/ZodBuilder/null.ts
 - [X] T020 [P] Implement EnumBuilder in src/ZodBuilder/enum.ts
