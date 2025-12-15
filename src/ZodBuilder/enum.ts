@@ -6,8 +6,19 @@ import { Serializable } from "../Types.js";
 export class EnumBuilder {
   private code: string;
 
-  constructor(code: string) {
-    this.code = code;
+  constructor(values: Serializable[]) {
+    if (values.length === 0) {
+      this.code = "z.never()";
+    } else if (values.length === 1) {
+      this.code = `z.literal(${JSON.stringify(values[0])})`;
+    } else if (values.every((x) => typeof x === "string")) {
+      // All strings - use z.enum()
+      this.code = `z.enum([${values.map((x) => JSON.stringify(x))}])`;
+    } else {
+      // Mixed types - use union of literals
+      const literals = values.map((val) => `z.literal(${JSON.stringify(val)})`);
+      this.code = `z.union([${literals.join(", ")}])`;
+    }
   }
 
   /**

@@ -5,8 +5,8 @@
 export class NumberBuilder {
   private code: string;
 
-  constructor(code: string = "z.number()") {
-    this.code = code;
+  constructor() {
+    this.code = "z.number()";
   }
 
   /**

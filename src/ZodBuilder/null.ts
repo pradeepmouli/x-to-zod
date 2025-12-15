@@ -4,8 +4,8 @@
 export class NullBuilder {
   private code: string;
 
-  constructor(code: string = "z.null()") {
-    this.code = code;
+  constructor() {
+    this.code = "z.null()";
   }
 
   /**

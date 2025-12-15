@@ -4,8 +4,8 @@
 export class StringBuilder {
   private code: string;
 
-  constructor(code: string = "z.string()") {
-    this.code = code;
+  constructor() {
+    this.code = "z.string()";
   }
 
   /**

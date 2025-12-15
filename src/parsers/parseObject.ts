@@ -1,6 +1,5 @@
 import { JsonSchemaObject, Refs } from "../Types.js";
 import {
-  buildObject,
   buildRecord,
   ObjectBuilder,
   applyOptional,
@@ -19,6 +18,7 @@ export function parseObject(
 
   // Step 1: Build base object from properties
   if (objectSchema.properties && Object.keys(objectSchema.properties).length > 0) {
+    const properties: Record<string, string> = {};
     const propsWithJsdocs: string[] = [];
 
     for (const key of Object.keys(objectSchema.properties)) {
@@ -40,7 +40,10 @@ export function parseObject(
         propZod = applyOptional(propZod);
       }
 
-      // Build the property string: "key": zodSchema
+      // Store in properties object for builder
+      properties[key] = propZod;
+
+      // Build the property string for JSDoc: "key": zodSchema
       let propStr = `${JSON.stringify(key)}: ${propZod}`;
 
       // Add JSDoc if enabled (prepends to the property string)
@@ -51,11 +54,15 @@ export function parseObject(
       propsWithJsdocs.push(propStr);
     }
 
-    // Build object with pre-formatted property strings
-    result = `z.object({ ${propsWithJsdocs.join(", ")} })`;
+    // Build object - if JSDoc enabled, build manually; otherwise use ObjectBuilder
+    if (refs.withJsdocs) {
+      result = `z.object({ ${propsWithJsdocs.join(", ")} })`;
+    } else {
+      result = new ObjectBuilder(properties).done();
+    }
   } else if (objectSchema.properties) {
     // Empty properties object
-    result = buildObject({});
+    result = new ObjectBuilder({}).done();
   } else {
     result = "";
   } // Step 2: Handle additionalProperties
@@ -87,7 +94,7 @@ export function parseObject(
         catchallSchemas.push(additionalPropertiesZod);
       }
 
-      const builder = new ObjectBuilder(result);
+      const builder = ObjectBuilder.fromCode(result);
       if (catchallSchemas.length > 1) {
         builder.catchall(`z.union([${catchallSchemas.join(", ")}])`);
       } else if (catchallSchemas.length === 1) {
@@ -149,10 +156,10 @@ export function parseObject(
     refineFn += "}\n";
     refineFn += "}";
 
-    result = new ObjectBuilder(result).superRefine(refineFn).done();
+    result = ObjectBuilder.fromCode(result).superRefine(refineFn).done();
   } else if (result && additionalPropertiesZod) {
     // No pattern properties, but we have additionalProperties
-    const builder = new ObjectBuilder(result);
+    const builder = ObjectBuilder.fromCode(result);
     if (additionalPropertiesZod === "z.never()") {
       result = builder.strict().done();
     } else {
@@ -168,7 +175,7 @@ export function parseObject(
   }
 
   // Step 4: Handle combinators (anyOf, oneOf, allOf)
-  let builder = new ObjectBuilder(result);
+  let builder = ObjectBuilder.fromCode(result);
 
   if (its.an.anyOf(objectSchema)) {
     const anyOfZod = parseAnyOf(

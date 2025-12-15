@@ -4,8 +4,8 @@
 export class BooleanBuilder {
   private code: string;
 
-  constructor(code: string = "z.boolean()") {
-    this.code = code;
+  constructor() {
+    this.code = "z.boolean()";
   }
 
   /**

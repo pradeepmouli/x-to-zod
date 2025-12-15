@@ -6,8 +6,8 @@ import { Serializable } from "../Types.js";
 export class ConstBuilder {
   private code: string;
 
-  constructor(code: string) {
-    this.code = code;
+  constructor(value: Serializable) {
+    this.code = `z.literal(${JSON.stringify(value)})`;
   }
 
   /**

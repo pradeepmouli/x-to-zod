@@ -4,8 +4,25 @@
 export class ObjectBuilder {
   private code: string;
 
-  constructor(code: string) {
-    this.code = code;
+  constructor(properties: Record<string, string> = {}) {
+    if (Object.keys(properties).length === 0) {
+      this.code = "z.object({})";
+    } else {
+      const propStrings = Object.entries(properties).map(
+        ([key, zodStr]) => `${JSON.stringify(key)}: ${zodStr}`,
+      );
+      this.code = `z.object({ ${propStrings.join(", ")} })`;
+    }
+  }
+
+  /**
+   * Create ObjectBuilder from existing Zod object code string.
+   * Used when applying modifiers to already-built object schemas.
+   */
+  static fromCode(code: string): ObjectBuilder {
+    const builder = new ObjectBuilder({});
+    builder.code = code;
+    return builder;
   }
 
   /**
