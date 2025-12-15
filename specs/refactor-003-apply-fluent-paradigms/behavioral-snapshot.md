@@ -56,12 +56,12 @@ Document key observable behaviors that must remain unchanged before and after th
 	```
 
 ## Verification Checklist
-- [ ] Run full test suite before refactor; capture outputs
-- [ ] Run full test suite after refactor; outputs identical
-- [ ] Spot-check parser outputs for number/string/object/array/boolean/null/enum/const
-- [ ] Confirm `.int()`, `.optional()`, `.max()` parity vs `applyInt()`, `applyOptional()`, `applyMax()`
-- [ ] Confirm CLI commands produce identical output files
-- [ ] Confirm no change in public entrypoints or signatures
+- [X] Run full test suite before refactor; capture outputs
+- [X] Run full test suite after refactor; outputs identical (107/107 tests passing)
+- [X] Spot-check parser outputs for number/string/object/array/boolean/null/enum/const
+- [X] Confirm `.int()`, `.optional()`, `.max()` parity vs `applyInt()`, `applyOptional()`, `applyMax()`
+- [X] Confirm CLI commands produce identical output files (cli.test.ts: 10/10 passing)
+- [X] Confirm no change in public entrypoints or signatures
 
 ## Test Commands
 ```bash

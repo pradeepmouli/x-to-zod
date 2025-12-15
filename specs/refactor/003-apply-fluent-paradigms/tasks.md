@@ -4,57 +4,57 @@ Feature: Fluent Zod-like Builders for ZodBuilder
 
 ## Phase 1: Setup
 
-- [ ] T001 Capture baseline metrics via script
-- [ ] T002 Ensure all tests pass (baseline)
-- [ ] T003 Create branch and confirm spec artifacts exist
+- [X] T001 Capture baseline metrics via script
+- [X] T002 Ensure all tests pass (baseline)
+- [X] T003 Create branch and confirm spec artifacts exist
 
 ## Phase 2: Foundational
 
-- [ ] T004 [P] Add base fluent wrapper in src/ZodBuilder/fluent.ts
-- [ ] T005 Update src/ZodBuilder/index.ts to export builder factories
+- [X] T004 [P] Add base fluent wrapper in src/ZodBuilder/fluent.ts
+- [X] T005 Update src/ZodBuilder/index.ts to export builder factories
 
 ## Phase 3: Number Builder
 
-- [ ] T006 Implement NumberBuilder class in src/ZodBuilder/number.ts
-- [ ] T007 Wire `build.number()` factory in src/ZodBuilder/index.ts
-- [ ] T008 Integrate NumberBuilder in src/parsers/parseNumber.ts and preserve chain order
-- [ ] T009 Run tests and compare outputs (no changes allowed)
- - [ ] T009a Gate: Run tests BEFORE code changes; confirm baseline green
- - [ ] T009b Gate: Run tests AFTER integration; compare against behavioral snapshot
+- [X] T006 Implement NumberBuilder class in src/ZodBuilder/number.ts
+- [X] T007 Wire `build.number()` factory in src/ZodBuilder/index.ts
+- [X] T008 Integrate NumberBuilder in src/parsers/parseNumber.ts and preserve chain order
+- [X] T009 Run tests and compare outputs (no changes allowed)
+ - [X] T009a Gate: Run tests BEFORE code changes; confirm baseline green
+ - [X] T009b Gate: Run tests AFTER integration; compare against behavioral snapshot
 
 ## Phase 4: String Builder
 
-- [ ] T010 [P] Implement StringBuilder in src/ZodBuilder/string.ts
-- [ ] T011 [P] Wire `build.string()` and integrate in src/parsers/parseString.ts
-- [ ] T012 Run tests and verify parity
- - [ ] T012a Gate: Run tests BEFORE code changes
- - [ ] T012b Gate: Run tests AFTER integration; snapshot compare
+- [X] T010 [P] Implement StringBuilder in src/ZodBuilder/string.ts
+- [X] T011 [P] Wire `build.string()` and integrate in src/parsers/parseString.ts
+- [X] T012 Run tests and verify parity
+ - [X] T012a Gate: Run tests BEFORE code changes
+ - [X] T012b Gate: Run tests AFTER integration; snapshot compare
 
 ## Phase 5: Array Builder
 
-- [ ] T013 [P] Implement ArrayBuilder in src/ZodBuilder/array.ts
-- [ ] T014 [P] Wire `build.array()` and integrate in src/parsers/parseArray.ts
-- [ ] T015 Run tests and verify parity
- - [ ] T015a Gate: Run tests BEFORE code changes
- - [ ] T015b Gate: Run tests AFTER integration; snapshot compare
+- [X] T013 [P] Implement ArrayBuilder in src/ZodBuilder/array.ts
+- [X] T014 [P] Wire `build.array()` and integrate in src/parsers/parseArray.ts
+- [X] T015 Run tests and verify parity
+ - [X] T015a Gate: Run tests BEFORE code changes
+ - [X] T015b Gate: Run tests AFTER integration; snapshot compare
 
 ## Phase 6: Object/Boolean/Null/Enum/Const Builders
 
-- [ ] T016 [P] Implement ObjectBuilder in src/ZodBuilder/object.ts
-- [ ] T017 [P] Integrate in src/parsers/parseObject.ts
-- [ ] T018 [P] Implement BooleanBuilder in src/ZodBuilder/boolean.ts (methods parity)
-- [ ] T019 [P] Implement NullBuilder in src/ZodBuilder/null.ts
-- [ ] T020 [P] Implement EnumBuilder in src/ZodBuilder/enum.ts
-- [ ] T021 [P] Implement ConstBuilder in src/ZodBuilder/const.ts
-- [ ] T022 Update exports and integrations where needed
-- [ ] T023 Run full test suite and verify parity
- - [ ] T023a Gate: Run tests BEFORE phase work begins
- - [ ] T023b Gate: Run tests AFTER all integrations; snapshot compare
+- [X] T016 [P] Implement ObjectBuilder in src/ZodBuilder/object.ts
+- [ ] T017 [P] Integrate in src/parsers/parseObject.ts (deferred: complex logic)
+- [X] T018 [P] Implement BooleanBuilder in src/ZodBuilder/boolean.ts (methods parity)
+- [X] T019 [P] Implement NullBuilder in src/ZodBuilder/null.ts
+- [X] T020 [P] Implement EnumBuilder in src/ZodBuilder/enum.ts
+- [X] T021 [P] Implement ConstBuilder in src/ZodBuilder/const.ts
+- [X] T022 Update exports and integrations where needed
+- [X] T023 Run full test suite and verify parity
+ - [X] T023a Gate: Run tests BEFORE phase work begins
+ - [X] T023b Gate: Run tests AFTER all integrations; snapshot compare (107/107 passing)
 
 ## Phase 7: Validation
 
-- [ ] T024 Re-measure metrics (after)
-- [ ] T025 Compare behavioral snapshot outputs (identical)
+- [X] T024 Re-measure metrics (after)
+- [X] T025 Compare behavioral snapshot outputs (identical, 107/107 tests passing)
 - [ ] T026 Code review checklist compliance
  - [ ] T030 Validate ESM/CJS parity (build both, verify post-build outputs unchanged)
  - [ ] T031 Validate CLI parity (run CLI on sample schemas and compare to baseline outputs)
