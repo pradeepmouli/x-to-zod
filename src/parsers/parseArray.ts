@@ -18,7 +18,7 @@ export const parseArray = (
 	// Handle tuple (array of schemas) vs array (single schema)
 	if (Array.isArray(schema.items)) {
 		const itemSchemas = schema.items.map((v, i) =>
-			parseSchema(v, { ...refs, path: [...refs.path, 'items', i] }).text(),
+			parseSchema(v, { ...refs, path: [...refs.path, 'items', i] }),
 		);
 		let tupleSchema = buildTuple(itemSchemas);
 
@@ -40,11 +40,11 @@ export const parseArray = (
 		r = new GenericBuilder(tupleSchema);
 	} else {
 		const itemSchema = !schema.items
-			? 'z.any()'
+			? build.any()
 			: parseSchema(schema.items, {
 					...refs,
 					path: [...refs.path, 'items'],
-				}).text();
+				});
 
 		const builder = build.array(itemSchema);
 

@@ -96,7 +96,7 @@ export const build = {
 	string: () => new StringBuilder(),
 	boolean: () => new BooleanBuilder(),
 	null: () => new NullBuilder(),
-	array: (itemSchemaZod: import('./BaseBuilder.js').BaseBuilder | string) =>
+	array: (itemSchemaZod: import('./BaseBuilder.js').BaseBuilder) =>
 		new ArrayBuilder(itemSchemaZod),
 	object: (
 		properties: Record<

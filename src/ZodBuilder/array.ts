@@ -4,13 +4,13 @@ import { BaseBuilder } from './BaseBuilder.js';
  * Fluent ArrayBuilder: wraps a Zod array schema string and provides chainable methods.
  */
 export class ArrayBuilder extends BaseBuilder {
-	private readonly _itemSchemaZod: BaseBuilder | string;
+	private readonly _itemSchema: BaseBuilder;
 	_minItems?: { value: number; errorMessage?: string } = undefined;
 	_maxItems?: { value: number; errorMessage?: string } = undefined;
 
-	constructor(itemSchemaZod: BaseBuilder | string) {
+	constructor(itemSchema: BaseBuilder) {
 		super();
-		this._itemSchemaZod = itemSchemaZod;
+		this._itemSchema = itemSchema;
 	}
 
 	/**
@@ -37,10 +37,7 @@ export class ArrayBuilder extends BaseBuilder {
 	 * Compute the base array schema.
 	 */
 	protected override base(): string {
-		const itemStr =
-			typeof this._itemSchemaZod === 'string'
-				? this._itemSchemaZod
-				: this._itemSchemaZod.text();
+		const itemStr = this._itemSchema.text();
 		return `z.array(${itemStr})`;
 	}
 
@@ -70,9 +67,8 @@ export class ArrayBuilder extends BaseBuilder {
  * Build a Zod array schema string from an item schema.
  * Item schema can be either a BaseBuilder instance or a Zod schema string.
  */
-export function buildArray(itemSchemaZod: BaseBuilder | string): string {
-	const itemStr =
-		typeof itemSchemaZod === 'string' ? itemSchemaZod : itemSchemaZod.text();
+export function buildArray(itemSchemaZod: BaseBuilder): string {
+	const itemStr = itemSchemaZod.text();
 	return `z.array(${itemStr})`;
 }
 
@@ -80,10 +76,8 @@ export function buildArray(itemSchemaZod: BaseBuilder | string): string {
  * Build a Zod tuple schema string from item schemas.
  * Item schemas can be either BaseBuilder instances or Zod schema strings.
  */
-export function buildTuple(itemSchemasZod: (BaseBuilder | string)[]): string {
-	const itemStrs = itemSchemasZod.map((item) =>
-		typeof item === 'string' ? item : item.text(),
-	);
+export function buildTuple(itemSchemasZod: BaseBuilder[]): string {
+	const itemStrs = itemSchemasZod.map((item) => item.text());
 	return `z.tuple([${itemStrs.join(',')}])`; // No space after comma
 }
 
