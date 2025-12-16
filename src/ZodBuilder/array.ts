@@ -34,14 +34,18 @@ export class ArrayBuilder extends BaseBuilder {
 	}
 
 	/**
-	 * Compute the base array schema with type-specific constraints.
+	 * Compute the base array schema.
 	 */
 	protected override base(): string {
 		const itemStr =
 			typeof this._itemSchemaZod === 'string'
 				? this._itemSchemaZod
 				: this._itemSchemaZod.text();
-		let result = `z.array(${itemStr})`;
+		return `z.array(${itemStr})`;
+	}
+
+	protected override modify(baseText: string): string {
+		let result = baseText;
 
 		if (this._minItems !== undefined) {
 			result = applyMinItems(
@@ -58,7 +62,7 @@ export class ArrayBuilder extends BaseBuilder {
 			);
 		}
 
-		return result;
+		return super.modify(result);
 	}
 }
 

@@ -68,13 +68,15 @@ export class ObjectBuilder extends BaseBuilder {
 	}
 
 	/**
-	 * Compute the base object schema with type-specific modifiers.
+	 * Compute the base object schema.
 	 */
 	protected override base(): string {
-		// Use precomputed schema if available, otherwise build from properties
-		let result = this._precomputedSchema ?? buildObject(this._properties);
+		return this._precomputedSchema ?? buildObject(this._properties);
+	}
 
-		// Apply object-specific modifiers
+	protected override modify(baseText: string): string {
+		let result = baseText;
+
 		if (this._strict) {
 			result = applyStrict(result);
 		}
@@ -91,7 +93,7 @@ export class ObjectBuilder extends BaseBuilder {
 			result = applyAnd(result, this._andSchema);
 		}
 
-		return result;
+		return super.modify(result);
 	}
 }
 

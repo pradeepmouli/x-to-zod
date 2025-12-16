@@ -6,8 +6,7 @@ import { BaseBuilder } from './BaseBuilder.js';
  */
 export class NumberBuilder extends BaseBuilder {
 	_int: boolean | { errorMessage: string } = false;
-	_multipleOf: number | { value: number; errorMessage?: string } | undefined =
-		undefined;
+	_multipleOf: { value: number; errorMessage?: string } | undefined = undefined;
 
 	_min:
 		| { value: number; exclusive: boolean; errorMessage?: string }
@@ -87,27 +86,30 @@ export class NumberBuilder extends BaseBuilder {
 	 */
 
 	/**
-	 * Compute the base number schema with type-specific constraints.
+	 * Compute the base number schema.
 	 */
 	protected override base(): string {
-		let result = 'z.number()';
+		return 'z.number()';
+	}
+
+	protected override modify(baseText: string): string {
+		let result = baseText;
+
 		if (this._int !== false) {
-			if (typeof this._int === 'object') {
-				result = applyInt(result, this._int.errorMessage);
-			} else {
-				result = applyInt(result);
-			}
+			result =
+				typeof this._int === 'object'
+					? applyInt(result, this._int.errorMessage)
+					: applyInt(result);
 		}
+
 		if (this._multipleOf !== undefined) {
-			if (typeof this._multipleOf === 'number') {
-				result = applyMultipleOf(result, this._multipleOf);
-			} else
-				result = applyMultipleOf(
-					result,
-					this._multipleOf.value,
-					this._multipleOf.errorMessage,
-				);
+			result = applyMultipleOf(
+				result,
+				this._multipleOf.value,
+				this._multipleOf.errorMessage,
+			);
 		}
+
 		if (this._min !== undefined) {
 			result = applyMin(
 				result,
@@ -124,7 +126,8 @@ export class NumberBuilder extends BaseBuilder {
 				this._max.errorMessage,
 			);
 		}
-		return result;
+
+		return super.modify(result);
 	}
 }
 

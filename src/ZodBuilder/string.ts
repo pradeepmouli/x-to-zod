@@ -96,10 +96,14 @@ export class StringBuilder extends BaseBuilder {
 	}
 
 	/**
-	 * Compute the base string schema with type-specific constraints.
+	 * Compute the base string schema.
 	 */
 	protected override base(): string {
-		let result = 'z.string()';
+		return 'z.string()';
+	}
+
+	protected override modify(baseText: string): string {
+		let result = baseText;
 
 		if (this._format !== undefined) {
 			result = applyFormat(
@@ -143,7 +147,7 @@ export class StringBuilder extends BaseBuilder {
 			);
 		}
 
-		return result;
+		return super.modify(result);
 	}
 }
 
