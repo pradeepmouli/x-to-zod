@@ -23,7 +23,7 @@
 
 **Goal**: Transform parsers to emit builders while top-level functions call `.text()`, ensuring tests pass immediately
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - Tests pass after each file modification
 - Generated output identical to baseline
 - No TypeScript compilation errors
@@ -240,7 +240,7 @@ class ObjectBuilder extends BaseBuilder {
     super('');
     this._properties = properties;
   }
-  
+
   text(): string {
     const props = Object.entries(this._properties)
       .map(([key, val]) => {
