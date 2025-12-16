@@ -10,8 +10,8 @@
 
 ## Phase 0: Setup & Baseline Validation (Prerequisite)
 
-- [ ] T001 [P] Verify baseline test suite passes: Run `npm test` and confirm 104 tests passing
-- [ ] T002 Verify TypeScript compilation succeeds: Run `npm run build`
+- [x] T001 [P] Verify baseline test suite passes: Run `npm test` and confirm 104 tests passing
+- [x] T002 Verify TypeScript compilation succeeds: Run `npm run build`
 - [x] T003 [P] Document baseline generated output: Run test schemas through current parser and save outputs to `specs/refactor/004-finish-fluent-api/baseline-outputs/` directory for later comparison
 - [ ] T004 [P] Confirm git status clean: `git status` shows no uncommitted changes on refactor/004 branch
 
@@ -23,7 +23,7 @@
 
 **Goal**: Transform parsers to emit builders while top-level functions call `.text()`, ensuring tests pass immediately
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - Tests pass after each file modification
 - Generated output identical to baseline
 - No TypeScript compilation errors
@@ -43,7 +43,7 @@
 - [x] T009 [P] Modify `addAnnotations()` in src/parsers/parseSchema.ts: Replace string concat with `builder.readonly()` call
 - [x] T010 Update parseSchema return type from `string` to `BaseBuilder` in src/parsers/parseSchema.ts
 - [x] T011 Remove `.text()` calls from parseSchema's selectParser results (return builders, not strings)
-- [ ] T012 [P] Verify parseSchema tests pass: Run `npm test -- parseSchema.test.ts`
+- [x] T012 [P] Verify parseSchema tests pass: Run `npm test -- parseSchema.test.ts`
 
 **Gate**: parseSchema tests pass, modifier logic validated
 
@@ -78,16 +78,16 @@
 - [x] T029 Update src/jsonSchemaToZod.ts main function: Call `.text()` on parseSchema result before returning
 - [x] T030 Update src/cli.ts: Handle parseSchema returning builder, call `.text()` on result
 - [x] T031 Update src/JsonSchema/jsonSchemaToZod.ts: Call `.text()` on builder result
-- [ ] T031a [P] **CLI Validation (Constitution Principle III)**: Test CLI with file I/O: `npm run build && npm run cli -- --input test/all.json --output /tmp/refactor-test-output.ts` and verify output matches baseline
-- [ ] T032 [P] Verify integration tests pass: Run `npm test -- jsonSchemaToZod.test.ts`
+- [x] T031a [P] **CLI Validation (Constitution Principle III)**: Test CLI with file I/O: `npm run build && npm run cli -- --input test/all.json --output /tmp/refactor-test-output.ts` and verify output matches baseline (use comparable flags like `--module none --noImport` if baseline has no wrapper).
+- [x] T032 [P] Verify integration tests pass: Run `npm test -- jsonSchemaToZod.test.ts`
 
 **Gate**: Full test suite passes: `npm test` shows 104 tests passing
 
 ### Phase 3+4.5: Comprehensive Validation
 
 - [X] T033 Run full test suite: `npm test` - must show 0 failures
-- [ ] T034 Verify TypeScript strict mode: `npm run build` - must succeed with no errors
-- [ ] T035 Verify behavior preservation: Compare generated outputs to baseline using `diff -r specs/refactor/004-finish-fluent-api/baseline-outputs/ <new_output_dir>` (should show zero differences)
+- [x] T034 Verify TypeScript strict mode: `npm run build` - must succeed with no errors
+- [x] T035 Verify behavior preservation: Compare generated outputs to baseline using `diff -r specs/refactor/004-finish-fluent-api/baseline-outputs/ <new_output_dir>` (should show zero differences). Note: diff must be run with comparable CLI options (e.g. `--module none --noImport`) to match baseline output format.
 - [ ] T036 [P] Commit Phase 3+4 changes: `git commit -m "refactor: parsers emit builders, top-level functions call .text()"`
 
 **Gate**: All tests pass, TypeScript strict mode succeeds, behavior preserved
@@ -109,25 +109,25 @@
 - [x] T037 [P] Update src/ZodBuilder/object.ts constructor: Change `Record<string, string>` to `Record<string, BaseBuilder | string>`
 - [x] T038 Update buildObject helper: Add logic to convert builders to strings: `const val = typeof v === 'string' ? v : v.text()`
 - [x] T039 [P] Update buildRecord helper: Accept union types and handle conversion
-- [ ] T040 [P] Verify object builder tests pass: `npm test -- test/parsers/parseObject.test.ts`
+- [x] T040 [P] Verify object builder tests pass: `npm test -- test/parsers/parseObject.test.ts`
 
 ### Phase 2.2: Update ArrayBuilder
 
 - [x] T041 [P] Update src/ZodBuilder/array.ts constructor: Change `string` to `BaseBuilder | string`
 - [x] T042 Update buildArray helper: Extract string from builder if needed
 - [x] T043 Update buildTuple helper: Accept `(BaseBuilder | string)[]` and handle conversion
-- [ ] T044 [P] Verify array builder tests pass: `npm test -- test/parsers/parseArray.test.ts`
+- [x] T044 [P] Verify array builder tests pass: `npm test -- test/parsers/parseArray.test.ts`
 
 ### Phase 2.3: Update Other Builders & Modifiers
 
 - [ ] T045 [P] Update src/ZodBuilder/modifiers.ts: Update helper functions to accept union types where needed
-- [ ] T046 [P] Verify all builder tests pass: `npm test -- test/parsers/`
+- [x] T046 [P] Verify all builder tests pass: `npm test -- test/parsers/`
 
 **Gate**: All tests pass, union types correctly handled
 
 ### Phase 2.4: Final Phase 2 Validation
 
-- [ ] T047 Run full test suite: `npm test` - must show 0 failures
+- [x] T047 Run full test suite: `npm test` - must show 0 failures
 - [x] T048 [P] Commit Phase 2 changes: `git commit -m "refactor: builders accept BaseBuilder | string union types"`
 
 **Gate**: Tests pass, ready for Phase 1
@@ -165,7 +165,7 @@
 ### Phase 1.3: Export & Integration
 
 - [x] T058 Update src/ZodBuilder/index.ts: Export all 9 new builders
-- [ ] T059 [P] Verify new builders are importable: Test `import { UnionBuilder, ... } from 'src/ZodBuilder'`
+- [x] T059 [P] Verify new builders are importable: Test `import { UnionBuilder, ... } from 'src/ZodBuilder'`
 - [x] T060 Update src/parsers/parseAnyOf.ts: Return `UnionBuilder` instead of template string
 - [x] T061 Update src/parsers/parseOneOf.ts: Return `DiscriminatedUnionBuilder` instead of template string (if applicable)
 - [x] T062 Update src/parsers/parseAllOf.ts: Return `IntersectionBuilder` instead of template string
@@ -240,7 +240,7 @@ class ObjectBuilder extends BaseBuilder {
     super('');
     this._properties = properties;
   }
-  
+
   text(): string {
     const props = Object.entries(this._properties)
       .map(([key, val]) => {
