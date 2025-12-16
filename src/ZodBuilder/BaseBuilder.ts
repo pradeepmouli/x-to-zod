@@ -11,7 +11,7 @@ import {
 /**
  * BaseBuilder: Abstract base class for all Zod schema builders.
  * Provides shared modifier methods that apply to all schema types.
- * 
+ *
  * Template Method Pattern:
  * - base(): Computes the type-specific schema string (must be overridden)
  * - modify(): Applies shared modifiers to the base schema

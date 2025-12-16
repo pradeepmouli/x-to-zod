@@ -10,7 +10,10 @@ export const parseIfThenElse = (
 	},
 	refs: Refs,
 ): BaseBuilder => {
-	const $if = parseSchema(schema.if, { ...refs, path: [...refs.path, 'if'] }).text();
+	const $if = parseSchema(schema.if, {
+		...refs,
+		path: [...refs.path, 'if'],
+	}).text();
 	const $then = parseSchema(schema.then, {
 		...refs,
 		path: [...refs.path, 'then'],

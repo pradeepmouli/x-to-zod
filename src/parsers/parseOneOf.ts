@@ -1,5 +1,9 @@
 import { JsonSchemaObject, JsonSchema, Refs } from '../Types.js';
-import { BaseBuilder, AnyBuilder, GenericBuilder } from '../ZodBuilder/index.js';
+import {
+	BaseBuilder,
+	AnyBuilder,
+	GenericBuilder,
+} from '../ZodBuilder/index.js';
 import { parseSchema } from './parseSchema.js';
 
 export const parseOneOf = (

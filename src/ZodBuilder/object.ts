@@ -99,7 +99,9 @@ export class ObjectBuilder extends BaseBuilder {
  * Build a Zod object schema string from property definitions.
  * Properties can be either BaseBuilder instances or Zod schema strings.
  */
-export function buildObject(properties: Record<string, BaseBuilder | string>): string {
+export function buildObject(
+	properties: Record<string, BaseBuilder | string>,
+): string {
 	if (Object.keys(properties).length === 0) {
 		return 'z.object({})';
 	}
@@ -122,8 +124,10 @@ export function buildRecord(
 	keySchemaZod: BaseBuilder | string,
 	valueSchemaZod: BaseBuilder | string,
 ): string {
-	const keyStr = typeof keySchemaZod === 'string' ? keySchemaZod : keySchemaZod.text();
-	const valueStr = typeof valueSchemaZod === 'string' ? valueSchemaZod : valueSchemaZod.text();
+	const keyStr =
+		typeof keySchemaZod === 'string' ? keySchemaZod : keySchemaZod.text();
+	const valueStr =
+		typeof valueSchemaZod === 'string' ? valueSchemaZod : valueSchemaZod.text();
 	return `z.record(${keyStr}, ${valueStr})`;
 }
 

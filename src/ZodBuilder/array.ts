@@ -37,9 +37,10 @@ export class ArrayBuilder extends BaseBuilder {
 	 * Compute the base array schema with type-specific constraints.
 	 */
 	protected override base(): string {
-		const itemStr = typeof this._itemSchemaZod === 'string' 
-			? this._itemSchemaZod 
-			: this._itemSchemaZod.text();
+		const itemStr =
+			typeof this._itemSchemaZod === 'string'
+				? this._itemSchemaZod
+				: this._itemSchemaZod.text();
 		let result = `z.array(${itemStr})`;
 
 		if (this._minItems !== undefined) {
@@ -66,7 +67,8 @@ export class ArrayBuilder extends BaseBuilder {
  * Item schema can be either a BaseBuilder instance or a Zod schema string.
  */
 export function buildArray(itemSchemaZod: BaseBuilder | string): string {
-	const itemStr = typeof itemSchemaZod === 'string' ? itemSchemaZod : itemSchemaZod.text();
+	const itemStr =
+		typeof itemSchemaZod === 'string' ? itemSchemaZod : itemSchemaZod.text();
 	return `z.array(${itemStr})`;
 }
 
@@ -75,8 +77,8 @@ export function buildArray(itemSchemaZod: BaseBuilder | string): string {
  * Item schemas can be either BaseBuilder instances or Zod schema strings.
  */
 export function buildTuple(itemSchemasZod: (BaseBuilder | string)[]): string {
-	const itemStrs = itemSchemasZod.map(item => 
-		typeof item === 'string' ? item : item.text()
+	const itemStrs = itemSchemasZod.map((item) =>
+		typeof item === 'string' ? item : item.text(),
 	);
 	return `z.tuple([${itemStrs.join(',')}])`; // No space after comma
 }

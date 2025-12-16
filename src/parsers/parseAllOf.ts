@@ -1,7 +1,11 @@
 import { parseSchema } from './parseSchema.js';
 import { half } from '../utils/half.js';
 import { JsonSchemaObject, JsonSchema, Refs } from '../Types.js';
-import { BaseBuilder, NeverBuilder, IntersectionBuilder } from '../ZodBuilder/index.js';
+import {
+	BaseBuilder,
+	NeverBuilder,
+	IntersectionBuilder,
+} from '../ZodBuilder/index.js';
 
 const originalIndex = Symbol('Original index');
 

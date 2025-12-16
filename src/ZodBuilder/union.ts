@@ -13,7 +13,9 @@ export class UnionBuilder extends BaseBuilder {
 	}
 
 	protected override base(): string {
-		const schemaStrings = this._schemas.map(s => typeof s === 'string' ? s : s.text());
+		const schemaStrings = this._schemas.map((s) =>
+			typeof s === 'string' ? s : s.text(),
+		);
 		return `z.union([${schemaStrings.join(', ')}])`;
 	}
 }
@@ -22,6 +24,8 @@ export class UnionBuilder extends BaseBuilder {
  * Build a Zod union schema string.
  */
 export function buildUnion(schemas: (BaseBuilder | string)[]): string {
-	const schemaStrings = schemas.map(s => typeof s === 'string' ? s : s.text());
+	const schemaStrings = schemas.map((s) =>
+		typeof s === 'string' ? s : s.text(),
+	);
 	return `z.union([${schemaStrings.join(', ')}])`;
 }

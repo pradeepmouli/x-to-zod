@@ -21,7 +21,12 @@ import {
 	JsonSchema,
 	Serializable,
 } from '../Types.js';
-import { BaseBuilder, AnyBuilder, NeverBuilder, GenericBuilder } from '../ZodBuilder/index.js';
+import {
+	BaseBuilder,
+	AnyBuilder,
+	NeverBuilder,
+	GenericBuilder,
+} from '../ZodBuilder/index.js';
 
 export const parseSchema = (
 	schema: JsonSchema,

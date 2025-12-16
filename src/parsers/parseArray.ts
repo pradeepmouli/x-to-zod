@@ -41,7 +41,10 @@ export const parseArray = (
 	} else {
 		const itemSchema = !schema.items
 			? 'z.any()'
-			: parseSchema(schema.items, { ...refs, path: [...refs.path, 'items'] }).text();
+			: parseSchema(schema.items, {
+					...refs,
+					path: [...refs.path, 'items'],
+				}).text();
 
 		const builder = build.array(itemSchema);
 

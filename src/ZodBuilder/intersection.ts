@@ -15,8 +15,10 @@ export class IntersectionBuilder extends BaseBuilder {
 	}
 
 	protected override base(): string {
-		const leftStr = typeof this._left === 'string' ? this._left : this._left.text();
-		const rightStr = typeof this._right === 'string' ? this._right : this._right.text();
+		const leftStr =
+			typeof this._left === 'string' ? this._left : this._left.text();
+		const rightStr =
+			typeof this._right === 'string' ? this._right : this._right.text();
 		return `z.intersection(${leftStr}, ${rightStr})`;
 	}
 }
@@ -26,7 +28,7 @@ export class IntersectionBuilder extends BaseBuilder {
  */
 export function buildIntersection(
 	left: BaseBuilder | string,
-	right: BaseBuilder | string
+	right: BaseBuilder | string,
 ): string {
 	const leftStr = typeof left === 'string' ? left : left.text();
 	const rightStr = typeof right === 'string' ? right : right.text();

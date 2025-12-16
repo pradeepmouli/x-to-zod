@@ -10,7 +10,7 @@ export class RecordBuilder extends BaseBuilder {
 
 	constructor(
 		keySchema: BaseBuilder | string,
-		valueSchema: BaseBuilder | string
+		valueSchema: BaseBuilder | string,
 	) {
 		super();
 		this._keySchema = keySchema;
@@ -18,8 +18,14 @@ export class RecordBuilder extends BaseBuilder {
 	}
 
 	protected override base(): string {
-		const keyStr = typeof this._keySchema === 'string' ? this._keySchema : this._keySchema.text();
-		const valueStr = typeof this._valueSchema === 'string' ? this._valueSchema : this._valueSchema.text();
+		const keyStr =
+			typeof this._keySchema === 'string'
+				? this._keySchema
+				: this._keySchema.text();
+		const valueStr =
+			typeof this._valueSchema === 'string'
+				? this._valueSchema
+				: this._valueSchema.text();
 		return `z.record(${keyStr}, ${valueStr})`;
 	}
 }
@@ -29,9 +35,10 @@ export class RecordBuilder extends BaseBuilder {
  */
 export function buildRecordSchema(
 	keySchema: BaseBuilder | string,
-	valueSchema: BaseBuilder | string
+	valueSchema: BaseBuilder | string,
 ): string {
 	const keyStr = typeof keySchema === 'string' ? keySchema : keySchema.text();
-	const valueStr = typeof valueSchema === 'string' ? valueSchema : valueSchema.text();
+	const valueStr =
+		typeof valueSchema === 'string' ? valueSchema : valueSchema.text();
 	return `z.record(${keyStr}, ${valueStr})`;
 }

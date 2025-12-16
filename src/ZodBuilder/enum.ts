@@ -22,7 +22,9 @@ export class EnumBuilder extends BaseBuilder {
 			return `z.enum([${this._values.map((x) => JSON.stringify(x))}])`;
 		} else {
 			// Mixed types - use union of literals
-			const literals = this._values.map((val) => `z.literal(${JSON.stringify(val)})`);
+			const literals = this._values.map(
+				(val) => `z.literal(${JSON.stringify(val)})`,
+			);
 			return `z.union([${literals.join(', ')}])`;
 		}
 	}

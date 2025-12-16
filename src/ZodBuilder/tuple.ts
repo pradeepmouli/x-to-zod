@@ -13,7 +13,9 @@ export class TupleBuilder extends BaseBuilder {
 	}
 
 	protected override base(): string {
-		const itemStrings = this._items.map(item => typeof item === 'string' ? item : item.text());
+		const itemStrings = this._items.map((item) =>
+			typeof item === 'string' ? item : item.text(),
+		);
 		return `z.tuple([${itemStrings.join(',')}])`; // No space after comma to match buildTuple
 	}
 }
@@ -22,6 +24,8 @@ export class TupleBuilder extends BaseBuilder {
  * Build a Zod tuple schema string.
  */
 export function buildTupleSchema(items: (BaseBuilder | string)[]): string {
-	const itemStrings = items.map(item => typeof item === 'string' ? item : item.text());
+	const itemStrings = items.map((item) =>
+		typeof item === 'string' ? item : item.text(),
+	);
 	return `z.tuple([${itemStrings.join(',')}])`; // No space after comma to match buildTuple
 }
