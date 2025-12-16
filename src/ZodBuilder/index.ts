@@ -44,6 +44,17 @@ export {
 	applyAnd,
 } from './object.js';
 
+// New builders (Phase 1)
+export { AnyBuilder, buildAny } from './any.js';
+export { NeverBuilder, buildNever } from './never.js';
+export { UnknownBuilder, buildUnknown } from './unknown.js';
+export { LiteralBuilder, buildLiteralValue } from './literal.js';
+export { UnionBuilder, buildUnion } from './union.js';
+export { IntersectionBuilder, buildIntersection } from './intersection.js';
+export { DiscriminatedUnionBuilder, buildDiscriminatedUnion } from './discriminatedUnion.js';
+export { TupleBuilder, buildTupleSchema } from './tuple.js';
+export { RecordBuilder, buildRecordSchema } from './record.js';
+
 // Import builder classes for the factory
 import { NumberBuilder } from './number.js';
 import { StringBuilder } from './string.js';
@@ -53,6 +64,14 @@ import { ArrayBuilder } from './array.js';
 import { ObjectBuilder } from './object.js';
 import { EnumBuilder } from './enum.js';
 import { ConstBuilder } from './const.js';
+import { AnyBuilder } from './any.js';
+import { NeverBuilder } from './never.js';
+import { UnknownBuilder } from './unknown.js';
+import { LiteralBuilder } from './literal.js';
+import { UnionBuilder } from './union.js';
+import { IntersectionBuilder } from './intersection.js';
+import { TupleBuilder } from './tuple.js';
+import { RecordBuilder } from './record.js';
 
 // Generic modifiers
 export {
@@ -78,4 +97,15 @@ export const build = {
 		new EnumBuilder(values),
 	literal: (value: import('../Types.js').Serializable) =>
 		new ConstBuilder(value),
+	// New builders
+	any: () => new AnyBuilder(),
+	never: () => new NeverBuilder(),
+	unknown: () => new UnknownBuilder(),
+	literalValue: (value: import('../Types.js').Serializable) => new LiteralBuilder(value),
+	union: (schemas: (import('./BaseBuilder.js').BaseBuilder<any> | string)[]) => new UnionBuilder(schemas),
+	intersection: (left: import('./BaseBuilder.js').BaseBuilder<any> | string, right: import('./BaseBuilder.js').BaseBuilder<any> | string) => 
+		new IntersectionBuilder(left, right),
+	tuple: (items: (import('./BaseBuilder.js').BaseBuilder<any> | string)[]) => new TupleBuilder(items),
+	record: (keySchema: import('./BaseBuilder.js').BaseBuilder<any> | string, valueSchema: import('./BaseBuilder.js').BaseBuilder<any> | string) => 
+		new RecordBuilder(keySchema, valueSchema),
 };

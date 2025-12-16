@@ -1,5 +1,5 @@
 import { JsonSchemaObject, JsonSchema, Refs } from '../Types.js';
-import { BaseBuilder } from '../ZodBuilder/index.js';
+import { BaseBuilder, AnyBuilder } from '../ZodBuilder/index.js';
 import { parseSchema } from './parseSchema.js';
 
 export const parseOneOf = (
@@ -38,5 +38,5 @@ export const parseOneOf = (
       });
     }
   })`)
-		: new BaseBuilder('z.any()');
+		: new AnyBuilder();
 };
