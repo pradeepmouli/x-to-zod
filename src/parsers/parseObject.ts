@@ -1,7 +1,6 @@
 import { JsonSchemaObject, Refs } from '../Types.js';
 import {
 	build,
-	buildRecord,
 	ObjectBuilder,
 	BaseBuilder,
 } from '../ZodBuilder/index.js';
@@ -116,12 +115,19 @@ export function parseObject(
 			}
 
 			if (valueSchemas.length > 1) {
-				result = buildRecord(
-					'z.string()',
-					`z.union([${valueSchemas.join(', ')}])`,
+				const unionSchema = build.union(
+					valueSchemas.map((s) => ObjectBuilder.fromCode(s)),
 				);
+				result = build
+					.record(
+						build.string(),
+						unionSchema,
+					)
+					.text();
 			} else if (valueSchemas.length === 1) {
-				result = buildRecord('z.string()', valueSchemas[0]);
+				result = build
+					.record(build.string(), ObjectBuilder.fromCode(valueSchemas[0]))
+					.text();
 			}
 		}
 
@@ -180,9 +186,13 @@ export function parseObject(
 	} else if (!result) {
 		// No properties, no patternProperties
 		if (additionalPropertiesZod) {
-			result = buildRecord('z.string()', additionalPropertiesZod);
+			result = build
+				.record(build.string(), ObjectBuilder.fromCode(additionalPropertiesZod))
+				.text();
 		} else {
-			result = buildRecord('z.string()', 'z.any()');
+			result = build
+				.record(build.string(), build.any())
+				.text();
 		}
 	}
 

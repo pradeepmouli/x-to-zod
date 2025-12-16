@@ -1,6 +1,6 @@
 import { JsonSchemaObject, JsonSchema, Refs } from '../Types.js';
 import { parseSchema } from './parseSchema.js';
-import { BaseBuilder, GenericBuilder } from '../ZodBuilder/index.js';
+import { BaseBuilder, build } from '../ZodBuilder/index.js';
 
 export const parseIfThenElse = (
 	schema: JsonSchemaObject & {
@@ -22,14 +22,17 @@ export const parseIfThenElse = (
 		...refs,
 		path: [...refs.path, 'else'],
 	}).text();
-	return new GenericBuilder(
-		`z.union([${$then}, ${$else}]).superRefine((value,ctx) => {
+
+	return build
+		.union([build.code($then), build.code($else)])
+		.superRefine(
+			`(value,ctx) => {
   const result = ${$if}.safeParse(value).success
     ? ${$then}.safeParse(value)
     : ${$else}.safeParse(value);
   if (!result.success) {
     result.error.errors.forEach((error) => ctx.addIssue(error))
   }
-})`,
-	);
+}`,
+		);
 };

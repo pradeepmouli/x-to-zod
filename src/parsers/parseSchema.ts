@@ -23,9 +23,7 @@ import {
 } from '../Types.js';
 import {
 	BaseBuilder,
-	AnyBuilder,
-	NeverBuilder,
-	GenericBuilder,
+	build,
 } from '../ZodBuilder/index.js';
 
 export const parseSchema = (
@@ -34,13 +32,13 @@ export const parseSchema = (
 	blockMeta?: boolean,
 ): BaseBuilder => {
 	if (typeof schema !== 'object')
-		return schema ? new AnyBuilder() : new NeverBuilder();
+		return schema ? build.any() : build.never();
 
 	if (refs.parserOverride) {
 		const custom = refs.parserOverride(schema, refs);
 
 		if (typeof custom === 'string') {
-			return new GenericBuilder(custom);
+			return build.code(custom);
 		}
 
 		if (custom) {
@@ -56,7 +54,7 @@ export const parseSchema = (
 		}
 
 		if (refs.depth === undefined || seen.n >= refs.depth) {
-			return new AnyBuilder();
+			return build.any();
 		}
 
 		seen.n += 1;

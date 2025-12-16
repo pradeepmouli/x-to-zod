@@ -5,12 +5,12 @@ import { BaseBuilder } from './BaseBuilder.js';
  * Accepts key and value schemas.
  */
 export class RecordBuilder extends BaseBuilder {
-	private readonly _keySchema: BaseBuilder | string;
-	private readonly _valueSchema: BaseBuilder | string;
+	private readonly _keySchema: BaseBuilder;
+	private readonly _valueSchema: BaseBuilder;
 
 	constructor(
-		keySchema: BaseBuilder | string,
-		valueSchema: BaseBuilder | string,
+		keySchema: BaseBuilder,
+		valueSchema: BaseBuilder,
 	) {
 		super();
 		this._keySchema = keySchema;
@@ -18,14 +18,8 @@ export class RecordBuilder extends BaseBuilder {
 	}
 
 	protected override base(): string {
-		const keyStr =
-			typeof this._keySchema === 'string'
-				? this._keySchema
-				: this._keySchema.text();
-		const valueStr =
-			typeof this._valueSchema === 'string'
-				? this._valueSchema
-				: this._valueSchema.text();
+		const keyStr = this._keySchema.text();
+		const valueStr = this._valueSchema.text();
 		return `z.record(${keyStr}, ${valueStr})`;
 	}
 }
@@ -34,11 +28,10 @@ export class RecordBuilder extends BaseBuilder {
  * Build a Zod record schema string.
  */
 export function buildRecordSchema(
-	keySchema: BaseBuilder | string,
-	valueSchema: BaseBuilder | string,
+	keySchema: BaseBuilder,
+	valueSchema: BaseBuilder,
 ): string {
-	const keyStr = typeof keySchema === 'string' ? keySchema : keySchema.text();
-	const valueStr =
-		typeof valueSchema === 'string' ? valueSchema : valueSchema.text();
+	const keyStr = keySchema.text();
+	const valueStr = valueSchema.text();
 	return `z.record(${keyStr}, ${valueStr})`;
 }

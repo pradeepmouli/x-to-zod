@@ -1,10 +1,11 @@
 import { BaseBuilder } from './BaseBuilder.js';
+import { build } from './index.js';
 
 /**
  * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
  */
 export class ObjectBuilder extends BaseBuilder {
-	readonly _properties: Record<string, BaseBuilder | string>;
+	readonly _properties: Record<string, BaseBuilder>;
 	private _precomputedSchema?: string; // Store pre-built schema string from fromCode()
 	private _strict: boolean = false;
 	private _loose: boolean = false;
@@ -12,7 +13,7 @@ export class ObjectBuilder extends BaseBuilder {
 	private _superRefineFn?: string;
 	private _andSchema?: string;
 
-	constructor(properties: Record<string, BaseBuilder | string> = {}) {
+	constructor(properties: Record<string, BaseBuilder> = {}) {
 		super();
 		this._properties = properties;
 	}
@@ -22,7 +23,7 @@ export class ObjectBuilder extends BaseBuilder {
 	 * Used when applying modifiers to already-built object schemas.
 	 */
 	static fromCode(code: string): ObjectBuilder {
-		const builder = new ObjectBuilder({});
+		const builder = build.object({});
 		builder._precomputedSchema = code;
 		return builder;
 	}
@@ -102,7 +103,7 @@ export class ObjectBuilder extends BaseBuilder {
  * Properties can be either BaseBuilder instances or Zod schema strings.
  */
 export function buildObject(
-	properties: Record<string, BaseBuilder | string>,
+	properties: Record<string, BaseBuilder>,
 ): string {
 	if (Object.keys(properties).length === 0) {
 		return 'z.object({})';
@@ -110,7 +111,7 @@ export function buildObject(
 
 	const props = Object.entries(properties)
 		.map(([key, val]) => {
-			const zodStr = typeof val === 'string' ? val : val.text();
+			const zodStr = val.text();
 			return `${JSON.stringify(key)}: ${zodStr}`;
 		})
 		.join(', ');
@@ -123,13 +124,11 @@ export function buildObject(
  * Key and value schemas can be either BaseBuilder instances or Zod schema strings.
  */
 export function buildRecord(
-	keySchemaZod: BaseBuilder | string,
-	valueSchemaZod: BaseBuilder | string,
+	keySchemaZod: BaseBuilder,
+	valueSchemaZod: BaseBuilder,
 ): string {
-	const keyStr =
-		typeof keySchemaZod === 'string' ? keySchemaZod : keySchemaZod.text();
-	const valueStr =
-		typeof valueSchemaZod === 'string' ? valueSchemaZod : valueSchemaZod.text();
+	const keyStr = keySchemaZod.text();
+	const valueStr = valueSchemaZod.text();
 	return `z.record(${keyStr}, ${valueStr})`;
 }
 

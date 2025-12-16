@@ -6,18 +6,16 @@ import { BaseBuilder } from './BaseBuilder.js';
  */
 export class DiscriminatedUnionBuilder extends BaseBuilder {
 	private readonly _discriminator: string;
-	private readonly _options: (BaseBuilder | string)[];
+	private readonly _options: BaseBuilder[];
 
-	constructor(discriminator: string, options: (BaseBuilder | string)[]) {
+	constructor(discriminator: string, options: BaseBuilder[]) {
 		super();
 		this._discriminator = discriminator;
 		this._options = options;
 	}
 
 	protected override base(): string {
-		const optionStrings = this._options.map((o) =>
-			typeof o === 'string' ? o : o.text(),
-		);
+		const optionStrings = this._options.map((o) => o.text());
 		return `z.discriminatedUnion(${JSON.stringify(this._discriminator)}, [${optionStrings.join(', ')}])`;
 	}
 }
@@ -27,10 +25,8 @@ export class DiscriminatedUnionBuilder extends BaseBuilder {
  */
 export function buildDiscriminatedUnion(
 	discriminator: string,
-	options: (BaseBuilder | string)[],
+	options: BaseBuilder[],
 ): string {
-	const optionStrings = options.map((o) =>
-		typeof o === 'string' ? o : o.text(),
-	);
+	const optionStrings = options.map((o) => o.text());
 	return `z.discriminatedUnion(${JSON.stringify(discriminator)}, [${optionStrings.join(', ')}])`;
 }

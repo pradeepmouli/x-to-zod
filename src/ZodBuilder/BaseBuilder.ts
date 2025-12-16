@@ -5,8 +5,10 @@ import {
 	applyDescribe,
 	applyNullable,
 	applyOptional,
+	applyRefine,
 	applyReadonly,
-} from './modifiers';
+	applySuperRefine,
+} from './modifiers.js';
 
 /**
  * BaseBuilder: Abstract base class for all Zod schema builders.
@@ -26,6 +28,9 @@ export abstract class BaseBuilder {
 	_describeText?: string = undefined;
 	_brandText?: string = undefined;
 	_fallbackText?: any = undefined;
+	_refineFn?: string = undefined;
+	_refineMessage?: string = undefined;
+	_superRefineFns: string[] = [];
 
 	/**
 	 * Apply optional constraint.
@@ -84,6 +89,27 @@ export abstract class BaseBuilder {
 	}
 
 	/**
+	 * Apply refine modifier.
+	 *
+	 * Note: function is provided as raw code string e.g. `(val) => val > 0`.
+	 */
+	refine(refineFn: string, message?: string): this {
+		this._refineFn = refineFn;
+		this._refineMessage = message;
+		return this;
+	}
+
+	/**
+	 * Apply superRefine modifier.
+	 *
+	 * Note: function is provided as raw code string e.g. `(val, ctx) => { ... }`.
+	 */
+	superRefine(superRefineFn: string): this {
+		this._superRefineFns.push(superRefineFn);
+		return this;
+	}
+
+	/**
 	 * Compute the type-specific base schema string.
 	 *
 	 * This is the core abstract method in the template method pattern.
@@ -119,6 +145,17 @@ export abstract class BaseBuilder {
 		}
 		if (this._readonly) {
 			result = applyReadonly(result);
+		}
+		if (this._refineFn) {
+			result = applyRefine(result, this._refineFn, this._refineMessage);
+		}
+		if (this._superRefineFns.length > 0) {
+			const seen = new Set<string>();
+			for (const fn of this._superRefineFns) {
+				if (seen.has(fn)) continue;
+				seen.add(fn);
+				result = applySuperRefine(result, fn);
+			}
 		}
 		if (this._optional) {
 			result = applyOptional(result);

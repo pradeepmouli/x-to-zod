@@ -5,20 +5,18 @@ import { BaseBuilder } from './BaseBuilder.js';
  * Accepts two schemas and creates an intersection type.
  */
 export class IntersectionBuilder extends BaseBuilder {
-	private readonly _left: BaseBuilder | string;
-	private readonly _right: BaseBuilder | string;
+	private readonly _left: BaseBuilder;
+	private readonly _right: BaseBuilder;
 
-	constructor(left: BaseBuilder | string, right: BaseBuilder | string) {
+	constructor(left: BaseBuilder, right: BaseBuilder) {
 		super();
 		this._left = left;
 		this._right = right;
 	}
 
 	protected override base(): string {
-		const leftStr =
-			typeof this._left === 'string' ? this._left : this._left.text();
-		const rightStr =
-			typeof this._right === 'string' ? this._right : this._right.text();
+		const leftStr = this._left.text();
+		const rightStr = this._right.text();
 		return `z.intersection(${leftStr}, ${rightStr})`;
 	}
 }
@@ -27,10 +25,10 @@ export class IntersectionBuilder extends BaseBuilder {
  * Build a Zod intersection schema string.
  */
 export function buildIntersection(
-	left: BaseBuilder | string,
-	right: BaseBuilder | string,
+	left: BaseBuilder,
+	right: BaseBuilder,
 ): string {
-	const leftStr = typeof left === 'string' ? left : left.text();
-	const rightStr = typeof right === 'string' ? right : right.text();
+	const leftStr = left.text();
+	const rightStr = right.text();
 	return `z.intersection(${leftStr}, ${rightStr})`;
 }

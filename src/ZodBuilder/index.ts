@@ -2,7 +2,7 @@
 export { BaseBuilder } from './BaseBuilder.js';
 
 // Utility builders
-export { GenericBuilder, buildGeneric } from './generic.js';
+export { buildGeneric } from './generic.js';
 
 // Base builders (primitive data → Zod code)
 export { BooleanBuilder, buildBoolean } from './boolean.js';
@@ -43,7 +43,6 @@ export {
 	applyCatchall,
 	applyLoose,
 	applyPassthrough,
-	applySuperRefine,
 	applyAnd,
 } from './object.js';
 
@@ -78,6 +77,7 @@ import { UnionBuilder } from './union.js';
 import { IntersectionBuilder } from './intersection.js';
 import { TupleBuilder } from './tuple.js';
 import { RecordBuilder } from './record.js';
+import { GenericBuilder } from './generic.js';
 
 // Generic modifiers
 export {
@@ -88,6 +88,8 @@ export {
 	applyBrand,
 	applyReadonly,
 	applyCatch,
+	applyRefine,
+	applySuperRefine,
 } from './modifiers.js';
 
 // Builder factories - Zod-like API
@@ -102,10 +104,7 @@ export const build = {
 			| import('./BaseBuilder.js').BaseBuilder[],
 	) => new ArrayBuilder(itemSchemaZod),
 	object: (
-		properties: Record<
-			string,
-			import('./BaseBuilder.js').BaseBuilder | string
-		> = {},
+		properties: Record<string, import('./BaseBuilder.js').BaseBuilder> = {},
 	) => new ObjectBuilder(properties),
 	enum: (values: import('../Types.js').Serializable[]) =>
 		new EnumBuilder(values),
@@ -117,16 +116,19 @@ export const build = {
 	unknown: () => new UnknownBuilder(),
 	literalValue: (value: import('../Types.js').Serializable) =>
 		new LiteralBuilder(value),
-	union: (schemas: (import('./BaseBuilder.js').BaseBuilder | string)[]) =>
+	// Escape hatch for raw Zod code
+	code: (code: string) => new GenericBuilder(code),
+	raw: (code: string) => new GenericBuilder(code),
+	union: (schemas: import('./BaseBuilder.js').BaseBuilder[]) =>
 		new UnionBuilder(schemas),
 	intersection: (
-		left: import('./BaseBuilder.js').BaseBuilder | string,
-		right: import('./BaseBuilder.js').BaseBuilder | string,
+		left: import('./BaseBuilder.js').BaseBuilder,
+		right: import('./BaseBuilder.js').BaseBuilder,
 	) => new IntersectionBuilder(left, right),
-	tuple: (items: (import('./BaseBuilder.js').BaseBuilder | string)[]) =>
+	tuple: (items: import('./BaseBuilder.js').BaseBuilder[]) =>
 		new TupleBuilder(items),
 	record: (
-		keySchema: import('./BaseBuilder.js').BaseBuilder | string,
-		valueSchema: import('./BaseBuilder.js').BaseBuilder | string,
+		keySchema: import('./BaseBuilder.js').BaseBuilder,
+		valueSchema: import('./BaseBuilder.js').BaseBuilder,
 	) => new RecordBuilder(keySchema, valueSchema),
 };
