@@ -72,7 +72,9 @@ export class ObjectBuilder extends BaseBuilder {
 	 * Compute the base object schema.
 	 */
 	protected override base(): string {
-		return this._precomputedSchema ?? objectTextFromProperties(this._properties);
+		return (
+			this._precomputedSchema ?? objectTextFromProperties(this._properties)
+		);
 	}
 
 	protected override modify(baseText: string): string {
@@ -98,7 +100,9 @@ export class ObjectBuilder extends BaseBuilder {
 	}
 }
 
-function objectTextFromProperties(properties: Record<string, BaseBuilder>): string {
+function objectTextFromProperties(
+	properties: Record<string, BaseBuilder>,
+): string {
 	if (Object.keys(properties).length === 0) {
 		return 'z.object({})';
 	}

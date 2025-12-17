@@ -8,10 +8,7 @@ export class RecordBuilder extends BaseBuilder {
 	private readonly _keySchema: BaseBuilder;
 	private readonly _valueSchema: BaseBuilder;
 
-	constructor(
-		keySchema: BaseBuilder,
-		valueSchema: BaseBuilder,
-	) {
+	constructor(keySchema: BaseBuilder, valueSchema: BaseBuilder) {
 		super();
 		this._keySchema = keySchema;
 		this._valueSchema = valueSchema;

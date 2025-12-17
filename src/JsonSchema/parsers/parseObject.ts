@@ -1,9 +1,5 @@
 import { JsonSchemaObject, Refs } from '../../Types.js';
-import {
-	build,
-	ObjectBuilder,
-	BaseBuilder,
-} from '../../ZodBuilder/index.js';
+import { build, ObjectBuilder, BaseBuilder } from '../../ZodBuilder/index.js';
 import { addJsdocs } from '../../utils/jsdocs.js';
 import { parseAnyOf } from './parseAnyOf.js';
 import { parseOneOf } from './parseOneOf.js';
@@ -118,12 +114,7 @@ export function parseObject(
 				const unionSchema = build.union(
 					valueSchemas.map((s) => ObjectBuilder.fromCode(s)),
 				);
-				result = build
-					.record(
-						build.string(),
-						unionSchema,
-					)
-					.text();
+				result = build.record(build.string(), unionSchema).text();
 			} else if (valueSchemas.length === 1) {
 				result = build
 					.record(build.string(), ObjectBuilder.fromCode(valueSchemas[0]))
@@ -190,9 +181,7 @@ export function parseObject(
 				.record(build.string(), ObjectBuilder.fromCode(additionalPropertiesZod))
 				.text();
 		} else {
-			result = build
-				.record(build.string(), build.any())
-				.text();
+			result = build.record(build.string(), build.any()).text();
 		}
 	}
 

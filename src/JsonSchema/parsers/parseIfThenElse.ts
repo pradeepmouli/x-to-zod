@@ -23,10 +23,8 @@ export const parseIfThenElse = (
 		path: [...refs.path, 'else'],
 	}).text();
 
-	return build
-		.union([build.code($then), build.code($else)])
-		.superRefine(
-			`(value,ctx) => {
+	return build.union([build.code($then), build.code($else)]).superRefine(
+		`(value,ctx) => {
   const result = ${$if}.safeParse(value).success
     ? ${$then}.safeParse(value)
     : ${$else}.safeParse(value);
@@ -34,5 +32,5 @@ export const parseIfThenElse = (
     result.error.errors.forEach((error) => ctx.addIssue(error))
   }
 }`,
-		);
+	);
 };

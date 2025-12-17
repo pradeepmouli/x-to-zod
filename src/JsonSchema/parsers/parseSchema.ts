@@ -21,18 +21,14 @@ import {
 	JsonSchema,
 	Serializable,
 } from '../../Types.js';
-import {
-	BaseBuilder,
-	build,
-} from '../../ZodBuilder/index.js';
+import { BaseBuilder, build } from '../../ZodBuilder/index.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
 	refs: Refs = { seen: new Map(), path: [] },
 	blockMeta?: boolean,
 ): BaseBuilder => {
-	if (typeof schema !== 'object')
-		return schema ? build.any() : build.never();
+	if (typeof schema !== 'object') return schema ? build.any() : build.never();
 
 	if (refs.parserOverride) {
 		const custom = refs.parserOverride(schema, refs);

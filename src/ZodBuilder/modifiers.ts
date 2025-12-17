@@ -30,10 +30,7 @@ export function applyDefault(zodStr: string, defaultValue: any): string {
 /**
  * Apply describe modifier to a schema.
  */
-export function applyDescribe(
-	zodStr: string,
-	description: string,
-): string {
+export function applyDescribe(zodStr: string, description: string): string {
 	return `${asText(zodStr)}.describe(${JSON.stringify(description)})`;
 }
 

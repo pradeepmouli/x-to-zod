@@ -23,11 +23,7 @@ export {
 	applyJsonTransform,
 	applyPipe,
 } from './string.js';
-export {
-	ArrayBuilder,
-	applyMinItems,
-	applyMaxItems,
-} from './array.js';
+export { ArrayBuilder, applyMinItems, applyMaxItems } from './array.js';
 export {
 	ObjectBuilder,
 	applyStrict,
@@ -44,9 +40,7 @@ export { UnknownBuilder } from './unknown.js';
 export { LiteralBuilder } from './literal.js';
 export { UnionBuilder } from './union.js';
 export { IntersectionBuilder } from './intersection.js';
-export {
-	DiscriminatedUnionBuilder,
-} from './discriminatedUnion.js';
+export { DiscriminatedUnionBuilder } from './discriminatedUnion.js';
 export { TupleBuilder } from './tuple.js';
 export { RecordBuilder } from './record.js';
 
