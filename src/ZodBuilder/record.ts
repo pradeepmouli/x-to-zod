@@ -23,15 +23,3 @@ export class RecordBuilder extends BaseBuilder {
 		return `z.record(${keyStr}, ${valueStr})`;
 	}
 }
-
-/**
- * Build a Zod record schema string.
- */
-export function buildRecordSchema(
-	keySchema: BaseBuilder,
-	valueSchema: BaseBuilder,
-): string {
-	const keyStr = keySchema.text();
-	const valueStr = valueSchema.text();
-	return `z.record(${keyStr}, ${valueStr})`;
-}

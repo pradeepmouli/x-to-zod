@@ -72,7 +72,7 @@ export class ObjectBuilder extends BaseBuilder {
 	 * Compute the base object schema.
 	 */
 	protected override base(): string {
-		return this._precomputedSchema ?? buildObject(this._properties);
+		return this._precomputedSchema ?? objectTextFromProperties(this._properties);
 	}
 
 	protected override modify(baseText: string): string {
@@ -98,13 +98,7 @@ export class ObjectBuilder extends BaseBuilder {
 	}
 }
 
-/**
- * Build a Zod object schema string from property definitions.
- * Properties can be either BaseBuilder instances or Zod schema strings.
- */
-export function buildObject(
-	properties: Record<string, BaseBuilder>,
-): string {
+function objectTextFromProperties(properties: Record<string, BaseBuilder>): string {
 	if (Object.keys(properties).length === 0) {
 		return 'z.object({})';
 	}
@@ -117,19 +111,6 @@ export function buildObject(
 		.join(', ');
 
 	return `z.object({ ${props} })`;
-}
-
-/**
- * Build a Zod record schema string.
- * Key and value schemas can be either BaseBuilder instances or Zod schema strings.
- */
-export function buildRecord(
-	keySchemaZod: BaseBuilder,
-	valueSchemaZod: BaseBuilder,
-): string {
-	const keyStr = keySchemaZod.text();
-	const valueStr = valueSchemaZod.text();
-	return `z.record(${keyStr}, ${valueStr})`;
 }
 
 /**

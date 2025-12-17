@@ -19,14 +19,3 @@ export class DiscriminatedUnionBuilder extends BaseBuilder {
 		return `z.discriminatedUnion(${JSON.stringify(this._discriminator)}, [${optionStrings.join(', ')}])`;
 	}
 }
-
-/**
- * Build a Zod discriminated union schema string.
- */
-export function buildDiscriminatedUnion(
-	discriminator: string,
-	options: BaseBuilder[],
-): string {
-	const optionStrings = options.map((o) => o.text());
-	return `z.discriminatedUnion(${JSON.stringify(discriminator)}, [${optionStrings.join(', ')}])`;
-}

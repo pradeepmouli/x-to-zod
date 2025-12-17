@@ -132,13 +132,6 @@ export class NumberBuilder extends BaseBuilder {
 }
 
 /**
- * Build a base Zod number schema string.
- */
-export function buildNumber(): string {
-	return 'z.number()';
-}
-
-/**
  * Apply integer constraint to a number schema.
  */
 export function applyInt(zodStr: string, errorMessage?: string): string {

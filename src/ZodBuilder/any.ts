@@ -12,10 +12,3 @@ export class AnyBuilder extends BaseBuilder {
 		return 'z.any()';
 	}
 }
-
-/**
- * Build a Zod any schema string.
- */
-export function buildAny(): string {
-	return 'z.any()';
-}

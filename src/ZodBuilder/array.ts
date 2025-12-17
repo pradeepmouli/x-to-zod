@@ -69,24 +69,6 @@ export class ArrayBuilder extends BaseBuilder {
 }
 
 /**
- * Build a Zod array schema string from an item schema.
- * Item schema can be either a BaseBuilder instance or a Zod schema string.
- */
-export function buildArray(itemSchemaZod: BaseBuilder): string {
-	const itemStr = itemSchemaZod.text();
-	return `z.array(${itemStr})`;
-}
-
-/**
- * Build a Zod tuple schema string from item schemas.
- * Item schemas can be either BaseBuilder instances or Zod schema strings.
- */
-export function buildTuple(itemSchemasZod: BaseBuilder[]): string {
-	const itemStrs = itemSchemasZod.map((item) => item.text());
-	return `z.tuple([${itemStrs.join(',')}])`; // No space after comma
-}
-
-/**
  * Apply minItems constraint to an array schema.
  */
 export function applyMinItems(

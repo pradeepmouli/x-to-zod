@@ -16,10 +16,3 @@ export class GenericBuilder extends BaseBuilder {
 		return this._code;
 	}
 }
-
-/**
- * Build a generic Zod schema from a code string.
- */
-export function buildGeneric(code: string): string {
-	return code;
-}

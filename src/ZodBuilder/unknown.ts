@@ -12,10 +12,3 @@ export class UnknownBuilder extends BaseBuilder {
 		return 'z.unknown()';
 	}
 }
-
-/**
- * Build a Zod unknown schema string.
- */
-export function buildUnknown(): string {
-	return 'z.unknown()';
-}

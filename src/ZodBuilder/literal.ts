@@ -16,10 +16,3 @@ export class LiteralBuilder extends BaseBuilder {
 		return `z.literal(${JSON.stringify(this._value)})`;
 	}
 }
-
-/**
- * Build a Zod literal schema string.
- */
-export function buildLiteralValue(value: Serializable): string {
-	return `z.literal(${JSON.stringify(value)})`;
-}

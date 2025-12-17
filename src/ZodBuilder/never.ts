@@ -12,10 +12,3 @@ export class NeverBuilder extends BaseBuilder {
 		return 'z.never()';
 	}
 }
-
-/**
- * Build a Zod never schema string.
- */
-export function buildNever(): string {
-	return 'z.never()';
-}

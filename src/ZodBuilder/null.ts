@@ -12,10 +12,3 @@ export class NullBuilder extends BaseBuilder {
 		return 'z.null()';
 	}
 }
-
-/**
- * Build a Zod null schema string.
- */
-export function buildNull(): string {
-	return 'z.null()';
-}

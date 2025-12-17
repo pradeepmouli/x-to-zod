@@ -152,13 +152,6 @@ export class StringBuilder extends BaseBuilder {
 }
 
 /**
- * Build a base Zod string schema string.
- */
-export function buildString(): string {
-	return 'z.string()';
-}
-
-/**
  * Apply format constraint to a string schema.
  */
 export function applyFormat(
