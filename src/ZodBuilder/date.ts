@@ -7,10 +7,6 @@ export class DateBuilder extends BaseBuilder {
 	_min?: { value: Date; errorMessage?: string } = undefined;
 	_max?: { value: Date; errorMessage?: string } = undefined;
 
-	constructor() {
-		super();
-	}
-
 	/**
 	 * Apply minimum date constraint.
 	 */

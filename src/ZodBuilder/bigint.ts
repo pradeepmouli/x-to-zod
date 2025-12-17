@@ -15,10 +15,6 @@ export class BigIntBuilder extends BaseBuilder {
 	_multipleOf?: { value: bigint; errorMessage?: string } | undefined =
 		undefined;
 
-	constructor() {
-		super();
-	}
-
 	/**
 	 * Apply minimum constraint (gte by default).
 	 */

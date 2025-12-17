@@ -68,8 +68,8 @@ export function applySetMin(
 	errorMessage?: string,
 ): string {
 	return errorMessage
-		? `${zodStr}.min(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.min(${JSON.stringify(value)})`;
+		? `${zodStr}.min(${value}, ${JSON.stringify(errorMessage)})`
+		: `${zodStr}.min(${value})`;
 }
 
 /**
@@ -81,8 +81,8 @@ export function applySetMax(
 	errorMessage?: string,
 ): string {
 	return errorMessage
-		? `${zodStr}.max(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.max(${JSON.stringify(value)})`;
+		? `${zodStr}.max(${value}, ${JSON.stringify(errorMessage)})`
+		: `${zodStr}.max(${value})`;
 }
 
 /**
@@ -94,6 +94,6 @@ export function applySetSize(
 	errorMessage?: string,
 ): string {
 	return errorMessage
-		? `${zodStr}.size(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.size(${JSON.stringify(value)})`;
+		? `${zodStr}.size(${value}, ${JSON.stringify(errorMessage)})`
+		: `${zodStr}.size(${value})`;
 }

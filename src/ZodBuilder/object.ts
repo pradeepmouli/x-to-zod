@@ -12,6 +12,10 @@ export class ObjectBuilder extends BaseBuilder {
 	private _catchallSchema?: string;
 	private _superRefineFn?: string;
 	private _andSchema?: string;
+	private _extendSchema?: string;
+	private _mergeSchema?: string;
+	private _pickKeys?: string[];
+	private _omitKeys?: string[];
 
 	constructor(properties: Record<string, BaseBuilder> = {}) {
 		super();
@@ -67,11 +71,6 @@ export class ObjectBuilder extends BaseBuilder {
 		this._andSchema = otherSchemaZod;
 		return this;
 	}
-
-	private _extendSchema?: string;
-	private _mergeSchema?: string;
-	private _pickKeys?: string[];
-	private _omitKeys?: string[];
 
 	/**
 	 * Extend the object schema with additional properties.
