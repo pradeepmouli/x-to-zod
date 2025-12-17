@@ -21,7 +21,7 @@
     "build:cjs": "tsc -p tsconfig.cjs.json && node postcjs.js",
     "build:esm": "tsc -p tsconfig.esm.json && node postesm.js",
     "build": "pnpm i && pnpm run gen && pnpm test && rimraf ./dist && pnpm run build:types && pnpm run build:cjs && pnpm run build:esm",
-    "dry": "pnpm run build && pnpm pub --dry-run",
+    "dry": "pnpm run build && pnpm publish --dry-run",
     "dev": "vitest",
     "gen": "tsx ./createIndex.ts",
     "test": "vitest run",
