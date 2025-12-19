@@ -80,6 +80,8 @@ export abstract class BaseBuilder {
 		return this;
 	}
 
+	meta(record<)
+
 	/**
 	 * Apply catch modifier.
 	 */

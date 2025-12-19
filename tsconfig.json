@@ -3,7 +3,8 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+	"types": ["node", "vitest"]
   },
   "include": ["src"]
 }
