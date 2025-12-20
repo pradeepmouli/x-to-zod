@@ -87,6 +87,9 @@ export { PreprocessBuilder } from './preprocess.js';
 export { PipeBuilder } from './pipe.js';
 export { JsonBuilder } from './json.js';
 export { FileBuilder } from './file.js';
+export { NativeEnumBuilder } from './nativeEnum.js';
+export { TemplateLiteralBuilder } from './templateLiteral.js';
+export { XorBuilder } from './xor.js';
 
 // Import builder classes for the factory
 import { NumberBuilder } from './number.js';
@@ -123,6 +126,9 @@ import { PreprocessBuilder } from './preprocess.js';
 import { PipeBuilder } from './pipe.js';
 import { JsonBuilder } from './json.js';
 import { FileBuilder } from './file.js';
+import { NativeEnumBuilder } from './nativeEnum.js';
+import { TemplateLiteralBuilder } from './templateLiteral.js';
+import { XorBuilder } from './xor.js';
 import { DiscriminatedUnionBuilder } from '../index.js';
 
 // Generic modifiers
@@ -217,6 +223,11 @@ export const build = {
 	) => new PipeBuilder(sourceSchema, targetSchema),
 	json: () => new JsonBuilder(),
 	file: () => new FileBuilder(),
+	nativeEnum: (enumReference: string) => new NativeEnumBuilder(enumReference),
+	templateLiteral: (parts: (string | import('./BaseBuilder.js').ZodBuilder)[]) =>
+		new TemplateLiteralBuilder(parts),
+	xor: (schemas: import('./BaseBuilder.js').ZodBuilder[]) =>
+		new XorBuilder(schemas),
 } as const;
 
 export type TypeKind = {[T in keyof typeof build]: ReturnType<typeof build[T]>};

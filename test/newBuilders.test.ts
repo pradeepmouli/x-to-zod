@@ -405,5 +405,47 @@ describe('New Zod Builders', () => {
 			const schema = build.file().nullable();
 			expect(schema.text()).toBe('z.file().nullable()');
 		});
+
+		it('nativeEnum builder', () => {
+			const schema = build.nativeEnum('MyEnum');
+			expect(schema.text()).toBe('z.nativeEnum(MyEnum)');
+		});
+
+		it('nativeEnum builder with modifiers', () => {
+			const schema = build.nativeEnum('Status').optional();
+			expect(schema.text()).toBe('z.nativeEnum(Status).optional()');
+		});
+
+		it('templateLiteral builder with strings only', () => {
+			const schema = build.templateLiteral(['prefix-', 'suffix']);
+			expect(schema.text()).toBe('z.templateLiteral(["prefix-","suffix"])');
+		});
+
+		it('templateLiteral builder with mixed parts', () => {
+			const schema = build.templateLiteral([
+				'user-',
+				build.string(),
+				'-',
+				build.number(),
+			]);
+			expect(schema.text()).toContain('z.templateLiteral([');
+			expect(schema.text()).toContain('"user-"');
+			expect(schema.text()).toContain('z.string()');
+			expect(schema.text()).toContain('z.number()');
+		});
+
+		it('xor builder', () => {
+			const schema = build.xor([build.string(), build.number()]);
+			expect(schema.text()).toBe('z.xor([z.string(),z.number()])');
+		});
+
+		it('xor builder with complex types', () => {
+			const schema = build.xor([
+				build.object({ type: build.literal('a'), value: build.string() }),
+				build.object({ type: build.literal('b'), value: build.number() }),
+			]);
+			expect(schema.text()).toContain('z.xor([');
+			expect(schema.text()).toContain('z.object({');
+		});
 	});
 });

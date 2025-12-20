@@ -77,6 +77,36 @@ build.file()  // z.file()
 build.file().nullable()  // z.file().nullable()
 ```
 
+### 9. NativeEnumBuilder (`z.nativeEnum()`)
+**File**: `src/ZodBuilder/nativeEnum.ts`  
+**Purpose**: Validates against TypeScript native enum values  
+**Usage**:
+```typescript
+build.nativeEnum('MyEnum')  // z.nativeEnum(MyEnum)
+build.nativeEnum('Status').optional()  // z.nativeEnum(Status).optional()
+```
+
+### 10. TemplateLiteralBuilder (`z.templateLiteral()`)
+**File**: `src/ZodBuilder/templateLiteral.ts`  
+**Purpose**: Validates template literal string types  
+**Usage**:
+```typescript
+build.templateLiteral(['prefix-', 'suffix'])  
+// z.templateLiteral(["prefix-","suffix"])
+
+build.templateLiteral(['user-', build.string(), '-', build.number()])
+// z.templateLiteral(["user-",z.string(),"-",z.number()])
+```
+
+### 11. XorBuilder (`z.xor()`)
+**File**: `src/ZodBuilder/xor.ts`  
+**Purpose**: Validates exclusive OR - exactly one schema must match  
+**Usage**:
+```typescript
+build.xor([build.string(), build.number()])  
+// z.xor([z.string(),z.number()])
+```
+
 ## Architecture
 
 All builders:
@@ -99,13 +129,37 @@ const lazy = build.lazy('() => mySchema');
 
 ## Test Coverage
 
-All builders have comprehensive test coverage in `test/newBuilders.test.ts`:
+All builders have comprehensive test coverage:
+- `test/newBuilders.test.ts`: Builder functionality tests (71 tests)
+- `test/zodCoverage.test.ts`: Type coverage verification (3 tests)
 - Basic functionality tests
 - Tests with modifiers (optional, nullable, etc.)
 - Tests with complex nested types
 - Tests with method chaining
 
-**Total tests**: 65 tests (all passing)
+**Total tests**: 74 tests (all passing)
+
+## Type Coverage
+
+The implementation provides comprehensive coverage of Zod v4 types:
+
+**Core types**: ✅ All implemented (string, number, boolean, bigint, date, symbol, undefined, null, void, any, unknown, never, nan)
+
+**Complex types**: ✅ All implemented (array, object, tuple, record, map, set)
+
+**Enums and literals**: ✅ All implemented (enum, literal, nativeEnum)
+
+**Unions and intersections**: ✅ All implemented (union, intersection, discriminatedUnion, xor)
+
+**Zod v4 special types**: ✅ All implemented (promise, lazy, function, codec, preprocess, pipe, json, file, templateLiteral)
+
+**Types not needed as separate builders**:
+- Modifiers (optional, nullable, readonly, etc.) - available as builder methods
+- String validators (email, url, uuid, etc.) - available as string builder methods
+- Number validators (int, float32, etc.) - available as number builder methods
+- Wrapper types (_default, prefault, success) - available via builder methods
+
+See `test/zodCoverage.test.ts` for a complete coverage verification test.
 
 ## Integration
 
@@ -117,7 +171,7 @@ The builders are fully integrated into the existing codebase:
 
 ## Compliance
 
-✅ All tests passing (65/65)  
+✅ All tests passing (74/74)  
 ✅ Linter passing (0 errors, pre-existing warnings only)  
 ✅ Follows existing code patterns and conventions  
-✅ Complete Zod v4 type coverage for mentioned types
+✅ Complete Zod v4 type coverage with verification test
