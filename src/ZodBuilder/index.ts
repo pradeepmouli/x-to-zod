@@ -85,6 +85,8 @@ export { FunctionBuilder } from './function.js';
 export { CodecBuilder } from './codec.js';
 export { PreprocessBuilder } from './preprocess.js';
 export { PipeBuilder } from './pipe.js';
+export { JsonBuilder } from './json.js';
+export { FileBuilder } from './file.js';
 
 // Import builder classes for the factory
 import { NumberBuilder } from './number.js';
@@ -119,6 +121,8 @@ import { FunctionBuilder } from './function.js';
 import { CodecBuilder } from './codec.js';
 import { PreprocessBuilder } from './preprocess.js';
 import { PipeBuilder } from './pipe.js';
+import { JsonBuilder } from './json.js';
+import { FileBuilder } from './file.js';
 import { DiscriminatedUnionBuilder } from '../index.js';
 
 // Generic modifiers
@@ -211,6 +215,8 @@ export const build = {
 		sourceSchema: import('./BaseBuilder.js').ZodBuilder,
 		targetSchema: import('./BaseBuilder.js').ZodBuilder,
 	) => new PipeBuilder(sourceSchema, targetSchema),
+	json: () => new JsonBuilder(),
+	file: () => new FileBuilder(),
 } as const;
 
 export type TypeKind = {[T in keyof typeof build]: ReturnType<typeof build[T]>};

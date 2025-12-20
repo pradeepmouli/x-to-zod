@@ -385,5 +385,25 @@ describe('New Zod Builders', () => {
 			expect(schema.text()).toContain('.pipe(');
 			expect(schema.text()).toContain('z.number()');
 		});
+
+		it('json builder', () => {
+			const schema = build.json();
+			expect(schema.text()).toBe('z.json()');
+		});
+
+		it('json builder with modifiers', () => {
+			const schema = build.json().optional();
+			expect(schema.text()).toBe('z.json().optional()');
+		});
+
+		it('file builder', () => {
+			const schema = build.file();
+			expect(schema.text()).toBe('z.file()');
+		});
+
+		it('file builder with modifiers', () => {
+			const schema = build.file().nullable();
+			expect(schema.text()).toBe('z.file().nullable()');
+		});
 	});
 });
