@@ -51,11 +51,7 @@ export { RecordBuilder } from './record.js';
 // Additional type builders
 export { VoidBuilder } from './void.js';
 export { UndefinedBuilder } from './undefined.js';
-export {
-	DateBuilder,
-	applyDateMin,
-	applyDateMax,
-} from './date.js';
+export { DateBuilder, applyDateMin, applyDateMax } from './date.js';
 export {
 	BigIntBuilder,
 	applyBigIntMin,
@@ -64,19 +60,23 @@ export {
 } from './bigint.js';
 export { SymbolBuilder } from './symbol.js';
 export { NaNBuilder } from './nan.js';
-export {
-	SetBuilder,
-	applySetMin,
-	applySetMax,
-	applySetSize,
-} from './set.js';
-export {
-	MapBuilder,
-	applyMapMin,
-	applyMapMax,
-	applyMapSize,
-} from './map.js';
+export { SetBuilder, applySetMin, applySetMax, applySetSize } from './set.js';
+export { MapBuilder, applyMapMin, applyMapMax, applyMapSize } from './map.js';
 export { CustomBuilder } from './custom.js';
+
+// Zod v4 builders
+export { PromiseBuilder } from './promise.js';
+export { LazyBuilder } from './lazy.js';
+export { FunctionBuilder } from './function.js';
+export { CodecBuilder } from './codec.js';
+export { PreprocessBuilder } from './preprocess.js';
+export { PipeBuilder } from './pipe.js';
+export { JsonBuilder } from './json.js';
+export { FileBuilder } from './file.js';
+export { NativeEnumBuilder } from './nativeEnum.js';
+export { TemplateLiteralBuilder } from './templateLiteral.js';
+export { XorBuilder } from './xor.js';
+export { KeyofBuilder } from './keyof.js';
 
 // Import builder classes for the factory
 import { NumberBuilder } from './number.js';
@@ -105,6 +105,18 @@ import { NaNBuilder } from './nan.js';
 import { SetBuilder } from './set.js';
 import { MapBuilder } from './map.js';
 import { CustomBuilder } from './custom.js';
+import { PromiseBuilder } from './promise.js';
+import { LazyBuilder } from './lazy.js';
+import { FunctionBuilder } from './function.js';
+import { CodecBuilder } from './codec.js';
+import { PreprocessBuilder } from './preprocess.js';
+import { PipeBuilder } from './pipe.js';
+import { JsonBuilder } from './json.js';
+import { FileBuilder } from './file.js';
+import { NativeEnumBuilder } from './nativeEnum.js';
+import { TemplateLiteralBuilder } from './templateLiteral.js';
+import { XorBuilder } from './xor.js';
+import { KeyofBuilder } from './keyof.js';
 import { DiscriminatedUnionBuilder } from '../index.js';
 
 // Generic modifiers
@@ -180,8 +192,37 @@ export const build = {
 		discriminator: string,
 		options: import('./BaseBuilder.js').ZodBuilder<string>[],
 	) => new DiscriminatedUnionBuilder(discriminator, options as any),
+	// Zod v4 builders
+	promise: (innerSchema: import('./BaseBuilder.js').ZodBuilder) =>
+		new PromiseBuilder(innerSchema),
+	lazy: (getter: string) => new LazyBuilder(getter),
+	function: () => new FunctionBuilder(),
+	codec: (
+		inSchema: import('./BaseBuilder.js').ZodBuilder,
+		outSchema: import('./BaseBuilder.js').ZodBuilder,
+	) => new CodecBuilder(inSchema, outSchema),
+	preprocess: (
+		transformFn: string,
+		schema: import('./BaseBuilder.js').ZodBuilder,
+	) => new PreprocessBuilder(transformFn, schema),
+	pipe: (
+		sourceSchema: import('./BaseBuilder.js').ZodBuilder,
+		targetSchema: import('./BaseBuilder.js').ZodBuilder,
+	) => new PipeBuilder(sourceSchema, targetSchema),
+	json: () => new JsonBuilder(),
+	file: () => new FileBuilder(),
+	nativeEnum: (enumReference: string) => new NativeEnumBuilder(enumReference),
+	templateLiteral: (
+		parts: (string | import('./BaseBuilder.js').ZodBuilder)[],
+	) => new TemplateLiteralBuilder(parts),
+	xor: (schemas: import('./BaseBuilder.js').ZodBuilder[]) =>
+		new XorBuilder(schemas),
+	keyof: (objectSchema: import('./BaseBuilder.js').ZodBuilder) =>
+		new KeyofBuilder(objectSchema),
 } as const;
 
-export type TypeKind = {[T in keyof typeof build]: ReturnType<typeof build[T]>};
+export type TypeKind = {
+	[T in keyof typeof build]: ReturnType<(typeof build)[T]>;
+};
 
 export type TypeKindOf<T extends keyof TypeKind> = TypeKind[T];

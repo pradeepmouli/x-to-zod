@@ -23,8 +23,6 @@ import {
 } from '../../Types.js';
 import { BaseBuilder, build } from '../../ZodBuilder/index.js';
 import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { base64 } from 'zod';
-import type { JSONSchema } from 'zod/v4/core';
 
 export const parseSchema = (
 	schema: JsonSchema,
@@ -113,7 +111,7 @@ const addAnnotations = (
 	return builder;
 };
 
-const selectParser: ParserSelector = (schema, refs)=> {
+const selectParser: ParserSelector = (schema, refs) => {
 	if (its.a.nullable(schema)) {
 		return parseNullable(schema, refs);
 	} else if (its.an.object(schema)) {
@@ -154,7 +152,6 @@ const selectParser: ParserSelector = (schema, refs)=> {
 
 export const its = {
 	an: {
-
 		object: (x: JsonSchemaObject): x is JsonSchemaObject & { type: 'object' } =>
 			x.type === 'object',
 		array: (x: JsonSchemaObject): x is JsonSchemaObject & { type: 'array' } =>

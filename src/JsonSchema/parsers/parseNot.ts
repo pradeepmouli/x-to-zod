@@ -1,5 +1,4 @@
 import { JsonSchemaObject, JsonSchema, Refs } from '../../Types.js';
-import z from 'zod';
 import { parseSchema } from './parseSchema.js';
 import { build } from '../../ZodBuilder/index.js';
 
@@ -12,13 +11,10 @@ export const parseNot = (
 		path: [...refs.path, 'not'],
 	}).text();
 
-
 	return build
 		.any()
 		.refine(
 			`(value) => !${notSchema}.safeParse(value).success`,
 			'Invalid input: Should NOT be valid against schema',
 		);
-
-
 };

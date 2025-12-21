@@ -191,10 +191,7 @@ describe('New Zod Builders', () => {
 		});
 
 		it('map builder with constraints', () => {
-			const schema = build
-				.map(build.string(), build.number())
-				.min(1)
-				.size(5);
+			const schema = build.map(build.string(), build.number()).min(1).size(5);
 			expect(schema.text()).toContain('z.map(z.string(), z.number())');
 			expect(schema.text()).toContain('.min(1)');
 			expect(schema.text()).toContain('.size(5)');
@@ -204,9 +201,7 @@ describe('New Zod Builders', () => {
 	describe('Modifiers', () => {
 		it('meta modifier', () => {
 			const schema = build.string().meta({ custom: 'metadata' });
-			expect(schema.text()).toBe(
-				'z.string().meta({"custom":"metadata"})',
-			);
+			expect(schema.text()).toBe('z.string().meta({"custom":"metadata"})');
 		});
 
 		it('transform modifier', () => {
@@ -255,19 +250,196 @@ describe('New Zod Builders', () => {
 
 		it('custom builder with validation function', () => {
 			const schema = build.custom('(val) => typeof val === "string"');
-			expect(schema.text()).toBe(
-				'z.custom((val) => typeof val === "string")',
-			);
+			expect(schema.text()).toBe('z.custom((val) => typeof val === "string")');
 		});
 
 		it('custom builder with validation and params', () => {
-			const schema = build.custom(
-				'(val) => val.length > 5',
-				{ message: 'Too short' },
-			);
+			const schema = build.custom('(val) => val.length > 5', {
+				message: 'Too short',
+			});
 			expect(schema.text()).toBe(
 				'z.custom((val) => val.length > 5, {"message":"Too short"})',
 			);
+		});
+	});
+
+	describe('Zod v4 Builders', () => {
+		it('promise builder', () => {
+			const schema = build.promise(build.string());
+			expect(schema.text()).toBe('z.promise(z.string())');
+		});
+
+		it('promise builder with complex type', () => {
+			const schema = build.promise(
+				build.object({ name: build.string(), age: build.number() }),
+			);
+			expect(schema.text()).toContain('z.promise(');
+			expect(schema.text()).toContain('z.object({');
+		});
+
+		it('promise builder with modifiers', () => {
+			const schema = build.promise(build.number()).optional();
+			expect(schema.text()).toBe('z.promise(z.number()).optional()');
+		});
+
+		it('lazy builder', () => {
+			const schema = build.lazy('() => z.string()');
+			expect(schema.text()).toBe('z.lazy(() => z.string())');
+		});
+
+		it('lazy builder for recursive schema', () => {
+			const schema = build.lazy('() => nodeSchema');
+			expect(schema.text()).toBe('z.lazy(() => nodeSchema)');
+		});
+
+		it('function builder without args', () => {
+			const schema = build.function();
+			expect(schema.text()).toBe('z.function()');
+		});
+
+		it('function builder with returns only', () => {
+			const schema = build.function().returns(build.string());
+			expect(schema.text()).toBe('z.function().returns(z.string())');
+		});
+
+		it('function builder with args only', () => {
+			const schema = build.function().args(build.string(), build.number());
+			expect(schema.text()).toBe('z.function().args(z.string(),z.number())');
+		});
+
+		it('function builder with args and returns', () => {
+			const schema = build
+				.function()
+				.args(build.string())
+				.returns(build.number());
+			expect(schema.text()).toBe(
+				'z.function().args(z.string()).returns(z.number())',
+			);
+		});
+
+		it('function builder with modifiers', () => {
+			const schema = build.function().returns(build.boolean()).optional();
+			expect(schema.text()).toBe(
+				'z.function().returns(z.boolean()).optional()',
+			);
+		});
+
+		it('codec builder', () => {
+			const schema = build.codec(build.string(), build.number());
+			expect(schema.text()).toBe('z.codec(z.string(),z.number())');
+		});
+
+		it('codec builder with complex types', () => {
+			const schema = build.codec(
+				build.object({ raw: build.string() }),
+				build.object({ parsed: build.number() }),
+			);
+			expect(schema.text()).toContain('z.codec(');
+			expect(schema.text()).toContain('z.object({');
+		});
+
+		it('preprocess builder', () => {
+			const fnStr = '(val) => val.trim()';
+			const schema = build.preprocess(fnStr, build.string());
+			expect(schema.text()).toBe(`z.preprocess(${fnStr},z.string())`);
+		});
+
+		it('preprocess builder with complex transformation', () => {
+			const fnStr = '(val) => parseInt(val, 10)';
+			const schema = build.preprocess(fnStr, build.number());
+			expect(schema.text()).toBe(`z.preprocess(${fnStr},z.number())`);
+		});
+
+		it('pipe builder', () => {
+			const schema = build.pipe(build.string(), build.number());
+			expect(schema.text()).toBe('z.string().pipe(z.number())');
+		});
+
+		it('pipe builder with transformations', () => {
+			const schema = build.pipe(
+				build.string().transform('(val) => parseInt(val)'),
+				build.number().min(0),
+			);
+			expect(schema.text()).toContain('.pipe(');
+			expect(schema.text()).toContain('z.number()');
+		});
+
+		it('json builder', () => {
+			const schema = build.json();
+			expect(schema.text()).toBe('z.json()');
+		});
+
+		it('json builder with modifiers', () => {
+			const schema = build.json().optional();
+			expect(schema.text()).toBe('z.json().optional()');
+		});
+
+		it('file builder', () => {
+			const schema = build.file();
+			expect(schema.text()).toBe('z.file()');
+		});
+
+		it('file builder with modifiers', () => {
+			const schema = build.file().nullable();
+			expect(schema.text()).toBe('z.file().nullable()');
+		});
+
+		it('nativeEnum builder', () => {
+			const schema = build.nativeEnum('MyEnum');
+			expect(schema.text()).toBe('z.nativeEnum(MyEnum)');
+		});
+
+		it('nativeEnum builder with modifiers', () => {
+			const schema = build.nativeEnum('Status').optional();
+			expect(schema.text()).toBe('z.nativeEnum(Status).optional()');
+		});
+
+		it('templateLiteral builder with strings only', () => {
+			const schema = build.templateLiteral(['prefix-', 'suffix']);
+			expect(schema.text()).toBe('z.templateLiteral(["prefix-","suffix"])');
+		});
+
+		it('templateLiteral builder with mixed parts', () => {
+			const schema = build.templateLiteral([
+				'user-',
+				build.string(),
+				'-',
+				build.number(),
+			]);
+			expect(schema.text()).toContain('z.templateLiteral([');
+			expect(schema.text()).toContain('"user-"');
+			expect(schema.text()).toContain('z.string()');
+			expect(schema.text()).toContain('z.number()');
+		});
+
+		it('xor builder', () => {
+			const schema = build.xor([build.string(), build.number()]);
+			expect(schema.text()).toBe('z.xor([z.string(),z.number()])');
+		});
+
+		it('xor builder with complex types', () => {
+			const schema = build.xor([
+				build.object({ type: build.literal('a'), value: build.string() }),
+				build.object({ type: build.literal('b'), value: build.number() }),
+			]);
+			expect(schema.text()).toContain('z.xor([');
+			expect(schema.text()).toContain('z.object({');
+		});
+
+		it('keyof builder', () => {
+			const schema = build.keyof(
+				build.object({ name: build.string(), age: build.number() }),
+			);
+			expect(schema.text()).toContain('z.keyof(');
+			expect(schema.text()).toContain('z.object({');
+		});
+
+		it('keyof builder with modifiers', () => {
+			const schema = build
+				.keyof(build.object({ id: build.string(), status: build.string() }))
+				.optional();
+			expect(schema.text()).toContain('z.keyof(');
+			expect(schema.text()).toContain('.optional()');
 		});
 	});
 });
