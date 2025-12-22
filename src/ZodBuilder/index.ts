@@ -196,7 +196,10 @@ export const build = {
 	promise: (innerSchema: import('./BaseBuilder.js').ZodBuilder) =>
 		new PromiseBuilder(innerSchema),
 	lazy: (getter: string) => new LazyBuilder(getter),
-	function: (functionSignature: {input?: import('./BaseBuilder.js').ZodBuilder[], output?: import('./BaseBuilder.js').ZodBuilder}) => new FunctionBuilder(functionSignature),
+	function: (functionSignature: {
+		input?: import('./BaseBuilder.js').ZodBuilder[];
+		output?: import('./BaseBuilder.js').ZodBuilder;
+	}) => new FunctionBuilder(functionSignature),
 	codec: (
 		inSchema: import('./BaseBuilder.js').ZodBuilder,
 		outSchema: import('./BaseBuilder.js').ZodBuilder,
@@ -219,7 +222,6 @@ export const build = {
 		new XorBuilder(schemas),
 	keyof: (objectSchema: import('./BaseBuilder.js').ZodBuilder) =>
 		new KeyofBuilder(objectSchema),
-
 } as const;
 
 export type TypeKind = {

@@ -9,7 +9,7 @@ export class FunctionBuilder extends ZodBuilder<'function'> {
 	private _input?: ZodBuilder[] = undefined;
 	private _output?: ZodBuilder = undefined;
 
-	constructor(params: {input?: ZodBuilder[], output?: ZodBuilder} = {}) {
+	constructor(params: { input?: ZodBuilder[]; output?: ZodBuilder } = {}) {
 		super();
 		this._input = params.input;
 		this._output = params.output;

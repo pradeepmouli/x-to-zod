@@ -11,7 +11,6 @@ export class ConstBuilder extends ZodBuilder<'literal'> {
 	constructor(value: Serializable) {
 		super();
 		this._value = value;
-
 	}
 
 	protected override base(): string {

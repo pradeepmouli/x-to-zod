@@ -133,10 +133,20 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 			result = applyAnd(result, this._andSchema);
 		}
 		if (this._extendSchema) {
-			result = applyExtend(result, typeof this._extendSchema === 'string' ? this._extendSchema : this._extendSchema.text());
+			result = applyExtend(
+				result,
+				typeof this._extendSchema === 'string'
+					? this._extendSchema
+					: this._extendSchema.text(),
+			);
 		}
 		if (this._mergeSchema) {
-			result = applyMerge(result, typeof this._mergeSchema === 'string' ? this._mergeSchema : this._mergeSchema.text());
+			result = applyMerge(
+				result,
+				typeof this._mergeSchema === 'string'
+					? this._mergeSchema
+					: this._mergeSchema.text(),
+			);
 		}
 		if (this._pickKeys) {
 			result = applyPick(result, this._pickKeys);
