@@ -39,20 +39,20 @@ const sourceFile: SourceFile = project.createSourceFile('./src/index.ts', '', {
 
 // Add all the export statements
 for (const exportPath of exportPaths) {
+	// Skip jsonSchemaToZod.js for now - we'll handle it specially
+	if (exportPath === './jsonSchemaToZod.js') {
+		continue;
+	}
 	sourceFile.addExportDeclaration({
 		moduleSpecifier: exportPath,
 	});
 }
 
-// Add the import and default export at the end to maintain order
-sourceFile.addImportDeclaration({
+// Export both named and default export from jsonSchemaToZod in a single statement
+// This avoids the circular dependency issue
+sourceFile.addExportDeclaration({
 	moduleSpecifier: './jsonSchemaToZod.js',
-	namedImports: ['jsonSchemaToZod'],
-});
-
-sourceFile.addExportAssignment({
-	isExportEquals: false,
-	expression: 'jsonSchemaToZod',
+	namedExports: ['jsonSchemaToZod', { name: 'jsonSchemaToZod', alias: 'default' }],
 });
 
 // Save the file

@@ -1,7 +1,5 @@
 import { ZodBuilder } from './BaseBuilder.js';
 
-import z from 'zod';
-
 /**
  * FunctionBuilder: represents z.function()
  * Supports function signature validation with args and returns
@@ -20,34 +18,28 @@ export class FunctionBuilder extends ZodBuilder<'function'> {
 	/**
 	 * Specify function arguments as an array of schemas
 	 */
-	input(...input: ZodBuilder[]): this {
-		this._input = input;
-		return this;
+	args(...input: ZodBuilder[]): FunctionBuilder {
+		return new FunctionBuilder({ input, output: this._output });
 	}
 
 	/**
 	 * Specify function return type schema
 	 */
-	output(output: ZodBuilder): this {
-		this._output = output;
-		return this;
+	returns(output: ZodBuilder): FunctionBuilder {
+		return new FunctionBuilder({ input: this._input, output });
 	}
 
 	protected override base(): string {
-		let params: string[] = [];
+		let result = 'z.function()';
 
 		if (this._input) {
 			const argStrs = this._input.map((arg) => arg.text());
-			params.push(`input: [${argStrs.join(',')}]`);
+			result += `.args(${argStrs.join(',')})`;
 		}
 		if (this._output) {
-			params.push(`output: ${this._output.text()}`);
+			result += `.returns(${this._output.text()})`;
 		}
-		if (params.length === 0) {
-			return 'z.function()';
-		}
-		else{
-			return `z.function({${params.join(', ')}})`;
-		}
+
+		return result;
 	}
 }

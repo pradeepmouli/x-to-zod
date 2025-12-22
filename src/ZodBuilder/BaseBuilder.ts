@@ -2,7 +2,7 @@
  * Generic modifiers that can be applied to any Zod schema.
  */
 
-import type { TypeKind, TypeKindOf } from '.';
+import type { TypeKind, TypeKindOf } from './index.js';
 
 function asText(input: string): string {
 	return input;

@@ -1,13 +1,21 @@
 # Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- cleanup, updated function builders
+
 ## 0.2.0
 
 ### Minor Changes
 
 - a3a450b: Add support for new JSON Schema feature
+
   ```
 
   ```
+
 - 30ee77d: Migrate to pnpm and add CI/CD for automated version bumping and publishing
 
   - Migrated from npm to pnpm for package management
