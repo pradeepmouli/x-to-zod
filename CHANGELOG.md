@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2
+
+### Patch Changes
+
+- oneOf now uses z.xor
+
 ## 0.2.1
 
 ### Patch Changes
