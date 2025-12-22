@@ -1,42 +1,53 @@
 import { ZodBuilder } from './BaseBuilder.js';
 
+import z from 'zod';
+
 /**
  * FunctionBuilder: represents z.function()
  * Supports function signature validation with args and returns
  */
 export class FunctionBuilder extends ZodBuilder<'function'> {
 	readonly typeKind = 'function' as const;
-	private _args?: ZodBuilder[] = undefined;
-	private _returns?: ZodBuilder = undefined;
+	private _input?: ZodBuilder[] = undefined;
+	private _output?: ZodBuilder = undefined;
+
+	constructor(params: {input?: ZodBuilder[], output?: ZodBuilder} = {}) {
+		super();
+		this._input = params.input;
+		this._output = params.output;
+	}
 
 	/**
 	 * Specify function arguments as an array of schemas
 	 */
-	args(...argSchemas: ZodBuilder[]): this {
-		this._args = argSchemas;
+	input(...input: ZodBuilder[]): this {
+		this._input = input;
 		return this;
 	}
 
 	/**
 	 * Specify function return type schema
 	 */
-	returns(returnSchema: ZodBuilder): this {
-		this._returns = returnSchema;
+	output(output: ZodBuilder): this {
+		this._output = output;
 		return this;
 	}
 
 	protected override base(): string {
-		let result = 'z.function()';
+		let params: string[] = [];
 
-		if (this._args && this._args.length > 0) {
-			const argStrs = this._args.map((arg) => arg.text());
-			result += `.args(${argStrs.join(',')})`;
+		if (this._input) {
+			const argStrs = this._input.map((arg) => arg.text());
+			params.push(`input: [${argStrs.join(',')}]`);
 		}
-
-		if (this._returns) {
-			result += `.returns(${this._returns.text()})`;
+		if (this._output) {
+			params.push(`output: ${this._output.text()}`);
 		}
-
-		return result;
+		if (params.length === 0) {
+			return 'z.function()';
+		}
+		else{
+			return `z.function({${params.join(', ')}})`;
+		}
 	}
 }

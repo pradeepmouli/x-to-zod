@@ -201,7 +201,7 @@ export function parseObject(
 				) as any,
 			},
 			refs,
-		).text();
+		);
 		builder.and(anyOfZod);
 	}
 
@@ -218,7 +218,7 @@ export function parseObject(
 				) as any,
 			},
 			refs,
-		).text();
+		);
 		builder.and(oneOfZod);
 	}
 
@@ -235,7 +235,7 @@ export function parseObject(
 				) as any,
 			},
 			refs,
-		).text();
+		);
 		builder.and(allOfZod);
 	}
 

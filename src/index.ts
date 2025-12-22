@@ -37,7 +37,6 @@ export * from './ZodBuilder/nan.js';
 export * from './ZodBuilder/never.js';
 export * from './ZodBuilder/null.js';
 export * from './ZodBuilder/number.js';
-export * from './ZodBuilder/object.js';
 export * from './ZodBuilder/record.js';
 export * from './ZodBuilder/set.js';
 export * from './ZodBuilder/string.js';

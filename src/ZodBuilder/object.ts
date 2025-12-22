@@ -12,9 +12,9 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 	private _loose: boolean = false;
 	private _catchallSchema?: string;
 	private _superRefineFn?: string;
-	private _andSchema?: string;
-	private _extendSchema?: string;
-	private _mergeSchema?: string;
+	private _andSchema?: ZodBuilder;
+	private _extendSchema?: ObjectBuilder;
+	private _mergeSchema?: ObjectBuilder;
 	private _pickKeys?: string[];
 	private _omitKeys?: string[];
 
@@ -68,7 +68,7 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 	/**
 	 * Apply and combinator (merge with another schema).
 	 */
-	and(otherSchemaZod: string): this {
+	and(otherSchemaZod: ZodBuilder): this {
 		this._andSchema = otherSchemaZod;
 		return this;
 	}
@@ -76,7 +76,7 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 	/**
 	 * Extend the object schema with additional properties.
 	 */
-	extend(extendSchemaZod: string): this {
+	extend(extendSchemaZod: ObjectBuilder): this {
 		this._extendSchema = extendSchemaZod;
 		return this;
 	}
@@ -84,7 +84,7 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 	/**
 	 * Merge with another object schema.
 	 */
-	merge(mergeSchemaZod: string): this {
+	merge(mergeSchemaZod: ObjectBuilder): this {
 		this._mergeSchema = mergeSchemaZod;
 		return this;
 	}
@@ -209,22 +209,22 @@ export function applySuperRefine(zodStr: string, refineFn: string): string {
 /**
  * Apply and combinator (merge with another schema).
  */
-export function applyAnd(zodStr: string, otherSchemaZod: string): string {
-	return `${zodStr}.and(${otherSchemaZod})`;
+export function applyAnd(zodStr: string, otherSchemaZod: ZodBuilder): string {
+	return `${zodStr}.and(${otherSchemaZod.text()})`;
 }
 
 /**
  * Apply extend to add properties to an object schema.
  */
-export function applyExtend(zodStr: string, extendSchemaZod: string): string {
-	return `${zodStr}.extend(${extendSchemaZod})`;
+export function applyExtend(zodStr: string, extendSchemaZod: ObjectBuilder): string {
+	return `${zodStr}.extend(${extendSchemaZod.text()})`;
 }
 
 /**
  * Apply merge to merge with another object schema.
  */
-export function applyMerge(zodStr: string, mergeSchemaZod: string): string {
-	return `${zodStr}.merge(${mergeSchemaZod})`;
+export function applyMerge(zodStr: string, mergeSchemaZod: ObjectBuilder): string {
+	return `${zodStr}.merge(${mergeSchemaZod.text()})`;
 }
 
 /**
