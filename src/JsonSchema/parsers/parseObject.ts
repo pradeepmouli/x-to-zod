@@ -3,7 +3,8 @@ import { build, ObjectBuilder, BaseBuilder } from '../../ZodBuilder/index.js';
 import { addJsdocs } from '../../utils/jsdocs.js';
 import { parseAnyOf } from './parseAnyOf.js';
 import { parseOneOf } from './parseOneOf.js';
-import { its, parseSchema } from './parseSchema.js';
+import { parseSchema } from './parseSchema.js';
+import { its } from '../its.js';
 import { parseAllOf } from './parseAllOf.js';
 
 export function parseObject(

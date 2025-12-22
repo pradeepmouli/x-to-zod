@@ -1,12 +1,9 @@
-export type Serializable =
-	| { [key: string]: Serializable }
-	| Serializable[]
-	| string
-	| number
-	| boolean
-	| null;
 
-export type JsonSchema = JsonSchemaObject | boolean;
+import {Jsonifiable} from 'type-fest'
+
+export type Serializable = Jsonifiable;
+
+export type JsonSchema = JsonSchemaObject | boolean | { $ref: string };
 export type JsonSchemaObject = {
 	// left permissive by design
 	type?: string | string[];
