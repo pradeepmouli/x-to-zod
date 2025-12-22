@@ -1,5 +1,4 @@
-
-import {Jsonifiable} from 'type-fest'
+import { Jsonifiable } from 'type-fest';
 
 export type Serializable = Jsonifiable;
 

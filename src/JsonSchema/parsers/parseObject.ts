@@ -31,10 +31,14 @@ export function parseObject(
 
 			// Determine if property is optional
 			const hasDefault =
-				typeof propSchema === 'object' && propSchema.default !== undefined;
+				typeof propSchema === 'object' &&
+				!('$ref' in propSchema) &&
+				propSchema.default !== undefined;
 			const required = Array.isArray(objectSchema.required)
 				? objectSchema.required.includes(key)
-				: typeof propSchema === 'object' && propSchema.required === true;
+				: typeof propSchema === 'object' &&
+					!('$ref' in propSchema) &&
+					propSchema.required === true;
 			const optional = !hasDefault && !required;
 
 			if (optional) {
@@ -195,6 +199,7 @@ export function parseObject(
 				...objectSchema,
 				anyOf: objectSchema.anyOf!.map((x) =>
 					typeof x === 'object' &&
+					!('$ref' in x) &&
 					!x.type &&
 					(x.properties || x.additionalProperties || x.patternProperties)
 						? { ...x, type: 'object' }
@@ -212,6 +217,7 @@ export function parseObject(
 				...objectSchema,
 				oneOf: objectSchema.oneOf!.map((x) =>
 					typeof x === 'object' &&
+					!('$ref' in x) &&
 					!x.type &&
 					(x.properties || x.additionalProperties || x.patternProperties)
 						? { ...x, type: 'object' }
@@ -229,6 +235,7 @@ export function parseObject(
 				...objectSchema,
 				allOf: objectSchema.allOf!.map((x) =>
 					typeof x === 'object' &&
+					!('$ref' in x) &&
 					!x.type &&
 					(x.properties || x.additionalProperties || x.patternProperties)
 						? { ...x, type: 'object' }

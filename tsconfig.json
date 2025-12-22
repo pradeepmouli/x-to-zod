@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+	"moduleResolution": "nodenext",
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,

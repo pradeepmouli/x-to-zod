@@ -23,7 +23,10 @@ export const jsonSchemaToZod = (
 	let result = builder.text();
 
 	const jsdocs =
-		rest.withJsdocs && typeof schema !== 'boolean' && !('$ref' in schema) && schema.description
+		rest.withJsdocs &&
+		typeof schema !== 'boolean' &&
+		!('$ref' in schema) &&
+		schema.description
 			? expandJsdocs(schema.description)
 			: '';
 
