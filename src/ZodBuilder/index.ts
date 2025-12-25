@@ -195,9 +195,9 @@ export const build = {
 		new CustomBuilder(validateFn, params, options),
 	discriminatedUnion: (
 		discriminator: string,
-		opts: import('./BaseBuilder.js').ZodBuilder<string>[],
+		schemas: import('./BaseBuilder.js').ZodBuilder<string>[],
 		options?: import('../Types.js').Options,
-	) => new DiscriminatedUnionBuilder(discriminator, opts as any, options),
+	) => new DiscriminatedUnionBuilder(discriminator, schemas as any, options),
 	// Zod v4 builders
 	promise: (innerSchema: import('./BaseBuilder.js').ZodBuilder, options?: import('../Types.js').Options) =>
 		new PromiseBuilder(innerSchema, options),
