@@ -33,7 +33,7 @@
 ### Behavior 4: Error Messages
 **Input**: JSON Schema with errorMessage property
 **Expected Output**: Custom errorMessage is preserved in generated code
-**Actual Output** (before**: Schemas with errorMessage generate Zod with custom messages
+**Actual Output** (before): Schemas with errorMessage generate Zod with custom messages
 **Actual Output** (after): [Must match]
 **Verification**: Test error message handling
 
