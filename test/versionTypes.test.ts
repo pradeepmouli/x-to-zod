@@ -53,7 +53,7 @@ describe('Type-level API restrictions', () => {
 		const nativeEnumSchema = build.nativeEnum('MyEnum');
 		const templateLiteralSchema = build.templateLiteral(['prefix-', 'suffix']);
 		const xorSchema = build.xor([build.string(), build.number()]);
-		const keyofSchema = build.keyof(build.object({}));
+		build.keyof(build.object({}));
 		
 		// Verify these work correctly
 		expect(promiseSchema.text()).toBe('z.promise(z.string())');
