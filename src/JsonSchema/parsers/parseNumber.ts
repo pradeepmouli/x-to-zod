@@ -22,7 +22,7 @@ export const parseNumber = (
 	if (typeof schema.minimum === 'number') {
 		builder.min(
 			schema.minimum,
-			schema.exclusiveMinimum === true,
+			false, // draft-2020-12 uses exclusiveMinimum as number, not boolean
 			schema.errorMessage?.minimum,
 		);
 	} else if (typeof schema.exclusiveMinimum === 'number') {
@@ -37,7 +37,7 @@ export const parseNumber = (
 	if (typeof schema.maximum === 'number') {
 		builder.max(
 			schema.maximum,
-			schema.exclusiveMaximum === true,
+			false, // draft-2020-12 uses exclusiveMaximum as number, not boolean
 			schema.errorMessage?.maximum,
 		);
 	} else if (typeof schema.exclusiveMaximum === 'number') {

@@ -1,58 +1,16 @@
 import { Jsonifiable } from 'type-fest';
+import type { JSONSchema } from 'json-schema-typed/draft-2020-12';
 import type { transformer } from './JsonSchema/index.js';
 
 export type Serializable = Jsonifiable;
 
-export type JsonSchema = JsonSchemaObject | boolean | { $ref: string };
-export type JsonSchemaObject = {
-	// left permissive by design
-	type?: string | string[];
-
-	// object
-	properties?: { [key: string]: JsonSchema };
-	additionalProperties?: JsonSchema;
-	unevaluatedProperties?: JsonSchema;
-	patternProperties?: { [key: string]: JsonSchema };
-	minProperties?: number;
-	maxProperties?: number;
-	required?: string[] | boolean;
-	propertyNames?: JsonSchema;
-
-	// array
-	items?: JsonSchema | JsonSchema[];
-	additionalItems?: JsonSchema;
-	minItems?: number;
-	maxItems?: number;
-	uniqueItems?: boolean;
-
-	// string
-	minLength?: number;
-	maxLength?: number;
-	pattern?: string;
-	format?: string;
-
-	// number
-	minimum?: number;
-	maximum?: number;
-	exclusiveMinimum?: number | boolean;
-	exclusiveMaximum?: number | boolean;
-	multipleOf?: number;
-
-	// unions
-	anyOf?: JsonSchema[];
-	allOf?: JsonSchema[];
-	oneOf?: JsonSchema[];
-
-	if?: JsonSchema;
-	then?: JsonSchema;
-	else?: JsonSchema;
-
-	// shared
-	const?: Serializable;
-	enum?: Serializable[];
-
+// Type aliases for backward compatibility
+export type JsonSchema = JSONSchema;
+export type JsonSchemaObject = JSONSchema.Interface & {
+	// Custom extensions
 	errorMessage?: { [key: string]: string | undefined };
-} & { [key: string]: any };
+	nullable?: boolean; // OpenAPI 3.0 extension
+};
 
 export type ParserSelector = (
 	schema: JsonSchemaObject,

@@ -14,7 +14,7 @@ export const parseAnyOf = (
 					path: [...refs.path, 'anyOf', 0],
 				})
 			: build.union(
-					schema.anyOf.map((schema, i) =>
+					schema.anyOf.map((schema: JsonSchema, i: number) =>
 						parseSchema(schema, { ...refs, path: [...refs.path, 'anyOf', i] }),
 					),
 				)

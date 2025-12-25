@@ -7,7 +7,7 @@ export const parseMultipleType = (
 	refs: Context,
 ) => {
 	return build.union(
-		schema.type.map((type) =>
+		schema.type.map((type: string) =>
 			parseSchema({ ...schema, type } as any, {
 				...refs,
 				withoutDefaults: true,
