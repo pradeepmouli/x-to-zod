@@ -136,9 +136,12 @@ export {
 
 // Builder factories - Zod-like API
 export const build = {
-	number: (options?: import('../Types.js').Options) => new NumberBuilder(options),
-	string: (options?: import('../Types.js').Options) => new StringBuilder(options),
-	boolean: (options?: import('../Types.js').Options) => new BooleanBuilder(options),
+	number: (options?: import('../Types.js').Options) =>
+		new NumberBuilder(options),
+	string: (options?: import('../Types.js').Options) =>
+		new StringBuilder(options),
+	boolean: (options?: import('../Types.js').Options) =>
+		new BooleanBuilder(options),
 	null: (options?: import('../Types.js').Options) => new NullBuilder(options),
 	array: (
 		itemSchemaZod:
@@ -150,28 +153,41 @@ export const build = {
 		properties: Record<string, import('./BaseBuilder.js').ZodBuilder> = {},
 		options?: import('../Types.js').Options,
 	) => new ObjectBuilder(properties, options),
-	enum: (values: import('../Types.js').Serializable[], options?: import('../Types.js').Options) =>
-		new EnumBuilder(values, options),
-	literal: (value: import('../Types.js').Serializable, options?: import('../Types.js').Options) =>
-		new ConstBuilder(value, options),
+	enum: (
+		values: import('../Types.js').Serializable[],
+		options?: import('../Types.js').Options,
+	) => new EnumBuilder(values, options),
+	literal: (
+		value: import('../Types.js').Serializable,
+		options?: import('../Types.js').Options,
+	) => new ConstBuilder(value, options),
 	// New builders
 	any: (options?: import('../Types.js').Options) => new AnyBuilder(options),
 	never: (options?: import('../Types.js').Options) => new NeverBuilder(options),
-	unknown: (options?: import('../Types.js').Options) => new UnknownBuilder(options),
-	literalValue: (value: import('../Types.js').Serializable, options?: import('../Types.js').Options) =>
-		new LiteralBuilder(value, options),
+	unknown: (options?: import('../Types.js').Options) =>
+		new UnknownBuilder(options),
+	literalValue: (
+		value: import('../Types.js').Serializable,
+		options?: import('../Types.js').Options,
+	) => new LiteralBuilder(value, options),
 	// Escape hatch for raw Zod code
-	code: (code: string, options?: import('../Types.js').Options) => new GenericBuilder(code, options),
-	raw: (code: string, options?: import('../Types.js').Options) => new GenericBuilder(code, options),
-	union: (schemas: import('./BaseBuilder.js').ZodBuilder[], options?: import('../Types.js').Options) =>
-		new UnionBuilder(schemas, options),
+	code: (code: string, options?: import('../Types.js').Options) =>
+		new GenericBuilder(code, options),
+	raw: (code: string, options?: import('../Types.js').Options) =>
+		new GenericBuilder(code, options),
+	union: (
+		schemas: import('./BaseBuilder.js').ZodBuilder[],
+		options?: import('../Types.js').Options,
+	) => new UnionBuilder(schemas, options),
 	intersection: (
 		left: import('./BaseBuilder.js').ZodBuilder,
 		right: import('./BaseBuilder.js').ZodBuilder,
 		options?: import('../Types.js').Options,
 	) => new IntersectionBuilder(left, right, options),
-	tuple: (items: import('./BaseBuilder.js').ZodBuilder[], options?: import('../Types.js').Options) =>
-		new TupleBuilder(items, options),
+	tuple: (
+		items: import('./BaseBuilder.js').ZodBuilder[],
+		options?: import('../Types.js').Options,
+	) => new TupleBuilder(items, options),
 	record: (
 		keySchema: import('./BaseBuilder.js').ZodBuilder,
 		valueSchema: import('./BaseBuilder.js').ZodBuilder,
@@ -179,33 +195,47 @@ export const build = {
 	) => new RecordBuilder(keySchema, valueSchema, options),
 	// Additional type builders
 	void: (options?: import('../Types.js').Options) => new VoidBuilder(options),
-	undefined: (options?: import('../Types.js').Options) => new UndefinedBuilder(options),
+	undefined: (options?: import('../Types.js').Options) =>
+		new UndefinedBuilder(options),
 	date: (options?: import('../Types.js').Options) => new DateBuilder(options),
-	bigint: (options?: import('../Types.js').Options) => new BigIntBuilder(options),
-	symbol: (options?: import('../Types.js').Options) => new SymbolBuilder(options),
+	bigint: (options?: import('../Types.js').Options) =>
+		new BigIntBuilder(options),
+	symbol: (options?: import('../Types.js').Options) =>
+		new SymbolBuilder(options),
 	nan: (options?: import('../Types.js').Options) => new NaNBuilder(options),
-	set: (itemSchema: import('./BaseBuilder.js').ZodBuilder, options?: import('../Types.js').Options) =>
-		new SetBuilder(itemSchema, options),
+	set: (
+		itemSchema: import('./BaseBuilder.js').ZodBuilder,
+		options?: import('../Types.js').Options,
+	) => new SetBuilder(itemSchema, options),
 	map: (
 		keySchema: import('./BaseBuilder.js').ZodBuilder,
 		valueSchema: import('./BaseBuilder.js').ZodBuilder,
 		options?: import('../Types.js').Options,
 	) => new MapBuilder(keySchema, valueSchema, options),
-	custom: (validateFn?: string, params?: any, options?: import('../Types.js').Options) =>
-		new CustomBuilder(validateFn, params, options),
+	custom: (
+		validateFn?: string,
+		params?: any,
+		options?: import('../Types.js').Options,
+	) => new CustomBuilder(validateFn, params, options),
 	discriminatedUnion: (
 		discriminator: string,
 		schemas: import('./BaseBuilder.js').ZodBuilder<string>[],
 		options?: import('../Types.js').Options,
 	) => new DiscriminatedUnionBuilder(discriminator, schemas as any, options),
 	// Zod v4 builders
-	promise: (innerSchema: import('./BaseBuilder.js').ZodBuilder, options?: import('../Types.js').Options) =>
-		new PromiseBuilder(innerSchema, options),
-	lazy: (getter: string, options?: import('../Types.js').Options) => new LazyBuilder(getter, options),
-	function: (functionSignature: {
-		input?: import('./BaseBuilder.js').ZodBuilder[];
-		output?: import('./BaseBuilder.js').ZodBuilder;
-	}, options?: import('../Types.js').Options) => new FunctionBuilder(functionSignature, options),
+	promise: (
+		innerSchema: import('./BaseBuilder.js').ZodBuilder,
+		options?: import('../Types.js').Options,
+	) => new PromiseBuilder(innerSchema, options),
+	lazy: (getter: string, options?: import('../Types.js').Options) =>
+		new LazyBuilder(getter, options),
+	function: (
+		functionSignature: {
+			input?: import('./BaseBuilder.js').ZodBuilder[];
+			output?: import('./BaseBuilder.js').ZodBuilder;
+		},
+		options?: import('../Types.js').Options,
+	) => new FunctionBuilder(functionSignature, options),
 	codec: (
 		inSchema: import('./BaseBuilder.js').ZodBuilder,
 		outSchema: import('./BaseBuilder.js').ZodBuilder,
@@ -223,15 +253,22 @@ export const build = {
 	) => new PipeBuilder(sourceSchema, targetSchema, options),
 	json: (options?: import('../Types.js').Options) => new JsonBuilder(options),
 	file: (options?: import('../Types.js').Options) => new FileBuilder(options),
-	nativeEnum: (enumReference: string, options?: import('../Types.js').Options) => new NativeEnumBuilder(enumReference, options),
+	nativeEnum: (
+		enumReference: string,
+		options?: import('../Types.js').Options,
+	) => new NativeEnumBuilder(enumReference, options),
 	templateLiteral: (
 		parts: (string | import('./BaseBuilder.js').ZodBuilder)[],
 		options?: import('../Types.js').Options,
 	) => new TemplateLiteralBuilder(parts, options),
-	xor: (schemas: import('./BaseBuilder.js').ZodBuilder[], options?: import('../Types.js').Options) =>
-		new XorBuilder(schemas, options),
-	keyof: (objectSchema: import('./BaseBuilder.js').ZodBuilder, options?: import('../Types.js').Options) =>
-		new KeyofBuilder(objectSchema, options),
+	xor: (
+		schemas: import('./BaseBuilder.js').ZodBuilder[],
+		options?: import('../Types.js').Options,
+	) => new XorBuilder(schemas, options),
+	keyof: (
+		objectSchema: import('./BaseBuilder.js').ZodBuilder,
+		options?: import('../Types.js').Options,
+	) => new KeyofBuilder(objectSchema, options),
 } as const;
 
 export type TypeKind = {

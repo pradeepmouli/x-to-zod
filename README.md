@@ -265,8 +265,8 @@ The `zodVersion` option affects how certain Zod constructs are generated:
 // additionalProperties: false
 z.object({ name: z.string() }).strict()
 
-// passthrough behavior
-z.object({ name: z.string() }).passthrough()
+// passthrough behavior (using .loose() method)
+z.object({ name: z.string() }).loose()
 ```
 
 **v4 mode:**

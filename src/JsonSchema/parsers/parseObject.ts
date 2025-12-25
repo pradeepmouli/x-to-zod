@@ -181,7 +181,11 @@ export function parseObject(
 		// No properties, no patternProperties
 		if (additionalPropertiesZod) {
 			result = build
-				.record(build.string(refs), ObjectBuilder.fromCode(additionalPropertiesZod, refs), refs)
+				.record(
+					build.string(refs),
+					ObjectBuilder.fromCode(additionalPropertiesZod, refs),
+					refs,
+				)
 				.text();
 		} else {
 			result = build.record(build.string(refs), build.any(refs), refs).text();

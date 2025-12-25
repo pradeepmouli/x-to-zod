@@ -8,7 +8,11 @@ export class CustomBuilder extends ZodBuilder<'custom'> {
 	_validateFn?: string;
 	_params?: any;
 
-	constructor(validateFn?: string, params?: any, options?: import('../Types.js').Options) {
+	constructor(
+		validateFn?: string,
+		params?: any,
+		options?: import('../Types.js').Options,
+	) {
 		super(options);
 		this._validateFn = validateFn;
 		this._params = params;
