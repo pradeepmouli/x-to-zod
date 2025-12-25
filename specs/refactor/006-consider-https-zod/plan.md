@@ -95,7 +95,15 @@ export abstract class ZodBuilder<T = string> {
 - Default version is 'v4'
 
 ### 1.3 Thread Options Through Parser Integration
-**File**: `src/JsonSchema/toZod.ts` and parser files
+**Files**: 
+- `src/JsonSchema/toZod.ts` (entry point)
+- `src/JsonSchema/parsers/parseString.ts`
+- `src/JsonSchema/parsers/parseObject.ts`
+- `src/JsonSchema/parsers/parseEnum.ts`
+- `src/JsonSchema/parsers/parseNumber.ts`
+- `src/JsonSchema/parsers/parseRecord.ts`
+- `src/JsonSchema/parsers/parseArray.ts`
+- `src/JsonSchema/parsers/parseSchema.ts` (central dispatcher)
 
 ```typescript
 // In toZod.ts
@@ -104,69 +112,67 @@ export function toZod(schema: JsonSchema, options?: Options): string {
   return builder.text();
 }
 
-// In parsers - pass options to builders
-function parseString(schema: JsonSchemaObject, options?: Options): StringBuilder {
+// In parseString.ts - pass options to builders
+export function parseString(schema: JsonSchemaObject, options?: Options): StringBuilder {
   const builder = new StringBuilder(options);
   // apply constraints
   return builder;
 }
+
+// Similar pattern for parseObject.ts, parseEnum.ts, etc.
 ```
 
 **Tasks**:
-- Add options parameter to all factory functions
-- Pass options to builder constructors
-- Update exports
+- Update toZod.ts to pass options to parseSchema
+- Update parseSchema.ts to accept and forward options
+- Update all type-specific parsers to accept options parameter
+- Pass options when constructing builders in each parser
+- Ensure options flow through nested schema parsing
 
 **Tests**:
-- Factory functions accept options
-- Options propagate correctly
+- Options propagate from entry point through all parsers
+- Nested schemas receive correct options
+- Factory functions accept options correctly
 
 ## Phase 2: Error Handling Updates
 
-### 2.1 Update withMessage Utility
-**File**: `src/utils/withMessage.ts`
-
-```typescript
-export function withMessage(
-  value: string | undefined,
-  zodVersion: ZodVersion = 'v4'
-): string {
-  if (!value) return '';
-
-  if (zodVersion === 'v4') {
-    return `, { error: ${JSON.stringify(value)} }`;
-  } else {
-    return `, { message: ${JSON.stringify(value)} }`;
-  }
-}
-```
-
-**Tasks**:
-- Add zodVersion parameter
-- Return `error` for v4, `message` for v3
-- Update all usages to pass version
-
-**Tests**:
-- v4 mode generates `error` parameter
-- v3 mode generates `message` parameter
-- Undefined values return empty string
-
-### 2.2 Update BaseBuilder Error Methods
+### 2.1 Add Error Message Method to BaseBuilder
 **File**: `src/ZodBuilder/BaseBuilder.ts`
 
+**Implementation Note**: The `withErrorMessage()` method generates a parameter string (with leading comma and space) that can be appended to Zod function calls. For example: `, { error: "Invalid email" }` in v4 mode or `, { message: "Invalid email" }` in v3 mode.
+
 ```typescript
+/**
+ * Generate version-appropriate error message parameter for Zod methods.
+ * @param message - Error message string
+ * @returns Parameter string with leading comma (e.g., ', { error: "msg" }') or empty string
+ * @example
+ * // v4 mode
+ * `z.email()${this.withErrorMessage('Invalid email')}` 
+ * // => 'z.email({ error: "Invalid email" })'
+ * 
+ * // v3 mode  
+ * `z.string().email()${this.withErrorMessage('Invalid email')}`
+ * // => 'z.string().email({ message: "Invalid email" })'
+ */
 protected withErrorMessage(message?: string): string {
-  return withMessage(message, this.zodVersion);
+  if (!message) return '';
+  const param = this.isV4() ? 'error' : 'message';
+  return `, { ${param}: ${JSON.stringify(message)} }`;
 }
 ```
 
 **Tasks**:
-- Add helper method that uses instance version
-- Update all subclasses to use this method
+- Add withErrorMessage method to BaseBuilder with JSDoc
+- Method checks zodVersion and returns appropriate parameter format
+- Returns empty string for undefined/null messages
+- Update all builder subclasses to use this method instead of manual string concatenation
 
 **Tests**:
-- Error messages respect zodVersion
-- Both v3 and v4 generate valid code
+- v4 mode generates `, { error: "..." }` format
+- v3 mode generates `, { message: "..." }` format
+- Undefined messages return empty string
+- Both v3 and v4 generate valid Zod code
 
 ## Phase 3: String Format Builders (Hybrid Approach)
 
@@ -185,7 +191,7 @@ export class EmailBuilder extends ZodBuilder<'email'> {
   readonly typeKind = 'email' as const;
   _errorMessage?: string;
 
-  build(): string {
+  text(): string {
     if (this.isV4()) {
       return `z.email()${this.withErrorMessage(this._errorMessage)}`;
     } else {
@@ -200,7 +206,7 @@ export class UuidBuilder extends ZodBuilder<'uuid'> {
   _errorMessage?: string;
   _lenient?: boolean; // for v3 compatibility
 
-  build(): string {
+  text(): string {
     if (this.isV4()) {
       // Use guid() for lenient mode in v4
       const func = this._lenient ? 'guid' : 'uuid';
@@ -214,7 +220,7 @@ export class UuidBuilder extends ZodBuilder<'uuid'> {
 
 **Tasks**:
 - Create builder class for each format type
-- Implement dual-mode build() method
+- Implement dual-mode text() method
 - Handle format-specific options (like UUID lenient mode)
 - Export all format builders
 
@@ -261,11 +267,27 @@ export class StringBuilder extends ZodBuilder<'string'> {
     }
   }
 
+  /**
+   * Check if any string-specific constraints are applied.
+   * COMPLETE LIST: minLength, maxLength, length, pattern (regex), 
+   * includes, startsWith, endsWith.
+   * 
+   * When ANY constraint exists, StringBuilder stays in chain mode even in v4.
+   * Only when NO constraints exist can v4 mode switch to format-specific builders.
+   */
   private hasStringConstraints(): boolean {
-    return !!(this._minLength || this._maxLength || this._pattern);
+    return !!(
+      this._minLength || 
+      this._maxLength || 
+      this._length ||
+      this._pattern ||
+      this._includes ||
+      this._startsWith ||
+      this._endsWith
+    );
   }
 
-  build(): string {
+  text(): string {
     let schema = 'z.string()';
 
     // Add format if in v3 mode or has constraints
@@ -289,18 +311,19 @@ export class StringBuilder extends ZodBuilder<'string'> {
 }
 ```
 
+**Constraints-First Strategy**: If ANY string constraint is present (min/max/length/pattern/includes/startsWith/endsWith), StringBuilder stays in chain mode even in v4. Only when NO constraints exist can v4 mode delegate to format-specific builders.
+
 **Tasks**:
-- Add format detection logic
-- Return format-specific builder in v4 when appropriate
-- Fall back to StringBuilder when string constraints exist
-- Update all format methods (email, uuid, url, etc.)
-- Add new format methods (ipv4, ipv6, cidrv4, cidrv6)
+- Add complete hasStringConstraints() method checking all constraint types
+- Return format-specific builder in v4 when no constraints
+- Fall back to StringBuilder when ANY constraint exists
+- Update all format methods (email, uuid, url, datetime, date, time, duration, ip variants, base64, emoji, cuid, ulid, nanoid)
 
 **Tests**:
-- v4 mode switches to format builders
-- v3 mode stays in StringBuilder
-- String with constraints stays in StringBuilder (both modes)
-- All format types work correctly
+- v4 mode switches to format builders when no constraints
+- v4 mode stays in StringBuilder when any constraint exists
+- v3 mode always stays in StringBuilder
+- All format types work correctly in both modes
 
 ## Phase 4: Object Builder Updates
 
@@ -328,9 +351,9 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
     return this;
   }
 
-  build(): string {
+  text(): string {
     const props = Object.entries(this._properties)
-      .map(([key, builder]) => `${key}: ${builder.build()}`)
+      .map(([key, builder]) => `${key}: ${builder.text()}`)
       .join(', ');
 
     if (this.isV4()) {
@@ -357,16 +380,16 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
   // For merge, generate .extend() in v4, .merge() in v3
   buildMerge(other: ObjectBuilder): string {
     if (this.isV4()) {
-      return `${this.build()}.extend(${other.buildProperties()})`;
+      return `${this.text()}.extend(${other.buildProperties()})`;
     } else {
-      return `${this.build()}.merge(${other.build()})`;
+      return `${this.text()}.merge(${other.text()})`;
     }
   }
 }
 ```
 
 **Tasks**:
-- Update build() to generate version-appropriate code
+- Update text() to generate version-appropriate code
 - Handle strict: `z.strictObject()` vs `.strict()`
 - Handle passthrough: `z.looseObject()` vs `.passthrough()`
 - Handle merge: `.extend()` vs `.merge()`
@@ -387,12 +410,12 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 export class NativeEnumBuilder extends ZodBuilder<'nativeEnum'> {
   _values: any;
 
-  constructor(values: any, options?: BuilderOptions) {
+  constructor(values: any, options?: Options) {
     super(options);
     this._values = values;
   }
 
-  build(): string {
+  text(): string {
     if (this.isV4()) {
       return `z.enum(${JSON.stringify(this._values)})`;
     } else {
@@ -403,7 +426,7 @@ export class NativeEnumBuilder extends ZodBuilder<'nativeEnum'> {
 ```
 
 **Tasks**:
-- Update to generate `z.enum()` in v4
+- Update text() method to generate `z.enum()` in v4
 - Keep `z.nativeEnum()` in v3
 - Handle enum value access patterns
 
@@ -452,17 +475,17 @@ export class RecordBuilder extends ZodBuilder<'record'> {
   _keySchema?: ZodBuilder;
   _valueSchema: ZodBuilder;
 
-  build(): string {
+  text(): string {
     if (this.isV4()) {
       // v4 requires two arguments
-      const key = this._keySchema ? this._keySchema.build() : 'z.string()';
-      return `z.record(${key}, ${this._valueSchema.build()})`;
+      const key = this._keySchema ? this._keySchema.text() : 'z.string()';
+      return `z.record(${key}, ${this._valueSchema.text()})`;
     } else {
       // v3 allows single argument
       if (this._keySchema) {
-        return `z.record(${this._keySchema.build()}, ${this._valueSchema.build()})`;
+        return `z.record(${this._keySchema.text()}, ${this._valueSchema.text()})`;
       } else {
-        return `z.record(${this._valueSchema.build()})`;
+        return `z.record(${this._valueSchema.text()})`;
       }
     }
   }
@@ -491,8 +514,8 @@ export class ArrayBuilder extends ZodBuilder<'array'> {
     return this;
   }
 
-  build(): string {
-    let schema = `z.array(${this._elementSchema.build()})`;
+  text(): string {
+    let schema = `z.array(${this._elementSchema.text()})`;
 
     if (this._minItems === 1) {
       schema += `.nonempty()${this.withErrorMessage(this._errorMessage)}`;
@@ -524,7 +547,7 @@ describe('StringBuilder (v4 mode)', () => {
   const builder = new StringBuilder({ zodVersion: 'v4' });
 
   it('generates top-level email function', () => {
-    const result = builder.email().build();
+    const result = builder.email().text();
     expect(result).toBe('z.email()');
   });
 });
@@ -533,7 +556,7 @@ describe('StringBuilder (v3 mode)', () => {
   const builder = new StringBuilder({ zodVersion: 'v3' });
 
   it('generates string method chain', () => {
-    const result = builder.email().build();
+    const result = builder.email().text();
     expect(result).toBe('z.string().email()');
   });
 });
@@ -653,7 +676,7 @@ Add section on version selection:
  * // v3 mode
  * const schema = string({ zodVersion: 'v3' }).email(); // generates: z.string().email()
  */
-export function string(options?: BuilderOptions): StringBuilder {
+export function string(options?: Options): StringBuilder {
   return new StringBuilder(options);
 }
 ```
