@@ -6,7 +6,7 @@ export const parseOneOf = (
 	schema: JsonSchemaObject & { oneOf: JsonSchema[] },
 	refs: Context,
 ): BaseBuilder => {
-	const schemaBuilders = schema.oneOf.map((schema, i) =>
+	const schemaBuilders = schema.oneOf.map((schema: JsonSchema, i: number) =>
 		parseSchema(schema, {
 			...refs,
 			path: [...refs.path, 'oneOf', i],

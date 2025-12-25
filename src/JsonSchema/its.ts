@@ -19,8 +19,8 @@ export const its = {
 		enum: (
 			x: JsonSchemaObject,
 		): x is JsonSchemaObject & {
-			enum: Serializable | Serializable[];
-		} => x.enum !== undefined,
+			enum: Serializable[];
+		} => Array.isArray(x.enum) && x.enum.length > 0,
 	},
 	a: {
 		nullable: (

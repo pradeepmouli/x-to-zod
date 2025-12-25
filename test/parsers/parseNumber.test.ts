@@ -28,8 +28,7 @@ describe('parseNumber', () => {
 		expect(
 			parseNumber({
 				type: 'number',
-				exclusiveMinimum: true,
-				minimum: 2,
+				exclusiveMinimum: 2,
 			}).text(),
 		).toBe(`z.number().gt(2)`);
 	});
@@ -47,8 +46,7 @@ describe('parseNumber', () => {
 		expect(
 			parseNumber({
 				type: 'number',
-				exclusiveMaximum: true,
-				maximum: 2,
+				exclusiveMaximum: 2,
 			}).text(),
 		).toBe(`z.number().lt(2)`);
 	});

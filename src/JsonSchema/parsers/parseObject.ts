@@ -1,4 +1,4 @@
-import { JsonSchemaObject, Context } from '../../Types.js';
+import { JsonSchemaObject, JsonSchema, Context } from '../../Types.js';
 import { build, ObjectBuilder, BaseBuilder } from '../../ZodBuilder/index.js';
 import { addJsdocs } from '../../utils/jsdocs.js';
 import { parseAnyOf } from './parseAnyOf.js';
@@ -36,9 +36,7 @@ export function parseObject(
 				propSchema.default !== undefined;
 			const required = Array.isArray(objectSchema.required)
 				? objectSchema.required.includes(key)
-				: typeof propSchema === 'object' &&
-					!('$ref' in propSchema) &&
-					propSchema.required === true;
+				: false; // fallback for non-standard schemas (JSON Schema spec requires 'required' to be an array at object level, not per-property boolean)
 			const optional = !hasDefault && !required;
 
 			if (optional) {
@@ -197,7 +195,7 @@ export function parseObject(
 		const anyOfZod = parseAnyOf(
 			{
 				...objectSchema,
-				anyOf: objectSchema.anyOf!.map((x) =>
+				anyOf: objectSchema.anyOf!.map((x: JsonSchema) =>
 					typeof x === 'object' &&
 					!('$ref' in x) &&
 					!x.type &&
@@ -215,7 +213,7 @@ export function parseObject(
 		const oneOfZod = parseOneOf(
 			{
 				...objectSchema,
-				oneOf: objectSchema.oneOf!.map((x) =>
+				oneOf: objectSchema.oneOf!.map((x: JsonSchema) =>
 					typeof x === 'object' &&
 					!('$ref' in x) &&
 					!x.type &&
@@ -233,7 +231,7 @@ export function parseObject(
 		const allOfZod = parseAllOf(
 			{
 				...objectSchema,
-				allOf: objectSchema.allOf!.map((x) =>
+				allOf: objectSchema.allOf!.map((x: JsonSchema) =>
 					typeof x === 'object' &&
 					!('$ref' in x) &&
 					!x.type &&

@@ -1,4 +1,4 @@
-import { JsonSchemaObject, Context } from '../../Types.js';
+import { JsonSchemaObject, JsonSchema, Context } from '../../Types.js';
 import { build, BaseBuilder } from '../../ZodBuilder/index.js';
 import { parseSchema } from './parseSchema.js';
 
@@ -10,7 +10,7 @@ export const parseArray = (
 
 	// Handle tuple (array of schemas) vs array (single schema)
 	if (Array.isArray(schema.items)) {
-		const itemSchemas = schema.items.map((v, i) =>
+		const itemSchemas = schema.items.map((v: JsonSchema, i: number) =>
 			parseSchema(v, { ...refs, path: [...refs.path, 'items', i] }),
 		);
 
