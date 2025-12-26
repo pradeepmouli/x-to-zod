@@ -258,7 +258,10 @@ export function applyCatchall(
  * In Zod v4, use .loose() instead of .passthrough().
  * Note: This function is version-aware and should be called from ObjectBuilder's modify() method.
  */
-export function applyLoose(zodStr: string, zodVersion: import('../Types.js').ZodVersion = 'v4'): string {
+export function applyLoose(
+	zodStr: string,
+	zodVersion: import('../Types.js').ZodVersion = 'v4',
+): string {
 	return zodVersion === 'v4' ? `${zodStr}.loose()` : `${zodStr}.passthrough()`;
 }
 
