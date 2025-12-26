@@ -1,4 +1,13 @@
 import { ZodBuilder } from './BaseBuilder.js';
+import { EmailBuilder } from './email.js';
+import { UrlBuilder } from './url.js';
+import { UuidBuilder } from './uuid.js';
+import { EmojiBuilder } from './emoji.js';
+import { NanoidBuilder } from './nanoid.js';
+import { CuidBuilder } from './cuid.js';
+import { UlidBuilder } from './ulid.js';
+import { IpBuilder } from './ip.js';
+import { Base64Builder } from './base64.js';
 
 /**
  * Fluent StringBuilder: wraps a Zod string schema string and provides chainable methods.
@@ -15,6 +24,22 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	constructor(options?: import('../Types.js').Options) {
 		super(options);
+	}
+
+	/**
+	 * Check if this StringBuilder has any constraints applied.
+	 * Used for hybrid v4 logic: if constraints exist, stay in StringBuilder.
+	 * If no constraints, can switch to format-specific builder.
+	 */
+	hasConstraints(): boolean {
+		return !!(
+			this._minLength ||
+			this._maxLength ||
+			this._pattern ||
+			this._base64 ||
+			this._json ||
+			this._pipe
+		);
 	}
 
 	/**
@@ -58,24 +83,51 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply email format.
+	 * In v4 mode without constraints, returns EmailBuilder for top-level z.email().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	email(errorMessage?: string): this {
+	email(errorMessage?: string): this | import('./email.js').EmailBuilder {
+		// In v4 mode without constraints, switch to EmailBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new EmailBuilder(this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'email', errorMessage };
 		return this;
 	}
 
 	/**
 	 * Apply uuid format.
+	 * In v4 mode without constraints, returns UuidBuilder for top-level z.uuid().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	uuid(errorMessage?: string): this {
+	uuid(errorMessage?: string): this | import('./uuid.js').UuidBuilder {
+		// In v4 mode without constraints, switch to UuidBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new UuidBuilder('uuid', this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'uuid', errorMessage };
 		return this;
 	}
 
 	/**
 	 * Apply url format.
+	 * In v4 mode without constraints, returns UrlBuilder for top-level z.url().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	url(errorMessage?: string): this {
+	url(errorMessage?: string): this | import('./url.js').UrlBuilder {
+		// In v4 mode without constraints, switch to UrlBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new UrlBuilder(this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'url', errorMessage };
 		return this;
 	}
@@ -98,8 +150,17 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply emoji format (single emoji character).
+	 * In v4 mode without constraints, returns EmojiBuilder for top-level z.emoji().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	emoji(errorMessage?: string): this {
+	emoji(errorMessage?: string): this | import('./emoji.js').EmojiBuilder {
+		// In v4 mode without constraints, switch to EmojiBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new EmojiBuilder(this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'emoji', errorMessage };
 		return this;
 	}
@@ -130,48 +191,102 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply nanoid format.
+	 * In v4 mode without constraints, returns NanoidBuilder for top-level z.nanoid().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	nanoid(errorMessage?: string): this {
+	nanoid(errorMessage?: string): this | import('./nanoid.js').NanoidBuilder {
+		// In v4 mode without constraints, switch to NanoidBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new NanoidBuilder(this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'nanoid', errorMessage };
 		return this;
 	}
 
 	/**
 	 * Apply cuid format.
+	 * In v4 mode without constraints, returns CuidBuilder for top-level z.cuid().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	cuid(errorMessage?: string): this {
+	cuid(errorMessage?: string): this | import('./cuid.js').CuidBuilder {
+		// In v4 mode without constraints, switch to CuidBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new CuidBuilder('cuid', this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'cuid', errorMessage };
 		return this;
 	}
 
 	/**
 	 * Apply cuid2 format.
+	 * In v4 mode without constraints, returns CuidBuilder for top-level z.cuid2().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	cuid2(errorMessage?: string): this {
+	cuid2(errorMessage?: string): this | import('./cuid.js').CuidBuilder {
+		// In v4 mode without constraints, switch to CuidBuilder with cuid2 variant
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new CuidBuilder('cuid2', this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'cuid2', errorMessage };
 		return this;
 	}
 
 	/**
 	 * Apply ulid format.
+	 * In v4 mode without constraints, returns UlidBuilder for top-level z.ulid().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	ulid(errorMessage?: string): this {
+	ulid(errorMessage?: string): this | import('./ulid.js').UlidBuilder {
+		// In v4 mode without constraints, switch to UlidBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new UlidBuilder(this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'ulid', errorMessage };
 		return this;
 	}
 
 	/**
 	 * Apply IPv4 format.
+	 * In v4 mode without constraints, returns IpBuilder for top-level z.ipv4().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	ipv4(errorMessage?: string): this {
+	ipv4(errorMessage?: string): this | import('./ip.js').IpBuilder {
+		// In v4 mode without constraints, switch to IpBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new IpBuilder('ipv4', this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'ipv4', errorMessage };
 		return this;
 	}
 
 	/**
 	 * Apply IPv6 format.
+	 * In v4 mode without constraints, returns IpBuilder for top-level z.ipv6().
+	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	ipv6(errorMessage?: string): this {
+	ipv6(errorMessage?: string): this | import('./ip.js').IpBuilder {
+		// In v4 mode without constraints, switch to IpBuilder
+		if (this.isV4() && !this.hasConstraints()) {
+			const builder = new IpBuilder('ipv6', this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._format = { format: 'ipv6', errorMessage };
 		return this;
 	}
@@ -213,6 +328,7 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply ISO date format.
+	 * Note: In Zod v4, maps to z.date() for ISO 8601 date strings.
 	 */
 	isoDate(errorMessage?: string): this {
 		this._format = { format: 'iso.date', errorMessage };
@@ -221,6 +337,7 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply ISO time format.
+	 * Note: In Zod v4, maps to z.time() for ISO 8601 time strings.
 	 */
 	isoTime(errorMessage?: string): this {
 		this._format = { format: 'iso.time', errorMessage };
@@ -229,6 +346,7 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply ISO datetime format.
+	 * Note: In Zod v4, maps to z.datetime() for ISO 8601 datetime strings.
 	 */
 	isoDatetime(errorMessage?: string): this {
 		this._format = { format: 'iso.datetime', errorMessage };
@@ -237,6 +355,7 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply ISO duration format.
+	 * Note: In Zod v4, maps to z.duration() for ISO 8601 duration strings.
 	 */
 	isoDuration(errorMessage?: string): this {
 		this._format = { format: 'iso.duration', errorMessage };
@@ -269,8 +388,20 @@ export class StringBuilder extends ZodBuilder<'string'> {
 
 	/**
 	 * Apply base64 encoding constraint.
+	 * In v4 mode without other constraints, returns Base64Builder for top-level z.base64().
+	 * In v3 mode or with other constraints, stays in StringBuilder chain.
 	 */
-	base64(errorMessage?: string): this {
+	base64(errorMessage?: string): this | import('./base64.js').Base64Builder {
+		// Check if we have OTHER constraints (not including base64 itself)
+		const hasOtherConstraints = !!(this._minLength || this._maxLength || this._pattern || this._json || this._pipe || this._format);
+		
+		// In v4 mode without other constraints, switch to Base64Builder
+		if (this.isV4() && !hasOtherConstraints) {
+			const builder = new Base64Builder(this.options);
+			if (errorMessage) builder.withError(errorMessage);
+			return builder;
+		}
+		// Otherwise stay in StringBuilder chain
 		this._base64 = { errorMessage };
 		return this;
 	}

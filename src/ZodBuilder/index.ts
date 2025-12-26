@@ -78,6 +78,20 @@ export { TemplateLiteralBuilder } from './templateLiteral.js';
 export { XorBuilder } from './xor.js';
 export { KeyofBuilder } from './keyof.js';
 
+// Zod v4 string format builders
+export { EmailBuilder } from './email.js';
+export { UrlBuilder } from './url.js';
+export { UuidBuilder } from './uuid.js';
+export { DatetimeBuilder } from './datetime.js';
+export { TimeBuilder } from './time.js';
+export { DurationBuilder } from './duration.js';
+export { IpBuilder } from './ip.js';
+export { Base64Builder } from './base64.js';
+export { EmojiBuilder } from './emoji.js';
+export { CuidBuilder } from './cuid.js';
+export { UlidBuilder } from './ulid.js';
+export { NanoidBuilder } from './nanoid.js';
+
 // Import builder classes for the factory
 import { NumberBuilder } from './number.js';
 import { StringBuilder } from './string.js';

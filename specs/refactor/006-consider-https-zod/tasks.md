@@ -52,41 +52,41 @@
 
 ### 3a: Create Basic Format Builders
 
-- [ ] T018 [P] Create EmailBuilder class in src/ZodBuilder/email.ts extending BaseBuilder
-- [ ] T019 [P] Create UrlBuilder class in src/ZodBuilder/url.ts extending BaseBuilder
-- [ ] T020 [P] Create UuidBuilder class in src/ZodBuilder/uuid.ts extending BaseBuilder (with guid/uuid support)
-- [ ] T021 [P] Create DatetimeBuilder class in src/ZodBuilder/datetime.ts extending BaseBuilder
+- [X] T018 [P] Create EmailBuilder class in src/ZodBuilder/email.ts extending BaseBuilder
+- [X] T019 [P] Create UrlBuilder class in src/ZodBuilder/url.ts extending BaseBuilder
+- [X] T020 [P] Create UuidBuilder class in src/ZodBuilder/uuid.ts extending BaseBuilder (with guid/uuid support)
+- [X] T021 [P] Create DatetimeBuilder class in src/ZodBuilder/datetime.ts extending BaseBuilder
 
 ### 3b: Create Additional Format Builders
 
-- [ ] T022 [P] Create DateBuilder class in src/ZodBuilder/date.ts extending BaseBuilder
-- [ ] T023 [P] Create TimeBuilder class in src/ZodBuilder/time.ts extending BaseBuilder
-- [ ] T024 [P] Create DurationBuilder class in src/ZodBuilder/duration.ts extending BaseBuilder
-- [ ] T025 [P] Create IpBuilder class in src/ZodBuilder/ip.ts extending BaseBuilder (with v4/v6/cidrv4/cidrv6 support)
+- [X] T022 [P] Create DateBuilder class in src/ZodBuilder/date.ts extending BaseBuilder
+- [X] T023 [P] Create TimeBuilder class in src/ZodBuilder/time.ts extending BaseBuilder
+- [X] T024 [P] Create DurationBuilder class in src/ZodBuilder/duration.ts extending BaseBuilder
+- [X] T025 [P] Create IpBuilder class in src/ZodBuilder/ip.ts extending BaseBuilder (with v4/v6/cidrv4/cidrv6 support)
 
 ### 3c: Create Specialized Format Builders
 
-- [ ] T026 [P] Create Base64Builder class in src/ZodBuilder/base64.ts extending BaseBuilder
-- [ ] T027 [P] Create EmojiBuilder class in src/ZodBuilder/emoji.ts extending BaseBuilder
-- [ ] T028 [P] Create CuidBuilder class in src/ZodBuilder/cuid.ts extending BaseBuilder (with cuid/cuid2 support)
-- [ ] T029 [P] Create UlidBuilder class in src/ZodBuilder/ulid.ts extending BaseBuilder
-- [ ] T030 [P] Create NanoidBuilder class in src/ZodBuilder/nanoid.ts extending BaseBuilder
+- [X] T026 [P] Create Base64Builder class in src/ZodBuilder/base64.ts extending BaseBuilder
+- [X] T027 [P] Create EmojiBuilder class in src/ZodBuilder/emoji.ts extending BaseBuilder
+- [X] T028 [P] Create CuidBuilder class in src/ZodBuilder/cuid.ts extending BaseBuilder (with cuid/cuid2 support)
+- [X] T029 [P] Create UlidBuilder class in src/ZodBuilder/ulid.ts extending BaseBuilder
+- [X] T030 [P] Create NanoidBuilder class in src/ZodBuilder/nanoid.ts extending BaseBuilder
 
 ### 3d: Update StringBuilder
 
-- [ ] T031 Add `hasConstraints()` helper method to StringBuilder in src/ZodBuilder/string.ts checking for min/max/pattern/length
-- [ ] T032 Update `email()` method in StringBuilder to return EmailBuilder in v4 mode when no constraints exist, otherwise return this
-- [ ] T033 Update `url()` method in StringBuilder to return UrlBuilder in v4 mode when no constraints exist, otherwise return this
-- [ ] T034 Update `uuid()` method in StringBuilder to return UuidBuilder in v4 mode when no constraints exist, otherwise return this
-- [ ] T035 Update `datetime()` method in StringBuilder to return DatetimeBuilder in v4 mode when no constraints exist, otherwise return this
-- [ ] T036 Update `date()` method in StringBuilder to return DateBuilder in v4 mode when no constraints exist, otherwise return this
-- [ ] T037 Update `time()` method in StringBuilder to return TimeBuilder in v4 mode when no constraints exist, otherwise return this
-- [ ] T038 Update `duration()` method in StringBuilder to return DurationBuilder in v4 mode when no constraints exist, otherwise return this
-- [ ] T039 Update `ip()`, `ipv4()`, `ipv6()` methods in StringBuilder to return IpBuilder in v4 mode when no constraints exist
-- [ ] T040 Update `base64()` method in StringBuilder to return Base64Builder in v4 mode when no constraints exist
-- [ ] T041 Update remaining format methods (emoji, cuid, ulid, nanoid) in StringBuilder to return appropriate builders in v4 mode
-- [ ] T042 Update StringBuilder `.text()` method to handle remaining in-chain formats in v3 mode or when constraints exist
-- [ ] T043 Export all format builder classes from src/ZodBuilder/index.ts
+- [X] T031 Add `hasConstraints()` helper method to StringBuilder in src/ZodBuilder/string.ts checking for min/max/pattern/length
+- [X] T032 Update `email()` method in StringBuilder to return EmailBuilder in v4 mode when no constraints exist, otherwise return this
+- [X] T033 Update `url()` method in StringBuilder to return UrlBuilder in v4 mode when no constraints exist, otherwise return this
+- [X] T034 Update `uuid()` method in StringBuilder to return UuidBuilder in v4 mode when no constraints exist, otherwise return this
+- [X] T035 Update `datetime()` method in StringBuilder to return DatetimeBuilder in v4 mode when no constraints exist, otherwise return this
+- [X] T036 Update `date()` method in StringBuilder to return DateBuilder in v4 mode when no constraints exist, otherwise return this
+- [X] T037 Update `time()` method in StringBuilder to return TimeBuilder in v4 mode when no constraints exist, otherwise return this
+- [X] T038 Update `duration()` method in StringBuilder to return DurationBuilder in v4 mode when no constraints exist, otherwise return this
+- [X] T039 Update `ip()`, `ipv4()`, `ipv6()` methods in StringBuilder to return IpBuilder in v4 mode when no constraints exist
+- [X] T040 Update `base64()` method in StringBuilder to return Base64Builder in v4 mode when no constraints exist
+- [X] T041 Update remaining format methods (emoji, cuid, ulid, nanoid) in StringBuilder to return appropriate builders in v4 mode
+- [X] T042 Update StringBuilder `.text()` method to handle remaining in-chain formats in v3 mode or when constraints exist
+- [X] T043 Export all format builder classes from src/ZodBuilder/index.ts
 
 **Checkpoint**: String formats generate top-level functions in v4, method chains in v3
 
