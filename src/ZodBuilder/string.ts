@@ -36,7 +36,6 @@ export class StringBuilder extends ZodBuilder<'string'> {
 			this._minLength ||
 			this._maxLength ||
 			this._pattern ||
-			this._base64 ||
 			this._json ||
 			this._pipe
 		);

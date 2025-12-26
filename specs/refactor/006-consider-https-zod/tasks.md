@@ -99,9 +99,9 @@
 - [X] T044 Update ObjectBuilder `.text()` method in src/ZodBuilder/object.ts to generate `z.strictObject({...})` in v4 when `_strict` is true
 - [X] T045 Update ObjectBuilder `.text()` method to generate `z.looseObject({...})` in v4 when `_passthrough` is true
 - [X] T046 Update ObjectBuilder `.text()` method to generate `z.object({...}).strict()` in v3 mode when `_strict` is true
-- [ ] T047 Update ObjectBuilder `.text()` method to generate `z.object({...}).passthrough()` in v3 mode when `_passthrough` is true
-- [ ] T048 Update ObjectBuilder merge handling to generate `.extend()` in v4 mode, `.merge()` in v3 mode
-- [ ] T049 Handle optional field defaults correctly for both v3 (not applied) and v4 (applied) - document behavior difference
+- [X] T047 Update ObjectBuilder `.text()` method to generate `z.object({...}).passthrough()` in v3 mode when `_passthrough` is true
+- [X] T048 Update ObjectBuilder merge handling to generate `.extend()` in v4 mode, `.merge()` in v3 mode
+- [X] T049 Handle optional field defaults correctly for both v3 (not applied) and v4 (applied) - document behavior difference
 
 **Checkpoint**: Object builders generate correct code per version
 
@@ -111,9 +111,9 @@
 
 **Purpose**: Update enum generation for Zod v4's unified API
 
-- [ ] T050 Update NativeEnumBuilder `.text()` method in src/ZodBuilder/nativeEnum.ts to generate `z.enum()` in v4 mode
-- [ ] T051 Update NativeEnumBuilder `.text()` method to generate `z.nativeEnum()` in v3 mode
-- [ ] T052 Verify enum value handling works correctly in both modes
+- [X] T050 Update NativeEnumBuilder `.text()` method in src/ZodBuilder/nativeEnum.ts to generate `z.enum()` in v4 mode
+- [X] T051 Update NativeEnumBuilder `.text()` method to generate `z.nativeEnum()` in v3 mode
+- [X] T052 Verify enum value handling works correctly in both modes
 
 **Checkpoint**: Enums generate unified API in v4, nativeEnum in v3
 

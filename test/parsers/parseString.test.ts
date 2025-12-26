@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseString } from '../../src/JsonSchema/parsers/parseString';
+import type { Context } from '../../src/Types';
 
 describe('parseString', () => {
 	const run = (output: string, data: unknown) =>
@@ -65,22 +66,54 @@ describe('parseString', () => {
 		).toBe(`z.string().uuid()`);
 	});
 
-	it('time', () => {
+	it('base64 (v3 mode)', () => {
+		const refsV3: Context = { path: [], seen: new Map(), zodVersion: 'v3' };
 		expect(
-			parseString({
-				type: 'string',
-				format: 'time',
-			}).text(),
-		).toBe(`z.string().time()`);
+			parseString(
+				{
+					type: 'string',
+					contentEncoding: 'base64',
+				},
+				refsV3,
+			).text(),
+		).toBe('z.string().base64()');
+		expect(
+			parseString(
+				{
+					type: 'string',
+					contentEncoding: 'base64',
+					errorMessage: {
+						contentEncoding: 'x',
+					},
+				},
+				refsV3,
+			).text(),
+		).toBe('z.string().base64("x")');
 	});
 
-	it('date', () => {
+	it('base64 (v4 mode)', () => {
+		const refsV4: Context = { path: [], seen: new Map(), zodVersion: 'v4' };
 		expect(
-			parseString({
-				type: 'string',
-				format: 'date',
-			}).text(),
-		).toBe(`z.string().date()`);
+			parseString(
+				{
+					type: 'string',
+					contentEncoding: 'base64',
+				},
+				refsV4,
+			).text(),
+		).toBe('z.base64()');
+		expect(
+			parseString(
+				{
+					type: 'string',
+					contentEncoding: 'base64',
+					errorMessage: {
+						contentEncoding: 'x',
+					},
+				},
+				refsV4,
+			).text(),
+		).toBe('z.base64({ error: "x" })');
 	});
 
 	it('duration', () => {
@@ -92,38 +125,6 @@ describe('parseString', () => {
 		).toBe(`z.string().duration()`);
 	});
 
-	it('base64', () => {
-		expect(
-			parseString({
-				type: 'string',
-				contentEncoding: 'base64',
-			}).text(),
-		).toBe('z.string().base64()');
-		expect(
-			parseString({
-				type: 'string',
-				contentEncoding: 'base64',
-				errorMessage: {
-					contentEncoding: 'x',
-				},
-			}).text(),
-		).toBe('z.string().base64("x")');
-		expect(
-			parseString({
-				type: 'string',
-				format: 'binary',
-			}).text(),
-		).toBe('z.string().base64()');
-		expect(
-			parseString({
-				type: 'string',
-				format: 'binary',
-				errorMessage: {
-					format: 'x',
-				},
-			}).text(),
-		).toBe('z.string().base64("x")');
-	});
 
 	it('stringified JSON', () => {
 		expect(

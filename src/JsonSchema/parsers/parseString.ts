@@ -30,7 +30,11 @@ export const parseString = (
 
 	// Apply contentEncoding constraint
 	if (schema.contentEncoding === 'base64') {
-		builder.base64(schema.errorMessage?.contentEncoding);
+		const maybeBuilder = builder.base64(schema.errorMessage?.contentEncoding);
+		// If hybrid v4 switched to Base64Builder, return early
+		if (maybeBuilder !== builder) {
+			return maybeBuilder as typeof builder;
+		}
 	}
 
 	// Apply contentMediaType constraint
