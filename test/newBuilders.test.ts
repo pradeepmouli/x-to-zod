@@ -295,6 +295,19 @@ describe('New Zod Builders', () => {
 			expect(schema.text()).toBe('z.lazy(() => nodeSchema)');
 		});
 
+		it('lazy builder with complex type', () => {
+			const schema = build.lazy(
+				build.object({ name: build.string(), age: build.number() }),
+			);
+			expect(schema.text()).toContain('z.lazy(');
+			expect(schema.text()).toContain('z.object({');
+		});
+
+		it('lazy builder with modifiers', () => {
+			const schema = build.lazy(build.number()).optional();
+			expect(schema.text()).toBe('z.lazy(() => z.number()).optional()');
+		});
+
 		it('function builder without args', () => {
 			const schema = build.function();
 			expect(schema.text()).toBe('z.function()');
