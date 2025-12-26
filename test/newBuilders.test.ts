@@ -52,87 +52,87 @@ describe('New Zod Builders', () => {
 
 	describe('String Validators', () => {
 		it('url validator', () => {
-			const schema = build.string().url();
+			const schema = build.string({ zodVersion: 'v3' }).url();
 			expect(schema.text()).toBe('z.string().url()');
 		});
 
 		it('httpUrl validator', () => {
-			const schema = build.string().httpUrl();
+			const schema = build.string({ zodVersion: 'v3' }).httpUrl();
 			expect(schema.text()).toBe('z.string().httpUrl()');
 		});
 
 		it('hostname validator', () => {
-			const schema = build.string().hostname();
+			const schema = build.string({ zodVersion: 'v3' }).hostname();
 			expect(schema.text()).toBe('z.string().hostname()');
 		});
 
 		it('emoji validator', () => {
-			const schema = build.string().emoji();
+			const schema = build.string({ zodVersion: 'v3' }).emoji();
 			expect(schema.text()).toBe('z.string().emoji()');
 		});
 
 		it('base64url validator', () => {
-			const schema = build.string().base64url();
+			const schema = build.string({ zodVersion: 'v3' }).base64url();
 			expect(schema.text()).toBe('z.string().base64url()');
 		});
 
 		it('hex validator', () => {
-			const schema = build.string().hex();
+			const schema = build.string({ zodVersion: 'v3' }).hex();
 			expect(schema.text()).toBe('z.string().hex()');
 		});
 
 		it('jwt validator', () => {
-			const schema = build.string().jwt();
+			const schema = build.string({ zodVersion: 'v3' }).jwt();
 			expect(schema.text()).toBe('z.string().jwt()');
 		});
 
 		it('nanoid validator', () => {
-			const schema = build.string().nanoid();
+			const schema = build.string({ zodVersion: 'v3' }).nanoid();
 			expect(schema.text()).toBe('z.string().nanoid()');
 		});
 
 		it('cuid validator', () => {
-			const schema = build.string().cuid();
+			const schema = build.string({ zodVersion: 'v3' }).cuid();
 			expect(schema.text()).toBe('z.string().cuid()');
 		});
 
 		it('cuid2 validator', () => {
-			const schema = build.string().cuid2();
+			const schema = build.string({ zodVersion: 'v3' }).cuid2();
 			expect(schema.text()).toBe('z.string().cuid2()');
 		});
 
 		it('ulid validator', () => {
-			const schema = build.string().ulid();
+			const schema = build.string({ zodVersion: 'v3' }).ulid();
 			expect(schema.text()).toBe('z.string().ulid()');
 		});
 
 		it('ipv4 validator', () => {
-			const schema = build.string().ipv4();
+			const schema = build.string({ zodVersion: 'v3' }).ipv4();
 			expect(schema.text()).toBe('z.string().ip({ version: "v4" })');
 		});
 
 		it('ipv6 validator', () => {
-			const schema = build.string().ipv6();
+			const schema = build.string({ zodVersion: 'v3' }).ipv6();
 			expect(schema.text()).toBe('z.string().ip({ version: "v6" })');
 		});
 
 		it('mac validator', () => {
-			const schema = build.string().mac();
+			const schema = build.string({ zodVersion: 'v3' }).mac();
 			expect(schema.text()).toBe('z.string().mac()');
 		});
 
 		it('cidrv4 validator', () => {
-			const schema = build.string().cidrv4();
+			const schema = build.string({ zodVersion: 'v3' }).cidrv4();
 			expect(schema.text()).toBe('z.string().cidrv4()');
 		});
 
 		it('cidrv6 validator', () => {
-			const schema = build.string().cidrv6();
+			const schema = build.string({ zodVersion: 'v3' }).cidrv6();
 			expect(schema.text()).toBe('z.string().cidrv6()');
 		});
 
 		it('hash validator with algorithm', () => {
-			const schema = build.string().hash('sha256');
+			const schema = build.string({ zodVersion: 'v3' }).hash('sha256');
 			expect(schema.text()).toBe('z.string().hash("sha256")');
 		});
 
@@ -222,7 +222,10 @@ describe('New Zod Builders', () => {
 
 		it('merge method', () => {
 			const schema = build
-				.object({ name: build.string() })
+				.object(
+					{ name: build.string({ zodVersion: 'v3' }) },
+					{ zodVersion: 'v3' },
+				)
 				.merge('otherSchema');
 			expect(schema.text()).toContain('.merge(otherSchema)');
 		});
@@ -385,12 +388,14 @@ describe('New Zod Builders', () => {
 		});
 
 		it('nativeEnum builder', () => {
-			const schema = build.nativeEnum('MyEnum');
+			const schema = build.nativeEnum('MyEnum', { zodVersion: 'v3' });
 			expect(schema.text()).toBe('z.nativeEnum(MyEnum)');
 		});
 
 		it('nativeEnum builder with modifiers', () => {
-			const schema = build.nativeEnum('Status').optional();
+			const schema = build
+				.nativeEnum('Status', { zodVersion: 'v3' })
+				.optional();
 			expect(schema.text()).toBe('z.nativeEnum(Status).optional()');
 		});
 

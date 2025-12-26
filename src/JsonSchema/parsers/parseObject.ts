@@ -61,11 +61,11 @@ export function parseObject(
 		if (refs.withJsdocs) {
 			result = `z.object({ ${propsWithJsdocs.join(', ')} })`;
 		} else {
-			result = build.object(properties).text();
+			result = build.object(properties, refs).text();
 		}
 	} else if (objectSchema.properties) {
 		// Empty properties object
-		result = build.object({}).text();
+		result = build.object({}, refs).text();
 	} else {
 		result = '';
 	} // Step 2: Handle additionalProperties
@@ -168,10 +168,10 @@ export function parseObject(
 		refineFn += '}\n';
 		refineFn += '}';
 
-		result = ObjectBuilder.fromCode(result).superRefine(refineFn).text();
+		result = ObjectBuilder.fromCode(result, refs).superRefine(refineFn).text();
 	} else if (result && additionalPropertiesZod) {
 		// No pattern properties, but we have additionalProperties
-		const builder = ObjectBuilder.fromCode(result);
+		const builder = ObjectBuilder.fromCode(result, refs);
 		if (additionalPropertiesZod === 'z.never()') {
 			result = builder.strict().text();
 		} else {
@@ -181,15 +181,19 @@ export function parseObject(
 		// No properties, no patternProperties
 		if (additionalPropertiesZod) {
 			result = build
-				.record(build.string(), ObjectBuilder.fromCode(additionalPropertiesZod))
+				.record(
+					build.string(refs),
+					ObjectBuilder.fromCode(additionalPropertiesZod, refs),
+					refs,
+				)
 				.text();
 		} else {
-			result = build.record(build.string(), build.any()).text();
+			result = build.record(build.string(refs), build.any(refs), refs).text();
 		}
 	}
 
 	// Step 4: Handle combinators (anyOf, oneOf, allOf)
-	let builder = ObjectBuilder.fromCode(result);
+	let builder = ObjectBuilder.fromCode(result, refs);
 
 	if (its.an.anyOf(objectSchema)) {
 		const anyOfZod = parseAnyOf(
