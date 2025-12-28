@@ -54,7 +54,7 @@ User description: "separate factories for v3 and v4, we in fact don't have to pa
 **Concrete Examples**:
 - `src/ZodBuilder/index.ts`: Complex runtime detection:
   ```typescript
-  const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && 
+  const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' &&
     ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
   if (isOptions) {
     return new StringBuilder(undefined, paramsOrOptions as Options);
@@ -72,7 +72,7 @@ User description: "separate factories for v3 and v4, we in fact don't have to pa
 - [X] Developer velocity impact - Complex factory logic slows feature development
 - [X] Code quality - Mixed concerns in factory makes version handling unclear
 
-**Justification**: 
+**Justification**:
 The current implementation of params support (enhance-002) introduced runtime detection to distinguish between Options and params. While functional, this approach has several problems:
 1. **Fragile**: Property checks can break with object shapes that look like Options
 2. **Repeated Logic**: Version decision made in every factory method call
@@ -133,7 +133,7 @@ Create separate factory objects (buildV3, buildV4) in dedicated files. Each fact
 // Factory with runtime detection
 export const build = {
   string: (paramsOrOptions?: Parameters<typeof z.string>[0] | Options) => {
-    const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && 
+    const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' &&
       ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
     if (isOptions) {
       return new StringBuilder(undefined, paramsOrOptions as Options);
@@ -151,13 +151,13 @@ const code = build.string().min(5).text();
 ```typescript
 // v3.ts - Separate factory for version 3
 export const buildV3 = {
-  string: (params?: Parameters<typeof z.string>[0]) => 
+  string: (params?: Parameters<typeof z.string>[0]) =>
     new StringBuilder(params, 'v3')
 };
 
 // v4.ts - Separate factory for version 4
 export const buildV4 = {
-  string: (params?: Parameters<typeof z.string>[0]) => 
+  string: (params?: Parameters<typeof z.string>[0]) =>
     new StringBuilder(params, 'v4')
 };
 
