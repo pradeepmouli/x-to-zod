@@ -2,13 +2,16 @@
 
 Feature: Dependency Injection Pattern for Version-Specific Factories
 
+**Branch**: `refactor/007-inject-build-factory`
 **Status**: 🟡 PLANNED - Ready for implementation
+**Test Baseline**: 263 passed, 2 skipped
+**TypeScript Status**: 0 errors
 
 ## Phase 0: Setup and Baseline
 
 - [ ] T001 Run full test suite and capture baseline (expect 263 passed, 2 skipped)
 - [ ] T002 Verify TypeScript compilation clean (0 errors)
-- [ ] T003 Create branch `refactor/007-inject-build-factory`
+- [X] T003 Create branch `refactor/007-inject-build-factory` (COMPLETED - branch already exists)
 - [ ] T004 Document current architecture (runtime detection in factory functions)
 
 ## Phase 1: Create Version-Specific Factory Files
@@ -37,9 +40,10 @@ Feature: Dependency Injection Pattern for Version-Specific Factories
 
 - [ ] T009 Update Context type in `src/Types.ts`
   - Files: `src/Types.ts`
+  - Import buildV3 and buildV4 types: `import type { buildV3 } from './ZodBuilder/v3.js'; import type { buildV4 } from './ZodBuilder/v4.js';`
   - Add `build: typeof buildV3 | typeof buildV4` property to Context type
-  - Context becomes: `{ build, path, seen }`
-  - Update type imports if needed
+  - Full Context type: `Context = Options & { build: typeof buildV3 | typeof buildV4; path: (string | number)[]; seen: Map<object | boolean, { n: number; r: BaseBuilder | undefined }> }`
+  - Preserve existing Options & structure
 
 - [ ] T010 Verify TypeScript compilation (0 errors expected at this stage)
 
@@ -80,8 +84,8 @@ Feature: Dependency Injection Pattern for Version-Specific Factories
   - Files: `src/ZodBuilder/date.ts`
   - Same pattern as StringBuilder
 
-- [ ] T019 [P] Update remaining builders (any, unknown, null, undefined, never, etc.)
-  - Files: All remaining `src/ZodBuilder/*.ts` files
+- [ ] T019 [P] Update remaining builders (52 files total)
+  - Files: any.ts, base64.ts, codec.ts, const.ts, cuid.ts, custom.ts, datetime.ts, discriminatedUnion.ts, duration.ts, email.ts, emoji.ts, enum.ts, file.ts, function.ts, generic.ts, intersection.ts, ip.ts, json.ts, keyof.ts, lazy.ts, literal.ts, map.ts, nan.ts, nanoid.ts, nativeEnum.ts, never.ts, null.ts, pipe.ts, preprocess.ts, promise.ts, record.ts, set.ts, symbol.ts, templateLiteral.ts, time.ts, tuple.ts, ulid.ts, undefined.ts, union.ts, unknown.ts, url.ts, uuid.ts, versions.ts, void.ts, xor.ts, plus 8 already listed (string, number, boolean, object, array, bigint, date, unknown)
   - Update all constructors to accept (params?, version?) signature
   - Remove Options parameter
 
@@ -89,12 +93,13 @@ Feature: Dependency Injection Pattern for Version-Specific Factories
 
 ## Phase 4: Update Entry Point
 
-- [ ] T021 Modify entry point to inject factory
-  - Files: `src/jsonSchemaToZod.ts` or main entry file
-  - Import buildV3, buildV4 from ZodBuilder
-  - Select factory based on options.zodVersion: `const build = options.zodVersion === 'v3' ? buildV3 : buildV4`
-  - Create context with build: `const context: Context = { build, path: [], seen: new Map() }`
-  - Pass context to parseSchema or main parser
+- [ ] T021 Modify entry points to inject factory
+  - Files: `src/jsonSchemaToZod.ts` (main export) AND `src/JsonSchema/toZod.ts` (internal entry)
+  - In toZod.ts: Import buildV3, buildV4 from ZodBuilder
+  - Select factory based on options.zodVersion: `const build = options.zodVersion === 'v3' ? buildV3 : buildV4` (default v4)
+  - Create context with build: `const context: Context = { ...rest, build, path: [], seen: new Map() }`
+  - Pass context to parseSchema
+  - Verify jsonSchemaToZod.ts delegates correctly to toZod
 
 - [ ] T022 Verify entry point compiles and tests run (expect 263 passed)
 
@@ -155,9 +160,10 @@ Feature: Dependency Injection Pattern for Version-Specific Factories
   - Files: `src/JsonSchema/parsers/parseMultipleType.ts`
   - Same pattern as parseString
 
-- [ ] T036 [P] Update any remaining parsers in `src/JsonSchema/parsers/`
-  - Files: All remaining parser files
+- [ ] T036 [P] Update parseIfThenElse, parseNullable, parseDefault to use refs.build
+  - Files: `src/JsonSchema/parsers/parseIfThenElse.ts`, `src/JsonSchema/parsers/parseNullable.ts`, `src/JsonSchema/parsers/parseDefault.ts`
   - Apply same pattern: remove build import, use refs.build
+  - These are the 3 remaining parsers not explicitly listed (17 total parsers confirmed)
 
 - [ ] T037 Run full test suite after parser updates (expect 263 passed)
 
@@ -183,6 +189,12 @@ Feature: Dependency Injection Pattern for Version-Specific Factories
   - Verify generated Zod code is identical
 
 - [ ] T044 Check for any remaining Options imports in builder files
+  - Command: `grep -r "import.*Options" src/ZodBuilder/`
+  - Verify: Should find 0 matches (Options only in Types.ts now)
+
+- [ ] T044a Verify runtime detection code removed
+  - Command: `grep -r "isOptions\|zodVersion.*in\|seen.*in\|path.*in" src/ZodBuilder/index.ts`
+  - Verify: Should find 0 matches in factory functions
 
 - [ ] T045 Update any internal documentation if needed
 
