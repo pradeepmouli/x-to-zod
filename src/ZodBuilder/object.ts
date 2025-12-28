@@ -232,7 +232,7 @@ function objectTextFromProperties(
 	paramsStr?: string,
 ): string {
 	const paramsText = paramsStr ? `, ${paramsStr}` : '';
-	
+
 	if (Object.keys(properties).length === 0) {
 		if (mode === 'strict') {
 			return `z.strictObject({}${paramsText})`;

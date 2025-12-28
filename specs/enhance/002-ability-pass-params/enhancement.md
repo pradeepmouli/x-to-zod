@@ -153,7 +153,7 @@ Architecture identified for improvement via refactoring (see refactor/007-inject
 build.string({ errorMap: customErrorMap })
 // Generates: z.string({ errorMap: customErrorMap })
 
-build.number({ 
+build.number({
   invalid_type_error: "Must be a number",
   required_error: "Required field"
 })
@@ -193,7 +193,7 @@ export class StringBuilder extends ZodBuilder<'string', Parameters<typeof z.stri
 
 // Factory function with typed params
 const build = {
-  string: (params?: Parameters<typeof z.string>[0], options?: Options) => 
+  string: (params?: Parameters<typeof z.string>[0], options?: Options) =>
     new StringBuilder(params, options),
   // ...
 };

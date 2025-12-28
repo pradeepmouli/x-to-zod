@@ -69,7 +69,9 @@ export class ArrayBuilder extends ZodBuilder<
 
 		const itemStr = this._itemSchema.text();
 		const paramsStr = this.serializeParams();
-		return paramsStr ? `z.array(${itemStr}, ${paramsStr})` : `z.array(${itemStr})`;
+		return paramsStr
+			? `z.array(${itemStr}, ${paramsStr})`
+			: `z.array(${itemStr})`;
 	}
 
 	protected override modify(baseText: string): string {

@@ -42,9 +42,9 @@ import { StringBuilder, NumberBuilder, /* ... */ } from './';
 import type { z } from 'zod';
 
 export const buildV3 = {
-  string: (params?: Parameters<typeof z.string>[0]) => 
+  string: (params?: Parameters<typeof z.string>[0]) =>
     new StringBuilder(params, 'v3'),
-  number: (params?: Parameters<typeof z.number>[0]) => 
+  number: (params?: Parameters<typeof z.number>[0]) =>
     new NumberBuilder(params, 'v3'),
   // ... all other builders
 };
@@ -57,7 +57,7 @@ export const buildV3 = {
 ```typescript
 export class StringBuilder extends ZodBuilder<'string', Parameters<typeof z.string>[0]> {
   private _version?: 'v3' | 'v4';
-  
+
   constructor(
     params?: Parameters<typeof z.string>[0],
     version?: 'v3' | 'v4'
@@ -66,7 +66,7 @@ export class StringBuilder extends ZodBuilder<'string', Parameters<typeof z.stri
     this._params = params;
     this._version = version;
   }
-  
+
   // ... rest of implementation
 }
 ```
@@ -77,19 +77,19 @@ export class StringBuilder extends ZodBuilder<'string', Parameters<typeof z.stri
 import { buildV3, buildV4 } from './ZodBuilder';
 
 export const jsonSchemaToZod = (
-  schema: JsonSchema, 
+  schema: JsonSchema,
   options: Options = {}
 ): string => {
   // Select factory once based on version
   const build = options.zodVersion === 'v3' ? buildV3 : buildV4;
-  
+
   // Inject into context
   const context: Context = {
     build,
     path: [],
     seen: new Map()
   };
-  
+
   // Parse with injected context
   return parseSchema(schema, context);
 };

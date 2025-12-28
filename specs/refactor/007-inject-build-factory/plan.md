@@ -49,13 +49,13 @@ const code = build.string().min(5).text();
 ```typescript
 // v3.ts - Version 3 factory
 export const buildV3 = {
-  string: (params?: Parameters<typeof z.string>[0]) => 
+  string: (params?: Parameters<typeof z.string>[0]) =>
     new StringBuilder(params, 'v3')
 };
 
 // v4.ts - Version 4 factory
 export const buildV4 = {
-  string: (params?: Parameters<typeof z.string>[0]) => 
+  string: (params?: Parameters<typeof z.string>[0]) =>
     new StringBuilder(params, 'v4')
 };
 
@@ -137,10 +137,10 @@ src/
     object.ts          # MODIFIED: Constructor signature updated
     array.ts           # MODIFIED: Constructor signature updated
     [all other builders...] # MODIFIED: Constructor signature updated
-  
+
   Types.ts             # MODIFIED: Context type includes build property
   jsonSchemaToZod.ts   # MODIFIED: Select factory and inject into context
-  
+
   JsonSchema/
     parsers/
       parseString.ts   # MODIFIED: Use refs.build instead of import

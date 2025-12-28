@@ -5,7 +5,7 @@
 Current architecture uses runtime detection to distinguish between Options and params in factory functions. This creates complexity and fragility:
 
 ```typescript
-const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && 
+const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' &&
   ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
 ```
 
@@ -20,7 +20,7 @@ const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' &&
 ### Unknown: Where to inject the build factory?
 
 **Decision**: Inject build factory into Context type at entry point
-**Rationale**: 
+**Rationale**:
 - Context is already passed through all parsers
 - Natural place for shared dependencies
 - Minimal changes to parser signatures
@@ -94,13 +94,13 @@ export const buildV4 = {
 ```typescript
 class StringBuilder extends ZodBuilder<'string', ...> {
   private _version?: 'v3' | 'v4';
-  
+
   constructor(params?, version?) {
     super();
     this._params = params;
     this._version = version;
   }
-  
+
   base(): string {
     // Version-specific logic if needed
     if (this._version === 'v3') {
@@ -148,14 +148,14 @@ const code = refs.build.string().min(5).text();
 const jsonSchemaToZod = (schema: JsonSchema, options: Options): string => {
   // Select factory based on version
   const build = options.zodVersion === 'v3' ? buildV3 : buildV4;
-  
+
   // Create context with injected factory
   const context: Context = {
     build,
     path: [],
     seen: new Map()
   };
-  
+
   // Parse schema with injected context
   return parseSchema(schema, context);
 };
