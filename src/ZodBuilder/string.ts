@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
 import { EmailBuilder } from './email.js';
 import { UrlBuilder } from './url.js';
@@ -12,7 +13,10 @@ import { Base64Builder } from './base64.js';
 /**
  * Fluent StringBuilder: wraps a Zod string schema string and provides chainable methods.
  */
-export class StringBuilder extends ZodBuilder<'string'> {
+export class StringBuilder extends ZodBuilder<
+	'string',
+	Parameters<typeof z.string>[0]
+> {
 	readonly typeKind = 'string' as const;
 	_format?: { format: string; errorMessage?: string } = undefined;
 	_pattern?: { pattern: string; errorMessage?: string } = undefined;
@@ -22,8 +26,12 @@ export class StringBuilder extends ZodBuilder<'string'> {
 	_json?: { errorMessage?: string } = undefined;
 	_pipe?: { contentSchema: ZodBuilder; errorMessage?: string } = undefined;
 
-	constructor(options?: import('../Types.js').Options) {
+	constructor(
+		params?: Parameters<typeof z.string>[0],
+		options?: import('../Types.js').Options,
+	) {
 		super(options);
+		this._params = params;
 	}
 
 	/**
@@ -432,7 +440,8 @@ export class StringBuilder extends ZodBuilder<'string'> {
 	 * Compute the base string schema.
 	 */
 	protected override base(): string {
-		return 'z.string()';
+		const paramsStr = this.serializeParams();
+		return paramsStr ? `z.string(${paramsStr})` : 'z.string()';
 	}
 
 	protected override modify(baseText: string): string {

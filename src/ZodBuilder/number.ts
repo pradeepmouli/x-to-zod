@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -12,7 +13,10 @@ import { ZodBuilder } from './BaseBuilder.js';
  * This difference is INHERENT to Zod and not controlled by json-schema-to-zod.
  * See NUMBER-INFINITY-NOTES.md for migration guidance.
  */
-export class NumberBuilder extends ZodBuilder<'number'> {
+export class NumberBuilder extends ZodBuilder<
+	'number',
+	Parameters<typeof z.number>[0]
+> {
 	readonly typeKind = 'number' as const;
 	_int: boolean | { errorMessage: string } = false;
 	_multipleOf: { value: number; errorMessage?: string } | undefined = undefined;
@@ -25,8 +29,12 @@ export class NumberBuilder extends ZodBuilder<'number'> {
 		| { value: number; exclusive: boolean; errorMessage?: string }
 		| undefined = undefined;
 
-	constructor(options?: import('../Types.js').Options) {
+	constructor(
+		params?: Parameters<typeof z.number>[0],
+		options?: import('../Types.js').Options,
+	) {
 		super(options);
+		this._params = params;
 	}
 
 	/**
@@ -98,7 +106,8 @@ export class NumberBuilder extends ZodBuilder<'number'> {
 	 * Compute the base number schema.
 	 */
 	protected override base(): string {
-		return 'z.number()';
+		const paramsStr = this.serializeParams();
+		return paramsStr ? `z.number(${paramsStr})` : 'z.number()';
 	}
 
 	protected override modify(baseText: string): string {

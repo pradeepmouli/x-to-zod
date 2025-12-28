@@ -1,10 +1,14 @@
+import type { z } from 'zod';
 import { ZodBuilder, applySuperRefine } from './BaseBuilder.js';
 import { build } from './index.js';
 
 /**
  * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
  */
-export class ObjectBuilder extends ZodBuilder<'object'> {
+export class ObjectBuilder extends ZodBuilder<
+	'object',
+	Parameters<typeof z.object>[1]
+> {
 	readonly typeKind = 'object' as const;
 	readonly _properties: Record<string, ZodBuilder>;
 	private _precomputedSchema?: string; // Store pre-built schema string from fromCode()
@@ -20,10 +24,12 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 
 	constructor(
 		properties: Record<string, ZodBuilder> = {},
+		params?: Parameters<typeof z.object>[1],
 		options?: import('../Types.js').Options,
 	) {
 		super(options);
 		this._properties = properties;
+		this._params = params;
 	}
 
 	/**
@@ -136,14 +142,26 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 			!this._superRefineFn
 		) {
 			if (this._strict) {
-				return objectTextFromProperties(this._properties, 'strict');
+				return objectTextFromProperties(
+					this._properties,
+					'strict',
+					this.serializeParams(),
+				);
 			}
 			if (this._loose) {
-				return objectTextFromProperties(this._properties, 'loose');
+				return objectTextFromProperties(
+					this._properties,
+					'loose',
+					this.serializeParams(),
+				);
 			}
 		}
 
-		return objectTextFromProperties(this._properties);
+		return objectTextFromProperties(
+			this._properties,
+			undefined,
+			this.serializeParams(),
+		);
 	}
 
 	protected override modify(baseText: string): string {
@@ -211,14 +229,17 @@ export class ObjectBuilder extends ZodBuilder<'object'> {
 function objectTextFromProperties(
 	properties: Record<string, ZodBuilder>,
 	mode?: 'strict' | 'loose',
+	paramsStr?: string,
 ): string {
+	const paramsText = paramsStr ? `, ${paramsStr}` : '';
+	
 	if (Object.keys(properties).length === 0) {
 		if (mode === 'strict') {
-			return 'z.strictObject({})';
+			return `z.strictObject({}${paramsText})`;
 		} else if (mode === 'loose') {
-			return 'z.looseObject({})';
+			return `z.looseObject({}${paramsText})`;
 		}
-		return 'z.object({})';
+		return `z.object({}${paramsText})`;
 	}
 
 	const props = Object.entries(properties)
@@ -229,11 +250,11 @@ function objectTextFromProperties(
 		.join(', ');
 
 	if (mode === 'strict') {
-		return `z.strictObject({ ${props} })`;
+		return `z.strictObject({ ${props} }${paramsText})`;
 	} else if (mode === 'loose') {
-		return `z.looseObject({ ${props} })`;
+		return `z.looseObject({ ${props} }${paramsText})`;
 	}
-	return `z.object({ ${props} })`;
+	return `z.object({ ${props} }${paramsText})`;
 }
 
 /**

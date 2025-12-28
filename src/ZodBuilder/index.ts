@@ -150,23 +150,57 @@ export {
 
 // Builder factories - Zod-like API
 const coreBuilders = {
-	number: (options?: import('../Types.js').Options) =>
-		new NumberBuilder(options),
-	string: (options?: import('../Types.js').Options) =>
-		new StringBuilder(options),
-	boolean: (options?: import('../Types.js').Options) =>
-		new BooleanBuilder(options),
+	number: (
+		paramsOrOptions?: Parameters<typeof import('zod').z.number>[0] | import('../Types.js').Options,
+		options?: import('../Types.js').Options,
+	) => {
+		// If paramsOrOptions looks like Options/Context, treat it as options
+		const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
+		return isOptions
+			? new NumberBuilder(undefined, paramsOrOptions as import('../Types.js').Options)
+			: new NumberBuilder(paramsOrOptions as Parameters<typeof import('zod').z.number>[0], options);
+	},
+	string: (
+		paramsOrOptions?: Parameters<typeof import('zod').z.string>[0] | import('../Types.js').Options,
+		options?: import('../Types.js').Options,
+	) => {
+		const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
+		return isOptions
+			? new StringBuilder(undefined, paramsOrOptions as import('../Types.js').Options)
+			: new StringBuilder(paramsOrOptions as Parameters<typeof import('zod').z.string>[0], options);
+	},
+	boolean: (
+		paramsOrOptions?: Parameters<typeof import('zod').z.boolean>[0] | import('../Types.js').Options,
+		options?: import('../Types.js').Options,
+	) => {
+		const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
+		return isOptions
+			? new BooleanBuilder(undefined, paramsOrOptions as import('../Types.js').Options)
+			: new BooleanBuilder(paramsOrOptions as Parameters<typeof import('zod').z.boolean>[0], options);
+	},
 	null: (options?: import('../Types.js').Options) => new NullBuilder(options),
 	array: (
 		itemSchemaZod:
 			| import('./BaseBuilder.js').ZodBuilder
 			| import('./BaseBuilder.js').ZodBuilder[],
+		paramsOrOptions?: Parameters<typeof import('zod').z.array>[1] | import('../Types.js').Options,
 		options?: import('../Types.js').Options,
-	) => new ArrayBuilder(itemSchemaZod, options),
+	) => {
+		const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
+		return isOptions
+			? new ArrayBuilder(itemSchemaZod, undefined, paramsOrOptions as import('../Types.js').Options)
+			: new ArrayBuilder(itemSchemaZod, paramsOrOptions as Parameters<typeof import('zod').z.array>[1], options);
+	},
 	object: (
 		properties: Record<string, import('./BaseBuilder.js').ZodBuilder> = {},
+		paramsOrOptions?: Parameters<typeof import('zod').z.object>[1] | import('../Types.js').Options,
 		options?: import('../Types.js').Options,
-	) => new ObjectBuilder(properties, options),
+	) => {
+		const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
+		return isOptions
+			? new ObjectBuilder(properties, undefined, paramsOrOptions as import('../Types.js').Options)
+			: new ObjectBuilder(properties, paramsOrOptions as Parameters<typeof import('zod').z.object>[1], options);
+	},
 	enum: (
 		values: import('../Types.js').Serializable[],
 		options?: import('../Types.js').Options,
@@ -211,9 +245,24 @@ const coreBuilders = {
 	void: (options?: import('../Types.js').Options) => new VoidBuilder(options),
 	undefined: (options?: import('../Types.js').Options) =>
 		new UndefinedBuilder(options),
-	date: (options?: import('../Types.js').Options) => new DateBuilder(options),
-	bigint: (options?: import('../Types.js').Options) =>
-		new BigIntBuilder(options),
+	date: (
+		paramsOrOptions?: Parameters<typeof import('zod').z.date>[0] | import('../Types.js').Options,
+		options?: import('../Types.js').Options,
+	) => {
+		const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
+		return isOptions
+			? new DateBuilder(undefined, paramsOrOptions as import('../Types.js').Options)
+			: new DateBuilder(paramsOrOptions as Parameters<typeof import('zod').z.date>[0], options);
+	},
+	bigint: (
+		paramsOrOptions?: Parameters<typeof import('zod').z.bigint>[0] | import('../Types.js').Options,
+		options?: import('../Types.js').Options,
+	) => {
+		const isOptions = paramsOrOptions && typeof paramsOrOptions === 'object' && ('zodVersion' in paramsOrOptions || 'seen' in paramsOrOptions || 'path' in paramsOrOptions);
+		return isOptions
+			? new BigIntBuilder(undefined, paramsOrOptions as import('../Types.js').Options)
+			: new BigIntBuilder(paramsOrOptions as Parameters<typeof import('zod').z.bigint>[0], options);
+	},
 	symbol: (options?: import('../Types.js').Options) =>
 		new SymbolBuilder(options),
 	nan: (options?: import('../Types.js').Options) => new NaNBuilder(options),
