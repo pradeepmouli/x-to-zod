@@ -4,8 +4,20 @@
 
 ### Minor Changes
 
-- v3 v4 support
+- Added explicit support for generating schemas targeting **Zod v3** and **Zod v4**.
+- Introduced `buildV3` and `buildV4` factory methods for selecting the target Zod major version:
+  - `buildV4(...)` generates Zod v4-compatible schema definitions.
+  - `buildV3(...)` generates Zod v3-compatible schema definitions.
+- The default builder now targets **Zod v4** output when no explicit version-specific builder is used.
 
+### Migration Notes
+
+- **Existing users targeting Zod v3:**
+  - If your project still uses Zod v3, switch to the `buildV3` factory to continue generating v3-compatible schemas.
+  - Review any downstream code that assumes v3-specific APIs and ensure it uses the v3-targeting builder.
+- **Users upgrading to or already on Zod v4:**
+  - No changes are required; the default behavior now generates v4-compatible output via the default builder / `buildV4`.
+- If you maintain libraries or tools built on top of this package, consider exposing a configuration option that allows consumers to choose between `buildV3` and `buildV4`, with v4 as the recommended default.
 ## 0.4.0
 
 ### Minor Changes
