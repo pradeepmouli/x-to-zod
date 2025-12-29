@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- v3 v4 support
+
 ## 0.4.0
 
 ### Minor Changes
