@@ -12,10 +12,7 @@ export class DateBuilder extends ZodBuilder<
 	_min?: { value: Date; errorMessage?: string } = undefined;
 	_max?: { value: Date; errorMessage?: string } = undefined;
 
-	constructor(
-		params?: Parameters<typeof z.date>[0],
-		version?: 'v3' | 'v4',
-	) {
+	constructor(params?: Parameters<typeof z.date>[0], version?: 'v3' | 'v4') {
 		super(version);
 		this._params = params;
 	}

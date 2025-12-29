@@ -26,10 +26,7 @@ export class StringBuilder extends ZodBuilder<
 	_json?: { errorMessage?: string } = undefined;
 	_pipe?: { contentSchema: ZodBuilder; errorMessage?: string } = undefined;
 
-	constructor(
-		params?: Parameters<typeof z.string>[0],
-		version?: 'v3' | 'v4',
-	) {
+	constructor(params?: Parameters<typeof z.string>[0], version?: 'v3' | 'v4') {
 		super(version);
 		this._params = params;
 	}

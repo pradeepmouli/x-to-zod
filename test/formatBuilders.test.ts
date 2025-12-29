@@ -14,10 +14,7 @@ describe('String Format Builders - Hybrid Approach', () => {
 		});
 
 		it('should stay in StringBuilder when constraints exist in v4', () => {
-			const email = buildV4
-				.string()
-				.min(5)
-				.email('Invalid email');
+			const email = buildV4.string().min(5).email('Invalid email');
 			expect(email.text()).toContain('z.string()');
 			expect(email.text()).toContain('.min(5)');
 			expect(email.text()).toContain('.email(');
@@ -131,11 +128,7 @@ describe('String Format Builders - Hybrid Approach', () => {
 
 	describe('Constraints-first behavior', () => {
 		it('should stay in StringBuilder when minLength comes first', () => {
-			const result = buildV4
-				.string()
-				.min(10)
-				.max(100)
-				.email();
+			const result = buildV4.string().min(10).max(100).email();
 			expect(result.text()).toContain('z.string()');
 			expect(result.text()).toContain('.min(10)');
 			expect(result.text()).toContain('.max(100)');
@@ -165,10 +158,7 @@ describe('String Format Builders - Hybrid Approach', () => {
 		});
 
 		it('should support .describe() on UrlBuilder', () => {
-			const url = buildV4
-				.string()
-				.url()
-				.describe('A valid URL');
+			const url = buildV4.string().url().describe('A valid URL');
 			expect(url.text()).toBe('z.url().describe("A valid URL")');
 		});
 	});

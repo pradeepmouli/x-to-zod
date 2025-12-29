@@ -54,78 +54,78 @@ describe('New Zod Builders', () => {
 
 	describe('String Validators', () => {
 		it('url validator', () => {
-		const schema = buildV3.string().url();
+			const schema = buildV3.string().url();
 		});
 
 		it('httpUrl validator', () => {
-		const schema = buildV3.string().httpUrl();
+			const schema = buildV3.string().httpUrl();
 		});
 
 		it('hostname validator', () => {
-		const schema = buildV3.string().hostname();
+			const schema = buildV3.string().hostname();
 		});
 
 		it('emoji validator', () => {
-		const schema = buildV3.string().emoji();
+			const schema = buildV3.string().emoji();
 		});
 
 		it('base64url validator', () => {
-		const schema = buildV3.string().base64url();
+			const schema = buildV3.string().base64url();
 		});
 
 		it('hex validator', () => {
-		const schema = buildV3.string().hex();
+			const schema = buildV3.string().hex();
 		});
 
 		it('jwt validator', () => {
-		const schema = buildV3.string().jwt();
+			const schema = buildV3.string().jwt();
 		});
 
 		it('nanoid validator', () => {
-		const schema = buildV3.string().nanoid();
+			const schema = buildV3.string().nanoid();
 		});
 
 		it('cuid validator', () => {
-		const schema = buildV3.string().cuid();
+			const schema = buildV3.string().cuid();
 		});
 
 		it('cuid2 validator', () => {
-		const schema = buildV3.string().cuid2();
-		expect(schema.text()).toBe('z.string().cuid2()');
-	});
+			const schema = buildV3.string().cuid2();
+			expect(schema.text()).toBe('z.string().cuid2()');
+		});
 
-	it('ulid validator', () => {
-		const schema = buildV3.string().ulid();
+		it('ulid validator', () => {
+			const schema = buildV3.string().ulid();
 			expect(schema.text()).toBe('z.string().ulid()');
 		});
 
 		it('ipv4 validator', () => {
-		const schema = buildV3.string().ipv4();
+			const schema = buildV3.string().ipv4();
 			expect(schema.text()).toBe('z.string().ip({ version: "v4" })');
 		});
 
 		it('ipv6 validator', () => {
-		const schema = buildV3.string().ipv6();
+			const schema = buildV3.string().ipv6();
 			expect(schema.text()).toBe('z.string().ip({ version: "v6" })');
 		});
 
 		it('mac validator', () => {
-		const schema = buildV3.string().mac();
+			const schema = buildV3.string().mac();
 			expect(schema.text()).toBe('z.string().mac()');
 		});
 
 		it('cidrv4 validator', () => {
-		const schema = buildV3.string().cidrv4();
+			const schema = buildV3.string().cidrv4();
 			expect(schema.text()).toBe('z.string().cidrv4()');
 		});
 
 		it('cidrv6 validator', () => {
-		const schema = buildV3.string().cidrv6();
+			const schema = buildV3.string().cidrv6();
 			expect(schema.text()).toBe('z.string().cidrv6()');
 		});
 
 		it('hash validator with algorithm', () => {
-		const schema = buildV3.string().hash('sha256');
+			const schema = buildV3.string().hash('sha256');
 			expect(schema.text()).toBe('z.string().hash("sha256")');
 		});
 
@@ -214,18 +214,18 @@ describe('New Zod Builders', () => {
 		});
 
 		it('merge method', () => {
-		const schema = buildV3
-			.object({ name: buildV3.string() })
-			.merge('otherSchema');
-		expect(schema.text()).toContain('.merge(otherSchema)');
-	});
+			const schema = buildV3
+				.object({ name: buildV3.string() })
+				.merge('otherSchema');
+			expect(schema.text()).toContain('.merge(otherSchema)');
+		});
 
-	it('pick method', () => {
-		const schema = buildV3
-			.object({ name: buildV3.string(), age: buildV3.number() })
-			.pick(['name']);
-		expect(schema.text()).toContain('.pick({ "name": true })');
-	});
+		it('pick method', () => {
+			const schema = buildV3
+				.object({ name: buildV3.string(), age: buildV3.number() })
+				.pick(['name']);
+			expect(schema.text()).toContain('.pick({ "name": true })');
+		});
 
 		it('omit method', () => {
 			const schema = build
@@ -391,15 +391,13 @@ describe('New Zod Builders', () => {
 		});
 
 		it('nativeEnum builder', () => {
-		const schema = buildV3.nativeEnum('MyEnum');
+			const schema = buildV3.nativeEnum('MyEnum');
 		});
 
 		it('nativeEnum builder with modifiers', () => {
-		const schema = buildV3
-			.nativeEnum('Status')
-			.optional();
-		expect(schema.text()).toBe('z.nativeEnum(Status).optional()');
-	});
+			const schema = buildV3.nativeEnum('Status').optional();
+			expect(schema.text()).toBe('z.nativeEnum(Status).optional()');
+		});
 
 		it('templateLiteral builder with strings only', () => {
 			const schema = build.templateLiteral(['prefix-', 'suffix']);

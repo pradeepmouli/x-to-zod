@@ -9,9 +9,7 @@ describe('NativeEnumBuilder - Zod v4 Unified API', () => {
 		});
 
 		it('should handle enum with modifiers in v4 mode', () => {
-			const enumBuilder = buildV4
-				.nativeEnum('StatusEnum')
-				.optional();
+			const enumBuilder = buildV4.nativeEnum('StatusEnum').optional();
 			expect(enumBuilder.text()).toBe('z.enum(StatusEnum).optional()');
 		});
 
@@ -41,9 +39,7 @@ describe('NativeEnumBuilder - Zod v4 Unified API', () => {
 		});
 
 		it('should handle enum with modifiers in v3 mode', () => {
-			const enumBuilder = buildV3
-				.nativeEnum('StatusEnum')
-				.optional();
+			const enumBuilder = buildV3.nativeEnum('StatusEnum').optional();
 			expect(enumBuilder.text()).toBe('z.nativeEnum(StatusEnum).optional()');
 		});
 
@@ -98,30 +94,22 @@ describe('NativeEnumBuilder - Zod v4 Unified API', () => {
 		});
 
 		it('should handle nullable enum in v4', () => {
-			const enumBuilder = buildV4
-				.nativeEnum('MyEnum')
-				.nullable();
+			const enumBuilder = buildV4.nativeEnum('MyEnum').nullable();
 			expect(enumBuilder.text()).toBe('z.enum(MyEnum).nullable()');
 		});
 
 		it('should handle nullable enum in v3', () => {
-			const enumBuilder = buildV3
-				.nativeEnum('MyEnum')
-				.nullable();
+			const enumBuilder = buildV3.nativeEnum('MyEnum').nullable();
 			expect(enumBuilder.text()).toBe('z.nativeEnum(MyEnum).nullable()');
 		});
 
 		it('should handle array of enums in v4', () => {
-			const arrayBuilder = buildV4.array(
-				buildV4.nativeEnum('StatusEnum'),
-			);
+			const arrayBuilder = buildV4.array(buildV4.nativeEnum('StatusEnum'));
 			expect(arrayBuilder.text()).toBe('z.array(z.enum(StatusEnum))');
 		});
 
 		it('should handle array of enums in v3', () => {
-			const arrayBuilder = buildV3.array(
-				buildV3.nativeEnum('StatusEnum'),
-			);
+			const arrayBuilder = buildV3.array(buildV3.nativeEnum('StatusEnum'));
 			expect(arrayBuilder.text()).toBe('z.array(z.nativeEnum(StatusEnum))');
 		});
 	});

@@ -3,8 +3,18 @@ import { parseString as parseStringImpl } from '../../src/JsonSchema/parsers/par
 import type { Context } from '../../src/Types';
 import { buildV3, buildV4 } from '../../src/ZodBuilder/index.js';
 
-const refsV3: Context = { path: [], seen: new Map(), build: buildV3, zodVersion: 'v3' };
-const refsV4: Context = { path: [], seen: new Map(), build: buildV4, zodVersion: 'v4' };
+const refsV3: Context = {
+	path: [],
+	seen: new Map(),
+	build: buildV3,
+	zodVersion: 'v3',
+};
+const refsV4: Context = {
+	path: [],
+	seen: new Map(),
+	build: buildV4,
+	zodVersion: 'v4',
+};
 const parseString = (
 	schema: Parameters<typeof parseStringImpl>[0],
 	refs: Context = refsV4,

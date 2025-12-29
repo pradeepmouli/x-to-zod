@@ -3,7 +3,12 @@ import { parseEnum as parseEnumImpl } from '../../src/JsonSchema/parsers/parseEn
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
-const refsV4: Context = { path: [], seen: new Map(), build: buildV4, zodVersion: 'v4' };
+const refsV4: Context = {
+	path: [],
+	seen: new Map(),
+	build: buildV4,
+	zodVersion: 'v4',
+};
 const parseEnum = (
 	schema: Parameters<typeof parseEnumImpl>[0],
 	refs: Context = refsV4,

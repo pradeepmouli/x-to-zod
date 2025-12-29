@@ -30,7 +30,8 @@ export const parseSchema = (
 	refs: Context = { seen: new Map(), path: [], build: buildV4 },
 	blockMeta?: boolean,
 ): ZodBuilder => {
-	if (typeof schema !== 'object') return schema ? refs.build.any() : refs.build.never();
+	if (typeof schema !== 'object')
+		return schema ? refs.build.any() : refs.build.never();
 
 	if (refs.preprocessors) {
 		for (const preprocessor of refs.preprocessors) {

@@ -8,11 +8,7 @@ export class CustomBuilder extends ZodBuilder<'custom'> {
 	_validateFn?: string;
 	_params?: any;
 
-	constructor(
-		validateFn?: string,
-		params?: any,
-		version?: 'v3' | 'v4',
-	) {
+	constructor(validateFn?: string, params?: any, version?: 'v3' | 'v4') {
 		super(version);
 		this._validateFn = validateFn;
 		this._params = params;

@@ -8,10 +8,7 @@ export class PromiseBuilder extends ZodBuilder<'promise'> {
 	readonly typeKind = 'promise' as const;
 	private readonly _innerSchema: ZodBuilder;
 
-	constructor(
-		innerSchema: ZodBuilder,
-		version?: 'v3' | 'v4',
-	) {
+	constructor(innerSchema: ZodBuilder, version?: 'v3' | 'v4') {
 		super(version);
 		this._innerSchema = innerSchema;
 	}

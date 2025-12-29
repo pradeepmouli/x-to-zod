@@ -7,16 +7,20 @@ const build = buildV4;
 describe('ObjectBuilder - Zod v4 Compatibility', () => {
 	describe('T047: passthrough() in v3 mode', () => {
 		it('should generate .loose() in v4 mode', () => {
-			const obj = build.object({
-				name: build.string(),
-			}).loose();
+			const obj = build
+				.object({
+					name: build.string(),
+				})
+				.loose();
 			expect(obj.text()).toBe('z.looseObject({ "name": z.string() })');
 		});
 
 		it('should generate .passthrough() when modifying precomputed schema in v4', () => {
-			const obj = build.object({
-				name: build.string(),
-			}).loose();
+			const obj = build
+				.object({
+					name: build.string(),
+				})
+				.loose();
 
 			const modified = ObjectBuilder.fromCode(obj.text(), {
 				zodVersion: 'v4',
@@ -27,9 +31,11 @@ describe('ObjectBuilder - Zod v4 Compatibility', () => {
 		});
 
 		it('should generate .passthrough() in v3 mode', () => {
-			const obj = buildV3.object({
-				name: buildV3.string(),
-			}).loose();
+			const obj = buildV3
+				.object({
+					name: buildV3.string(),
+				})
+				.loose();
 			expect(obj.text()).toBe('z.object({ "name": z.string() }).passthrough()');
 		});
 

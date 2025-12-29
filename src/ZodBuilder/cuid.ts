@@ -24,10 +24,7 @@ export class CuidBuilder extends ZodBuilder<'cuid'> {
 	private _variant: 'cuid' | 'cuid2';
 	private _errorMessage?: string;
 
-	constructor(
-		variant: 'cuid' | 'cuid2' = 'cuid',
-		version?: 'v3' | 'v4',
-	) {
+	constructor(variant: 'cuid' | 'cuid2' = 'cuid', version?: 'v3' | 'v4') {
 		super(version);
 		this._variant = variant;
 	}

@@ -87,8 +87,7 @@ export const buildV4 = {
 	discriminatedUnion: (discriminator: string, schemas: ZodBuilder<string>[]) =>
 		new DiscriminatedUnionBuilder(discriminator, schemas as any, 'v4'),
 	// Zod v4 only builders
-	promise: (innerSchema: ZodBuilder) =>
-		new PromiseBuilder(innerSchema, 'v4'),
+	promise: (innerSchema: ZodBuilder) => new PromiseBuilder(innerSchema, 'v4'),
 	lazy: (input: ZodBuilder) => new LazyBuilder(input, 'v4'),
 	function: (functionSignature: {
 		input?: ZodBuilder[];
@@ -107,6 +106,5 @@ export const buildV4 = {
 	templateLiteral: (parts: (string | ZodBuilder)[]) =>
 		new TemplateLiteralBuilder(parts, 'v4'),
 	xor: (schemas: ZodBuilder[]) => new XorBuilder(schemas, 'v4'),
-	keyof: (objectSchema: ZodBuilder) =>
-		new KeyofBuilder(objectSchema, 'v4'),
+	keyof: (objectSchema: ZodBuilder) => new KeyofBuilder(objectSchema, 'v4'),
 } as const;

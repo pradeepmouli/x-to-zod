@@ -9,10 +9,7 @@ export class BooleanBuilder extends ZodBuilder<
 	Parameters<typeof z.boolean>[0]
 > {
 	readonly typeKind = 'boolean' as const;
-	constructor(
-		params?: Parameters<typeof z.boolean>[0],
-		version?: 'v3' | 'v4',
-	) {
+	constructor(params?: Parameters<typeof z.boolean>[0], version?: 'v3' | 'v4') {
 		super(version);
 		this._params = params;
 	}

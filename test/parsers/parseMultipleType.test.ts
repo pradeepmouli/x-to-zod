@@ -3,7 +3,12 @@ import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
-const refsV4: Context = { path: [], seen: new Map(), build: buildV4, zodVersion: 'v4' };
+const refsV4: Context = {
+	path: [],
+	seen: new Map(),
+	build: buildV4,
+	zodVersion: 'v4',
+};
 
 describe('parseMultipleType', () => {
 	it('should handle object with multitype properties with default', () => {

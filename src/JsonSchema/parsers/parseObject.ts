@@ -182,10 +182,7 @@ export function parseObject(
 		// No properties, no patternProperties
 		if (additionalPropertiesZod) {
 			result = refs.build
-				.record(
-					refs.build.string(),
-					additionalPropertiesZod,
-				)
+				.record(refs.build.string(), additionalPropertiesZod)
 				.text();
 		} else {
 			result = refs.build.record(refs.build.string(), refs.build.any()).text();

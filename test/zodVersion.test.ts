@@ -26,9 +26,7 @@ describe('Zod Version Support', () => {
 
 	describe('ObjectBuilder - strict mode', () => {
 		it('should generate z.strictObject() in v4 mode when building fresh', () => {
-			const builder = buildV4
-				.object({ name: buildV4.string() })
-				.strict();
+			const builder = buildV4.object({ name: buildV4.string() }).strict();
 			expect(builder.text()).toBe('z.strictObject({ "name": z.string() })');
 		});
 
@@ -66,16 +64,12 @@ describe('Zod Version Support', () => {
 
 	describe('ObjectBuilder - loose/passthrough mode', () => {
 		it('should use loose in builder API for v4', () => {
-			const builder = buildV4
-				.object({ name: buildV4.string() })
-				.loose();
+			const builder = buildV4.object({ name: buildV4.string() }).loose();
 			expect(builder.text()).toBe('z.looseObject({ "name": z.string() })');
 		});
 
 		it('should generate z.strictObject() for strict mode in v4', () => {
-			const builder = buildV4
-				.object({ name: buildV4.string() })
-				.strict();
+			const builder = buildV4.object({ name: buildV4.string() }).strict();
 			expect(builder.text()).toBe('z.strictObject({ "name": z.string() })');
 		});
 	});
