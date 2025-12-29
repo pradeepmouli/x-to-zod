@@ -139,6 +139,9 @@ describe('ObjectBuilder - Zod v4 Compatibility', () => {
 
 	describe('Combined modifiers', () => {
 		it('should handle strict + merge in v4', () => {
+			// In v4, when merge is present, strict behavior is collapsed into the base object
+			// and extend() is used instead of .strict().extend(). This is because
+			// v4's strictObject cannot be extended inline.
 			const base = build
 				.object({
 					id: build.number(),
