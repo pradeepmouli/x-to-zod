@@ -10,9 +10,9 @@ export class KeyofBuilder extends ZodBuilder<'keyof'> {
 
 	constructor(
 		objectSchema: ZodBuilder,
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._objectSchema = objectSchema;
 	}
 

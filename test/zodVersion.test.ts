@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { jsonSchemaToZod } from '../src/index.js';
-import { build } from '../src/ZodBuilder/index.js';
+import { buildV3, buildV4 } from '../src/ZodBuilder/index.js';
 
 describe('Zod Version Support', () => {
 	describe('Configuration', () => {
@@ -15,19 +15,19 @@ describe('Zod Version Support', () => {
 			expect(v3Result).toBeTruthy();
 		});
 
-		it('should default to v3 for backward compatibility', () => {
+		it('should default to v4 for new code', () => {
 			const schema = { type: 'string' as const };
 			const result = jsonSchemaToZod(schema);
 
-			// Default behavior should be same as v3
+			// Default behavior should be v4
 			expect(result).toBe('z.string()');
 		});
 	});
 
 	describe('ObjectBuilder - strict mode', () => {
 		it('should generate z.strictObject() in v4 mode when building fresh', () => {
-			const builder = build
-				.object({ name: build.string() }, { zodVersion: 'v4' })
+			const builder = buildV4
+				.object({ name: buildV4.string() })
 				.strict();
 			expect(builder.text()).toBe('z.strictObject({ "name": z.string() })');
 		});
@@ -66,15 +66,15 @@ describe('Zod Version Support', () => {
 
 	describe('ObjectBuilder - loose/passthrough mode', () => {
 		it('should use loose in builder API for v4', () => {
-			const builder = build
-				.object({ name: build.string() }, { zodVersion: 'v4' })
+			const builder = buildV4
+				.object({ name: buildV4.string() })
 				.loose();
 			expect(builder.text()).toBe('z.looseObject({ "name": z.string() })');
 		});
 
 		it('should generate z.strictObject() for strict mode in v4', () => {
-			const builder = build
-				.object({ name: build.string() }, { zodVersion: 'v4' })
+			const builder = buildV4
+				.object({ name: buildV4.string() })
 				.strict();
 			expect(builder.text()).toBe('z.strictObject({ "name": z.string() })');
 		});
@@ -82,15 +82,15 @@ describe('Zod Version Support', () => {
 
 	describe('ObjectBuilder - merge method', () => {
 		it('should use .extend() in v4 mode', () => {
-			const builder = build
-				.object({ name: build.string() }, { zodVersion: 'v4' })
+			const builder = buildV4
+				.object({ name: buildV4.string() })
 				.merge('otherSchema');
 			expect(builder.text()).toContain('.extend(otherSchema)');
 		});
 
 		it('should use .merge() in v3 mode', () => {
-			const builder = build
-				.object({ name: build.string() }, { zodVersion: 'v3' })
+			const builder = buildV3
+				.object({ name: buildV3.string() })
 				.merge('otherSchema');
 			expect(builder.text()).toContain('.merge(otherSchema)');
 		});

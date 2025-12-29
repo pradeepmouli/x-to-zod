@@ -5,8 +5,8 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class AnyBuilder extends ZodBuilder<'any'> {
 	readonly typeKind = 'any' as const;
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(version?: 'v3' | 'v4') {
+		super(version);
 	}
 
 	protected override base(): string {

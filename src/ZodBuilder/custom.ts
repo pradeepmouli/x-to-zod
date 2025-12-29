@@ -11,9 +11,9 @@ export class CustomBuilder extends ZodBuilder<'custom'> {
 	constructor(
 		validateFn?: string,
 		params?: any,
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._validateFn = validateFn;
 		this._params = params;
 	}

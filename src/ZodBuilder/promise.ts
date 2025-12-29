@@ -10,9 +10,9 @@ export class PromiseBuilder extends ZodBuilder<'promise'> {
 
 	constructor(
 		innerSchema: ZodBuilder,
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._innerSchema = innerSchema;
 	}
 

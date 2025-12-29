@@ -14,9 +14,9 @@ export class DateBuilder extends ZodBuilder<
 
 	constructor(
 		params?: Parameters<typeof z.date>[0],
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._params = params;
 	}
 

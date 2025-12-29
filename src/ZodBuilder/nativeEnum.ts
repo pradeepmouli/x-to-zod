@@ -11,8 +11,8 @@ export class NativeEnumBuilder extends ZodBuilder<'nativeEnum'> {
 	readonly typeKind = 'nativeEnum' as const;
 	private readonly _enumReference: string;
 
-	constructor(enumReference: string, options?: import('../Types.js').Options) {
-		super(options);
+	constructor(enumReference: string, version?: 'v3' | 'v4') {
+		super(version);
 		this._enumReference = enumReference;
 	}
 

@@ -24,9 +24,9 @@ export class UuidBuilder extends ZodBuilder<'uuid'> {
 
 	constructor(
 		variant: 'uuid' | 'guid' = 'uuid',
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._variant = variant;
 	}
 

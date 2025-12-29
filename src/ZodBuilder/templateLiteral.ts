@@ -10,9 +10,9 @@ export class TemplateLiteralBuilder extends ZodBuilder<'templateLiteral'> {
 
 	constructor(
 		parts: (string | ZodBuilder)[],
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._parts = parts;
 	}
 

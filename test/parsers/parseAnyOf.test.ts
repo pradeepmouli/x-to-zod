@@ -1,35 +1,35 @@
 import { describe, it, expect } from 'vitest';
-import { parseAnyOf } from '../../src/JsonSchema/parsers/parseAnyOf';
+import { parseAnyOf as parseAnyOfImpl } from '../../src/JsonSchema/parsers/parseAnyOf.js';
+import type { Context } from '../../src/Types';
+import { buildV4 } from '../../src/ZodBuilder/index.js';
+
+const refsV4: Context = { path: [], seen: new Map(), build: buildV4, zodVersion: 'v4' };
+const parseAnyOf = (
+	schema: Parameters<typeof parseAnyOfImpl>[0],
+	refs: Context = refsV4,
+) => parseAnyOfImpl(schema, refs);
 
 describe('parseAnyOf', () => {
 	it('should create a union from two or more schemas', () => {
 		expect(
-			parseAnyOf(
-				{
-					anyOf: [
-						{
-							type: 'string',
-						},
-						{ type: 'number' },
-					],
-				},
-				{ path: [], seen: new Map() },
-			).text(),
+			parseAnyOf({
+				anyOf: [
+					{
+						type: 'string',
+					},
+					{ type: 'number' },
+				],
+			}).text(),
 		).toBe('z.union([z.string(), z.number()])');
 	});
 
 	it('should extract a single schema', () => {
-		expect(
-			parseAnyOf(
-				{ anyOf: [{ type: 'string' }] },
-				{ path: [], seen: new Map() },
-			).text(),
-		).toBe('z.string()');
+		expect(parseAnyOf({ anyOf: [{ type: 'string' }] }).text()).toBe(
+			'z.string()',
+		);
 	});
 
 	it('should return z.any() if array is empty', () => {
-		expect(
-			parseAnyOf({ anyOf: [] }, { path: [], seen: new Map() }).text(),
-		).toBe('z.any()');
+		expect(parseAnyOf({ anyOf: [] }).text()).toBe('z.any()');
 	});
 });

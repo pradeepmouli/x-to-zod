@@ -20,16 +20,17 @@ import {
 	JsonSchemaObject,
 	JsonSchema,
 } from '../../Types.js';
-import { BaseBuilder, build } from '../../ZodBuilder/index.js';
+import { BaseBuilder } from '../../ZodBuilder/index.js';
 import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { its } from '../its.js';
+import { buildV4 } from '../../ZodBuilder/v4.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
-	refs: Context = { seen: new Map(), path: [] },
+	refs: Context = { seen: new Map(), path: [], build: buildV4 },
 	blockMeta?: boolean,
 ): ZodBuilder => {
-	if (typeof schema !== 'object') return schema ? build.any() : build.never();
+	if (typeof schema !== 'object') return schema ? refs.build.any() : refs.build.never();
 
 	if (refs.preprocessors) {
 		for (const preprocessor of refs.preprocessors) {
@@ -41,7 +42,7 @@ export const parseSchema = (
 		const custom = refs.parserOverride(schema, refs);
 
 		if (typeof custom === 'string') {
-			return build.code(custom);
+			return refs.build.code(custom);
 		}
 
 		if (custom instanceof ZodBuilder) {
@@ -57,7 +58,7 @@ export const parseSchema = (
 		}
 
 		if (refs.depth === undefined || seen.n >= refs.depth) {
-			return build.any();
+			return refs.build.any();
 		}
 
 		seen.n += 1;

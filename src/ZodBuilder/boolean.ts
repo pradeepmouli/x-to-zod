@@ -11,9 +11,9 @@ export class BooleanBuilder extends ZodBuilder<
 	readonly typeKind = 'boolean' as const;
 	constructor(
 		params?: Parameters<typeof z.boolean>[0],
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._params = params;
 	}
 

@@ -1,5 +1,5 @@
 import { JsonSchemaObject, JsonSchema, Context } from '../../Types.js';
-import { build, BaseBuilder } from '../../ZodBuilder/index.js';
+import { BaseBuilder } from '../../ZodBuilder/index.js';
 import { parseSchema } from './parseSchema.js';
 
 export const parseArray = (
@@ -14,7 +14,7 @@ export const parseArray = (
 			parseSchema(v, { ...refs, path: [...refs.path, 'items', i] }),
 		);
 
-		const builder = build.array(itemSchemas, refs);
+		const builder = refs.build.array(itemSchemas);
 
 		if (schema.minItems !== undefined) {
 			builder.min(schema.minItems, schema.errorMessage?.minItems);
@@ -26,13 +26,13 @@ export const parseArray = (
 		r = builder;
 	} else {
 		const itemSchema = !schema.items
-			? build.any(refs)
+			? refs.build.any()
 			: parseSchema(schema.items, {
 					...refs,
 					path: [...refs.path, 'items'],
 				});
 
-		const builder = build.array(itemSchema, refs);
+		const builder = refs.build.array(itemSchema);
 
 		// Apply minItems constraint
 		if (schema.minItems !== undefined) {

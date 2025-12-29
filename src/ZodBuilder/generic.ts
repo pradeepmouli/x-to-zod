@@ -8,8 +8,8 @@ export class GenericBuilder extends ZodBuilder<'generic'> {
 	readonly typeKind = 'generic' as const;
 	private readonly _code: string;
 
-	constructor(code: string, options?: import('../Types.js').Options) {
-		super(options);
+	constructor(code: string, version?: 'v3' | 'v4') {
+		super(version);
 		this._code = code;
 	}
 

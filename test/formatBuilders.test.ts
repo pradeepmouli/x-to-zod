@@ -1,21 +1,21 @@
 import { describe, it, expect } from 'vitest';
-import { build } from '../src/ZodBuilder/index.js';
+import { buildV3, buildV4 } from '../src/ZodBuilder/index.js';
 
 describe('String Format Builders - Hybrid Approach', () => {
 	describe('EmailBuilder - v4 mode', () => {
 		it('should generate z.email() in v4 mode without constraints', () => {
-			const email = build.string({ zodVersion: 'v4' }).email();
+			const email = buildV4.string().email();
 			expect(email.text()).toBe('z.email()');
 		});
 
 		it('should generate z.email({ error: "..." }) with error message in v4', () => {
-			const email = build.string({ zodVersion: 'v4' }).email('Invalid email');
+			const email = buildV4.string().email('Invalid email');
 			expect(email.text()).toBe('z.email({ error: "Invalid email" })');
 		});
 
 		it('should stay in StringBuilder when constraints exist in v4', () => {
-			const email = build
-				.string({ zodVersion: 'v4' })
+			const email = buildV4
+				.string()
 				.min(5)
 				.email('Invalid email');
 			expect(email.text()).toContain('z.string()');
@@ -26,24 +26,24 @@ describe('String Format Builders - Hybrid Approach', () => {
 
 	describe('EmailBuilder - v3 mode', () => {
 		it('should generate z.string().email() in v3 mode', () => {
-			const email = build.string({ zodVersion: 'v3' }).email();
+			const email = buildV3.string().email();
 			expect(email.text()).toBe('z.string().email()');
 		});
 
 		it('should generate z.string().email({ message: "..." }) in v3', () => {
-			const email = build.string({ zodVersion: 'v3' }).email('Invalid email');
+			const email = buildV3.string().email('Invalid email');
 			expect(email.text()).toBe('z.string().email("Invalid email")');
 		});
 	});
 
 	describe('UrlBuilder - v4 mode', () => {
 		it('should generate z.url() in v4 mode without constraints', () => {
-			const url = build.string({ zodVersion: 'v4' }).url();
+			const url = buildV4.string().url();
 			expect(url.text()).toBe('z.url()');
 		});
 
 		it('should stay in StringBuilder when min length exists', () => {
-			const url = build.string({ zodVersion: 'v4' }).min(10).url();
+			const url = buildV4.string().min(10).url();
 			expect(url.text()).toContain('z.string()');
 			expect(url.text()).toContain('.min(10)');
 		});
@@ -51,77 +51,77 @@ describe('String Format Builders - Hybrid Approach', () => {
 
 	describe('UuidBuilder - v4 mode', () => {
 		it('should generate z.uuid() in v4 mode without constraints', () => {
-			const uuid = build.string({ zodVersion: 'v4' }).uuid();
+			const uuid = buildV4.string().uuid();
 			expect(uuid.text()).toBe('z.uuid()');
 		});
 
 		it('should generate z.uuid({ error: "..." }) with error message', () => {
-			const uuid = build.string({ zodVersion: 'v4' }).uuid('Invalid UUID');
+			const uuid = buildV4.string().uuid('Invalid UUID');
 			expect(uuid.text()).toBe('z.uuid({ error: "Invalid UUID" })');
 		});
 	});
 
 	describe('UuidBuilder - v3 mode', () => {
 		it('should generate z.string().uuid() in v3 mode', () => {
-			const uuid = build.string({ zodVersion: 'v3' }).uuid();
+			const uuid = buildV3.string().uuid();
 			expect(uuid.text()).toBe('z.string().uuid()');
 		});
 	});
 
 	describe('IpBuilder - v4 mode', () => {
 		it('should generate z.ipv4() in v4 mode', () => {
-			const ip = build.string({ zodVersion: 'v4' }).ipv4();
+			const ip = buildV4.string().ipv4();
 			expect(ip.text()).toBe('z.ipv4()');
 		});
 
 		it('should generate z.ipv6() in v4 mode', () => {
-			const ip = build.string({ zodVersion: 'v4' }).ipv6();
+			const ip = buildV4.string().ipv6();
 			expect(ip.text()).toBe('z.ipv6()');
 		});
 	});
 
 	describe('CuidBuilder - v4 mode', () => {
 		it('should generate z.cuid() in v4 mode', () => {
-			const cuid = build.string({ zodVersion: 'v4' }).cuid();
+			const cuid = buildV4.string().cuid();
 			expect(cuid.text()).toBe('z.cuid()');
 		});
 
 		it('should generate z.cuid2() in v4 mode', () => {
-			const cuid2 = build.string({ zodVersion: 'v4' }).cuid2();
+			const cuid2 = buildV4.string().cuid2();
 			expect(cuid2.text()).toBe('z.cuid2()');
 		});
 	});
 
 	describe('UlidBuilder - v4 mode', () => {
 		it('should generate z.ulid() in v4 mode', () => {
-			const ulid = build.string({ zodVersion: 'v4' }).ulid();
+			const ulid = buildV4.string().ulid();
 			expect(ulid.text()).toBe('z.ulid()');
 		});
 	});
 
 	describe('NanoidBuilder - v4 mode', () => {
 		it('should generate z.nanoid() in v4 mode', () => {
-			const nanoid = build.string({ zodVersion: 'v4' }).nanoid();
+			const nanoid = buildV4.string().nanoid();
 			expect(nanoid.text()).toBe('z.nanoid()');
 		});
 	});
 
 	describe('EmojiBuilder - v4 mode', () => {
 		it('should generate z.emoji() in v4 mode', () => {
-			const emoji = build.string({ zodVersion: 'v4' }).emoji();
+			const emoji = buildV4.string().emoji();
 			expect(emoji.text()).toBe('z.emoji()');
 		});
 	});
 
 	describe('Base64Builder - v4 mode', () => {
 		it('should generate z.base64() in v4 mode', () => {
-			const b64 = build.string({ zodVersion: 'v4' }).base64();
+			const b64 = buildV4.string().base64();
 			expect(b64.text()).toBe('z.base64()');
 		});
 
 		it('should stay in StringBuilder when pattern exists', () => {
-			const b64 = build
-				.string({ zodVersion: 'v4' })
+			const b64 = buildV4
+				.string()
 				.regex(/^[A-Za-z0-9+/=]+$/)
 				.base64();
 			expect(b64.text()).toContain('z.string()');
@@ -131,8 +131,8 @@ describe('String Format Builders - Hybrid Approach', () => {
 
 	describe('Constraints-first behavior', () => {
 		it('should stay in StringBuilder when minLength comes first', () => {
-			const result = build
-				.string({ zodVersion: 'v4' })
+			const result = buildV4
+				.string()
 				.min(10)
 				.max(100)
 				.email();
@@ -143,8 +143,8 @@ describe('String Format Builders - Hybrid Approach', () => {
 		});
 
 		it('should stay in StringBuilder when pattern exists', () => {
-			const result = build
-				.string({ zodVersion: 'v4' })
+			const result = buildV4
+				.string()
 				.regex(/^[a-z]+$/)
 				.uuid();
 			expect(result.text()).toContain('z.string()');
@@ -155,18 +155,18 @@ describe('String Format Builders - Hybrid Approach', () => {
 
 	describe('Modifier support on format builders', () => {
 		it('should support .optional() on EmailBuilder', () => {
-			const email = build.string({ zodVersion: 'v4' }).email().optional();
+			const email = buildV4.string().email().optional();
 			expect(email.text()).toBe('z.email().optional()');
 		});
 
 		it('should support .nullable() on UuidBuilder', () => {
-			const uuid = build.string({ zodVersion: 'v4' }).uuid().nullable();
+			const uuid = buildV4.string().uuid().nullable();
 			expect(uuid.text()).toBe('z.uuid().nullable()');
 		});
 
 		it('should support .describe() on UrlBuilder', () => {
-			const url = build
-				.string({ zodVersion: 'v4' })
+			const url = buildV4
+				.string()
 				.url()
 				.describe('A valid URL');
 			expect(url.text()).toBe('z.url().describe("A valid URL")');

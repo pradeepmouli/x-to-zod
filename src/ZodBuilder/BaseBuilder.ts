@@ -125,10 +125,10 @@ export abstract class ZodBuilder<T extends string = string, P = any> {
 	_metaData?: any = undefined;
 	_transformFn?: string = undefined;
 
-	protected options?: import('../Types.js').Options;
+	protected _version?: 'v3' | 'v4';
 
-	constructor(options?: import('../Types.js').Options) {
-		this.options = options;
+	constructor(version?: 'v3' | 'v4') {
+		this._version = version;
 	}
 
 	/**
@@ -136,7 +136,7 @@ export abstract class ZodBuilder<T extends string = string, P = any> {
 	 * @returns 'v3' or 'v4' (default: 'v4')
 	 */
 	protected get zodVersion(): import('../Types.js').ZodVersion {
-		return this.options?.zodVersion || 'v4';
+		return this._version || 'v4';
 	}
 
 	/**

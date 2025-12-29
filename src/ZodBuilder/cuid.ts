@@ -26,9 +26,9 @@ export class CuidBuilder extends ZodBuilder<'cuid'> {
 
 	constructor(
 		variant: 'cuid' | 'cuid2' = 'cuid',
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._variant = variant;
 	}
 
