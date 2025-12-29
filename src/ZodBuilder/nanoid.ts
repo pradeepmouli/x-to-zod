@@ -17,8 +17,8 @@ export class NanoidBuilder extends ZodBuilder<'nanoid'> {
 	readonly typeKind = 'nanoid' as const;
 	private _errorMessage?: string;
 
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(version?: 'v3' | 'v4') {
+		super(version);
 	}
 
 	/**

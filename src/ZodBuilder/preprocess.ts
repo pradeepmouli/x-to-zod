@@ -9,12 +9,8 @@ export class PreprocessBuilder extends ZodBuilder<'preprocess'> {
 	private readonly _preprocessFn: string;
 	private readonly _schema: ZodBuilder;
 
-	constructor(
-		transformFn: string,
-		schema: ZodBuilder,
-		options?: import('../Types.js').Options,
-	) {
-		super(options);
+	constructor(transformFn: string, schema: ZodBuilder, version?: 'v3' | 'v4') {
+		super(version);
 		this._preprocessFn = transformFn;
 		this._schema = schema;
 	}

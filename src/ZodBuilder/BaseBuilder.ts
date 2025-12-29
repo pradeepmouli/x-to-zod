@@ -2,6 +2,7 @@
  * Generic modifiers that can be applied to any Zod schema.
  */
 
+import type { z } from 'zod';
 import type { TypeKind, TypeKindOf } from './index.js';
 
 function asText(input: string): string {
@@ -102,10 +103,14 @@ export function applyTransform(zodStr: string, transformFn: string): string {
  * - base(): Computes the type-specific schema string (must be overridden)
  * - modify(): Applies shared modifiers to the base schema
  * - text(): Orchestrates base() and modify() to produce final output
+ *
+ * @template T - The type kind (e.g., 'string', 'number', 'object')
+ * @template P - The Zod params type for this builder (default: any)
  */
 
-export abstract class ZodBuilder<T extends string = string> {
+export abstract class ZodBuilder<T extends string = string, P = any> {
 	abstract readonly typeKind: T;
+	protected _params?: P;
 	_optional: boolean = false;
 	_nullable: boolean = false;
 	_readonly: boolean = false;
@@ -120,10 +125,10 @@ export abstract class ZodBuilder<T extends string = string> {
 	_metaData?: any = undefined;
 	_transformFn?: string = undefined;
 
-	protected options?: import('../Types.js').Options;
+	protected _version?: 'v3' | 'v4';
 
-	constructor(options?: import('../Types.js').Options) {
-		this.options = options;
+	constructor(version?: 'v3' | 'v4') {
+		this._version = version;
 	}
 
 	/**
@@ -131,7 +136,7 @@ export abstract class ZodBuilder<T extends string = string> {
 	 * @returns 'v3' or 'v4' (default: 'v4')
 	 */
 	protected get zodVersion(): import('../Types.js').ZodVersion {
-		return this.options?.zodVersion || 'v4';
+		return this._version || 'v4';
 	}
 
 	/**
@@ -146,6 +151,28 @@ export abstract class ZodBuilder<T extends string = string> {
 	 */
 	protected isV3(): boolean {
 		return this.zodVersion === 'v3';
+	}
+
+	/**
+	 * Serialize params to a string representation for code generation.
+	 * Handles objects, strings, primitives, and undefined.
+	 * @returns String representation of params or empty string if no params
+	 */
+	protected serializeParams(): string {
+		if (this._params === undefined) return '';
+
+		// If params is a string, treat it as an error message
+		if (typeof this._params === 'string') {
+			return JSON.stringify(this._params);
+		}
+
+		// For objects, stringify them
+		if (typeof this._params === 'object' && this._params !== null) {
+			return JSON.stringify(this._params);
+		}
+
+		// For primitives (number, boolean), stringify
+		return JSON.stringify(this._params);
 	}
 
 	/**

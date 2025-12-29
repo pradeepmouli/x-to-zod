@@ -17,8 +17,8 @@ export class DurationBuilder extends ZodBuilder<'duration'> {
 	readonly typeKind = 'duration' as const;
 	private _errorMessage?: string;
 
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(version?: 'v3' | 'v4') {
+		super(version);
 	}
 
 	/**

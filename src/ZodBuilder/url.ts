@@ -20,8 +20,8 @@ export class UrlBuilder extends ZodBuilder<'url'> {
 	readonly typeKind = 'url' as const;
 	private _errorMessage?: string;
 
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(version?: 'v3' | 'v4') {
+		super(version);
 	}
 
 	/**

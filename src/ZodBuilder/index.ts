@@ -109,7 +109,7 @@ import { UnionBuilder } from './union.js';
 import { IntersectionBuilder } from './intersection.js';
 import { TupleBuilder } from './tuple.js';
 import { RecordBuilder } from './record.js';
-import { GenericBuilder } from './generic.js';
+// Note: GenericBuilder is no longer used here (escape hatch lives in builders directly)
 import { VoidBuilder } from './void.js';
 import { UndefinedBuilder } from './undefined.js';
 import { DateBuilder } from './date.js';
@@ -148,162 +148,20 @@ export {
 	applyTransform,
 } from './BaseBuilder.js';
 
-// Builder factories - Zod-like API
-const coreBuilders = {
-	number: (options?: import('../Types.js').Options) =>
-		new NumberBuilder(options),
-	string: (options?: import('../Types.js').Options) =>
-		new StringBuilder(options),
-	boolean: (options?: import('../Types.js').Options) =>
-		new BooleanBuilder(options),
-	null: (options?: import('../Types.js').Options) => new NullBuilder(options),
-	array: (
-		itemSchemaZod:
-			| import('./BaseBuilder.js').ZodBuilder
-			| import('./BaseBuilder.js').ZodBuilder[],
-		options?: import('../Types.js').Options,
-	) => new ArrayBuilder(itemSchemaZod, options),
-	object: (
-		properties: Record<string, import('./BaseBuilder.js').ZodBuilder> = {},
-		options?: import('../Types.js').Options,
-	) => new ObjectBuilder(properties, options),
-	enum: (
-		values: import('../Types.js').Serializable[],
-		options?: import('../Types.js').Options,
-	) => new EnumBuilder(values, options),
-	literal: (
-		value: import('../Types.js').Serializable,
-		options?: import('../Types.js').Options,
-	) => new ConstBuilder(value, options),
-	// New builders
-	any: (options?: import('../Types.js').Options) => new AnyBuilder(options),
-	never: (options?: import('../Types.js').Options) => new NeverBuilder(options),
-	unknown: (options?: import('../Types.js').Options) =>
-		new UnknownBuilder(options),
-	literalValue: (
-		value: import('../Types.js').Serializable,
-		options?: import('../Types.js').Options,
-	) => new LiteralBuilder(value, options),
-	// Escape hatch for raw Zod code
-	code: (code: string, options?: import('../Types.js').Options) =>
-		new GenericBuilder(code, options),
-	raw: (code: string, options?: import('../Types.js').Options) =>
-		new GenericBuilder(code, options),
-	union: (
-		schemas: import('./BaseBuilder.js').ZodBuilder[],
-		options?: import('../Types.js').Options,
-	) => new UnionBuilder(schemas, options),
-	intersection: (
-		left: import('./BaseBuilder.js').ZodBuilder,
-		right: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new IntersectionBuilder(left, right, options),
-	tuple: (
-		items: import('./BaseBuilder.js').ZodBuilder[],
-		options?: import('../Types.js').Options,
-	) => new TupleBuilder(items, options),
-	record: (
-		keySchema: import('./BaseBuilder.js').ZodBuilder,
-		valueSchema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new RecordBuilder(keySchema, valueSchema, options),
-	// Additional type builders
-	void: (options?: import('../Types.js').Options) => new VoidBuilder(options),
-	undefined: (options?: import('../Types.js').Options) =>
-		new UndefinedBuilder(options),
-	date: (options?: import('../Types.js').Options) => new DateBuilder(options),
-	bigint: (options?: import('../Types.js').Options) =>
-		new BigIntBuilder(options),
-	symbol: (options?: import('../Types.js').Options) =>
-		new SymbolBuilder(options),
-	nan: (options?: import('../Types.js').Options) => new NaNBuilder(options),
-	set: (
-		itemSchema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new SetBuilder(itemSchema, options),
-	map: (
-		keySchema: import('./BaseBuilder.js').ZodBuilder,
-		valueSchema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new MapBuilder(keySchema, valueSchema, options),
-	custom: (
-		validateFn?: string,
-		params?: any,
-		options?: import('../Types.js').Options,
-	) => new CustomBuilder(validateFn, params, options),
-	discriminatedUnion: (
-		discriminator: string,
-		schemas: import('./BaseBuilder.js').ZodBuilder<string>[],
-		options?: import('../Types.js').Options,
-	) => new DiscriminatedUnionBuilder(discriminator, schemas as any, options),
-} as const;
-const v4OnlyBuilders = {
-	// Zod v4 builders
-	promise: (
-		innerSchema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new PromiseBuilder(innerSchema, options),
-	lazy: (
-		input: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new LazyBuilder(input, options),
-	function: (
-		functionSignature: {
-			input?: import('./BaseBuilder.js').ZodBuilder[];
-			output?: import('./BaseBuilder.js').ZodBuilder;
-		},
-		options?: import('../Types.js').Options,
-	) => new FunctionBuilder(functionSignature, options),
-	codec: (
-		inSchema: import('./BaseBuilder.js').ZodBuilder,
-		outSchema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new CodecBuilder(inSchema, outSchema, options),
-	preprocess: (
-		transformFn: string,
-		schema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new PreprocessBuilder(transformFn, schema, options),
-	pipe: (
-		sourceSchema: import('./BaseBuilder.js').ZodBuilder,
-		targetSchema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new PipeBuilder(sourceSchema, targetSchema, options),
-	json: (options?: import('../Types.js').Options) => new JsonBuilder(options),
-	file: (options?: import('../Types.js').Options) => new FileBuilder(options),
-	nativeEnum: (
-		enumReference: string,
-		options?: import('../Types.js').Options,
-	) => new NativeEnumBuilder(enumReference, options),
-	templateLiteral: (
-		parts: (string | import('./BaseBuilder.js').ZodBuilder)[],
-		options?: import('../Types.js').Options,
-	) => new TemplateLiteralBuilder(parts, options),
-	xor: (
-		schemas: import('./BaseBuilder.js').ZodBuilder[],
-		options?: import('../Types.js').Options,
-	) => new XorBuilder(schemas, options),
-	keyof: (
-		objectSchema: import('./BaseBuilder.js').ZodBuilder,
-		options?: import('../Types.js').Options,
-	) => new KeyofBuilder(objectSchema, options),
-} as const;
+// Builder factories
+import { buildV4 } from './v4.js';
 
-// Builder factories - Zod-like API (includes all builders for backward compatibility)
-export const build = {
-	...coreBuilders,
-	...v4OnlyBuilders,
-} as const;
+export const build = buildV4;
 
 export type TypeKind = {
-	[T in keyof typeof build]: ReturnType<(typeof build)[T]>;
+	[T in keyof typeof buildV4]: ReturnType<(typeof buildV4)[T]>;
 };
 
 export type TypeKindOf<T extends keyof TypeKind> = TypeKind[T];
 
-// Version-specific builder exports
-export const buildV3 = coreBuilders;
-export const buildV4 = build;
+// Version-specific builder exports - import from new factory files
+export { buildV3 } from './v3.js';
+export { buildV4 } from './v4.js';
 
 // Type exports for version-specific APIs
 export type { V3BuildAPI, V4BuildAPI } from './versions.js';

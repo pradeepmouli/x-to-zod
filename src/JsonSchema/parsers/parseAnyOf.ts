@@ -1,6 +1,6 @@
 import { JsonSchemaObject, JsonSchema, Context } from '../../Types.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { build, type UnionBuilder } from '../../ZodBuilder/index.js';
+import { type UnionBuilder } from '../../ZodBuilder/index.js';
 import { parseSchema } from './parseSchema.js';
 
 export const parseAnyOf = (
@@ -13,10 +13,10 @@ export const parseAnyOf = (
 					...refs,
 					path: [...refs.path, 'anyOf', 0],
 				})
-			: build.union(
+			: refs.build.union(
 					schema.anyOf.map((schema: JsonSchema, i: number) =>
 						parseSchema(schema, { ...refs, path: [...refs.path, 'anyOf', i] }),
 					),
 				)
-		: build.any();
+		: refs.build.any();
 };

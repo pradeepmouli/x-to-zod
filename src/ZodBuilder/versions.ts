@@ -4,58 +4,96 @@
  */
 
 import type { ZodBuilder } from './BaseBuilder.js';
+import type { Options } from '../Types.js';
 
 // V4-only builder types (not available in v3)
 export type V4OnlyBuilders = {
-	promise: (innerSchema: ZodBuilder) => ZodBuilder;
-	lazy: (getter: string) => ZodBuilder;
-	function: (functionSignature?: {
-		input?: ZodBuilder[];
-		output?: ZodBuilder;
-	}) => ZodBuilder;
-	codec: (inSchema: ZodBuilder, outSchema: ZodBuilder) => ZodBuilder;
-	preprocess: (transformFn: string, schema: ZodBuilder) => ZodBuilder;
-	pipe: (sourceSchema: ZodBuilder, targetSchema: ZodBuilder) => ZodBuilder;
-	json: () => ZodBuilder;
-	file: () => ZodBuilder;
-	nativeEnum: (enumReference: string) => ZodBuilder;
-	templateLiteral: (parts: (string | ZodBuilder)[]) => ZodBuilder;
-	xor: (schemas: ZodBuilder[]) => ZodBuilder;
-	keyof: (objectSchema: ZodBuilder) => ZodBuilder;
+	promise: (innerSchema: ZodBuilder, options?: Options) => ZodBuilder;
+	lazy: (input: ZodBuilder, options?: Options) => ZodBuilder;
+	function: (
+		functionSignature?: {
+			input?: ZodBuilder[];
+			output?: ZodBuilder;
+		},
+		options?: Options,
+	) => ZodBuilder;
+	codec: (
+		inSchema: ZodBuilder,
+		outSchema: ZodBuilder,
+		options?: Options,
+	) => ZodBuilder;
+	preprocess: (
+		transformFn: string,
+		schema: ZodBuilder,
+		options?: Options,
+	) => ZodBuilder;
+	pipe: (
+		sourceSchema: ZodBuilder,
+		targetSchema: ZodBuilder,
+		options?: Options,
+	) => ZodBuilder;
+	json: (options?: Options) => ZodBuilder;
+	file: (options?: Options) => ZodBuilder;
+	nativeEnum: (enumReference: string, options?: Options) => ZodBuilder;
+	templateLiteral: (
+		parts: (string | ZodBuilder)[],
+		options?: Options,
+	) => ZodBuilder;
+	xor: (schemas: ZodBuilder[], options?: Options) => ZodBuilder;
+	keyof: (objectSchema: ZodBuilder, options?: Options) => ZodBuilder;
 };
 
 // Core builders available in both v3 and v4
 export type CoreBuilders = {
-	number: () => ZodBuilder;
-	string: () => ZodBuilder;
-	boolean: () => ZodBuilder;
-	null: () => ZodBuilder;
-	array: (itemSchemaZod: ZodBuilder | ZodBuilder[]) => ZodBuilder;
-	object: (properties?: Record<string, ZodBuilder>) => ZodBuilder;
-	enum: (values: any[]) => ZodBuilder;
-	literal: (value: any) => ZodBuilder;
-	any: () => ZodBuilder;
-	never: () => ZodBuilder;
-	unknown: () => ZodBuilder;
-	literalValue: (value: any) => ZodBuilder;
-	code: (code: string) => ZodBuilder;
-	raw: (code: string) => ZodBuilder;
-	union: (schemas: ZodBuilder[]) => ZodBuilder;
-	intersection: (left: ZodBuilder, right: ZodBuilder) => ZodBuilder;
-	tuple: (items: ZodBuilder[]) => ZodBuilder;
-	record: (keySchema: ZodBuilder, valueSchema: ZodBuilder) => ZodBuilder;
-	void: () => ZodBuilder;
-	undefined: () => ZodBuilder;
-	date: () => ZodBuilder;
-	bigint: () => ZodBuilder;
-	symbol: () => ZodBuilder;
-	nan: () => ZodBuilder;
-	set: (itemSchema: ZodBuilder) => ZodBuilder;
-	map: (keySchema: ZodBuilder, valueSchema: ZodBuilder) => ZodBuilder;
-	custom: (validateFn?: string, params?: any) => ZodBuilder;
+	number: (options?: Options) => ZodBuilder;
+	string: (options?: Options) => ZodBuilder;
+	boolean: (options?: Options) => ZodBuilder;
+	null: (options?: Options) => ZodBuilder;
+	array: (
+		itemSchemaZod: ZodBuilder | ZodBuilder[],
+		options?: Options,
+	) => ZodBuilder;
+	object: (
+		properties?: Record<string, ZodBuilder>,
+		options?: Options,
+	) => ZodBuilder;
+	enum: (values: any[], options?: Options) => ZodBuilder;
+	literal: (value: any, options?: Options) => ZodBuilder;
+	any: (options?: Options) => ZodBuilder;
+	never: (options?: Options) => ZodBuilder;
+	unknown: (options?: Options) => ZodBuilder;
+	literalValue: (value: any, options?: Options) => ZodBuilder;
+	code: (code: string, options?: Options) => ZodBuilder;
+	raw: (code: string, options?: Options) => ZodBuilder;
+	union: (schemas: ZodBuilder[], options?: Options) => ZodBuilder;
+	intersection: (
+		left: ZodBuilder,
+		right: ZodBuilder,
+		options?: Options,
+	) => ZodBuilder;
+	tuple: (items: ZodBuilder[], options?: Options) => ZodBuilder;
+	record: (
+		keySchema: ZodBuilder,
+		valueSchema: ZodBuilder,
+		options?: Options,
+	) => ZodBuilder;
+	void: (options?: Options) => ZodBuilder;
+	undefined: (options?: Options) => ZodBuilder;
+	date: (options?: Options) => ZodBuilder;
+	bigint: (options?: Options) => ZodBuilder;
+	symbol: (options?: Options) => ZodBuilder;
+	nan: (options?: Options) => ZodBuilder;
+	set: (itemSchema: ZodBuilder, options?: Options) => ZodBuilder;
+	map: (
+		keySchema: ZodBuilder,
+		valueSchema: ZodBuilder,
+		options?: Options,
+	) => ZodBuilder;
+	custom: (validateFn?: string, params?: any, options?: Options) => ZodBuilder;
 	discriminatedUnion: (
 		discriminator: string,
 		schemas: ZodBuilder[],
+		options?: Options,
 	) => ZodBuilder;
 };
 

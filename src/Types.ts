@@ -41,6 +41,9 @@ export type Options = {
 };
 
 export type Context = Options & {
+	build:
+		| typeof import('./ZodBuilder/v3.js').buildV3
+		| typeof import('./ZodBuilder/v4.js').buildV4;
 	path: (string | number)[];
 	seen: Map<
 		object | boolean,

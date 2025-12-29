@@ -1,6 +1,8 @@
 import { Options, JsonSchema } from '../Types.js';
 import { parseSchema } from './parsers/parseSchema.js';
 import { expandJsdocs } from '../utils/jsdocs.js';
+import { buildV3 } from '../ZodBuilder/v3.js';
+import { buildV4 } from '../ZodBuilder/v4.js';
 
 export const toZod = (
 	schema: JsonSchema,
@@ -12,12 +14,18 @@ export const toZod = (
 		);
 	}
 
+	// Select build factory based on zodVersion (default: v4)
+	const zodVersion = rest.zodVersion ?? 'v4';
+	const build = zodVersion === 'v3' ? buildV3 : buildV4;
+
 	const builder = parseSchema(schema, {
+		build,
 		module,
 		name,
 		path: [],
 		seen: new Map(),
 		...rest,
+		zodVersion,
 	});
 
 	let result = builder.text();

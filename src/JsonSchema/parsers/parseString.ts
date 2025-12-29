@@ -1,12 +1,11 @@
 import { Context, JsonSchemaObject } from '../../Types.js';
-import { build } from '../../ZodBuilder/index.js';
 import { parseSchema } from './parseSchema.js';
 
 export const parseString = (
 	schema: JsonSchemaObject & { type: 'string' },
-	refs?: Context,
+	refs: Context,
 ) => {
-	const builder = build.string(refs);
+	const builder = refs.build.string();
 
 	// Apply format constraint
 	if (schema.format) {

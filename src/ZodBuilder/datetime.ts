@@ -22,8 +22,8 @@ export class DatetimeBuilder extends ZodBuilder<'datetime'> {
 	private _offset?: boolean;
 	private _errorMessage?: string;
 
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(version?: 'v3' | 'v4') {
+		super(version);
 	}
 
 	/**

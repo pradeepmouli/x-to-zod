@@ -1,12 +1,21 @@
+import type { z } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
  * DateBuilder: represents z.date() with optional constraints
  */
-export class DateBuilder extends ZodBuilder<'date'> {
+export class DateBuilder extends ZodBuilder<
+	'date',
+	Parameters<typeof z.date>[0]
+> {
 	readonly typeKind = 'date' as const;
 	_min?: { value: Date; errorMessage?: string } = undefined;
 	_max?: { value: Date; errorMessage?: string } = undefined;
+
+	constructor(params?: Parameters<typeof z.date>[0], version?: 'v3' | 'v4') {
+		super(version);
+		this._params = params;
+	}
 
 	/**
 	 * Apply minimum date constraint.
@@ -25,7 +34,8 @@ export class DateBuilder extends ZodBuilder<'date'> {
 	}
 
 	protected override base(): string {
-		return 'z.date()';
+		const paramsStr = this.serializeParams();
+		return paramsStr ? `z.date(${paramsStr})` : 'z.date()';
 	}
 
 	protected override modify(baseText: string): string {

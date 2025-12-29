@@ -17,8 +17,8 @@ export class EmojiBuilder extends ZodBuilder<'emoji'> {
 	readonly typeKind = 'emoji' as const;
 	private _errorMessage?: string;
 
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(version?: 'v3' | 'v4') {
+		super(version);
 	}
 
 	/**

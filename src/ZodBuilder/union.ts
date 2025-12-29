@@ -8,8 +8,8 @@ export class UnionBuilder extends ZodBuilder<'union'> {
 	readonly typeKind = 'union' as const;
 	private readonly _schemas: ZodBuilder[];
 
-	constructor(schemas: ZodBuilder[], options?: import('../Types.js').Options) {
-		super(options);
+	constructor(schemas: ZodBuilder[], version?: 'v3' | 'v4') {
+		super(version);
 		this._schemas = schemas;
 	}
 

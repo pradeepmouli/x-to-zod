@@ -13,9 +13,9 @@ export class DiscriminatedUnionBuilder extends ZodBuilder<'discriminatedUnion'> 
 	constructor(
 		discriminator: string,
 		options: ZodBuilder<keyof TypeKind>[],
-		zodOptions?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(zodOptions);
+		super(version);
 		this._discriminator = discriminator;
 		this._options = options;
 	}

@@ -1,3 +1,4 @@
+import type { z } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -17,7 +18,10 @@ import { ZodBuilder } from './BaseBuilder.js';
  * The validation is functionally identical in both v3 and v4.
  * See ARRAY-NONEMPTY-NOTES.md for details.
  */
-export class ArrayBuilder extends ZodBuilder<'array'> {
+export class ArrayBuilder extends ZodBuilder<
+	'array',
+	Parameters<typeof z.array>[1]
+> {
 	readonly typeKind = 'array' as const;
 	private readonly _itemSchema: ZodBuilder | ZodBuilder[];
 	_minItems?: { value: number; errorMessage?: string } = undefined;
@@ -25,10 +29,12 @@ export class ArrayBuilder extends ZodBuilder<'array'> {
 
 	constructor(
 		itemSchema: ZodBuilder | ZodBuilder[],
-		options?: import('../Types.js').Options,
+		params?: Parameters<typeof z.array>[1],
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._itemSchema = itemSchema;
+		this._params = params;
 	}
 
 	/**
@@ -55,13 +61,17 @@ export class ArrayBuilder extends ZodBuilder<'array'> {
 	 * Compute the base array schema.
 	 */
 	protected override base(): string {
+		// Tuples don't support params
 		if (Array.isArray(this._itemSchema)) {
 			const itemStrs = this._itemSchema.map((item) => item.text());
 			return `z.tuple([${itemStrs.join(',')}])`; // No space after comma
 		}
 
 		const itemStr = this._itemSchema.text();
-		return `z.array(${itemStr})`;
+		const paramsStr = this.serializeParams();
+		return paramsStr
+			? `z.array(${itemStr}, ${paramsStr})`
+			: `z.array(${itemStr})`;
 	}
 
 	protected override modify(baseText: string): string {

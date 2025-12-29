@@ -11,9 +11,9 @@ export class FunctionBuilder extends ZodBuilder<'function'> {
 
 	constructor(
 		params: { input?: ZodBuilder[]; output?: ZodBuilder } = {},
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._input = params.input;
 		this._output = params.output;
 	}

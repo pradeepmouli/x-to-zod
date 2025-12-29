@@ -1,9 +1,13 @@
+import type { z } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
  * BigIntBuilder: represents z.bigint() with optional constraints
  */
-export class BigIntBuilder extends ZodBuilder<'bigint'> {
+export class BigIntBuilder extends ZodBuilder<
+	'bigint',
+	Parameters<typeof z.bigint>[0]
+> {
 	_min?:
 		| { value: bigint; exclusive: boolean; errorMessage?: string }
 		| undefined = undefined;
@@ -16,8 +20,9 @@ export class BigIntBuilder extends ZodBuilder<'bigint'> {
 		undefined;
 
 	readonly typeKind = 'bigint' as const;
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(params?: Parameters<typeof z.bigint>[0], version?: 'v3' | 'v4') {
+		super(version);
+		this._params = params;
 	}
 	/**
 	 * Apply minimum constraint (gte by default).
@@ -44,7 +49,8 @@ export class BigIntBuilder extends ZodBuilder<'bigint'> {
 	}
 
 	protected override base(): string {
-		return 'z.bigint()';
+		const paramsStr = this.serializeParams();
+		return paramsStr ? `z.bigint(${paramsStr})` : 'z.bigint()';
 	}
 
 	protected override modify(baseText: string): string {

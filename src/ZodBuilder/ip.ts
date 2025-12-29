@@ -30,9 +30,9 @@ export class IpBuilder extends ZodBuilder<'ip'> {
 
 	constructor(
 		variant: 'ip' | 'ipv4' | 'ipv6' | 'cidrv4' | 'cidrv6' = 'ip',
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._variant = variant;
 	}
 

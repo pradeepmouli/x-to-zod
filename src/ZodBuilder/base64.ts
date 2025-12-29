@@ -17,8 +17,8 @@ export class Base64Builder extends ZodBuilder<'base64'> {
 	readonly typeKind = 'base64' as const;
 	private _errorMessage?: string;
 
-	constructor(options?: import('../Types.js').Options) {
-		super(options);
+	constructor(version?: 'v3' | 'v4') {
+		super(version);
 	}
 
 	/**

@@ -12,9 +12,9 @@ export class CodecBuilder extends ZodBuilder<'codec'> {
 	constructor(
 		inSchema: ZodBuilder,
 		outSchema: ZodBuilder,
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._inSchema = inSchema;
 		this._outSchema = outSchema;
 	}
