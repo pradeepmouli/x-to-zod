@@ -55,38 +55,47 @@ describe('New Zod Builders', () => {
 	describe('String Validators', () => {
 		it('url validator', () => {
 			const schema = buildV3.string().url();
+			expect(schema.text()).toBe('z.string().url()');
 		});
 
 		it('httpUrl validator', () => {
 			const schema = buildV3.string().httpUrl();
+			expect(schema.text()).toBe('z.string().httpUrl()');
 		});
 
 		it('hostname validator', () => {
 			const schema = buildV3.string().hostname();
+			expect(schema.text()).toBe('z.string().hostname()');
 		});
 
 		it('emoji validator', () => {
 			const schema = buildV3.string().emoji();
+			expect(schema.text()).toBe('z.string().emoji()');
 		});
 
 		it('base64url validator', () => {
 			const schema = buildV3.string().base64url();
+			expect(schema.text()).toBe('z.string().base64url()');
 		});
 
 		it('hex validator', () => {
 			const schema = buildV3.string().hex();
+			expect(schema.text()).toBe('z.string().hex()');
 		});
 
 		it('jwt validator', () => {
 			const schema = buildV3.string().jwt();
+			expect(schema.text()).toBe('z.string().jwt()');
 		});
 
 		it('nanoid validator', () => {
 			const schema = buildV3.string().nanoid();
+			expect(schema.text()).toBe('z.string().nanoid()');
 		});
 
 		it('cuid validator', () => {
 			const schema = buildV3.string().cuid();
+			expect(schema.text()).toBe('z.string().cuid()');
 		});
 
 		it('cuid2 validator', () => {
@@ -392,6 +401,7 @@ describe('New Zod Builders', () => {
 
 		it('nativeEnum builder', () => {
 			const schema = buildV3.nativeEnum('MyEnum');
+			expect(schema.text()).toBe('z.nativeEnum(MyEnum)');
 		});
 
 		it('nativeEnum builder with modifiers', () => {
