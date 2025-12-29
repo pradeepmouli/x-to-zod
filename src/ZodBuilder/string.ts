@@ -26,11 +26,8 @@ export class StringBuilder extends ZodBuilder<
 	_json?: { errorMessage?: string } = undefined;
 	_pipe?: { contentSchema: ZodBuilder; errorMessage?: string } = undefined;
 
-	constructor(
-		params?: Parameters<typeof z.string>[0],
-		options?: import('../Types.js').Options,
-	) {
-		super(options);
+	constructor(params?: Parameters<typeof z.string>[0], version?: 'v3' | 'v4') {
+		super(version);
 		this._params = params;
 	}
 
@@ -96,7 +93,7 @@ export class StringBuilder extends ZodBuilder<
 	email(errorMessage?: string): this | import('./email.js').EmailBuilder {
 		// In v4 mode without constraints, switch to EmailBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new EmailBuilder(this.options);
+			const builder = new EmailBuilder(this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -113,7 +110,7 @@ export class StringBuilder extends ZodBuilder<
 	uuid(errorMessage?: string): this | import('./uuid.js').UuidBuilder {
 		// In v4 mode without constraints, switch to UuidBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new UuidBuilder('uuid', this.options);
+			const builder = new UuidBuilder('uuid', this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -130,7 +127,7 @@ export class StringBuilder extends ZodBuilder<
 	url(errorMessage?: string): this | import('./url.js').UrlBuilder {
 		// In v4 mode without constraints, switch to UrlBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new UrlBuilder(this.options);
+			const builder = new UrlBuilder(this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -163,7 +160,7 @@ export class StringBuilder extends ZodBuilder<
 	emoji(errorMessage?: string): this | import('./emoji.js').EmojiBuilder {
 		// In v4 mode without constraints, switch to EmojiBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new EmojiBuilder(this.options);
+			const builder = new EmojiBuilder(this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -204,7 +201,7 @@ export class StringBuilder extends ZodBuilder<
 	nanoid(errorMessage?: string): this | import('./nanoid.js').NanoidBuilder {
 		// In v4 mode without constraints, switch to NanoidBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new NanoidBuilder(this.options);
+			const builder = new NanoidBuilder(this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -221,7 +218,7 @@ export class StringBuilder extends ZodBuilder<
 	cuid(errorMessage?: string): this | import('./cuid.js').CuidBuilder {
 		// In v4 mode without constraints, switch to CuidBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new CuidBuilder('cuid', this.options);
+			const builder = new CuidBuilder('cuid', this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -238,7 +235,7 @@ export class StringBuilder extends ZodBuilder<
 	cuid2(errorMessage?: string): this | import('./cuid.js').CuidBuilder {
 		// In v4 mode without constraints, switch to CuidBuilder with cuid2 variant
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new CuidBuilder('cuid2', this.options);
+			const builder = new CuidBuilder('cuid2', this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -255,7 +252,7 @@ export class StringBuilder extends ZodBuilder<
 	ulid(errorMessage?: string): this | import('./ulid.js').UlidBuilder {
 		// In v4 mode without constraints, switch to UlidBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new UlidBuilder(this.options);
+			const builder = new UlidBuilder(this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -272,7 +269,7 @@ export class StringBuilder extends ZodBuilder<
 	ipv4(errorMessage?: string): this | import('./ip.js').IpBuilder {
 		// In v4 mode without constraints, switch to IpBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new IpBuilder('ipv4', this.options);
+			const builder = new IpBuilder('ipv4', this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -289,7 +286,7 @@ export class StringBuilder extends ZodBuilder<
 	ipv6(errorMessage?: string): this | import('./ip.js').IpBuilder {
 		// In v4 mode without constraints, switch to IpBuilder
 		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new IpBuilder('ipv6', this.options);
+			const builder = new IpBuilder('ipv6', this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}
@@ -411,7 +408,7 @@ export class StringBuilder extends ZodBuilder<
 
 		// In v4 mode without other constraints, switch to Base64Builder
 		if (this.isV4() && !hasOtherConstraints) {
-			const builder = new Base64Builder(this.options);
+			const builder = new Base64Builder(this._version);
 			if (errorMessage) builder.withError(errorMessage);
 			return builder;
 		}

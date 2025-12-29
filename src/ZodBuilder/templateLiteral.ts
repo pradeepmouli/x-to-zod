@@ -8,11 +8,8 @@ export class TemplateLiteralBuilder extends ZodBuilder<'templateLiteral'> {
 	readonly typeKind = 'templateLiteral' as const;
 	private readonly _parts: (string | ZodBuilder)[];
 
-	constructor(
-		parts: (string | ZodBuilder)[],
-		options?: import('../Types.js').Options,
-	) {
-		super(options);
+	constructor(parts: (string | ZodBuilder)[], version?: 'v3' | 'v4') {
+		super(version);
 		this._parts = parts;
 	}
 

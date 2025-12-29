@@ -8,11 +8,8 @@ export class KeyofBuilder extends ZodBuilder<'keyof'> {
 	readonly typeKind = 'keyof' as const;
 	private readonly _objectSchema: ZodBuilder;
 
-	constructor(
-		objectSchema: ZodBuilder,
-		options?: import('../Types.js').Options,
-	) {
-		super(options);
+	constructor(objectSchema: ZodBuilder, version?: 'v3' | 'v4') {
+		super(version);
 		this._objectSchema = objectSchema;
 	}
 

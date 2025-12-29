@@ -10,8 +10,8 @@ export class SetBuilder extends ZodBuilder<'set'> {
 	_max?: { value: number; errorMessage?: string } = undefined;
 	_size?: { value: number; errorMessage?: string } = undefined;
 
-	constructor(itemSchema: ZodBuilder, options?: import('../Types.js').Options) {
-		super(options);
+	constructor(itemSchema: ZodBuilder, version?: 'v3' | 'v4') {
+		super(version);
 		this._itemSchema = itemSchema;
 	}
 

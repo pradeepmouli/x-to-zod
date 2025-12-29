@@ -8,8 +8,8 @@ export class EnumBuilder extends ZodBuilder<'enum'> {
 	readonly typeKind = 'enum' as const;
 	private readonly _values: Serializable[];
 
-	constructor(values: Serializable[], options?: import('../Types.js').Options) {
-		super(options);
+	constructor(values: Serializable[], version?: 'v3' | 'v4') {
+		super(version);
 		this._values = values;
 	}
 

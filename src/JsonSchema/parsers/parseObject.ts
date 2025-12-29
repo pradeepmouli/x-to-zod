@@ -1,5 +1,5 @@
 import { JsonSchemaObject, JsonSchema, Context } from '../../Types.js';
-import { build, ObjectBuilder, BaseBuilder } from '../../ZodBuilder/index.js';
+import { ObjectBuilder, BaseBuilder } from '../../ZodBuilder/index.js';
 import { addJsdocs } from '../../utils/jsdocs.js';
 import { parseAnyOf } from './parseAnyOf.js';
 import { parseOneOf } from './parseOneOf.js';
@@ -61,11 +61,11 @@ export function parseObject(
 		if (refs.withJsdocs) {
 			result = `z.object({ ${propsWithJsdocs.join(', ')} })`;
 		} else {
-			result = build.object(properties, refs).text();
+			result = refs.build.object(properties).text();
 		}
 	} else if (objectSchema.properties) {
 		// Empty properties object
-		result = build.object({}, refs).text();
+		result = refs.build.object({}).text();
 	} else {
 		result = '';
 	} // Step 2: Handle additionalProperties
@@ -74,7 +74,7 @@ export function parseObject(
 			? parseSchema(objectSchema.additionalProperties, {
 					...refs,
 					path: [...refs.path, 'additionalProperties'],
-				}).text()
+				})
 			: undefined;
 
 	// Step 3: Handle patternProperties
@@ -96,7 +96,7 @@ export function parseObject(
 			// We have properties, so add catchall
 			const catchallSchemas = Object.values(parsedPatternProps);
 			if (additionalPropertiesZod) {
-				catchallSchemas.push(additionalPropertiesZod);
+				catchallSchemas.push(additionalPropertiesZod.text());
 			}
 
 			const builder = ObjectBuilder.fromCode(result);
@@ -110,17 +110,17 @@ export function parseObject(
 			// No properties, build a record
 			const valueSchemas = Object.values(parsedPatternProps);
 			if (additionalPropertiesZod) {
-				valueSchemas.push(additionalPropertiesZod);
+				valueSchemas.push(additionalPropertiesZod.text());
 			}
 
 			if (valueSchemas.length > 1) {
-				const unionSchema = build.union(
+				const unionSchema = refs.build.union(
 					valueSchemas.map((s) => ObjectBuilder.fromCode(s)),
 				);
-				result = build.record(build.string(), unionSchema).text();
+				result = refs.build.record(refs.build.string(), unionSchema).text();
 			} else if (valueSchemas.length === 1) {
-				result = build
-					.record(build.string(), ObjectBuilder.fromCode(valueSchemas[0]))
+				result = refs.build
+					.record(refs.build.string(), ObjectBuilder.fromCode(valueSchemas[0]))
 					.text();
 			}
 		}
@@ -158,7 +158,7 @@ export function parseObject(
 
 		if (additionalPropertiesZod) {
 			refineFn += 'if (!evaluated) {\n';
-			refineFn += `const result = ${additionalPropertiesZod}.safeParse(value[key])\n`;
+			refineFn += `const result = ${additionalPropertiesZod.text()}.safeParse(value[key])\n`;
 			refineFn += 'if (!result.success) {\n';
 			refineFn += `ctx.addIssue({\n          path: [key],\n          code: 'custom',\n          message: \`Invalid input: must match catchall schema\`,\n          params: {\n            issues: result.error.issues\n          }\n        })\n`;
 			refineFn += '}\n';
@@ -172,28 +172,25 @@ export function parseObject(
 	} else if (result && additionalPropertiesZod) {
 		// No pattern properties, but we have additionalProperties
 		const builder = ObjectBuilder.fromCode(result, refs);
-		if (additionalPropertiesZod === 'z.never()') {
+		const apText = additionalPropertiesZod.text();
+		if (apText === 'z.never()') {
 			result = builder.strict().text();
 		} else {
-			result = builder.catchall(additionalPropertiesZod).text();
+			result = builder.catchall(apText).text();
 		}
 	} else if (!result) {
 		// No properties, no patternProperties
 		if (additionalPropertiesZod) {
-			result = build
-				.record(
-					build.string(refs),
-					ObjectBuilder.fromCode(additionalPropertiesZod, refs),
-					refs,
-				)
+			result = refs.build
+				.record(refs.build.string(), additionalPropertiesZod)
 				.text();
 		} else {
-			result = build.record(build.string(refs), build.any(refs), refs).text();
+			result = refs.build.record(refs.build.string(), refs.build.any()).text();
 		}
 	}
 
 	// Step 4: Handle combinators (anyOf, oneOf, allOf)
-	let builder = ObjectBuilder.fromCode(result, refs);
+	let builder = ObjectBuilder.fromCode(result);
 
 	if (its.an.anyOf(objectSchema)) {
 		const anyOfZod = parseAnyOf(

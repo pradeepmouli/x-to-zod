@@ -1,7 +1,22 @@
 import { JSONSchema7 } from 'json-schema';
 import { ZodError } from 'zod';
-import { parseObject } from '../../src/JsonSchema/parsers/parseObject';
+import { parseObject as parseObjectImpl } from '../../src/JsonSchema/parsers/parseObject.js';
 import { describe, it, expect, assert } from 'vitest';
+import type { Context } from '../../src/Types';
+import { buildV4 } from '../../src/ZodBuilder/index.js';
+
+const withRefs = (refs: Partial<Context> = {}): Context => ({
+	build: buildV4,
+	zodVersion: 'v4',
+	path: [],
+	seen: new Map(),
+	...refs,
+});
+
+const parseObject = (
+	schema: Parameters<typeof parseObjectImpl>[0],
+	refs?: Partial<Context>,
+) => parseObjectImpl(schema, withRefs(refs));
 
 describe('parseObject', () => {
 	it('should handle with missing properties', () => {

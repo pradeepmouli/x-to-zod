@@ -1,5 +1,6 @@
 import { JsonSchemaObject, JsonSchema, Context } from '../../Types.js';
-import { BaseBuilder, build } from '../../ZodBuilder/index.js';
+import { BaseBuilder } from '../../ZodBuilder/index.js';
+import type { buildV4 } from '../../ZodBuilder/v4.js';
 import { parseSchema } from './parseSchema.js';
 
 export const parseOneOf = (
@@ -13,9 +14,17 @@ export const parseOneOf = (
 		}),
 	);
 
-	return schema.oneOf.length
-		? schema.oneOf.length === 1
-			? schemaBuilders[0]
-			: build.xor(schemaBuilders)
-		: build.any();
+	if (!schema.oneOf.length) {
+		return refs.build.any();
+	}
+
+	if (schema.oneOf.length === 1) {
+		return schemaBuilders[0];
+	}
+
+	if (refs.zodVersion !== 'v3' && 'xor' in refs.build) {
+		return (refs.build as typeof buildV4).xor(schemaBuilders);
+	}
+
+	return refs.build.union(schemaBuilders);
 };

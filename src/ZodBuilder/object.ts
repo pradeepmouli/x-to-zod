@@ -1,6 +1,5 @@
 import type { z } from 'zod';
 import { ZodBuilder, applySuperRefine } from './BaseBuilder.js';
-import { build } from './index.js';
 
 /**
  * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
@@ -25,9 +24,9 @@ export class ObjectBuilder extends ZodBuilder<
 	constructor(
 		properties: Record<string, ZodBuilder> = {},
 		params?: Parameters<typeof z.object>[1],
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._properties = properties;
 		this._params = params;
 	}
@@ -38,9 +37,10 @@ export class ObjectBuilder extends ZodBuilder<
 	 */
 	static fromCode(
 		code: string,
-		options?: import('../Types.js').Options,
+		refs?: import('../Types.js').Context,
 	): ObjectBuilder {
-		const builder = build.object({}, options);
+		const zodVersion = refs?.zodVersion || 'v4';
+		const builder = new ObjectBuilder({}, undefined, zodVersion);
 		builder._precomputedSchema = code;
 		return builder;
 	}

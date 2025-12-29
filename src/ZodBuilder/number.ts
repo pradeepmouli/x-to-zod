@@ -29,11 +29,8 @@ export class NumberBuilder extends ZodBuilder<
 		| { value: number; exclusive: boolean; errorMessage?: string }
 		| undefined = undefined;
 
-	constructor(
-		params?: Parameters<typeof z.number>[0],
-		options?: import('../Types.js').Options,
-	) {
-		super(options);
+	constructor(params?: Parameters<typeof z.number>[0], version?: 'v3' | 'v4') {
+		super(version);
 		this._params = params;
 	}
 

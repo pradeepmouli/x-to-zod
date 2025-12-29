@@ -20,11 +20,8 @@ export class BigIntBuilder extends ZodBuilder<
 		undefined;
 
 	readonly typeKind = 'bigint' as const;
-	constructor(
-		params?: Parameters<typeof z.bigint>[0],
-		options?: import('../Types.js').Options,
-	) {
-		super(options);
+	constructor(params?: Parameters<typeof z.bigint>[0], version?: 'v3' | 'v4') {
+		super(version);
 		this._params = params;
 	}
 	/**

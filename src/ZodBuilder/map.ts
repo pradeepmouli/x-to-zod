@@ -14,9 +14,9 @@ export class MapBuilder extends ZodBuilder<'map'> {
 	constructor(
 		keySchema: ZodBuilder,
 		valueSchema: ZodBuilder,
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._keySchema = keySchema;
 		this._valueSchema = valueSchema;
 	}

@@ -30,9 +30,9 @@ export class ArrayBuilder extends ZodBuilder<
 	constructor(
 		itemSchema: ZodBuilder | ZodBuilder[],
 		params?: Parameters<typeof z.array>[1],
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._itemSchema = itemSchema;
 		this._params = params;
 	}

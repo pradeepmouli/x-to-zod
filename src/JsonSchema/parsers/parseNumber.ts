@@ -1,11 +1,10 @@
 import { Context, JsonSchemaObject } from '../../Types.js';
-import { build } from '../../ZodBuilder/index.js';
 
 export const parseNumber = (
 	schema: JsonSchemaObject & { type: 'number' | 'integer' },
-	refs?: Context,
+	refs: Context,
 ) => {
-	const builder = build.number(refs);
+	const builder = refs.build.number();
 
 	// Apply integer constraint
 	if (schema.type === 'integer') {

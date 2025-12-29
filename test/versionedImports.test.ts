@@ -14,6 +14,8 @@ describe('Version-specific imports', () => {
 			expect(build.union).toBeDefined();
 			expect(build.date).toBeDefined();
 			expect(build.bigint).toBeDefined();
+			// v3 supports nativeEnum via z.nativeEnum()
+			expect(build.nativeEnum).toBeDefined();
 
 			// V4-only builders should NOT be available in v3
 			expect((build as any).promise).toBeUndefined();
@@ -24,7 +26,6 @@ describe('Version-specific imports', () => {
 			expect((build as any).pipe).toBeUndefined();
 			expect((build as any).json).toBeUndefined();
 			expect((build as any).file).toBeUndefined();
-			expect((build as any).nativeEnum).toBeUndefined();
 			expect((build as any).templateLiteral).toBeUndefined();
 			expect((build as any).xor).toBeUndefined();
 			expect((build as any).keyof).toBeUndefined();

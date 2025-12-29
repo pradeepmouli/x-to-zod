@@ -13,9 +13,9 @@ export class PipeBuilder extends ZodBuilder<'pipe'> {
 	constructor(
 		sourceSchema: ZodBuilder,
 		targetSchema: ZodBuilder,
-		options?: import('../Types.js').Options,
+		version?: 'v3' | 'v4',
 	) {
-		super(options);
+		super(version);
 		this._sourceSchema = sourceSchema;
 		this._targetSchema = targetSchema;
 	}

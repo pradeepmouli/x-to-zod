@@ -1,5 +1,20 @@
-import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
+import { parseSchema as parseSchemaImpl } from '../../src/JsonSchema/parsers/parseSchema.js';
 import { describe, it, expect } from 'vitest';
+import type { Context } from '../../src/Types';
+import { buildV4 } from '../../src/ZodBuilder/index.js';
+
+const withRefs = (refs: Partial<Context> = {}): Context => ({
+	build: buildV4,
+	zodVersion: 'v4',
+	path: [],
+	seen: new Map(),
+	...refs,
+});
+
+const parseSchema = (
+	schema: Parameters<typeof parseSchemaImpl>[0],
+	refs?: Partial<Context>,
+) => parseSchemaImpl(schema, withRefs(refs));
 
 describe('parseSchema', () => {
 	it('should be usable without providing refs', () => {
