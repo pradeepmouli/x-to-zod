@@ -6,44 +6,66 @@ This document provides a high-level overview of two major enhancements to x-to-z
 
 ## Features
 
-### 1. Enhancement 003: Post-Processing API
+### 1. Refactor 008: Parser Class Architecture
+
+**Location**: `./refactor-008-parser-class-architecture.md`
+
+**Summary**: Refactor parsers from functions to classes with inheritance, enabling integrated pre/post-processing, early processor filtering, and cleaner code organization.
+
+**Key Changes**:
+- **BaseParser abstract class**: Template method pattern with shared logic
+- **Parser classes**: ObjectParser, ArrayParser, StringParser, etc. extend BaseParser
+- **Integrated processing**: Pre/post-processors built into parse lifecycle
+- **Type guards**: Replace `instanceof` with `is.*Builder()` type guards
+- **Early filtering**: Only run applicable processors per parser
+- **Symmetric API**: `parse.object()` mirrors `build.object()`
+
+**Benefits**:
+- Cleaner code organization (no duplicated logic)
+- Natural integration point for transformations
+- Better performance (early processor filtering)
+- More maintainable parser architecture
+
+### 2. Enhancement 003: Post-Processing API
 
 **Location**: `./enhancement-003-post-processing-api.md`
 
-**Summary**: Adds the ability to manipulate ZodBuilder trees before code generation using path-based traversal and transformation APIs.
+**Summary**: User-facing API for transforming builders during parsing, built on refactor-008 foundation.
 
 **Key Capabilities**:
-- **Path-based queries**: JSONPath-inspired syntax to target specific builders (e.g., `$.properties.*.email`)
-- **Tree traversal**: Visitor pattern and walker API for navigating builder trees
-- **Builder transformation**: Modify builders globally or conditionally
-- **Parser interception**: Hook into parsers before builder tree assembly
+- **Simple function signature**: `(builder, context) => builder | undefined`
+- **Path-based filtering**: JSONPath patterns (e.g., `$.properties.*.email`)
+- **Type-aware transformations**: Use type guards to check builder types
+- **Pre-built helpers**: Common transformations (strict objects, brand IDs, etc.)
 
 **Use Cases**:
 - Apply global constraints (e.g., make all objects strict)
 - Add branding to specific field types
-- Optimize builder trees (flatten unions, merge intersections)
-- Generate metrics and validate schema patterns
-- Inject custom code at specific paths
+- Conditional modifications based on path
+- Schema-driven transformations
 
 **Example**:
 ```typescript
+import { is } from 'x-to-zod/utils';
+
 const result = jsonSchemaToZod(schema, {
   postProcessors: [
-    // Make all email fields lowercase
-    {
-      type: 'path',
-      pattern: '$..email',
-      transform: (builder) => builder.toLowerCase()
-    },
     // Make all objects strict
-    (builder) => builder instanceof ObjectBuilder ? builder.strict() : builder
+    (builder) => is.objectBuilder(builder) ? builder.strict() : undefined,
+
+    // Validate email fields
+    (builder, ctx) => {
+      if (ctx.matchPath('$..email') && is.stringBuilder(builder)) {
+        return builder.email().toLowerCase();
+      }
+    }
   ]
 });
 ```
 
 ---
 
-### 2. Feature 004: Multi-Schema Projects
+### 3. Feature 004: Multi-Schema Projects
 
 **Location**: `./feature-004-multi-schema-projects.md`
 
