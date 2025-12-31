@@ -6,8 +6,10 @@ import type {
 	PostProcessorConfig,
 	ProcessorConfig,
 } from '../../Types.js';
-import { parseSchema } from './parseSchema.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+
+// Forward declaration to avoid circular dependency
+let _parseSchema: (schema: JsonSchema, refs: Context, blockMeta?: boolean) => ZodBuilder;
 
 /**
  * Abstract base class implementing the template method for schema parsing.
@@ -24,6 +26,16 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	) {
 		this.preProcessors = this.filterPreProcessors(refs.preProcessors);
 		this.postProcessors = this.filterPostProcessors(refs.postProcessors);
+	}
+
+	/**
+	 * Set the parseSchema function reference to avoid circular imports.
+	 * This should be called once during module initialization.
+	 */
+	static setParseSchema(
+		parseSchema: (schema: JsonSchema, refs: Context, blockMeta?: boolean) => ZodBuilder,
+	): void {
+		_parseSchema = parseSchema;
 	}
 
 	parse(): ZodBuilder {
@@ -182,6 +194,9 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		schema: JsonSchema,
 		...pathSegments: (string | number)[]
 	): ZodBuilder {
-		return parseSchema(schema, this.createChildContext(...pathSegments));
+		if (!_parseSchema) {
+			throw new Error('BaseParser.setParseSchema() must be called before using parseChild()');
+		}
+		return _parseSchema(schema, this.createChildContext(...pathSegments));
 	}
 }
