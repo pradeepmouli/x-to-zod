@@ -2,7 +2,9 @@ import type { JsonSchemaObject, Context, JsonSchema } from '../../Types.js';
 import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class NumberParser extends BaseParser {
+export class NumberParser extends BaseParser<'number'> {
+	readonly typeKind = 'number' as const;
+
 	constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
 		super(schema, refs);
 	}
@@ -37,6 +39,8 @@ export class NumberParser extends BaseParser {
 	}
 
 	protected canProduceType(type: string): boolean {
-		return type === 'number' || type === 'integer' || type === 'NumberBuilder';
+		return (
+			type === this.typeKind || type === 'integer' || type === 'NumberBuilder'
+		);
 	}
 }

@@ -2,7 +2,9 @@ import type { JsonSchemaObject, Context, JsonSchema } from '../../Types.js';
 import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class BooleanParser extends BaseParser {
+export class BooleanParser extends BaseParser<'boolean'> {
+	readonly typeKind = 'boolean' as const;
+
 	constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
 		super(schema, refs);
 	}
@@ -12,6 +14,6 @@ export class BooleanParser extends BaseParser {
 	}
 
 	protected canProduceType(type: string): boolean {
-		return type === 'boolean' || type === 'BooleanBuilder';
+		return type === this.typeKind || type === 'BooleanBuilder';
 	}
 }

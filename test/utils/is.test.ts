@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { buildV4 } from '../../src/ZodBuilder/v4.js';
+import type { Context } from '../../src/Types.js';
+import { BooleanParser } from '../../src/JsonSchema/parsers/BooleanParser.js';
 import {
 	is,
 	isObjectBuilder,
@@ -129,6 +131,25 @@ describe('Type Guards', () => {
 		});
 	});
 
+	describe('isParserOfKind', () => {
+		const ctx = (): Context => ({
+			build: buildV4,
+			path: [],
+			seen: new Map(),
+			zodVersion: 'v4',
+		});
+
+		it('returns true when typeKind matches', () => {
+			const parser = new BooleanParser({ type: 'boolean' }, ctx());
+			expect(is.parserOfKind(parser, 'boolean')).toBe(true);
+		});
+
+		it('returns false when typeKind differs', () => {
+			const parser = new BooleanParser({ type: 'boolean' }, ctx());
+			expect(is.parserOfKind(parser, 'string')).toBe(false);
+		});
+	});
+
 	describe('is namespace', () => {
 		it('provides all type guards', () => {
 			expect(is.objectBuilder).toBeDefined();
@@ -140,6 +161,7 @@ describe('Type Guards', () => {
 			expect(is.unionBuilder).toBeDefined();
 			expect(is.intersectionBuilder).toBeDefined();
 			expect(is.lazyBuilder).toBeDefined();
+			expect(is.parserOfKind).toBeDefined();
 		});
 
 		it('works with is namespace', () => {

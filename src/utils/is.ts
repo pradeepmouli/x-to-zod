@@ -9,6 +9,7 @@ import {
 	IntersectionBuilder,
 	LazyBuilder,
 } from '../ZodBuilder/index.js';
+import { BaseParser } from '../JsonSchema/parsers/BaseParser.js';
 
 /**
  * Type guard for ObjectBuilder
@@ -76,6 +77,18 @@ export function isLazyBuilder(value: unknown): value is LazyBuilder {
 }
 
 /**
+ * Type guard for BaseParser instances by typeKind discriminator.
+ */
+export function isParserOfKind<K extends string>(
+	value: unknown,
+	kind: K,
+): value is BaseParser<K> {
+	if (!value || typeof value !== 'object') return false;
+	const candidate = value as { typeKind?: unknown; parse?: unknown };
+	return candidate.typeKind === kind && typeof candidate.parse === 'function';
+}
+
+/**
  * Namespace containing all builder type guards
  */
 export const is = {
@@ -88,4 +101,5 @@ export const is = {
 	unionBuilder: isUnionBuilder,
 	intersectionBuilder: isIntersectionBuilder,
 	lazyBuilder: isLazyBuilder,
+	parserOfKind: isParserOfKind,
 };

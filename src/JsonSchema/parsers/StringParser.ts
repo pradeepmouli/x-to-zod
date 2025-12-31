@@ -3,7 +3,9 @@ import { BaseParser } from './BaseParser.js';
 import { parseSchema } from './parseSchema.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class StringParser extends BaseParser {
+export class StringParser extends BaseParser<'string'> {
+	readonly typeKind = 'string' as const;
+
 	constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
 		super(schema, refs);
 	}
@@ -47,6 +49,6 @@ export class StringParser extends BaseParser {
 	}
 
 	protected canProduceType(type: string): boolean {
-		return type === 'string' || type === 'StringBuilder';
+		return type === this.typeKind || type === 'StringBuilder';
 	}
 }

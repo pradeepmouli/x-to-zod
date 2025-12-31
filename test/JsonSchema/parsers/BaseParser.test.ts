@@ -18,23 +18,27 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 	...overrides,
 });
 
-class StringTestParser extends BaseParser {
-	constructor(schema: JsonSchema, refs: Context) {
+
+class StringTestParser extends BaseParser<'string'> {
+	readonly typeKind = 'string' as const;
+
+	constructor(
+		schema: JsonSchema,
+		refs: Context,
+		private stepsTracker?: string[],
+	) {
 		super(schema, refs);
 	}
 
 	protected parseImpl(): any {
-		this.#steps.push('parseImpl');
+		if (this.stepsTracker) {
+			this.stepsTracker.push('parseImpl');
+		}
 		return this.refs.build.string();
 	}
 
 	protected canProduceType(type: string): boolean {
 		return type === 'string' || type === 'StringBuilder';
-	}
-
-	readonly #steps: string[] = [];
-	get steps() {
-		return this.#steps;
 	}
 }
 
@@ -67,6 +71,7 @@ describe('BaseParser', () => {
 		const parser = new StringTestParser(
 			{ type: 'string', description: 'orig', default: 'abc' } as JsonSchema,
 			ctx({ preProcessors: [pre], postProcessors: [post] }),
+			steps,
 		);
 
 		const builder = parser.parse();

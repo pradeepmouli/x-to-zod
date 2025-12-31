@@ -12,7 +12,9 @@ import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 /**
  * Abstract base class implementing the template method for schema parsing.
  */
-export abstract class BaseParser {
+export abstract class BaseParser<TypeKind extends string = string> {
+	abstract readonly typeKind: TypeKind;
+
 	protected readonly preProcessors: PreProcessor[];
 	protected readonly postProcessors: PostProcessor[];
 
@@ -32,7 +34,10 @@ export abstract class BaseParser {
 	}
 
 	protected abstract parseImpl(schema: JsonSchema): ZodBuilder;
-	protected abstract canProduceType(type: string): boolean;
+
+	protected canProduceType(type: string): boolean {
+		return type === this.typeKind;
+	}
 
 	protected applyPreProcessors(schema: JsonSchema): JsonSchema {
 		let current = schema;
@@ -90,36 +95,51 @@ export abstract class BaseParser {
 	}
 
 	protected filterPreProcessors(
-		processors: PreProcessor[] = [],
+		processors: (PreProcessor & Partial<ProcessorConfig>)[] = [],
+		path: (string | number)[] = this.refs.path,
 	): PreProcessor[] {
 		return processors.filter((processor) =>
-			this.isProcessorApplicable(processor),
+			this.isProcessorApplicable(processor as ProcessorConfig, path),
 		);
 	}
 
 	protected filterPostProcessors(
 		configs: (PostProcessor | PostProcessorConfig)[] = [],
+		path: (string | number)[] = this.refs.path,
 	): PostProcessor[] {
 		return configs
-			.filter((config) => this.isPostProcessorMatch(config))
+			.filter((config) => this.isPostProcessorApplicable(config, path))
 			.map((config) =>
 				typeof config === 'function' ? config : config.processor,
 			);
 	}
 
-	protected isProcessorApplicable(processor: ProcessorConfig): boolean {
+	private filterPostProcessorConfigsForPath(
+		configs: (PostProcessor | PostProcessorConfig)[] = [],
+		path: (string | number)[],
+	): (PostProcessor | PostProcessorConfig)[] {
+		return configs.filter((config) =>
+			this.isPostProcessorApplicable(config, path),
+		);
+	}
+
+	protected isProcessorApplicable(
+		processor: ProcessorConfig,
+		path: (string | number)[] = this.refs.path,
+	): boolean {
 		if (!processor.pathPattern) return true;
 		const patterns = Array.isArray(processor.pathPattern)
 			? processor.pathPattern
 			: [processor.pathPattern];
-		return patterns.some((pattern) => this.matchesPath(pattern));
+		return patterns.some((pattern: string) => this.matchesPath(pattern, path));
 	}
 
-	private isPostProcessorMatch(
+	private isPostProcessorApplicable(
 		config: PostProcessor | PostProcessorConfig,
+		path: (string | number)[] = this.refs.path,
 	): boolean {
 		const candidate = typeof config === 'function' ? undefined : config;
-		if (candidate?.pathPattern && !this.isProcessorApplicable(candidate)) {
+		if (candidate?.pathPattern && !this.isProcessorApplicable(candidate, path)) {
 			return false;
 		}
 
@@ -129,23 +149,36 @@ export abstract class BaseParser {
 		return filters.some((type) => this.canProduceType(type));
 	}
 
-	protected matchesPath(pattern: string): boolean {
-		const currentPath = (this.refs.path || []).join('.');
+	protected matchesPath(
+		pattern: string,
+		path: (string | number)[] = this.refs.path,
+	): boolean {
+		const currentPath = (path || []).join('.');
 		if (pattern === '*') return true;
 		return currentPath === pattern;
 	}
 
-	protected createChildContext(pathSegment: string | number): Context {
+	protected createChildContext(...pathSegments: (string | number)[]): Context {
+		const childPath = [...(this.refs.path || []), ...pathSegments];
 		return {
 			...this.refs,
-			path: [...(this.refs.path || []), pathSegment],
+			path: childPath,
+			preProcessors: this.refs.preProcessors
+				? this.filterPreProcessors(this.refs.preProcessors, childPath)
+				: undefined,
+			postProcessors: this.refs.postProcessors
+				? this.filterPostProcessorConfigsForPath(
+					this.refs.postProcessors,
+					childPath,
+				)
+				: undefined,
 		};
 	}
 
 	protected parseChild(
 		schema: JsonSchema,
-		pathSegment: string | number,
+		...pathSegments: (string | number)[]
 	): ZodBuilder {
-		return parseSchema(schema, this.createChildContext(pathSegment));
+		return parseSchema(schema, this.createChildContext(...pathSegments));
 	}
 }
