@@ -281,38 +281,38 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Prerequisite**: Complete Object and Array parsers first (simple combinators depend on complex parsers)
 
-- [ ] T135 [P] [Phase2] Write test cases for AnyOfParser in test/JsonSchema/parsers/AnyOfParser.test.ts (RED phase)
-- [ ] T136 [P] [Phase2] Create src/JsonSchema/parsers/AnyOfParser.ts extending BaseParser
-- [ ] T137 [P] [Phase2] Implement parseImpl() iterating schema.anyOf in src/JsonSchema/parsers/AnyOfParser.ts (GREEN phase)
-- [ ] T138 [P] [Phase2] Implement parseChild() for each anyOf option in src/JsonSchema/parsers/AnyOfParser.ts
-- [ ] T139 [P] [Phase2] Implement build.union() with all options in src/JsonSchema/parsers/AnyOfParser.ts
-- [ ] T140 [P] [Phase2] Implement canProduceType() returning true for 'anyOf'|'UnionBuilder' in src/JsonSchema/parsers/AnyOfParser.ts
-- [ ] T141 [P] [Phase2] Run AnyOfParser tests (GREEN phase)
+- [X] T135 [P] [Phase2] Write test cases for AnyOfParser in test/JsonSchema/parsers/AnyOfParser.test.ts (RED phase)
+- [X] T136 [P] [Phase2] Create src/JsonSchema/parsers/AnyOfParser.ts extending BaseParser
+- [X] T137 [P] [Phase2] Implement parseImpl() iterating schema.anyOf in src/JsonSchema/parsers/AnyOfParser.ts (GREEN phase)
+- [X] T138 [P] [Phase2] Implement parseChild() for each anyOf option in src/JsonSchema/parsers/AnyOfParser.ts
+- [X] T139 [P] [Phase2] Implement build.union() with all options in src/JsonSchema/parsers/AnyOfParser.ts
+- [X] T140 [P] [Phase2] Implement canProduceType() returning true for 'anyOf'|'UnionBuilder' in src/JsonSchema/parsers/AnyOfParser.ts
+- [X] T141 [P] [Phase2] Run AnyOfParser tests (GREEN phase)
 
 #### Subtask: AllOf Parser (allOf)
 
-- [ ] T142 [P] [Phase2] Write test cases for AllOfParser in test/JsonSchema/parsers/AllOfParser.test.ts (RED phase)
-- [ ] T143 [P] [Phase2] Create src/JsonSchema/parsers/AllOfParser.ts extending BaseParser
-- [ ] T144 [P] [Phase2] Implement parseImpl() iterating schema.allOf in src/JsonSchema/parsers/AllOfParser.ts (GREEN phase)
-- [ ] T145 [P] [Phase2] Implement parseChild() for each allOf option in src/JsonSchema/parsers/AllOfParser.ts
-- [ ] T146 [P] [Phase2] Implement build.intersection() with all options in src/JsonSchema/parsers/AllOfParser.ts
-- [ ] T147 [P] [Phase2] Implement canProduceType() returning true for 'allOf'|'IntersectionBuilder' in src/JsonSchema/parsers/AllOfParser.ts
-- [ ] T148 [P] [Phase2] Run AllOfParser tests (GREEN phase)
+- [X] T142 [P] [Phase2] Write test cases for AllOfParser in test/JsonSchema/parsers/AllOfParser.test.ts (RED phase)
+- [X] T143 [P] [Phase2] Create src/JsonSchema/parsers/AllOfParser.ts extending BaseParser
+- [X] T144 [P] [Phase2] Implement parseImpl() iterating schema.allOf in src/JsonSchema/parsers/AllOfParser.ts (GREEN phase)
+- [X] T145 [P] [Phase2] Implement parseChild() for each allOf option in src/JsonSchema/parsers/AllOfParser.ts
+- [X] T146 [P] [Phase2] Implement build.intersection() with all options in src/JsonSchema/parsers/AllOfParser.ts
+- [X] T147 [P] [Phase2] Implement canProduceType() returning true for 'allOf'|'IntersectionBuilder' in src/JsonSchema/parsers/AllOfParser.ts
+- [X] T148 [P] [Phase2] Run AllOfParser tests (GREEN phase)
 
 #### Subtask: OneOf Parser (oneOf)
 
-- [ ] T149 [P] [Phase2] Write test cases for OneOfParser in test/JsonSchema/parsers/OneOfParser.test.ts (RED phase)
-- [ ] T150 [P] [Phase2] Create src/JsonSchema/parsers/OneOfParser.ts extending BaseParser
-- [ ] T151 [P] [Phase2] Implement parseImpl() iterating schema.oneOf in src/JsonSchema/parsers/OneOfParser.ts (GREEN phase)
-- [ ] T152 [P] [Phase2] Implement parseChild() for each oneOf option in src/JsonSchema/parsers/OneOfParser.ts
-- [ ] T153 [P] [Phase2] Implement appropriate oneOf logic in src/JsonSchema/parsers/OneOfParser.ts
-- [ ] T154 [P] [Phase2] Implement canProduceType() returning true for 'oneOf'|'OneOfBuilder' in src/JsonSchema/parsers/OneOfParser.ts
-- [ ] T155 [P] [Phase2] Run OneOfParser tests (GREEN phase)
+- [X] T149 [P] [Phase2] Write test cases for OneOfParser in test/JsonSchema/parsers/OneOfParser.test.ts (RED phase)
+- [X] T150 [P] [Phase2] Create src/JsonSchema/parsers/OneOfParser.ts extending BaseParser
+- [X] T151 [P] [Phase2] Implement parseImpl() iterating schema.oneOf in src/JsonSchema/parsers/OneOfParser.ts (GREEN phase)
+- [X] T152 [P] [Phase2] Implement parseChild() for each oneOf option in src/JsonSchema/parsers/OneOfParser.ts
+- [X] T153 [P] [Phase2] Implement appropriate oneOf logic in src/JsonSchema/parsers/OneOfParser.ts
+- [X] T154 [P] [Phase2] Implement canProduceType() returning true for 'oneOf'|'OneOfBuilder' in src/JsonSchema/parsers/OneOfParser.ts
+- [X] T155 [P] [Phase2] Run OneOfParser tests (GREEN phase)
 
 #### Subtask: Integration Testing
 
-- [ ] T156 [Phase2] Run full test suite: npm test
-- [ ] T157 [Phase2] Verify 100% test pass rate (all existing tests still pass)
+- [X] T156 [Phase2] Run full test suite: npm test
+- [X] T157 [Phase2] Verify 100% test pass rate (all existing tests still pass)
 - [ ] T158 [Phase2] Run coverage analysis: npm test -- --coverage
 - [ ] T159 [Phase2] Verify coverage maintained or improved from baseline
 - [ ] T160 [Phase2] Compare behavioral snapshot: outputs must match original functions exactly

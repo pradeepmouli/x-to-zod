@@ -19,8 +19,9 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 });
 
 class StringTestParser extends BaseParser {
-	constructor(schema: JsonSchema, refs: Context) {
+	constructor(schema: JsonSchema, refs: Context, steps?: string[]) {
 		super(schema, refs);
+		this.#steps = steps || [];
 	}
 
 	protected parseImpl(): any {
@@ -32,7 +33,7 @@ class StringTestParser extends BaseParser {
 		return type === 'string' || type === 'StringBuilder';
 	}
 
-	readonly #steps: string[] = [];
+	readonly #steps: string[];
 	get steps() {
 		return this.#steps;
 	}
@@ -67,6 +68,7 @@ describe('BaseParser', () => {
 		const parser = new StringTestParser(
 			{ type: 'string', description: 'orig', default: 'abc' } as JsonSchema,
 			ctx({ preProcessors: [pre], postProcessors: [post] }),
+			steps,
 		);
 
 		const builder = parser.parse();
