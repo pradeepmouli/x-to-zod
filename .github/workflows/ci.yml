@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master, copilot/**, refactor/**, feature/**, fix/** ]
+    branches: [ master ]
   pull_request:
-
+    branches: [ refactor/**, feature/**, bugfix/** ]
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
