@@ -1,18 +1,9 @@
-import { parseAnyOf } from './parseAnyOf.js';
-import { parseBoolean } from './parseBoolean.js';
 import { parseDefault } from './parseDefault.js';
 import { parseMultipleType } from './parseMultipleType.js';
 import { parseNot } from './parseNot.js';
-import { parseNull } from './parseNull.js';
-import { parseAllOf } from './parseAllOf.js';
-import { parseArray } from './parseArray.js';
 import { parseConst } from './parseConst.js';
 import { parseEnum } from './parseEnum.js';
 import { parseIfThenElse } from './parseIfThenElse.js';
-import { parseNumber } from './parseNumber.js';
-import { parseObject } from './parseObject.js';
-import { parseString } from './parseString.js';
-import { parseOneOf } from './parseOneOf.js';
 import { parseNullable } from './parseNullable.js';
 import {
 	ParserSelector,
@@ -24,6 +15,8 @@ import { BaseBuilder } from '../../ZodBuilder/index.js';
 import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { its } from '../its.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
+import { selectParserClass } from './registry.js';
+import { is } from '../../utils/is.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
@@ -46,7 +39,7 @@ export const parseSchema = (
 			return refs.build.code(custom);
 		}
 
-		if (custom instanceof ZodBuilder) {
+		if (is.zodBuilder(custom)) {
 			return custom;
 		}
 	}
@@ -120,18 +113,10 @@ const addAnnotations = (
 };
 
 const selectParser: ParserSelector = (schema, refs) => {
+	// Check for special cases FIRST (nullable, not, enum, const, etc)
+	// These can wrap other types
 	if (its.a.nullable(schema)) {
 		return parseNullable(schema, refs);
-	} else if (its.an.object(schema)) {
-		return parseObject(schema, refs);
-	} else if (its.an.array(schema)) {
-		return parseArray(schema, refs);
-	} else if (its.an.anyOf(schema)) {
-		return parseAnyOf(schema, refs);
-	} else if (its.an.allOf(schema)) {
-		return parseAllOf(schema, refs);
-	} else if (its.a.oneOf(schema)) {
-		return parseOneOf(schema, refs);
 	} else if (its.a.not(schema)) {
 		return parseNot(schema, refs);
 	} else if (its.an.enum(schema)) {
@@ -140,20 +125,17 @@ const selectParser: ParserSelector = (schema, refs) => {
 		return parseConst(schema, refs);
 	} else if (its.a.multipleType(schema)) {
 		return parseMultipleType(schema, refs);
-	} else if (its.a.primitive(schema, 'string')) {
-		return parseString(schema, refs);
-	} else if (
-		its.a.primitive(schema, 'number') ||
-		its.a.primitive(schema, 'integer')
-	) {
-		return parseNumber(schema, refs);
-	} else if (its.a.primitive(schema, 'boolean')) {
-		return parseBoolean(schema, refs);
-	} else if (its.a.primitive(schema, 'null')) {
-		return parseNull(schema, refs);
 	} else if (its.a.conditional(schema)) {
 		return parseIfThenElse(schema, refs);
-	} else {
-		return parseDefault(schema, refs);
 	}
+
+	// Try registry-based parser classes (for converted parsers)
+	const ParserClass = selectParserClass(schema);
+	if (ParserClass) {
+		const parser = new ParserClass(schema as any, refs);
+		return parser.parse();
+	}
+
+	// Default fallback
+	return parseDefault(schema, refs);
 };

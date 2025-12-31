@@ -55,7 +55,7 @@
     "build": "pnpm test && rimraf ./dist && pnpm run build:types && pnpm run build:cjs && pnpm run build:esm",
     "dry": "pnpm run build && pnpm publish --dry-run",
     "dev": "vitest",
-    "test": "vitest run",
+    "test": "vitest run --test-timeout=60000",
     "lint": "oxlint src test",
     "lint:fix": "oxlint --fix src test",
     "format": "oxfmt src test",

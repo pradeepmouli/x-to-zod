@@ -115,12 +115,12 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	}
 
 	private filterPostProcessorConfigsForPath(
-		configs: (PostProcessor | PostProcessorConfig)[] = [],
+		configs: PostProcessorConfig[] = [],
 		path: (string | number)[],
-	): (PostProcessor | PostProcessorConfig)[] {
+	): PostProcessorConfig[] {
 		return configs.filter((config) =>
 			this.isPostProcessorApplicable(config, path),
-		);
+		) as PostProcessorConfig[];
 	}
 
 	protected isProcessorApplicable(

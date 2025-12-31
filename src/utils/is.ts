@@ -9,7 +9,15 @@ import {
 	IntersectionBuilder,
 	LazyBuilder,
 } from '../ZodBuilder/index.js';
+import { ZodBuilder } from '../ZodBuilder/BaseBuilder.js';
 import { BaseParser } from '../JsonSchema/parsers/BaseParser.js';
+
+/**
+ * Type guard for ZodBuilder base class
+ */
+export function isZodBuilder(value: unknown): value is ZodBuilder {
+	return value instanceof ZodBuilder;
+}
 
 /**
  * Type guard for ObjectBuilder
@@ -92,6 +100,7 @@ export function isParserOfKind<K extends string>(
  * Namespace containing all builder type guards
  */
 export const is = {
+	zodBuilder: isZodBuilder,
 	objectBuilder: isObjectBuilder,
 	arrayBuilder: isArrayBuilder,
 	stringBuilder: isStringBuilder,

@@ -400,41 +400,41 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 #### Subtask: Symmetric Parse API
 
-- [ ] T182 [Phase3] Create parse object in src/JsonSchema/parsers/index.ts
-- [ ] T183 [Phase3] Implement parse.schema() calling parseSchema() in src/JsonSchema/parsers/index.ts
-- [ ] T184 [Phase3] Implement parse.object() instantiating ObjectParser in src/JsonSchema/parsers/index.ts
-- [ ] T185 [Phase3] Implement parse.array() instantiating ArrayParser in src/JsonSchema/parsers/index.ts
-- [ ] T186 [Phase3] Implement parse.string() instantiating StringParser in src/JsonSchema/parsers/index.ts
-- [ ] T187 [Phase3] Implement parse.number() instantiating NumberParser in src/JsonSchema/parsers/index.ts
-- [ ] T188 [Phase3] Implement parse.boolean() instantiating BooleanParser in src/JsonSchema/parsers/index.ts
-- [ ] T189 [Phase3] Implement parse.null() instantiating NullParser in src/JsonSchema/parsers/index.ts
-- [ ] T190 [Phase3] Implement parse.anyOf() instantiating AnyOfParser in src/JsonSchema/parsers/index.ts
-- [ ] T191 [Phase3] Implement parse.allOf() instantiating AllOfParser in src/JsonSchema/parsers/index.ts
-- [ ] T192 [Phase3] Export parse object from src/JsonSchema/parsers/index.ts
-- [ ] T193 [Phase3] Add JSDoc comments to all parse.* methods in src/JsonSchema/parsers/index.ts
+- [X] T182 [Phase3] Create parse object in src/JsonSchema/parsers/index.ts
+- [X] T183 [Phase3] Implement parse.schema() calling parseSchema() in src/JsonSchema/parsers/index.ts
+- [X] T184 [Phase3] Implement parse.object() instantiating ObjectParser in src/JsonSchema/parsers/index.ts
+- [X] T185 [Phase3] Implement parse.array() instantiating ArrayParser in src/JsonSchema/parsers/index.ts
+- [X] T186 [Phase3] Implement parse.string() instantiating StringParser in src/JsonSchema/parsers/index.ts
+- [X] T187 [Phase3] Implement parse.number() instantiating NumberParser in src/JsonSchema/parsers/index.ts
+- [X] T188 [Phase3] Implement parse.boolean() instantiating BooleanParser in src/JsonSchema/parsers/index.ts
+- [X] T189 [Phase3] Implement parse.null() instantiating NullParser in src/JsonSchema/parsers/index.ts
+- [X] T190 [Phase3] Implement parse.anyOf() instantiating AnyOfParser in src/JsonSchema/parsers/index.ts
+- [X] T191 [Phase3] Implement parse.allOf() instantiating AllOfParser in src/JsonSchema/parsers/index.ts
+- [X] T192 [Phase3] Export parse object from src/JsonSchema/parsers/index.ts
+- [X] T193 [Phase3] Add JSDoc comments to all parse.* methods in src/JsonSchema/parsers/index.ts
 
 #### Subtask: Replace instanceof Checks
 
-- [ ] T194 [Phase3] Search for all instanceof usage: grep -r "instanceof.*Builder" src/
-- [ ] T195 [Phase3] Replace instanceof ObjectBuilder with is.objectBuilder() throughout src/
-- [ ] T196 [Phase3] Replace instanceof ArrayBuilder with is.arrayBuilder() throughout src/
-- [ ] T197 [Phase3] Replace instanceof StringBuilder with is.stringBuilder() throughout src/
-- [ ] T198 [Phase3] Replace instanceof NumberBuilder with is.numberBuilder() throughout src/
-- [ ] T199 [Phase3] Replace instanceof UnionBuilder with is.unionBuilder() throughout src/
-- [ ] T200 [Phase3] Verify no instanceof checks remain: grep -r "instanceof.*Builder" src/ (should return nothing)
+- [X] T194 [Phase3] Search for all instanceof usage: grep -r "instanceof.*Builder" src/
+- [X] T195 [Phase3] Replace instanceof ObjectBuilder with is.objectBuilder() throughout src/
+- [X] T196 [Phase3] Replace instanceof ArrayBuilder with is.arrayBuilder() throughout src/
+- [X] T197 [Phase3] Replace instanceof StringBuilder with is.stringBuilder() throughout src/
+- [X] T198 [Phase3] Replace instanceof NumberBuilder with is.numberBuilder() throughout src/
+- [X] T199 [Phase3] Replace instanceof UnionBuilder with is.unionBuilder() throughout src/
+- [X] T200 [Phase3] Verify no instanceof checks remain: grep -r "instanceof.*Builder" src/ (should return nothing)
 
 #### Subtask: Testing
 
-- [ ] T201 [Phase3] Create test/JsonSchema/parsers/registry.test.ts
-- [ ] T202 [Phase3] Add test for selectParserClass() with object schema in test/JsonSchema/parsers/registry.test.ts
-- [ ] T203 [Phase3] Add test for selectParserClass() with array schema in test/JsonSchema/parsers/registry.test.ts
-- [ ] T204 [Phase3] Add test for selectParserClass() with combinator schemas in test/JsonSchema/parsers/registry.test.ts
-- [ ] T205 [Phase3] Add test for selectParserClass() with type inference in test/JsonSchema/parsers/registry.test.ts
+- [X] T201 [Phase3] Create test/JsonSchema/parsers/registry.test.ts
+- [X] T202 [Phase3] Add test for selectParserClass() with object schema in test/JsonSchema/parsers/registry.test.ts
+- [X] T203 [Phase3] Add test for selectParserClass() with array schema in test/JsonSchema/parsers/registry.test.ts
+- [X] T204 [Phase3] Add test for selectParserClass() with combinator schemas in test/JsonSchema/parsers/registry.test.ts
+- [X] T205 [Phase3] Add test for selectParserClass() with type inference in test/JsonSchema/parsers/registry.test.ts
 - [ ] T206 [Phase3] Add test for parse.schema() usage in test/JsonSchema/parsers/index.test.ts
 - [ ] T207 [Phase3] Add test for parse.object() producing ObjectBuilder in test/JsonSchema/parsers/index.test.ts
 - [ ] T208 [Phase3] Add test for parse.array() producing ArrayBuilder in test/JsonSchema/parsers/index.test.ts
 - [ ] T209 [Phase3] Add test verifying parse.* output matches parseSchema() output in test/JsonSchema/parsers/index.test.ts
-- [ ] T210 [Phase3] Run registry tests: npm test -- test/JsonSchema/parsers/registry.test.ts
+- [X] T210 [Phase3] Run registry tests: npm test -- test/JsonSchema/parsers/registry.test.ts
 - [ ] T211 [Phase3] Run full test suite: npm test
 - [ ] T212 [Phase3] Verify 100% test pass rate
 
