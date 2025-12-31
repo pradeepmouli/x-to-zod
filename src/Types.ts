@@ -75,6 +75,10 @@ export type Options = {
 	preprocessors?: transformer[];
 	/** Zod version to target for generated code (default: 'v4') */
 	zodVersion?: ZodVersion;
+	/** Pre-processors to transform schema before parsing */
+	preProcessors?: PreProcessor[];
+	/** Post-processors to transform builders after parsing */
+	postProcessors?: (PostProcessor | PostProcessorConfig)[];
 };
 
 export type Context = Options & {

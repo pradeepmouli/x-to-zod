@@ -28,8 +28,10 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		protected readonly schema: JsonSchema,
 		protected readonly refs: Context,
 	) {
-		this.preProcessors = this.filterPreProcessors(refs.preProcessors);
-		this.postProcessors = this.filterPostProcessors(refs.postProcessors);
+		// Note: this.typeKind is not yet initialized when parent constructor runs
+		// We filter in the parse() method instead
+		this.preProcessors = [];
+		this.postProcessors = [];
 	}
 
 	/**
@@ -47,6 +49,14 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	}
 
 	parse(): ZodBuilder {
+		// Filter processors now that typeKind is initialized
+		if (!this.preProcessors.length && this.refs.preProcessors) {
+			(this as any).preProcessors = this.filterPreProcessors(this.refs.preProcessors);
+		}
+		if (!this.postProcessors.length && this.refs.postProcessors) {
+			(this as any).postProcessors = this.filterPostProcessors(this.refs.postProcessors);
+		}
+
 		const processedSchema = this.applyPreProcessors(this.schema);
 		let builder = this.parseImpl(processedSchema);
 		builder = this.applyPostProcessors(builder, processedSchema);

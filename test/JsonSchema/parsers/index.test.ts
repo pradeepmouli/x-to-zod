@@ -233,8 +233,14 @@ describe('parse API', () => {
 		it('should produce an intersection builder', () => {
 			const schema = {
 				allOf: [
-					{ type: 'object' as const, properties: { a: { type: 'string' as const } } },
-					{ type: 'object' as const, properties: { b: { type: 'number' as const } } },
+					{
+						type: 'object' as const,
+						properties: { a: { type: 'string' as const } },
+					},
+					{
+						type: 'object' as const,
+						properties: { b: { type: 'number' as const } },
+					},
 				],
 			};
 
@@ -337,8 +343,14 @@ describe('parse API', () => {
 		it('should produce identical output for allOf schemas', () => {
 			const schema = {
 				allOf: [
-					{ type: 'object' as const, properties: { a: { type: 'string' as const } } },
-					{ type: 'object' as const, properties: { b: { type: 'number' as const } } },
+					{
+						type: 'object' as const,
+						properties: { a: { type: 'string' as const } },
+					},
+					{
+						type: 'object' as const,
+						properties: { b: { type: 'number' as const } },
+					},
 				],
 			};
 

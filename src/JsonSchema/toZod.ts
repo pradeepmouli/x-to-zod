@@ -18,6 +18,11 @@ export const toZod = (
 	const zodVersion = rest.zodVersion ?? 'v4';
 	const build = zodVersion === 'v3' ? buildV3 : buildV4;
 
+	// Normalize postProcessors to PostProcessorConfig format
+	const postProcessors = rest.postProcessors?.map((p) =>
+		typeof p === 'function' ? { processor: p } : p,
+	);
+
 	const builder = parseSchema(schema, {
 		build,
 		module,
@@ -26,6 +31,7 @@ export const toZod = (
 		seen: new Map(),
 		...rest,
 		zodVersion,
+		postProcessors,
 	});
 
 	let result = builder.text();

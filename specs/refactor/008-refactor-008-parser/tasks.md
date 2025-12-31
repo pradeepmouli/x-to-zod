@@ -463,52 +463,52 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 #### Subtask: Update Entry Point
 
-- [ ] T213 [Phase4] Update JsonSchemaToZodOptions interface in src/jsonSchemaToZod.ts
-- [ ] T214 [Phase4] Add postProcessors field to JsonSchemaToZodOptions in src/jsonSchemaToZod.ts
-- [ ] T215 [Phase4] Add preProcessors field to JsonSchemaToZodOptions in src/jsonSchemaToZod.ts
-- [ ] T216 [Phase4] Update jsonSchemaToZod() function to accept processors in src/jsonSchemaToZod.ts
-- [ ] T217 [Phase4] Pass preProcessors through Context in src/jsonSchemaToZod.ts
-- [ ] T218 [Phase4] Pass postProcessors through Context in src/jsonSchemaToZod.ts
-- [ ] T219 [Phase4] Normalize postProcessors (function to config) in src/jsonSchemaToZod.ts
-- [ ] T220 [Phase4] Verify backward compatibility: processors optional in src/jsonSchemaToZod.ts
+- [X] T213 [Phase4] Update JsonSchemaToZodOptions interface in src/jsonSchemaToZod.ts
+- [X] T214 [Phase4] Add postProcessors field to JsonSchemaToZodOptions in src/jsonSchemaToZod.ts
+- [X] T215 [Phase4] Add preProcessors field to JsonSchemaToZodOptions in src/jsonSchemaToZod.ts
+- [X] T216 [Phase4] Update jsonSchemaToZod() function to accept processors in src/jsonSchemaToZod.ts
+- [X] T217 [Phase4] Pass preProcessors through Context in src/jsonSchemaToZod.ts
+- [X] T218 [Phase4] Pass postProcessors through Context in src/jsonSchemaToZod.ts
+- [X] T219 [Phase4] Normalize postProcessors (function to config) in src/jsonSchemaToZod.ts
+- [X] T220 [Phase4] Verify backward compatibility: processors optional in src/jsonSchemaToZod.ts
 
 #### Subtask: Processor Context
 
-- [ ] T221 [Phase4] Verify BaseParser.applyPostProcessors() creates correct context in src/JsonSchema/parsers/BaseParser.ts
-- [ ] T222 [Phase4] Ensure context.path includes current path in src/JsonSchema/parsers/BaseParser.ts
-- [ ] T223 [Phase4] Ensure context.schema includes schema being parsed in src/JsonSchema/parsers/BaseParser.ts
-- [ ] T224 [Phase4] Ensure context.build includes build functions in src/JsonSchema/parsers/BaseParser.ts
+- [X] T221 [Phase4] Verify BaseParser.applyPostProcessors() creates correct context in src/JsonSchema/parsers/BaseParser.ts
+- [X] T222 [Phase4] Ensure context.path includes current path in src/JsonSchema/parsers/BaseParser.ts
+- [X] T223 [Phase4] Ensure context.schema includes schema being parsed in src/JsonSchema/parsers/BaseParser.ts
+- [X] T224 [Phase4] Ensure context.build includes build functions in src/JsonSchema/parsers/BaseParser.ts
 
 #### Subtask: Type Filtering
 
-- [ ] T225 [Phase4] Verify filterPostProcessors() handles function form in src/JsonSchema/parsers/BaseParser.ts
-- [ ] T226 [Phase4] Verify filterPostProcessors() handles config form in src/JsonSchema/parsers/BaseParser.ts
-- [ ] T227 [Phase4] Verify filterPostProcessors() filters by typeFilter in src/JsonSchema/parsers/BaseParser.ts
-- [ ] T228 [Phase4] Verify filterPostProcessors() handles array of types in src/JsonSchema/parsers/BaseParser.ts
-- [ ] T229 [Phase4] Verify canProduceType() implemented in all parser classes
-- [ ] T230 [Phase4] Test type filtering: ObjectBuilder processors only apply to objects
+- [X] T225 [Phase4] Verify filterPostProcessors() handles function form in src/JsonSchema/parsers/BaseParser.ts
+- [X] T226 [Phase4] Verify filterPostProcessors() handles config form in src/JsonSchema/parsers/BaseParser.ts
+- [X] T227 [Phase4] Verify filterPostProcessors() filters by typeFilter in src/JsonSchema/parsers/BaseParser.ts
+- [X] T228 [Phase4] Verify filterPostProcessors() handles array of types in src/JsonSchema/parsers/BaseParser.ts
+- [X] T229 [Phase4] Verify canProduceType() implemented in all parser classes
+- [X] T230 [Phase4] Test type filtering: ObjectBuilder processors only apply to objects
 
 #### Subtask: Testing
 
-- [ ] T231 [Phase4] Create test/postProcessors.test.ts
-- [ ] T232 [Phase4] Add test: basic processor application in test/postProcessors.test.ts
-- [ ] T233 [Phase4] Add test: processor receives correct context in test/postProcessors.test.ts
-- [ ] T234 [Phase4] Add test: type filtering with ObjectBuilder in test/postProcessors.test.ts
-- [ ] T235 [Phase4] Add test: type filtering with ArrayBuilder in test/postProcessors.test.ts
-- [ ] T236 [Phase4] Add test: multiple processors applied in order in test/postProcessors.test.ts
-- [ ] T237 [Phase4] Add test: processor returning undefined preserves builder in test/postProcessors.test.ts
-- [ ] T238 [Phase4] Add test: strictify all objects processor example in test/postProcessors.test.ts
-- [ ] T239 [Phase4] Add test: nonempty arrays processor example in test/postProcessors.test.ts
-- [ ] T240 [Phase4] Add test: path-based filtering (if implemented) in test/postProcessors.test.ts
-- [ ] T241 [Phase4] Run processor tests: npm test -- test/postProcessors.test.ts
-- [ ] T242 [Phase4] Verify all processor tests pass
+- [X] T231 [Phase4] Create test/postProcessors.test.ts
+- [X] T232 [Phase4] Add test: basic processor application in test/postProcessors.test.ts
+- [X] T233 [Phase4] Add test: processor receives correct context in test/postProcessors.test.ts
+- [X] T234 [Phase4] Add test: type filtering with ObjectBuilder in test/postProcessors.test.ts
+- [X] T235 [Phase4] Add test: type filtering with ArrayBuilder in test/postProcessors.test.ts
+- [X] T236 [Phase4] Add test: multiple processors applied in order in test/postProcessors.test.ts
+- [X] T237 [Phase4] Add test: processor returning undefined preserves builder in test/postProcessors.test.ts
+- [X] T238 [Phase4] Add test: strictify all objects processor example in test/postProcessors.test.ts
+- [X] T239 [Phase4] Add test: nonempty arrays processor example in test/postProcessors.test.ts
+- [X] T240 [Phase4] Add test: path-based filtering (if implemented) in test/postProcessors.test.ts
+- [X] T241 [Phase4] Run processor tests: npm test -- test/postProcessors.test.ts
+- [X] T242 [Phase4] Verify all processor tests pass
 
 #### Subtask: Backward Compatibility Verification
 
-- [ ] T243 [Phase4] Run full test suite without processors: npm test
-- [ ] T244 [Phase4] Verify 100% test pass rate (all existing tests pass)
-- [ ] T245 [Phase4] Test jsonSchemaToZod() without postProcessors option (should work as before)
-- [ ] T246 [Phase4] Compare output with/without processors (no processors = original behavior)
+- [X] T243 [Phase4] Run full test suite without processors: npm test
+- [X] T244 [Phase4] Verify 100% test pass rate (all existing tests pass)
+- [X] T245 [Phase4] Test jsonSchemaToZod() without postProcessors option (should work as before)
+- [X] T246 [Phase4] Compare output with/without processors (no processors = original behavior)
 - [ ] T247 [Phase4] Run performance benchmark to check for regression
 - [ ] T248 [Phase4] Document performance results in specs/refactor/008-refactor-008-parser/phase4-performance.md
 
