@@ -248,34 +248,34 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Prerequisite**: Complete all simple parsers (Boolean, Null, String, Number) first
 
-- [ ] T112 [Phase2] Write comprehensive test cases for ObjectParser in test/JsonSchema/parsers/ObjectParser.test.ts (RED phase)
-- [ ] T113 [Phase2] Create src/JsonSchema/parsers/ObjectParser.ts extending BaseParser
-- [ ] T114 [Phase2] Implement parseImpl() iterating over properties in src/JsonSchema/parsers/ObjectParser.ts (GREEN phase)
-- [ ] T115 [Phase2] Implement required field handling using schema.required array in src/JsonSchema/parsers/ObjectParser.ts
-- [ ] T116 [Phase2] Implement optional field marking for non-required properties in src/JsonSchema/parsers/ObjectParser.ts
-- [ ] T117 [Phase2] Implement parseChild() calls for each property in src/JsonSchema/parsers/ObjectParser.ts
-- [ ] T118 [Phase2] Implement additionalProperties: false → .strict() in src/JsonSchema/parsers/ObjectParser.ts
-- [ ] T119 [Phase2] Implement applyPatternProperties() helper method in src/JsonSchema/parsers/ObjectParser.ts
-- [ ] T120 [Phase2] Implement canProduceType() returning true for 'object'|'ObjectBuilder' in src/JsonSchema/parsers/ObjectParser.ts
-- [ ] T121 [Phase2] Run ObjectParser tests: npm test -- test/JsonSchema/parsers/ObjectParser.test.ts (GREEN phase)
-- [ ] T122 [Phase2] Verify ObjectParser output matches original parseObject() exactly
-- [ ] T123 [Phase2] Refactor ObjectParser implementation (REFACTOR phase)
+- [X] T112 [Phase2] Write comprehensive test cases for ObjectParser in test/JsonSchema/parsers/ObjectParser.test.ts (RED phase)
+- [X] T113 [Phase2] Create src/JsonSchema/parsers/ObjectParser.ts extending BaseParser
+- [X] T114 [Phase2] Implement parseImpl() iterating over properties in src/JsonSchema/parsers/ObjectParser.ts (GREEN phase)
+- [X] T115 [Phase2] Implement required field handling using schema.required array in src/JsonSchema/parsers/ObjectParser.ts
+- [X] T116 [Phase2] Implement optional field marking for non-required properties in src/JsonSchema/parsers/ObjectParser.ts
+- [X] T117 [Phase2] Implement parseChild() calls for each property in src/JsonSchema/parsers/ObjectParser.ts
+- [X] T118 [Phase2] Implement additionalProperties: false → .strict() in src/JsonSchema/parsers/ObjectParser.ts
+- [X] T119 [Phase2] Implement applyPatternProperties() helper method in src/JsonSchema/parsers/ObjectParser.ts
+- [X] T120 [Phase2] Implement canProduceType() returning true for 'object'|'ObjectBuilder' in src/JsonSchema/parsers/ObjectParser.ts
+- [X] T121 [Phase2] Run ObjectParser tests: npm test -- test/JsonSchema/parsers/ObjectParser.test.ts (GREEN phase)
+- [X] T122 [Phase2] Verify ObjectParser output matches original parseObject() exactly
+- [X] T123 [Phase2] Refactor ObjectParser implementation (REFACTOR phase)
 
 #### Subtask: Array Parser
 
 **Prerequisite**: Complete all simple parsers first
 
-- [ ] T124 [Phase2] Write comprehensive test cases for ArrayParser in test/JsonSchema/parsers/ArrayParser.test.ts (RED phase)
-- [ ] T125 [Phase2] Create src/JsonSchema/parsers/ArrayParser.ts extending BaseParser
-- [ ] T126 [Phase2] Implement parseImpl() checking for tuple vs regular array in src/JsonSchema/parsers/ArrayParser.ts (GREEN phase)
-- [ ] T127 [Phase2] Implement tuple handling with build.tuple() in src/JsonSchema/parsers/ArrayParser.ts
-- [ ] T128 [Phase2] Implement regular array handling with build.array() in src/JsonSchema/parsers/ArrayParser.ts
-- [ ] T129 [Phase2] Implement minItems/maxItems constraints in src/JsonSchema/parsers/ArrayParser.ts
-- [ ] T130 [Phase2] Implement uniqueItems constraint handling in src/JsonSchema/parsers/ArrayParser.ts
-- [ ] T131 [Phase2] Implement canProduceType() returning true for 'array'|'ArrayBuilder' in src/JsonSchema/parsers/ArrayParser.ts
-- [ ] T132 [Phase2] Run ArrayParser tests: npm test -- test/JsonSchema/parsers/ArrayParser.test.ts (GREEN phase)
-- [ ] T133 [Phase2] Verify ArrayParser output matches original parseArray() exactly
-- [ ] T134 [Phase2] Refactor ArrayParser implementation (REFACTOR phase)
+- [X] T124 [Phase2] Write comprehensive test cases for ArrayParser in test/JsonSchema/parsers/ArrayParser.test.ts (RED phase)
+- [X] T125 [Phase2] Create src/JsonSchema/parsers/ArrayParser.ts extending BaseParser
+- [X] T126 [Phase2] Implement parseImpl() checking for tuple vs regular array in src/JsonSchema/parsers/ArrayParser.ts (GREEN phase)
+- [X] T127 [Phase2] Implement tuple handling with build.tuple() in src/JsonSchema/parsers/ArrayParser.ts
+- [X] T128 [Phase2] Implement regular array handling with build.array() in src/JsonSchema/parsers/ArrayParser.ts
+- [X] T129 [Phase2] Implement minItems/maxItems constraints in src/JsonSchema/parsers/ArrayParser.ts
+- [X] T130 [Phase2] Implement uniqueItems constraint handling in src/JsonSchema/parsers/ArrayParser.ts
+- [X] T131 [Phase2] Implement canProduceType() returning true for 'array'|'ArrayBuilder' in src/JsonSchema/parsers/ArrayParser.ts
+- [X] T132 [Phase2] Run ArrayParser tests: npm test -- test/JsonSchema/parsers/ArrayParser.test.ts (GREEN phase)
+- [X] T133 [Phase2] Verify ArrayParser output matches original parseArray() exactly
+- [X] T134 [Phase2] Refactor ArrayParser implementation (REFACTOR phase)
 
 #### Subtask: AnyOf Parser (anyOf)
 
