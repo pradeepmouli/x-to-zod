@@ -9,7 +9,10 @@ export class ObjectParser extends BaseParser {
 	}
 
 	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		return parseObject(schema as JsonSchemaObject & { type: 'object' }, this.refs);
+		return parseObject(
+			schema as JsonSchemaObject & { type: 'object' },
+			this.refs,
+		);
 	}
 
 	protected canProduceType(type: string): boolean {

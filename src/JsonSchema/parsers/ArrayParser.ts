@@ -9,7 +9,10 @@ export class ArrayParser extends BaseParser {
 	}
 
 	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		return parseArray(schema as JsonSchemaObject & { type: 'array' }, this.refs);
+		return parseArray(
+			schema as JsonSchemaObject & { type: 'array' },
+			this.refs,
+		);
 	}
 
 	protected canProduceType(type: string): boolean {

@@ -41,7 +41,10 @@ describe('ArrayParser', () => {
 	it('parses tuple array', () => {
 		const schema: JsonSchemaObject & { type: 'array' } = {
 			type: 'array',
-			items: [{ type: 'string' } as JsonSchemaObject, { type: 'number' } as JsonSchemaObject],
+			items: [
+				{ type: 'string' } as JsonSchemaObject,
+				{ type: 'number' } as JsonSchemaObject,
+			],
 			minItems: 2,
 			errorMessage: { minItems: 'too-few' },
 		};
