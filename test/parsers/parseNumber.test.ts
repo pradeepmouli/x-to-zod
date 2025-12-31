@@ -92,4 +92,15 @@ describe('parseNumber', () => {
 			'z.number().int("ayy").multipleOf(2, "lmao").gt(0, "deez").lte(2, "nuts")',
 		);
 	});
+
+	it('should handle multipleOf with minimum and maximum', () => {
+		expect(
+			parseNumber({
+				type: 'number',
+				multipleOf: 2,
+				minimum: 1,
+				maximum: 5,
+			}).text(),
+		).toBe('z.number().int().multipleOf(2).gte(1).lte(5)');
+	});
 });

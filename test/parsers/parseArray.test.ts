@@ -31,6 +31,20 @@ describe('parseArray', () => {
 		).toBe('z.tuple([z.string(),z.number()])');
 	});
 
+	it('should apply minItems and maxItems for tuple arrays', () => {
+		expect(
+			parseArray({
+				type: 'array',
+				minItems: 1,
+				maxItems: 2,
+				items: [
+					{ type: 'string' },
+					{ type: 'number' },
+				],
+			}).text(),
+		).toBe('z.tuple([z.string(),z.number()]).min(1).max(2)');
+	});
+
 	it('should create array with items object', () => {
 		expect(
 			parseArray({
@@ -52,5 +66,18 @@ describe('parseArray', () => {
 				},
 			}).text(),
 		).toBe('z.array(z.string()).max(2)');
+	});
+
+	it('should create min and max for regular arrays', () => {
+		expect(
+			parseArray({
+				type: 'array',
+				minItems: 1,
+				maxItems: 3,
+				items: {
+					type: 'string',
+				},
+			}).text(),
+		).toBe('z.array(z.string()).min(1).max(3)');
 	});
 });

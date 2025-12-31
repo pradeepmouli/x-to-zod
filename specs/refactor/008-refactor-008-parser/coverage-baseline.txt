@@ -1,0 +1,35 @@
+Coverage run: npm test -- --coverage (vitest v4.0.16, v8 provider)
+Date: Tue Dec 30 19:34:12 EST 2025
+
+Overall:
+- Statements: 83.49%
+- Branches:   71.35%
+- Functions:  81.15%
+- Lines:      84.13%
+
+Key files:
+- src/JsonSchema/index.ts:      Stmts 6.25% (branch 0)  Uncovered: 50-68
+- src/JsonSchema/toZod.ts:      Stmts 100% (branch 97.22) Uncovered: 45
+- src/JsonSchema/parsers/parseSchema.ts: Stmts 89.47% (branch 86.56) Uncovered: 37-39,50,61-65
+- src/JsonSchema/parsers/parseObject.ts: Stmts 100% (branch 97.75) Uncovered branches: 105,121
+- src/JsonSchema/parsers/parseArray.ts:  Stmts 88.88% (branch 83.33) Uncovered: 20,23
+- src/JsonSchema/parsers/parseOneOf.ts:  Stmts 90% (branch 87.5)  Uncovered: 29
+- src/JsonSchema/parsers/parseString.ts: Stmts 100% (branch 94.44) Uncovered: 44
+- src/JsonSchema/parsers/parseNumber.ts: Stmts 100% (branch 100) Uncovered: none
+- src/JsonSchema/parsers/parseBoolean.ts: Stmts 100% (branch 100) Uncovered: none
+- src/JsonSchema/parsers/parseNull.ts:    Stmts 100% (branch 100) Uncovered: none
+- src/JsonSchema/parsers/parseAnyOf.ts:   Stmts 100% (branch 100) Uncovered: none
+- src/JsonSchema/parsers/parseAllOf.ts:   Stmts 100% (branch 100) Uncovered: none
+
+Notes for T006-T015 gap analysis:
+- Lowest coverage in JsonSchema index (dispatch logic) and parseSchema edge branches.
+- Array/OneOf branch gaps align with tuple/guard paths.
+- toZod single uncovered branch at line 45 (branch-only gap).
+- No critical (<70%) parser gaps; focus improvements on parseSchema branch cases and tuple guard branches in parseArray/parseOneOf.
+
+Re-run after gap tests (npm test -- --coverage, Tue Dec 30 19:39:18 EST 2025):
+- Overall: Statements 83.86%, Branches 72.00%, Functions 81.15%, Lines 84.51%
+- parseArray.ts: 100% statements/branches after tuple min/max test
+- parseObject.ts: branches 97.75% (remaining: 105,121)
+- parseSchema.ts: branches 91.04% (remaining: 37-39,50,65)
+- parseOneOf.ts: branch gap remains at line 29 (single-length xor fallback)

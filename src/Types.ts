@@ -1,6 +1,7 @@
 import { Jsonifiable } from 'type-fest';
 import type { JSONSchema } from 'json-schema-typed/draft-2020-12';
 import type { transformer } from './JsonSchema/index.js';
+import type { ZodBuilder as BaseBuilder } from './ZodBuilder/BaseBuilder.js';
 
 export type Serializable = Jsonifiable;
 
@@ -22,6 +23,42 @@ export type ParserOverride = (
 ) => import('./ZodBuilder/index.js').BaseBuilder | string | void;
 
 export type ZodVersion = 'v3' | 'v4';
+
+export type BuildFunctions =
+	| typeof import('./ZodBuilder/v3.js').buildV3
+	| typeof import('./ZodBuilder/v4.js').buildV4;
+
+export type ProcessorPathPattern = string | string[];
+
+export interface ProcessorConfig {
+	pathPattern?: ProcessorPathPattern;
+}
+
+/**
+ * Pre-processor: transforms schema before parsing.
+ */
+export interface PreProcessor extends ProcessorConfig {
+	(schema: JsonSchema, refs: Context): JsonSchema | undefined;
+}
+
+export interface PostProcessorContext {
+	path: (string | number)[];
+	schema: JsonSchema;
+	build: BuildFunctions;
+}
+
+/**
+ * Post-processor: transforms a builder after parsing.
+ */
+export type PostProcessor = (
+	builder: BaseBuilder,
+	context: PostProcessorContext,
+) => BaseBuilder | undefined;
+
+export interface PostProcessorConfig extends ProcessorConfig {
+	processor: PostProcessor;
+	typeFilter?: string | string[];
+}
 
 export type Options = {
 	name?: string;
@@ -49,4 +86,6 @@ export type Context = Options & {
 		object | boolean,
 		{ n: number; r: import('./ZodBuilder/index.js').BaseBuilder | undefined }
 	>;
+	preProcessors?: PreProcessor[];
+	postProcessors?: PostProcessorConfig[];
 };
