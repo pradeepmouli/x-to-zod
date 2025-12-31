@@ -1,6 +1,6 @@
 # Refactor 008: Design Decisions
 
-**Date**: December 30, 2025  
+**Date**: December 30, 2025
 **Status**: ✅ All Open Questions Resolved
 
 ---
@@ -29,7 +29,7 @@ protected createChildContext(path: string): Context {
     }
     return true;
   });
-  
+
   return { ...this.refs, processors: childProcessors };
 }
 ```
@@ -106,7 +106,7 @@ parseOneOf(schema);
 jsonSchemaToZod(schema, options);
 
 // ✅ PRESERVED - custom parser logic
-jsonSchemaToZod(schema, { 
+jsonSchemaToZod(schema, {
   parserOverride: (schema) => customLogic(schema)
 });
 

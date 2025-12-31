@@ -37,10 +37,7 @@ describe('parseArray', () => {
 				type: 'array',
 				minItems: 1,
 				maxItems: 2,
-				items: [
-					{ type: 'string' },
-					{ type: 'number' },
-				],
+				items: [{ type: 'string' }, { type: 'number' }],
 			}).text(),
 		).toBe('z.tuple([z.string(),z.number()]).min(1).max(2)');
 	});

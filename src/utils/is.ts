@@ -62,7 +62,9 @@ export function isUnionBuilder(value: unknown): value is UnionBuilder {
 /**
  * Type guard for IntersectionBuilder
  */
-export function isIntersectionBuilder(value: unknown): value is IntersectionBuilder {
+export function isIntersectionBuilder(
+	value: unknown,
+): value is IntersectionBuilder {
 	return value instanceof IntersectionBuilder;
 }
 

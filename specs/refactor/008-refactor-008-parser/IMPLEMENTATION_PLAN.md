@@ -263,15 +263,15 @@ export abstract class BaseParser {
     schema: JsonSchema
   ): ZodBuilder {
     let result = builder;
-    
+
     if (schema.description) {
       result = result.describe(schema.description);
     }
-    
+
     if ('default' in schema && schema.default !== undefined) {
       result = result.default(schema.default);
     }
-    
+
     return result;
   }
 
@@ -303,7 +303,7 @@ export abstract class BaseParser {
         }
         return true;
       })
-      .map(config => 
+      .map(config =>
         typeof config === 'function' ? config : config.processor
       );
   }
@@ -519,7 +519,7 @@ Each Parser:
       // Move logic from parseXxx() here
       // Should produce identical output
     }
-    
+
     protected canProduceType(type: string): boolean {
       // Identify which builder types this parser produces
       return type === 'object' || type === 'ObjectBuilder';
@@ -674,7 +674,7 @@ export class ObjectParser extends BaseParser {
     if (schema.properties) {
       for (const [key, propSchema] of Object.entries(schema.properties)) {
         const propBuilder = this.parseChild(propSchema, key);
-        
+
         // Mark as optional if not required
         if (!schema.required?.includes(key)) {
           properties[key] = propBuilder.optional();
@@ -1165,7 +1165,7 @@ Update JsonSchemaToZodOptions interface:
 ```typescript
 export interface JsonSchemaToZodOptions {
   // ... existing options ...
-  
+
   /**
    * Optional post-processors to transform builders after parsing
    */
@@ -1218,8 +1218,8 @@ protected filterPostProcessors(
   return configs
     .filter(config => {
       // Normalize to PostProcessorConfig if function
-      const cfg = typeof config === 'function' 
-        ? { processor: config } 
+      const cfg = typeof config === 'function'
+        ? { processor: config }
         : config;
 
       // Filter based on type and path
@@ -1235,7 +1235,7 @@ protected filterPostProcessors(
       // Could add path filtering here
       return true;
     })
-    .map(config => 
+    .map(config =>
       typeof config === 'function' ? config : config.processor
     );
 }

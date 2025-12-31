@@ -37,8 +37,6 @@ export class NumberParser extends BaseParser {
 	}
 
 	protected canProduceType(type: string): boolean {
-		return (
-			type === 'number' || type === 'integer' || type === 'NumberBuilder'
-		);
+		return type === 'number' || type === 'integer' || type === 'NumberBuilder';
 	}
 }

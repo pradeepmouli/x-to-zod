@@ -63,14 +63,15 @@ export abstract class BaseParser {
 		return current;
 	}
 
-	protected applyMetadata(
-		builder: ZodBuilder,
-		schema: JsonSchema,
-	): ZodBuilder {
+	protected applyMetadata(builder: ZodBuilder, schema: JsonSchema): ZodBuilder {
 		if (schema && typeof schema === 'object') {
 			let current = builder;
 			const description = (schema as Record<string, unknown>).description;
-			if (!this.refs.withoutDescribes && typeof description === 'string' && description.length > 0) {
+			if (
+				!this.refs.withoutDescribes &&
+				typeof description === 'string' &&
+				description.length > 0
+			) {
 				current = current.describe(description);
 			}
 
@@ -88,8 +89,12 @@ export abstract class BaseParser {
 		return builder;
 	}
 
-	protected filterPreProcessors(processors: PreProcessor[] = []): PreProcessor[] {
-		return processors.filter((processor) => this.isProcessorApplicable(processor));
+	protected filterPreProcessors(
+		processors: PreProcessor[] = [],
+	): PreProcessor[] {
+		return processors.filter((processor) =>
+			this.isProcessorApplicable(processor),
+		);
 	}
 
 	protected filterPostProcessors(
@@ -97,7 +102,9 @@ export abstract class BaseParser {
 	): PostProcessor[] {
 		return configs
 			.filter((config) => this.isPostProcessorMatch(config))
-			.map((config) => (typeof config === 'function' ? config : config.processor));
+			.map((config) =>
+				typeof config === 'function' ? config : config.processor,
+			);
 	}
 
 	protected isProcessorApplicable(processor: ProcessorConfig): boolean {
@@ -108,7 +115,9 @@ export abstract class BaseParser {
 		return patterns.some((pattern) => this.matchesPath(pattern));
 	}
 
-	private isPostProcessorMatch(config: PostProcessor | PostProcessorConfig): boolean {
+	private isPostProcessorMatch(
+		config: PostProcessor | PostProcessorConfig,
+	): boolean {
 		const candidate = typeof config === 'function' ? undefined : config;
 		if (candidate?.pathPattern && !this.isProcessorApplicable(candidate)) {
 			return false;
@@ -133,7 +142,10 @@ export abstract class BaseParser {
 		};
 	}
 
-	protected parseChild(schema: JsonSchema, pathSegment: string | number): ZodBuilder {
+	protected parseChild(
+		schema: JsonSchema,
+		pathSegment: string | number,
+	): ZodBuilder {
 		return parseSchema(schema, this.createChildContext(pathSegment));
 	}
 }

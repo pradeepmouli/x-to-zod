@@ -111,7 +111,9 @@ describe('Type Guards', () => {
 
 		it('returns false for non-IntersectionBuilder', () => {
 			expect(isIntersectionBuilder(buildV4.string())).toBe(false);
-			expect(isIntersectionBuilder(buildV4.union([buildV4.string()]))).toBe(false);
+			expect(isIntersectionBuilder(buildV4.union([buildV4.string()]))).toBe(
+				false,
+			);
 		});
 	});
 

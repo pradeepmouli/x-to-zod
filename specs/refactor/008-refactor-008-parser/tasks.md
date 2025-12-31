@@ -1,8 +1,8 @@
 # Refactor 008: Parser Class Architecture - Task Breakdown
 
-**Refactor ID**: refactor-008  
-**Branch**: `refactor/008-refactor-008-parser`  
-**Created**: 2025-12-30  
+**Refactor ID**: refactor-008
+**Branch**: `refactor/008-refactor-008-parser`
+**Created**: 2025-12-30
 **Status**: Ready for Execution
 
 ---
@@ -11,13 +11,13 @@
 
 This document provides a complete task breakdown for refactoring the x-to-zod parser architecture from functional to class-based implementation using the Template Method pattern. Each task follows the strict checklist format and is organized by phase for incremental delivery.
 
-**Implementation Strategy**: 
+**Implementation Strategy**:
 - **MVP First**: Complete Phase 0-1 to establish foundation
 - **Incremental Delivery**: Each phase is independently testable
 - **Parallel Opportunities**: Tasks marked [P] can run in parallel within each phase
 
-**Total Phases**: 7 (Setup + 6 Implementation Phases)  
-**Estimated Timeline**: 5-6 weeks  
+**Total Phases**: 7 (Setup + 6 Implementation Phases)
+**Estimated Timeline**: 5-6 weeks
 **Task Format**: `- [ ] [TaskID] [P?] [Phase?] Description with file path`
 
 ---
@@ -26,7 +26,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Goal**: Initialize refactor workflow, capture baseline metrics, verify branch setup
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ Branch exists and is checked out
 - ✅ Baseline metrics captured
 - ✅ All tests pass before starting refactor
@@ -47,7 +47,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Goal**: Establish comprehensive test coverage before refactoring to ensure behavior preservation
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ Coverage report generated showing >80% parser coverage
 - ✅ All critical gaps (<70% coverage) have new tests added
 - ✅ testing-gaps.md document completed
@@ -82,7 +82,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [X] T031 [Phase0] Document all tests added with coverage improvement metrics
 - [X] T032 [Phase0] Sign-off checklist: All critical gaps addressed, all tests passing, ready for Phase 1
 
-**Exit Criteria**: 
+**Exit Criteria**:
 - ✅ All parser code >80% coverage
 - ✅ All critical paths >90% coverage
 - ✅ testing-gaps.md completed with sign-off
@@ -96,7 +96,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Execution Timeline**: ~2-3 weeks
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ All BaseParser tests written FIRST (RED phase)
 - ✅ BaseParser.ts compiles and passes all tests
 - ✅ All type guards functional and testable
@@ -171,7 +171,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [X] T081 [Phase1] Review BaseParser for improvements and refactor if needed
 - [X] T082 [Phase1] Run full test suite: npm test (verify no regressions)
 
-**Exit Criteria**: 
+**Exit Criteria**:
 - ✅ All test files created with stubs (RED phase)
 - ✅ BaseParser created and compiles (GREEN phase)
 - ✅ All type guards implemented and tests pass
@@ -188,14 +188,14 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Execution Timeline**: ~3-4 weeks
 
-**Execution Order**: 
+**Execution Order**:
 1. **Simple Parsers** (write tests, then implement): Boolean, Null, String, Number
 2. **Complex Parsers** (after simple): Object, Array
 3. **Combinator Parsers** (after complex): AnyOf, AllOf, OneOf
 
 **Critical Note**: AnyParser is not created as a standalone parser; it serves as a fallback in selectParserClass() when no other parser matches.
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ Each parser class extends BaseParser correctly
 - ✅ parseImpl() produces identical output to original function
 - ✅ All existing tests still pass (100% pass rate)
@@ -318,7 +318,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [ ] T160 [Phase2] Compare behavioral snapshot: outputs must match original functions exactly
 - [ ] T161 [Phase2] Document any behavioral differences (should be none) in specs/refactor/008-refactor-008-parser/phase2-validation.md
 
-**Exit Criteria**: 
+**Exit Criteria**:
 - ✅ All 9 parser classes created and tested (TDD: RED → GREEN → REFACTOR)
 - ✅ Each parser extends BaseParser
 - ✅ Output matches original functions exactly
@@ -332,7 +332,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Goal**: Create parser registry, implement selection logic, establish symmetric parse API
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ Registry maps all JSON Schema types to parser classes
 - ✅ selectParserClass() works for all schema variations
 - ✅ parseSchema() uses registry correctly
@@ -417,7 +417,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [ ] T211 [Phase3] Run full test suite: npm test
 - [ ] T212 [Phase3] Verify 100% test pass rate
 
-**Exit Criteria**: 
+**Exit Criteria**:
 - ✅ Registry created and functional
 - ✅ Parser selection works for all types
 - ✅ parseSchema() uses registry
@@ -431,7 +431,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Goal**: Enable post-processor support with type and path filtering
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ jsonSchemaToZod() accepts postProcessors option
 - ✅ Processors filtered by type correctly
 - ✅ Processors receive correct context
@@ -491,7 +491,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [ ] T247 [Phase4] Run performance benchmark to check for regression
 - [ ] T248 [Phase4] Document performance results in specs/refactor/008-refactor-008-parser/phase4-performance.md
 
-**Exit Criteria**: 
+**Exit Criteria**:
 - ✅ jsonSchemaToZod() accepts processors
 - ✅ Type filtering works correctly
 - ✅ Processor context provided
@@ -505,7 +505,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Goal**: Comprehensive validation of behavior preservation and test coverage
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ 100% test pass rate
 - ✅ Coverage maintained or improved from baseline
 - ✅ Behavioral snapshot matches exactly
@@ -595,7 +595,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [ ] T310 [Phase5] Complete validation checklist: No breaking changes ✅
 - [ ] T311 [Phase5] Sign-off: Ready for Phase 6 (Documentation)
 
-**Exit Criteria**: 
+**Exit Criteria**:
 - ✅ 100% test pass rate
 - ✅ Coverage >= baseline
 - ✅ Behavioral snapshot matches
@@ -608,7 +608,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Goal**: Comprehensive documentation for architecture, API, and migration
 
-**Independent Test Criteria**: 
+**Independent Test Criteria**:
 - ✅ Architecture documentation complete and clear
 - ✅ Post-processing guide with examples
 - ✅ Migration guide for contributors
@@ -687,7 +687,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [ ] T359 [Phase6] Get peer review of documentation
 - [ ] T360 [Phase6] Address review feedback and finalize
 
-**Exit Criteria**: 
+**Exit Criteria**:
 - ✅ Architecture docs complete
 - ✅ Post-processing guide complete
 - ✅ Migration guide complete
@@ -702,7 +702,7 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 ### Phase Dependencies (Sequential)
 
 ```
-Phase 1 (Setup) 
+Phase 1 (Setup)
   → Phase 2 (Phase 0: Testing Gaps)
     → Phase 3 (Phase 1: Infrastructure)
       → Phase 4 (Phase 2: Convert Parsers)
@@ -759,7 +759,7 @@ If critical issues discovered at any phase:
 ### Phase Completion Sign-Off
 
 - [ ] **Phase 1**: Setup - Tasks T001-T005 complete
-- [ ] **Phase 2**: Testing Gaps - Tasks T006-T032 complete  
+- [ ] **Phase 2**: Testing Gaps - Tasks T006-T032 complete
 - [ ] **Phase 3**: Infrastructure - Tasks T033-T077 complete
 - [ ] **Phase 4**: Convert Parsers - Tasks T078-T154 complete
 - [ ] **Phase 5**: Registry & API - Tasks T155-T212 complete
@@ -776,12 +776,12 @@ If critical issues discovered at any phase:
 - [ ] Documentation complete and reviewed
 - [ ] Ready to merge to master
 
-**Approved by**: _____________________  
+**Approved by**: _____________________
 **Date**: _____________________
 
 ---
 
-*Task breakdown for Refactor 008: Parser Class Architecture with Integrated Post-Processing*  
-*Total Tasks: 360*  
-*Created: 2025-12-30*  
+*Task breakdown for Refactor 008: Parser Class Architecture with Integrated Post-Processing*
+*Total Tasks: 360*
+*Created: 2025-12-30*
 *Version: 1.0*

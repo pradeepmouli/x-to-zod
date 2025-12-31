@@ -52,12 +52,12 @@ User description: "Refactor 008: Parser Class Architecture with Integrated Post-
 Transform parser functions into a class hierarchy with a base parser class that implements the template method pattern. The `BaseParser` class will handle common concerns (metadata application, processor filtering, pre/post-processing hooks) while subclasses implement specific parsing logic (`parseImpl()`). This eliminates duplication, enables processor filtering, and supports future extensions.
 
 **Files Affected**:
-- **Created**: 
+- **Created**:
   - `src/JsonSchema/parsers/BaseParser.ts` - Abstract base class with template method
   - `src/JsonSchema/parsers/ObjectParser.ts`, `ArrayParser.ts`, `StringParser.ts`, `NumberParser.ts`, `BooleanParser.ts`, `NullParser.ts`, `AnyOfParser.ts`, `AllOfParser.ts`, `OneOfParser.ts`
   - `src/JsonSchema/parsers/registry.ts` - Parser class registry and selection
-  
-- **Modified**: 
+
+- **Modified**:
   - `src/JsonSchema/parsers/index.ts` - Replace parser functions with class-based approach
   - `src/JsonSchema/toZod.ts` - Accept post-processors in options
   - `src/Types.ts` - Add PostProcessor and related types
@@ -105,7 +105,7 @@ Symmetric API: parse.object() mirrors build.object()
 
 **Parser Functions** (to be refactored):
 - `parseObject()` - Likely has tests in parser test files
-- `parseArray()` - Likely has tests  
+- `parseArray()` - Likely has tests
 - `parseString()` - Likely has tests
 - `parseNumber()` / `parseInt()` - Likely has tests
 - `parseBoolean()` - Likely has tests
@@ -304,7 +304,7 @@ Revert if any of these occur within 24-48 hours:
 ### Recovery Time Objective
 **RTO**: < 30 minutes
 - Revert commit: ~2 minutes
-- CI/CD run: ~6 minutes  
+- CI/CD run: ~6 minutes
 - Verification: ~22 minutes
 
 ## Implementation Plan
@@ -452,7 +452,7 @@ Revert if any of these occur within 24-48 hours:
 - [ ] Output matches original function
 - [ ] All existing tests still pass
 
-### Phase 3: Parser Registry and Selection  
+### Phase 3: Parser Registry and Selection
 - [ ] Registry maps all schema types
 - [ ] Parser selection works for all variations
 - [ ] Symmetric parse API available

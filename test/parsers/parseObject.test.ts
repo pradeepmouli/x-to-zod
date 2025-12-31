@@ -19,17 +19,17 @@ const parseObject = (
 ) => parseObjectImpl(schema, withRefs(refs));
 
 describe('parseObject', () => {
-		it('should handle circular self-reference using seen map (returns guarded nesting)', () => {
-			const schema: any = { type: 'object', properties: {} };
-			// Point a property back to the same schema object to trigger seen-cycle guard
-			schema.properties.self = schema;
+	it('should handle circular self-reference using seen map (returns guarded nesting)', () => {
+		const schema: any = { type: 'object', properties: {} };
+		// Point a property back to the same schema object to trigger seen-cycle guard
+		schema.properties.self = schema;
 
-			const result = parseObject(schema, { path: [], seen: new Map() }).text();
+		const result = parseObject(schema, { path: [], seen: new Map() }).text();
 
-			expect(result).toBe(
-				'z.object({ "self": z.object({ "self": z.any().optional() }).optional() })',
-			);
-		});
+		expect(result).toBe(
+			'z.object({ "self": z.object({ "self": z.any().optional() }).optional() })',
+		);
+	});
 
 	it('should handle with missing properties', () => {
 		expect(
@@ -196,7 +196,9 @@ describe('parseObject', () => {
 			{ path: [], seen: new Map() },
 		).text();
 
-		expect(result).toContain('z.record(z.string(), z.union([z.string(), z.never()]))');
+		expect(result).toContain(
+			'z.record(z.string(), z.union([z.string(), z.never()]))',
+		);
 		expect(result).toContain('new RegExp("^foo$")');
 		expect(result).toContain('superRefine');
 	});
