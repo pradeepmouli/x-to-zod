@@ -9,7 +9,11 @@ import type {
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
 // Forward declaration to avoid circular dependency
-let _parseSchema: (schema: JsonSchema, refs: Context, blockMeta?: boolean) => ZodBuilder;
+let _parseSchema: (
+	schema: JsonSchema,
+	refs: Context,
+	blockMeta?: boolean,
+) => ZodBuilder;
 
 /**
  * Abstract base class implementing the template method for schema parsing.
@@ -33,7 +37,11 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	 * This should be called once during module initialization.
 	 */
 	static setParseSchema(
-		parseSchema: (schema: JsonSchema, refs: Context, blockMeta?: boolean) => ZodBuilder,
+		parseSchema: (
+			schema: JsonSchema,
+			refs: Context,
+			blockMeta?: boolean,
+		) => ZodBuilder,
 	): void {
 		_parseSchema = parseSchema;
 	}
@@ -195,7 +203,9 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		...pathSegments: (string | number)[]
 	): ZodBuilder {
 		if (!_parseSchema) {
-			throw new Error('BaseParser.setParseSchema() must be called before using parseChild()');
+			throw new Error(
+				'BaseParser.setParseSchema() must be called before using parseChild()',
+			);
 		}
 		return _parseSchema(schema, this.createChildContext(...pathSegments));
 	}
