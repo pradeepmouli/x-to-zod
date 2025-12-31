@@ -31,13 +31,13 @@ export const parserRegistry = new Map<string, ParserClass>([
 
 /**
  * Selects the appropriate parser class for a given JSON Schema.
- * 
+ *
  * Selection priority:
  * 1. Combinator schemas (anyOf, allOf, oneOf)
  * 2. Explicit type property
  * 3. Inferred type from schema structure
  * 4. Default fallback (any)
- * 
+ *
  * @param schema - The JSON Schema to parse
  * @returns The appropriate parser class constructor
  */
@@ -78,7 +78,10 @@ export function selectParserClass(schema: JsonSchema): ParserClass | null {
 	if (its.a.primitive(schemaObj, 'string')) {
 		return StringParser;
 	}
-	if (its.a.primitive(schemaObj, 'number') || its.a.primitive(schemaObj, 'integer')) {
+	if (
+		its.a.primitive(schemaObj, 'number') ||
+		its.a.primitive(schemaObj, 'integer')
+	) {
 		return NumberParser;
 	}
 	if (its.a.primitive(schemaObj, 'boolean')) {

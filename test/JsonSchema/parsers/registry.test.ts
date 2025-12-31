@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { selectParserClass, parserRegistry } from '../../../src/JsonSchema/parsers/registry.js';
+import {
+	selectParserClass,
+	parserRegistry,
+} from '../../../src/JsonSchema/parsers/registry.js';
 import { ObjectParser } from '../../../src/JsonSchema/parsers/ObjectParser.js';
 import { ArrayParser } from '../../../src/JsonSchema/parsers/ArrayParser.js';
 import { StringParser } from '../../../src/JsonSchema/parsers/StringParser.js';

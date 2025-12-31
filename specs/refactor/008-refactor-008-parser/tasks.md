@@ -343,30 +343,36 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 #### Subtask: Create Registry
 
-- [ ] T155 [Phase3] Create src/JsonSchema/parsers/registry.ts file
-- [ ] T156 [Phase3] Import all parser classes in src/JsonSchema/parsers/registry.ts
-- [ ] T157 [Phase3] Create parserRegistry Map<string, typeof BaseParser> in src/JsonSchema/parsers/registry.ts
-- [ ] T158 [Phase3] Register ObjectParser for 'object' type in src/JsonSchema/parsers/registry.ts
-- [ ] T159 [Phase3] Register ArrayParser for 'array' type in src/JsonSchema/parsers/registry.ts
-- [ ] T160 [Phase3] Register StringParser for 'string' type in src/JsonSchema/parsers/registry.ts
-- [ ] T161 [Phase3] Register NumberParser for 'number' and 'integer' types in src/JsonSchema/parsers/registry.ts
-- [ ] T162 [Phase3] Register BooleanParser for 'boolean' type in src/JsonSchema/parsers/registry.ts
-- [ ] T163 [Phase3] Register NullParser for 'null' type in src/JsonSchema/parsers/registry.ts
-- [ ] T164 [Phase3] Register AnyOfParser for 'anyOf' in src/JsonSchema/parsers/registry.ts
-- [ ] T165 [Phase3] Register AllOfParser for 'allOf' in src/JsonSchema/parsers/registry.ts
-- [ ] T166 [Phase3] Register OneOfParser for 'oneOf' in src/JsonSchema/parsers/registry.ts
+- [X] T155 [Phase3] Create src/JsonSchema/parsers/registry.ts file
+- [X] T156 [Phase3] Import all parser classes in src/JsonSchema/parsers/registry.ts
+- [X] T157 [Phase3] Create parserRegistry Map<string, typeof BaseParser> in src/JsonSchema/parsers/registry.ts
+- [X] T158 [Phase3] Register ObjectParser for 'object' type in src/JsonSchema/parsers/registry.ts
+- [X] T159 [Phase3] Register ArrayParser for 'array' type in src/JsonSchema/parsers/registry.ts
+- [X] T160 [Phase3] Register StringParser for 'string' type in src/JsonSchema/parsers/registry.ts
+- [X] T161 [Phase3] Register NumberParser for 'number' and 'integer' types in src/JsonSchema/parsers/registry.ts
+- [X] T162 [Phase3] Register BooleanParser for 'boolean' type in src/JsonSchema/parsers/registry.ts
+- [X] T163 [Phase3] Register NullParser for 'null' type in src/JsonSchema/parsers/registry.ts
+- [X] T164 [Phase3] Register AnyOfParser for 'anyOf' in src/JsonSchema/parsers/registry.ts
+- [X] T165 [Phase3] Register AllOfParser for 'allOf' in src/JsonSchema/parsers/registry.ts
+- [X] T166 [Phase3] Register OneOfParser for 'oneOf' in src/JsonSchema/parsers/registry.ts
 
 #### Subtask: Selection Logic
 
-- [ ] T167 [Phase3] Implement selectParserClass() function in src/JsonSchema/parsers/registry.ts
-- [ ] T168 [Phase3] Add combinator check first (anyOf/allOf/oneOf) in selectParserClass() in src/JsonSchema/parsers/registry.ts
+- [X] T167 [Phase3] Implement selectParserClass() function in src/JsonSchema/parsers/registry.ts
+- [X] T168 [Phase3] Add combinator check first (anyOf/allOf/oneOf) in selectParserClass() in src/JsonSchema/parsers/registry.ts
 - [ ] T169 [Phase3] Add nullable check using its.nullable() in selectParserClass() in src/JsonSchema/parsers/registry.ts
-- [ ] T170 [Phase3] Add explicit type lookup from parserRegistry in selectParserClass() in src/JsonSchema/parsers/registry.ts
-- [ ] T171 [Phase3] Add type inference fallback using its.* utilities in selectParserClass() in src/JsonSchema/parsers/registry.ts
+- [X] T170 [Phase3] Add explicit type lookup from parserRegistry in selectParserClass() in src/JsonSchema/parsers/registry.ts
+- [X] T171 [Phase3] Add type inference fallback using its.* utilities in selectParserClass() in src/JsonSchema/parsers/registry.ts
 - [ ] T172 [Phase3] Add AnyParser as default fallback in selectParserClass() in src/JsonSchema/parsers/registry.ts
-- [ ] T173 [Phase3] Export selectParserClass from src/JsonSchema/parsers/registry.ts
+- [X] T173 [Phase3] Export selectParserClass from src/JsonSchema/parsers/registry.ts
 
 #### Subtask: Update parseSchema
+
+NOTE: Blocked by circular dependency issue. BaseParser imports parseSchema, which would need to import registry.
+Alternative approaches needed:
+- Refactor BaseParser to receive parseSchema via context
+- Create separate entry point for class-based system
+- Use dependency injection pattern
 
 - [ ] T174 [Phase3] Update parseSchema() in src/JsonSchema/parsers/index.ts
 - [ ] T175 [Phase3] Import selectParserClass from registry in src/JsonSchema/parsers/index.ts
