@@ -40,9 +40,7 @@ export class OneOfParser extends BaseParser<'oneOf'> {
 
 	protected canProduceType(type: string): boolean {
 		return (
-			type === this.typeKind ||
-			type === 'OneOfBuilder' ||
-			type === 'XorBuilder'
+			type === this.typeKind || type === 'OneOfBuilder' || type === 'XorBuilder'
 		);
 	}
 }

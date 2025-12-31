@@ -139,7 +139,10 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		path: (string | number)[] = this.refs.path,
 	): boolean {
 		const candidate = typeof config === 'function' ? undefined : config;
-		if (candidate?.pathPattern && !this.isProcessorApplicable(candidate, path)) {
+		if (
+			candidate?.pathPattern &&
+			!this.isProcessorApplicable(candidate, path)
+		) {
 			return false;
 		}
 
@@ -168,9 +171,9 @@ export abstract class BaseParser<TypeKind extends string = string> {
 				: undefined,
 			postProcessors: this.refs.postProcessors
 				? this.filterPostProcessorConfigsForPath(
-					this.refs.postProcessors,
-					childPath,
-				)
+						this.refs.postProcessors,
+						childPath,
+					)
 				: undefined,
 		};
 	}

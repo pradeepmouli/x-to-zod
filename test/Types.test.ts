@@ -20,7 +20,10 @@ describe('Processor Types', () => {
 		});
 
 		it('accepts array of string patterns', () => {
-			const pattern: ProcessorPathPattern = ['properties.name', 'properties.email'];
+			const pattern: ProcessorPathPattern = [
+				'properties.name',
+				'properties.email',
+			];
 			expect(Array.isArray(pattern)).toBe(true);
 		});
 	});
@@ -61,7 +64,9 @@ describe('Processor Types', () => {
 			const input: JsonSchema = { type: 'string' };
 			const output = processor(input, {} as Context);
 
-			expect(output).toEqual(expect.objectContaining({ description: 'processed' }));
+			expect(output).toEqual(
+				expect.objectContaining({ description: 'processed' }),
+			);
 		});
 
 		it('can return undefined to skip transformation', () => {
@@ -88,14 +93,11 @@ describe('Processor Types', () => {
 				return schema;
 			};
 
-			processor(
-				{ type: 'string' },
-				{
-					path: ['properties', 'name'],
-					build: buildV4,
-					seen: new Map(),
-				} as Context,
-			);
+			processor({ type: 'string' }, {
+				path: ['properties', 'name'],
+				build: buildV4,
+				seen: new Map(),
+			} as Context);
 		});
 	});
 
@@ -224,7 +226,10 @@ describe('Processor Types', () => {
 				typeFilter: ['string', 'StringBuilder'],
 			};
 
-			expect(config.pathPattern).toEqual(['properties.name', 'properties.email']);
+			expect(config.pathPattern).toEqual([
+				'properties.name',
+				'properties.email',
+			]);
 			expect(config.typeFilter).toEqual(['string', 'StringBuilder']);
 		});
 
@@ -262,7 +267,9 @@ describe('Processor Types', () => {
 			};
 
 			expect(context.preProcessors).toHaveLength(1);
-			expect(context.preProcessors?.[0].pathPattern).toBe('properties.username');
+			expect(context.preProcessors?.[0].pathPattern).toBe(
+				'properties.username',
+			);
 		});
 
 		it('can create post-processors with different typeFilters', () => {

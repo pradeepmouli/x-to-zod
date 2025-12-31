@@ -30,7 +30,10 @@ describe('OneOfParser', () => {
 			oneOf: [{ type: 'string' }, { type: 'number' }],
 		};
 
-		const parser = new OneOfParser(schema, ctx({ zodVersion: 'v3', build: buildV3 }));
+		const parser = new OneOfParser(
+			schema,
+			ctx({ zodVersion: 'v3', build: buildV3 }),
+		);
 		const builder = parser.parse();
 		const text = builder.text();
 

@@ -56,9 +56,11 @@ export class AllOfParser extends BaseParser<'allOf'> {
 		const leftBuilder = new AllOfParser({ allOf: left }, this.refs).parseImpl({
 			allOf: left,
 		});
-		const rightBuilder = new AllOfParser({ allOf: right }, this.refs).parseImpl({
-			allOf: right,
-		});
+		const rightBuilder = new AllOfParser({ allOf: right }, this.refs).parseImpl(
+			{
+				allOf: right,
+			},
+		);
 
 		return this.refs.build.intersection(leftBuilder, rightBuilder);
 	}

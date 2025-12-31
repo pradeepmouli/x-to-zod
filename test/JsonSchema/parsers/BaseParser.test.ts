@@ -18,7 +18,6 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 	...overrides,
 });
 
-
 class StringTestParser extends BaseParser<'string'> {
 	readonly typeKind = 'string' as const;
 
