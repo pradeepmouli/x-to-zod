@@ -281,38 +281,38 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 **Prerequisite**: Complete Object and Array parsers first (simple combinators depend on complex parsers)
 
-- [ ] T135 [P] [Phase2] Write test cases for AnyOfParser in test/JsonSchema/parsers/AnyOfParser.test.ts (RED phase)
-- [ ] T136 [P] [Phase2] Create src/JsonSchema/parsers/AnyOfParser.ts extending BaseParser
-- [ ] T137 [P] [Phase2] Implement parseImpl() iterating schema.anyOf in src/JsonSchema/parsers/AnyOfParser.ts (GREEN phase)
-- [ ] T138 [P] [Phase2] Implement parseChild() for each anyOf option in src/JsonSchema/parsers/AnyOfParser.ts
-- [ ] T139 [P] [Phase2] Implement build.union() with all options in src/JsonSchema/parsers/AnyOfParser.ts
-- [ ] T140 [P] [Phase2] Implement canProduceType() returning true for 'anyOf'|'UnionBuilder' in src/JsonSchema/parsers/AnyOfParser.ts
-- [ ] T141 [P] [Phase2] Run AnyOfParser tests (GREEN phase)
+- [X] T135 [P] [Phase2] Write test cases for AnyOfParser in test/JsonSchema/parsers/AnyOfParser.test.ts (RED phase)
+- [X] T136 [P] [Phase2] Create src/JsonSchema/parsers/AnyOfParser.ts extending BaseParser
+- [X] T137 [P] [Phase2] Implement parseImpl() iterating schema.anyOf in src/JsonSchema/parsers/AnyOfParser.ts (GREEN phase)
+- [X] T138 [P] [Phase2] Implement parseChild() for each anyOf option in src/JsonSchema/parsers/AnyOfParser.ts
+- [X] T139 [P] [Phase2] Implement build.union() with all options in src/JsonSchema/parsers/AnyOfParser.ts
+- [X] T140 [P] [Phase2] Implement canProduceType() returning true for 'anyOf'|'UnionBuilder' in src/JsonSchema/parsers/AnyOfParser.ts
+- [X] T141 [P] [Phase2] Run AnyOfParser tests (GREEN phase)
 
 #### Subtask: AllOf Parser (allOf)
 
-- [ ] T142 [P] [Phase2] Write test cases for AllOfParser in test/JsonSchema/parsers/AllOfParser.test.ts (RED phase)
-- [ ] T143 [P] [Phase2] Create src/JsonSchema/parsers/AllOfParser.ts extending BaseParser
-- [ ] T144 [P] [Phase2] Implement parseImpl() iterating schema.allOf in src/JsonSchema/parsers/AllOfParser.ts (GREEN phase)
-- [ ] T145 [P] [Phase2] Implement parseChild() for each allOf option in src/JsonSchema/parsers/AllOfParser.ts
-- [ ] T146 [P] [Phase2] Implement build.intersection() with all options in src/JsonSchema/parsers/AllOfParser.ts
-- [ ] T147 [P] [Phase2] Implement canProduceType() returning true for 'allOf'|'IntersectionBuilder' in src/JsonSchema/parsers/AllOfParser.ts
-- [ ] T148 [P] [Phase2] Run AllOfParser tests (GREEN phase)
+- [X] T142 [P] [Phase2] Write test cases for AllOfParser in test/JsonSchema/parsers/AllOfParser.test.ts (RED phase)
+- [X] T143 [P] [Phase2] Create src/JsonSchema/parsers/AllOfParser.ts extending BaseParser
+- [X] T144 [P] [Phase2] Implement parseImpl() iterating schema.allOf in src/JsonSchema/parsers/AllOfParser.ts (GREEN phase)
+- [X] T145 [P] [Phase2] Implement parseChild() for each allOf option in src/JsonSchema/parsers/AllOfParser.ts
+- [X] T146 [P] [Phase2] Implement build.intersection() with all options in src/JsonSchema/parsers/AllOfParser.ts
+- [X] T147 [P] [Phase2] Implement canProduceType() returning true for 'allOf'|'IntersectionBuilder' in src/JsonSchema/parsers/AllOfParser.ts
+- [X] T148 [P] [Phase2] Run AllOfParser tests (GREEN phase)
 
 #### Subtask: OneOf Parser (oneOf)
 
-- [ ] T149 [P] [Phase2] Write test cases for OneOfParser in test/JsonSchema/parsers/OneOfParser.test.ts (RED phase)
-- [ ] T150 [P] [Phase2] Create src/JsonSchema/parsers/OneOfParser.ts extending BaseParser
-- [ ] T151 [P] [Phase2] Implement parseImpl() iterating schema.oneOf in src/JsonSchema/parsers/OneOfParser.ts (GREEN phase)
-- [ ] T152 [P] [Phase2] Implement parseChild() for each oneOf option in src/JsonSchema/parsers/OneOfParser.ts
-- [ ] T153 [P] [Phase2] Implement appropriate oneOf logic in src/JsonSchema/parsers/OneOfParser.ts
-- [ ] T154 [P] [Phase2] Implement canProduceType() returning true for 'oneOf'|'OneOfBuilder' in src/JsonSchema/parsers/OneOfParser.ts
-- [ ] T155 [P] [Phase2] Run OneOfParser tests (GREEN phase)
+- [X] T149 [P] [Phase2] Write test cases for OneOfParser in test/JsonSchema/parsers/OneOfParser.test.ts (RED phase)
+- [X] T150 [P] [Phase2] Create src/JsonSchema/parsers/OneOfParser.ts extending BaseParser
+- [X] T151 [P] [Phase2] Implement parseImpl() iterating schema.oneOf in src/JsonSchema/parsers/OneOfParser.ts (GREEN phase)
+- [X] T152 [P] [Phase2] Implement parseChild() for each oneOf option in src/JsonSchema/parsers/OneOfParser.ts
+- [X] T153 [P] [Phase2] Implement appropriate oneOf logic in src/JsonSchema/parsers/OneOfParser.ts
+- [X] T154 [P] [Phase2] Implement canProduceType() returning true for 'oneOf'|'OneOfBuilder' in src/JsonSchema/parsers/OneOfParser.ts
+- [X] T155 [P] [Phase2] Run OneOfParser tests (GREEN phase)
 
 #### Subtask: Integration Testing
 
-- [ ] T156 [Phase2] Run full test suite: npm test
-- [ ] T157 [Phase2] Verify 100% test pass rate (all existing tests still pass)
+- [X] T156 [Phase2] Run full test suite: npm test
+- [X] T157 [Phase2] Verify 100% test pass rate (all existing tests still pass)
 - [ ] T158 [Phase2] Run coverage analysis: npm test -- --coverage
 - [ ] T159 [Phase2] Verify coverage maintained or improved from baseline
 - [ ] T160 [Phase2] Compare behavioral snapshot: outputs must match original functions exactly
@@ -343,30 +343,36 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 
 #### Subtask: Create Registry
 
-- [ ] T155 [Phase3] Create src/JsonSchema/parsers/registry.ts file
-- [ ] T156 [Phase3] Import all parser classes in src/JsonSchema/parsers/registry.ts
-- [ ] T157 [Phase3] Create parserRegistry Map<string, typeof BaseParser> in src/JsonSchema/parsers/registry.ts
-- [ ] T158 [Phase3] Register ObjectParser for 'object' type in src/JsonSchema/parsers/registry.ts
-- [ ] T159 [Phase3] Register ArrayParser for 'array' type in src/JsonSchema/parsers/registry.ts
-- [ ] T160 [Phase3] Register StringParser for 'string' type in src/JsonSchema/parsers/registry.ts
-- [ ] T161 [Phase3] Register NumberParser for 'number' and 'integer' types in src/JsonSchema/parsers/registry.ts
-- [ ] T162 [Phase3] Register BooleanParser for 'boolean' type in src/JsonSchema/parsers/registry.ts
-- [ ] T163 [Phase3] Register NullParser for 'null' type in src/JsonSchema/parsers/registry.ts
-- [ ] T164 [Phase3] Register AnyOfParser for 'anyOf' in src/JsonSchema/parsers/registry.ts
-- [ ] T165 [Phase3] Register AllOfParser for 'allOf' in src/JsonSchema/parsers/registry.ts
-- [ ] T166 [Phase3] Register OneOfParser for 'oneOf' in src/JsonSchema/parsers/registry.ts
+- [X] T155 [Phase3] Create src/JsonSchema/parsers/registry.ts file
+- [X] T156 [Phase3] Import all parser classes in src/JsonSchema/parsers/registry.ts
+- [X] T157 [Phase3] Create parserRegistry Map<string, typeof BaseParser> in src/JsonSchema/parsers/registry.ts
+- [X] T158 [Phase3] Register ObjectParser for 'object' type in src/JsonSchema/parsers/registry.ts
+- [X] T159 [Phase3] Register ArrayParser for 'array' type in src/JsonSchema/parsers/registry.ts
+- [X] T160 [Phase3] Register StringParser for 'string' type in src/JsonSchema/parsers/registry.ts
+- [X] T161 [Phase3] Register NumberParser for 'number' and 'integer' types in src/JsonSchema/parsers/registry.ts
+- [X] T162 [Phase3] Register BooleanParser for 'boolean' type in src/JsonSchema/parsers/registry.ts
+- [X] T163 [Phase3] Register NullParser for 'null' type in src/JsonSchema/parsers/registry.ts
+- [X] T164 [Phase3] Register AnyOfParser for 'anyOf' in src/JsonSchema/parsers/registry.ts
+- [X] T165 [Phase3] Register AllOfParser for 'allOf' in src/JsonSchema/parsers/registry.ts
+- [X] T166 [Phase3] Register OneOfParser for 'oneOf' in src/JsonSchema/parsers/registry.ts
 
 #### Subtask: Selection Logic
 
-- [ ] T167 [Phase3] Implement selectParserClass() function in src/JsonSchema/parsers/registry.ts
-- [ ] T168 [Phase3] Add combinator check first (anyOf/allOf/oneOf) in selectParserClass() in src/JsonSchema/parsers/registry.ts
+- [X] T167 [Phase3] Implement selectParserClass() function in src/JsonSchema/parsers/registry.ts
+- [X] T168 [Phase3] Add combinator check first (anyOf/allOf/oneOf) in selectParserClass() in src/JsonSchema/parsers/registry.ts
 - [ ] T169 [Phase3] Add nullable check using its.nullable() in selectParserClass() in src/JsonSchema/parsers/registry.ts
-- [ ] T170 [Phase3] Add explicit type lookup from parserRegistry in selectParserClass() in src/JsonSchema/parsers/registry.ts
-- [ ] T171 [Phase3] Add type inference fallback using its.* utilities in selectParserClass() in src/JsonSchema/parsers/registry.ts
+- [X] T170 [Phase3] Add explicit type lookup from parserRegistry in selectParserClass() in src/JsonSchema/parsers/registry.ts
+- [X] T171 [Phase3] Add type inference fallback using its.* utilities in selectParserClass() in src/JsonSchema/parsers/registry.ts
 - [ ] T172 [Phase3] Add AnyParser as default fallback in selectParserClass() in src/JsonSchema/parsers/registry.ts
-- [ ] T173 [Phase3] Export selectParserClass from src/JsonSchema/parsers/registry.ts
+- [X] T173 [Phase3] Export selectParserClass from src/JsonSchema/parsers/registry.ts
 
 #### Subtask: Update parseSchema
+
+NOTE: Blocked by circular dependency issue. BaseParser imports parseSchema, which would need to import registry.
+Alternative approaches needed:
+- Refactor BaseParser to receive parseSchema via context
+- Create separate entry point for class-based system
+- Use dependency injection pattern
 
 - [ ] T174 [Phase3] Update parseSchema() in src/JsonSchema/parsers/index.ts
 - [ ] T175 [Phase3] Import selectParserClass from registry in src/JsonSchema/parsers/index.ts
