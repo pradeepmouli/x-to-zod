@@ -68,7 +68,9 @@ describe('Post-Processor Integration', () => {
 			expect(paths).toContain(''); // root
 			// The exact path structure may vary based on implementation
 			// Just verify we're collecting paths
-			const hasNestedPaths = paths.some(p => p.includes('nested') || p === 'nested');
+			const hasNestedPaths = paths.some(
+				(p) => p.includes('nested') || p === 'nested',
+			);
 			expect(hasNestedPaths || paths.length > 1).toBe(true);
 		});
 
@@ -152,10 +154,7 @@ describe('Post-Processor Integration', () => {
 
 		it('should handle array of type filters', () => {
 			const schema = {
-				anyOf: [
-					{ type: 'string' as const },
-					{ type: 'number' as const },
-				],
+				anyOf: [{ type: 'string' as const }, { type: 'number' as const }],
 			};
 
 			let processedCount = 0;
