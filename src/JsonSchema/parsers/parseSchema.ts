@@ -12,17 +12,17 @@ import {
 	JsonSchema,
 } from '../../Types.js';
 import { BaseBuilder } from '../../ZodBuilder/index.js';
-import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { its } from '../its.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { selectParserClass } from './registry.js';
 import { is } from '../../utils/is.js';
+import { registerParseSchema } from './BaseParser.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
 	refs: Context = { seen: new Map(), path: [], build: buildV4 },
 	blockMeta?: boolean,
-): ZodBuilder => {
+): BaseBuilder => {
 	if (typeof schema !== 'object')
 		return schema ? refs.build.any() : refs.build.never();
 
@@ -78,6 +78,9 @@ export const parseSchema = (
 
 	return parsed;
 };
+
+// Register parseSchema for BaseParser to use in parseChild without circular import
+registerParseSchema(parseSchema);
 
 const addDescribes = (
 	schema: JsonSchemaObject,

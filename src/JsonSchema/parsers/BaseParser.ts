@@ -6,7 +6,6 @@ import type {
 	PostProcessorConfig,
 	ProcessorConfig,
 } from '../../Types.js';
-import { parseSchema } from './parseSchema.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
 /**
@@ -182,6 +181,19 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		schema: JsonSchema,
 		...pathSegments: (string | number)[]
 	): ZodBuilder {
-		return parseSchema(schema, this.createChildContext(...pathSegments));
+		if (!parseSchemaFn) {
+			throw new Error('parseSchema has not been registered');
+		}
+		return parseSchemaFn(schema, this.createChildContext(...pathSegments));
 	}
+}
+
+// Lazily registered parseSchema to break circular dependency
+let parseSchemaFn: ((schema: JsonSchema, refs: Context) => ZodBuilder) | null =
+	null;
+
+export function registerParseSchema(
+	fn: (schema: JsonSchema, refs: Context) => ZodBuilder,
+): void {
+	parseSchemaFn = fn;
 }
