@@ -72,7 +72,8 @@ describe('parse API', () => {
 			const result = parse.object(schema, defaultContext);
 			const code = result.text();
 
-			expect(code).toContain('z.object');
+			// Empty object with no properties becomes z.record
+			expect(code).toContain('z.record');
 		});
 
 		it('should handle required and optional properties', () => {

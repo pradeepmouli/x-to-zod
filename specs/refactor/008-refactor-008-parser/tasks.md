@@ -430,13 +430,13 @@ This document provides a complete task breakdown for refactoring the x-to-zod pa
 - [X] T203 [Phase3] Add test for selectParserClass() with array schema in test/JsonSchema/parsers/registry.test.ts
 - [X] T204 [Phase3] Add test for selectParserClass() with combinator schemas in test/JsonSchema/parsers/registry.test.ts
 - [X] T205 [Phase3] Add test for selectParserClass() with type inference in test/JsonSchema/parsers/registry.test.ts
-- [ ] T206 [Phase3] Add test for parse.schema() usage in test/JsonSchema/parsers/index.test.ts
-- [ ] T207 [Phase3] Add test for parse.object() producing ObjectBuilder in test/JsonSchema/parsers/index.test.ts
-- [ ] T208 [Phase3] Add test for parse.array() producing ArrayBuilder in test/JsonSchema/parsers/index.test.ts
-- [ ] T209 [Phase3] Add test verifying parse.* output matches parseSchema() output in test/JsonSchema/parsers/index.test.ts
+- [X] T206 [Phase3] Add test for parse.schema() usage in test/JsonSchema/parsers/index.test.ts
+- [X] T207 [Phase3] Add test for parse.object() producing ObjectBuilder in test/JsonSchema/parsers/index.test.ts
+- [X] T208 [Phase3] Add test for parse.array() producing ArrayBuilder in test/JsonSchema/parsers/index.test.ts
+- [X] T209 [Phase3] Add test verifying parse.* output matches parseSchema() output in test/JsonSchema/parsers/index.test.ts
 - [X] T210 [Phase3] Run registry tests: npm test -- test/JsonSchema/parsers/registry.test.ts
-- [ ] T211 [Phase3] Run full test suite: npm test
-- [ ] T212 [Phase3] Verify 100% test pass rate
+- [X] T211 [Phase3] Run full test suite: npm test
+- [X] T212 [Phase3] Verify 100% test pass rate
 
 **Exit Criteria**:
 - ✅ Registry created and functional
