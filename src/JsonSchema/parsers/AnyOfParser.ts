@@ -8,7 +8,10 @@ import { parseAnyOf } from './parseAnyOf.js';
  * Delegates to the original parseAnyOf function for implementation.
  */
 export class AnyOfParser extends BaseParser {
-	constructor(schema: JsonSchemaObject & { anyOf?: JsonSchema[] }, refs: Context) {
+	constructor(
+		schema: JsonSchemaObject & { anyOf?: JsonSchema[] },
+		refs: Context,
+	) {
 		super(schema, refs);
 	}
 
@@ -18,10 +21,6 @@ export class AnyOfParser extends BaseParser {
 	}
 
 	protected canProduceType(type: string): boolean {
-		return (
-			type === 'union' ||
-			type === 'UnionBuilder' ||
-			type === 'anyOf'
-		);
+		return type === 'union' || type === 'UnionBuilder' || type === 'anyOf';
 	}
 }

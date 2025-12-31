@@ -9,7 +9,10 @@ import { parseOneOf } from './parseOneOf.js';
  * In v4, uses xor for exclusive-or semantics; in v3, falls back to union.
  */
 export class OneOfParser extends BaseParser {
-	constructor(schema: JsonSchemaObject & { oneOf?: JsonSchema[] }, refs: Context) {
+	constructor(
+		schema: JsonSchemaObject & { oneOf?: JsonSchema[] },
+		refs: Context,
+	) {
 		super(schema, refs);
 	}
 

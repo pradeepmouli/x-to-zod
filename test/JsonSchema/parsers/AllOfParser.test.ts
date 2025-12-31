@@ -17,7 +17,7 @@ describe('AllOfParser', () => {
 		};
 		const parser = new AllOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.never()');
 	});
@@ -28,7 +28,7 @@ describe('AllOfParser', () => {
 		};
 		const parser = new AllOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.string()');
 	});
@@ -42,7 +42,7 @@ describe('AllOfParser', () => {
 		};
 		const parser = new AllOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.intersection');
 	});
@@ -57,7 +57,7 @@ describe('AllOfParser', () => {
 		};
 		const parser = new AllOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.intersection');
 	});
@@ -72,7 +72,7 @@ describe('AllOfParser', () => {
 		};
 		const parser = new AllOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('Combined schema');
 	});
@@ -82,7 +82,7 @@ describe('AllOfParser', () => {
 			allOf: [{ type: 'string' }],
 		};
 		const parser = new AllOfParser(schema, createContext());
-		
+
 		// Use type assertion to access protected method for testing
 		expect((parser as any).canProduceType('intersection')).toBe(true);
 		expect((parser as any).canProduceType('IntersectionBuilder')).toBe(true);

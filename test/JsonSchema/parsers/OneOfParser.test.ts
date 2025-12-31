@@ -18,7 +18,7 @@ describe('OneOfParser', () => {
 		};
 		const parser = new OneOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.any()');
 	});
@@ -29,7 +29,7 @@ describe('OneOfParser', () => {
 		};
 		const parser = new OneOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.string()');
 	});
@@ -40,7 +40,7 @@ describe('OneOfParser', () => {
 		};
 		const parser = new OneOfParser(schema, createContext('v3'));
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.union');
 		expect(result.text()).toContain('z.string()');
@@ -53,7 +53,7 @@ describe('OneOfParser', () => {
 		};
 		const parser = new OneOfParser(schema, createContext('v4'));
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		// V4 should use xor if available
 		const text = result.text();
@@ -69,7 +69,7 @@ describe('OneOfParser', () => {
 		};
 		const parser = new OneOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.union');
 	});
@@ -81,7 +81,7 @@ describe('OneOfParser', () => {
 		};
 		const parser = new OneOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('Exactly one of these types');
 	});
@@ -91,7 +91,7 @@ describe('OneOfParser', () => {
 			oneOf: [{ type: 'string' }],
 		};
 		const parser = new OneOfParser(schema, createContext());
-		
+
 		// Use type assertion to access protected method for testing
 		expect((parser as any).canProduceType('union')).toBe(true);
 		expect((parser as any).canProduceType('UnionBuilder')).toBe(true);

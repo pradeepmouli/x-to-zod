@@ -17,7 +17,7 @@ describe('AnyOfParser', () => {
 		};
 		const parser = new AnyOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.any()');
 	});
@@ -28,7 +28,7 @@ describe('AnyOfParser', () => {
 		};
 		const parser = new AnyOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.string()');
 	});
@@ -39,7 +39,7 @@ describe('AnyOfParser', () => {
 		};
 		const parser = new AnyOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.union');
 		expect(result.text()).toContain('z.string()');
@@ -55,7 +55,7 @@ describe('AnyOfParser', () => {
 		};
 		const parser = new AnyOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('z.union');
 	});
@@ -67,7 +67,7 @@ describe('AnyOfParser', () => {
 		};
 		const parser = new AnyOfParser(schema, createContext());
 		const result = parser.parse();
-		
+
 		expect(result).toBeDefined();
 		expect(result.text()).toContain('A string or number value');
 	});
@@ -77,7 +77,7 @@ describe('AnyOfParser', () => {
 			anyOf: [{ type: 'string' }],
 		};
 		const parser = new AnyOfParser(schema, createContext());
-		
+
 		// Use type assertion to access protected method for testing
 		expect((parser as any).canProduceType('union')).toBe(true);
 		expect((parser as any).canProduceType('UnionBuilder')).toBe(true);

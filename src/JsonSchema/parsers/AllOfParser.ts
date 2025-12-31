@@ -8,7 +8,10 @@ import { parseAllOf } from './parseAllOf.js';
  * Delegates to the original parseAllOf function for implementation.
  */
 export class AllOfParser extends BaseParser {
-	constructor(schema: JsonSchemaObject & { allOf?: JsonSchema[] }, refs: Context) {
+	constructor(
+		schema: JsonSchemaObject & { allOf?: JsonSchema[] },
+		refs: Context,
+	) {
 		super(schema, refs);
 	}
 
