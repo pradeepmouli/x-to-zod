@@ -17,6 +17,7 @@ import { its } from '../its.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { selectParserClass } from './registry.js';
 import { is } from '../../utils/is.js';
+import { BaseParser } from './BaseParser.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
@@ -139,3 +140,6 @@ const selectParser: ParserSelector = (schema, refs) => {
 	// Default fallback
 	return parseDefault(schema, refs);
 };
+
+// Initialize BaseParser with parseSchema reference to break circular dependency
+BaseParser.setParseSchema(parseSchema);

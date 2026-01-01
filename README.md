@@ -53,6 +53,13 @@ This fork includes several architectural improvements and new features:
 - v4 mode generates new syntax: `z.strictObject()`, `z.looseObject()`, `.extend()` instead of `.merge()`
 - Fully backward compatible - existing code continues to work without changes
 
+### 8. **Post-Processing System**
+- Transform Zod builders after parsing with custom post-processors
+- Type-based filtering to target specific builder types (objects, arrays, strings, etc.)
+- Path-based filtering for granular control
+- Use cases: add organization-wide validation rules, security constraints, custom transformations
+- See [Post-Processing Guide](./docs/post-processing.md) for details
+
 ## Installation
 
 ```console
@@ -153,6 +160,56 @@ const cjs = jsonSchemaToZod(myObject, { module: "cjs", name: "mySchema" });
 
 const justTheSchema = jsonSchemaToZod(myObject);
 ```
+
+### Post-Processing
+
+Transform Zod builders after parsing with post-processors:
+
+```typescript
+import { jsonSchemaToZod } from "x-to-zod";
+import { is } from "x-to-zod/utils";
+
+const schema = {
+  type: "object",
+  properties: {
+    name: { type: "string" },
+    tags: { type: "array", items: { type: "string" } }
+  }
+};
+
+// Make all objects strict
+const result = jsonSchemaToZod(schema, {
+  postProcessors: [
+    {
+      processor: (builder) => {
+        if (is.objectBuilder(builder)) {
+          return builder.strict();
+        }
+        return builder;
+      },
+      typeFilter: 'object'
+    }
+  ]
+});
+
+// Multiple processors with type filtering
+const enhanced = jsonSchemaToZod(schema, {
+  postProcessors: [
+    // Make objects strict
+    {
+      processor: (builder) => is.objectBuilder(builder) ? builder.strict() : builder,
+      typeFilter: 'object'
+    },
+    // Require non-empty arrays
+    {
+      processor: (builder) => is.arrayBuilder(builder) ? builder.min(1) : builder,
+      typeFilter: 'array'
+    }
+  ]
+});
+```
+
+**See [Post-Processing Guide](./docs/post-processing.md) for more examples and use cases.**
 
 ## Builder API
 
@@ -638,6 +695,41 @@ const code = jsonSchemaToZod(schema, {
   }
 });
 ```
+
+## Documentation
+
+### Comprehensive Guides
+
+- **[Parser Architecture](./docs/parser-architecture.md)** - Understanding the class-based parser system
+  - Class hierarchy and template method pattern
+  - Parser selection algorithm
+  - Type guards and symmetric parse API
+  - How to add new parser classes
+
+- **[Post-Processing Guide](./docs/post-processing.md)** - Transform builders after parsing
+  - Post-processor concepts and use cases
+  - Type and path filtering
+  - Practical examples (strict objects, non-empty arrays, custom validations)
+  - Best practices and debugging tips
+
+- **[Migration Guide](./docs/migration-parser-classes.md)** - For contributors extending parsers
+  - Functional vs class-based comparison
+  - Migration steps and patterns
+  - Testing strategies
+  - FAQs
+
+- **[API Reference](./docs/API.md)** - Complete API documentation
+  - BaseParser and all parser classes
+  - Registry functions and parse API
+  - Type definitions and type guards
+  - Usage examples
+
+### Quick Links
+
+- [Builder API](#builder-api) - Fluent builder interface
+- [CLI Options](#options) - Command-line usage
+- [Programmatic Usage](#programmatic) - Using in code
+- [Post-Processing](#post-processing) - Custom transformations
 
 ## Important Notes
 

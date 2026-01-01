@@ -6,8 +6,14 @@ import type {
 	PostProcessorConfig,
 	ProcessorConfig,
 } from '../../Types.js';
-import { parseSchema } from './parseSchema.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+
+// Forward declaration to avoid circular dependency
+let _parseSchema: (
+	schema: JsonSchema,
+	refs: Context,
+	blockMeta?: boolean,
+) => ZodBuilder;
 
 /**
  * Abstract base class implementing the template method for schema parsing.
@@ -22,11 +28,39 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		protected readonly schema: JsonSchema,
 		protected readonly refs: Context,
 	) {
-		this.preProcessors = this.filterPreProcessors(refs.preProcessors);
-		this.postProcessors = this.filterPostProcessors(refs.postProcessors);
+		// Note: this.typeKind is not yet initialized when parent constructor runs
+		// We filter in the parse() method instead
+		this.preProcessors = [];
+		this.postProcessors = [];
+	}
+
+	/**
+	 * Set the parseSchema function reference to avoid circular imports.
+	 * This should be called once during module initialization.
+	 */
+	static setParseSchema(
+		parseSchema: (
+			schema: JsonSchema,
+			refs: Context,
+			blockMeta?: boolean,
+		) => ZodBuilder,
+	): void {
+		_parseSchema = parseSchema;
 	}
 
 	parse(): ZodBuilder {
+		// Filter processors now that typeKind is initialized
+		if (!this.preProcessors.length && this.refs.preProcessors) {
+			(this as any).preProcessors = this.filterPreProcessors(
+				this.refs.preProcessors,
+			);
+		}
+		if (!this.postProcessors.length && this.refs.postProcessors) {
+			(this as any).postProcessors = this.filterPostProcessors(
+				this.refs.postProcessors,
+			);
+		}
+
 		const processedSchema = this.applyPreProcessors(this.schema);
 		let builder = this.parseImpl(processedSchema);
 		builder = this.applyPostProcessors(builder, processedSchema);
@@ -182,6 +216,11 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		schema: JsonSchema,
 		...pathSegments: (string | number)[]
 	): ZodBuilder {
-		return parseSchema(schema, this.createChildContext(...pathSegments));
+		if (!_parseSchema) {
+			throw new Error(
+				'BaseParser.setParseSchema() must be called before using parseChild()',
+			);
+		}
+		return _parseSchema(schema, this.createChildContext(...pathSegments));
 	}
 }
