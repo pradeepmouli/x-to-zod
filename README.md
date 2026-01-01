@@ -210,8 +210,6 @@ const enhanced = jsonSchemaToZod(schema, {
 ```
 
 **See [Post-Processing Guide](./docs/post-processing.md) for more examples and use cases.**
-```
-
 ## Builder API
 
 The `build.*` factory creates fluent builders that mirror Zod's API. Each builder supports `.text()` to produce code and shares common modifiers like `.optional()`, `.nullable()`, `.default()`, `.describe()`, `.brand()`, `.readonly()`, `.catch()`, `.refine()`, `.superRefine()`, `.meta()`, `.transform()`.
