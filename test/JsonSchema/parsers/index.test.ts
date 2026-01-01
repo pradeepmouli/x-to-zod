@@ -3,7 +3,6 @@ import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { parseSchema } from '../../../src/JsonSchema/parsers/parseSchema.js';
 import { buildV4 } from '../../../src/ZodBuilder/v4.js';
 import type { Context } from '../../../src/Types.js';
-import { is } from '../../../src/utils/is.js';
 
 describe('parse API', () => {
 	const defaultContext: Context = {
