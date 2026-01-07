@@ -207,4 +207,13 @@ describe('parseString', () => {
 			'z.string().ip({ version: "v4", message: "ayy" }).regex(new RegExp("x"), "lmao").min(1, "deez").max(2, "nuts")',
 		);
 	});
+
+	it('should handle regex pattern without format', () => {
+		expect(
+			parseString({
+				type: 'string',
+				pattern: '^[a-z]+$',
+			}).text(),
+		).toBe('z.string().regex(new RegExp("^[a-z]+$"))');
+	});
 });
