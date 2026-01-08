@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Context, JsonSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import { parseNumber as parseNumberFn } from '../../../src/JsonSchema/parsers/parseNumber.js';
+import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { NumberParser } from '../../../src/JsonSchema/parsers/NumberParser.js';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
@@ -29,7 +29,7 @@ describe('NumberParser', () => {
 		const parser = new NumberParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseNumberFn(schema as any, ctx()).text();
+		const expected = parse.number(schema as any, ctx()).text();
 
 		expect(result).toBe(expected);
 	});
@@ -47,7 +47,7 @@ describe('NumberParser', () => {
 		const parser = new NumberParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseNumberFn(schema as any, ctx()).text();
+		const expected = parse.number(schema as any, ctx()).text();
 
 		expect(result).toBe(expected);
 	});

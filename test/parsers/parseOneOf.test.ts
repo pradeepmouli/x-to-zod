@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseOneOf as parseOneOfImpl } from '../../src/JsonSchema/parsers/parseOneOf.js';
+import { parse } from '../../src/JsonSchema/parsers/index.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -10,9 +10,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseOneOf = (
-	schema: Parameters<typeof parseOneOfImpl>[0],
+	schema: Parameters<typeof parse.oneOf>[0],
 	refs: Context = refsV4,
-) => parseOneOfImpl(schema, refs);
+) => parse.oneOf(schema as any, refs);
 
 describe('parseOneOf', () => {
 	it('should create a union from two or more schemas', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseAllOf as parseAllOfImpl } from '../../src/JsonSchema/parsers/parseAllOf.js';
+import { parse } from '../../src/JsonSchema/parsers/index.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -10,9 +10,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseAllOf = (
-	schema: Parameters<typeof parseAllOfImpl>[0],
+	schema: Parameters<typeof parse.allOf>[0],
 	refs: Context = refsV4,
-) => parseAllOfImpl(schema, refs);
+) => parse.allOf(schema as any, refs);
 
 describe('parseAllOf', () => {
 	it('should create never if empty', () => {

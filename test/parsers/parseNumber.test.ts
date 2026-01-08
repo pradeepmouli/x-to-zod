@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseNumber as parseNumberImpl } from '../../src/JsonSchema/parsers/parseNumber.js';
+import { parse } from '../../src/JsonSchema/parsers/index.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -10,9 +10,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseNumber = (
-	schema: Parameters<typeof parseNumberImpl>[0],
+	schema: Parameters<typeof parse.number>[0],
 	refs: Context = refsV4,
-) => parseNumberImpl(schema, refs);
+) => parse.number(schema as any, refs);
 
 describe('parseNumber', () => {
 	it('should handle integer', () => {

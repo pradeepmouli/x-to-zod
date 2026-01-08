@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { jsonSchemaToZod } from './jsonSchemaToZod.js';
 import { writeFileSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
+import { dirname, isAbsolute, resolve } from 'path';
+import { pathToFileURL } from 'url';
 import { parseArgs, parseOrReadJSON, readPipe } from './utils/cliTools.js';
 import { JsonSchema } from './Types.js';
 
@@ -36,6 +37,12 @@ const params = {
 		value: ['esm', 'cjs', 'none'],
 		description: "Module syntax; 'esm', 'cjs' or 'none'. Defaults to 'esm'.",
 	},
+	postProcessors: {
+		shorthand: 'p',
+		value: 'string',
+		description:
+			'Path to a module exporting an array named postProcessors for builder transforms.',
+	},
 	type: {
 		shorthand: 't',
 		value: 'string',
@@ -52,10 +59,39 @@ const params = {
 	},
 } as const;
 
+async function loadPostProcessors(modulePath: string) {
+	const resolved = isAbsolute(modulePath)
+		? modulePath
+		: resolve(process.cwd(), modulePath);
+
+	try {
+		const imported = await import(pathToFileURL(resolved).href);
+		const candidate =
+			imported?.postProcessors ||
+			imported?.default?.postProcessors ||
+			imported?.default;
+
+		if (Array.isArray(candidate)) {
+			return candidate;
+		}
+	} catch (error) {
+		throw new Error(
+			`Failed to load postProcessors module at ${modulePath}: ${(error as Error).message}`,
+		);
+	}
+
+	throw new Error(
+		`Expected module ${modulePath} to export an array named postProcessors`,
+	);
+}
+
 async function main() {
 	const args = parseArgs(params, process.argv, true);
 	const input = args.input || (await readPipe());
 	const jsonSchema = parseOrReadJSON(input);
+	const postProcessors = args.postProcessors
+		? await loadPostProcessors(args.postProcessors)
+		: undefined;
 	const zodSchema = jsonSchemaToZod(jsonSchema as JsonSchema, {
 		name: args.name,
 		depth: args.depth,
@@ -63,6 +99,7 @@ async function main() {
 		noImport: args.noImport,
 		type: args.type,
 		withJsdocs: args.withJsdocs,
+		postProcessors,
 	});
 
 	if (args.output) {

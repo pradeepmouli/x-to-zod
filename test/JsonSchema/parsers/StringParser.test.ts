@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Context, JsonSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import { parseString as parseStringFn } from '../../../src/JsonSchema/parsers/parseString.js';
+import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { StringParser } from '../../../src/JsonSchema/parsers/StringParser.js';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
@@ -22,7 +22,8 @@ describe('StringParser', () => {
 		const parser = new StringParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseStringFn(schema as any, ctx())
+		const expected = parse
+			.string(schema as any, ctx())
 			.describe('desc')
 			.default('def')
 			.text();
@@ -47,7 +48,7 @@ describe('StringParser', () => {
 		const parser = new StringParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseStringFn(schema as any, ctx()).text();
+		const expected = parse.string(schema as any, ctx()).text();
 
 		expect(result).toBe(expected);
 	});
@@ -61,7 +62,7 @@ describe('StringParser', () => {
 		const parser = new StringParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseStringFn(schema as any, ctx()).text();
+		const expected = parse.string(schema as any, ctx()).text();
 
 		expect(result).toBe(expected);
 	});
@@ -79,7 +80,7 @@ describe('StringParser', () => {
 		const parser = new StringParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseStringFn(schema as any, ctx()).text();
+		const expected = parse.string(schema as any, ctx()).text();
 
 		expect(result).toBe(expected);
 	});

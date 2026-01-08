@@ -1,3 +1,5 @@
+import type { TypeKind, TypeKindOf } from './index.js';
+
 /**
  * Generic modifiers that can be applied to any Zod schema.
  */
@@ -195,6 +197,11 @@ export abstract class ZodBuilder<T extends string = string, P = any> {
 	 */
 	optional(): this {
 		this._optional = true;
+		return this;
+	}
+
+	required(): this {
+		this._optional = false;
 		return this;
 	}
 

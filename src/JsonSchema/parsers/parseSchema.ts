@@ -18,12 +18,25 @@ import { buildV4 } from '../../ZodBuilder/v4.js';
 import { selectParserClass } from './registry.js';
 import { is } from '../../utils/is.js';
 import { BaseParser } from './BaseParser.js';
+import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
-	refs: Context = { seen: new Map(), path: [], build: buildV4 },
+	refs: Context = {
+		seen: new Map(),
+		path: [],
+		pathString: '$',
+		matchPath: (pattern: string) => matchPattern([], pattern),
+		build: buildV4,
+	},
 	blockMeta?: boolean,
 ): ZodBuilder => {
+	const path = refs.path || [];
+	const pathString =
+		refs.pathString ?? (path.length ? `$.${path.join('.')}` : '$');
+	const matchPath =
+		refs.matchPath ?? ((pattern: string) => matchPattern(path, pattern));
+
 	if (typeof schema !== 'object')
 		return schema ? refs.build.any() : refs.build.never();
 
@@ -62,7 +75,12 @@ export const parseSchema = (
 		refs.seen.set(schema, seen);
 	}
 
-	let parsed = selectParser(schema, refs);
+	let parsed = selectParser(schema, {
+		...refs,
+		path,
+		pathString,
+		matchPath,
+	});
 	if (!blockMeta) {
 		if (!refs.withoutDescribes) {
 			parsed = addDescribes(schema, parsed);

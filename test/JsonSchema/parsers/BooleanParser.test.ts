@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Context, JsonSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import { parseBoolean as parseBooleanFn } from '../../../src/JsonSchema/parsers/parseBoolean.js';
+import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { BooleanParser } from '../../../src/JsonSchema/parsers/BooleanParser.js';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
@@ -18,7 +18,7 @@ describe('BooleanParser', () => {
 		const parser = new BooleanParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseBooleanFn(schema as any, ctx()).text();
+		const expected = parse.boolean(schema as any, ctx()).text();
 
 		expect(result).toBe(expected);
 	});

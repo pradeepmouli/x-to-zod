@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseString as parseStringImpl } from '../../src/JsonSchema/parsers/parseString.js';
+import { parse } from '../../src/JsonSchema/parsers/index.js';
 import type { Context } from '../../src/Types';
 import { buildV3, buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -16,9 +16,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseString = (
-	schema: Parameters<typeof parseStringImpl>[0],
+	schema: Parameters<typeof parse.string>[0],
 	refs: Context = refsV4,
-) => parseStringImpl(schema, refs);
+) => parse.string(schema as any, refs);
 
 describe('parseString', () => {
 	const run = (output: string, data: unknown) =>

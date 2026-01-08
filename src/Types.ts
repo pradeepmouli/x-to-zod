@@ -43,8 +43,10 @@ export interface PreProcessor extends ProcessorConfig {
 
 export interface PostProcessorContext {
 	path: (string | number)[];
+	pathString: string;
 	schema: JsonSchema;
 	build: BuildFunctions;
+	matchPath: (pattern: string) => boolean;
 }
 
 /**
@@ -86,6 +88,8 @@ export type Context = Options & {
 		| typeof import('./ZodBuilder/v3.js').buildV3
 		| typeof import('./ZodBuilder/v4.js').buildV4;
 	path: (string | number)[];
+	pathString?: string;
+	matchPath?: (pattern: string) => boolean;
 	seen: Map<
 		object | boolean,
 		{ n: number; r: import('./ZodBuilder/index.js').BaseBuilder | undefined }

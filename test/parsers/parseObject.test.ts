@@ -1,6 +1,6 @@
 import { JSONSchema7 } from 'json-schema';
 import { ZodError } from 'zod';
-import { parseObject as parseObjectImpl } from '../../src/JsonSchema/parsers/parseObject.js';
+import { parse } from '../../src/JsonSchema/parsers/index.js';
 import { describe, it, expect, assert } from 'vitest';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
@@ -14,9 +14,9 @@ const withRefs = (refs: Partial<Context> = {}): Context => ({
 });
 
 const parseObject = (
-	schema: Parameters<typeof parseObjectImpl>[0],
+	schema: Parameters<typeof parse.object>[0],
 	refs?: Partial<Context>,
-) => parseObjectImpl(schema, withRefs(refs));
+) => parse.object(schema as any, withRefs(refs));
 
 describe('parseObject', () => {
 	it('should handle circular self-reference using seen map (returns guarded nesting)', () => {

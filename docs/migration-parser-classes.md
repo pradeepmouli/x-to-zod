@@ -57,28 +57,28 @@ export function parseObject(
       if (result) processed = result;
     }
   }
-  
+
   // Parse object
   const builder = buildObjectFromSchema(processed, refs);
-  
+
   // Apply postprocessors
   let result = builder;
   if (refs.postProcessors) {
     for (const postprocessor of refs.postProcessors) {
-      const modified = postprocessor(result, { 
-        path: refs.path, 
-        schema: processed, 
-        build: refs.build 
+      const modified = postprocessor(result, {
+        path: refs.path,
+        schema: processed,
+        build: refs.build
       });
       if (modified) result = modified;
     }
   }
-  
+
   // Apply metadata
   if (processed.description) {
     result = result.describe(processed.description);
   }
-  
+
   return result;
 }
 ```
@@ -94,7 +94,8 @@ Problems with this approach:
 ```typescript
 // src/JsonSchema/parsers/ObjectParser.ts
 import { BaseParser } from './BaseParser.js';
-import { parseObject } from './parseObject.js';
+import { ObjectBuilder } from '../../ZodBuilder/index.js';
+import { parseSchema } from './parseSchema.js';
 
 export class ObjectParser extends BaseParser<'object'> {
   readonly typeKind = 'object' as const;
@@ -104,10 +105,10 @@ export class ObjectParser extends BaseParser<'object'> {
   }
 
   protected parseImpl(schema: JsonSchema): ZodBuilder {
-    return parseObject(
-      schema as JsonSchemaObject & { type: 'object' },
-      this.refs
-    );
+    const objectSchema = schema as JsonSchemaObject & { type: 'object' };
+    // Parse properties and constraints inline; use parseSchema for children.
+    const builder = ObjectBuilder.fromCode('z.object({})', this.refs);
+    return builder;
   }
 
   protected canProduceType(type: string): boolean {
@@ -139,7 +140,7 @@ Benefits of this approach:
 
 ### Example: Extending Behavior
 
-**Functional Approach** (wrapper pattern):
+**Functional Approach** (wrapper pattern; legacy):
 
 ```typescript
 function parseObjectWithDefaults(schema, refs) {
@@ -161,19 +162,19 @@ class ObjectParserWithDefaults extends ObjectParser {
 
 ### Example: Custom Processing
 
-**Functional Approach**:
+**Functional Approach** (legacy):
 
 ```typescript
 function customParseObject(schema, refs) {
   // Custom preprocessing
   const modified = transformSchema(schema);
-  
+
   // Parse
   let builder = parseObject(modified, refs);
-  
+
   // Custom postprocessing
   builder = builder.strict();
-  
+
   return builder;
 }
 ```
@@ -187,7 +188,7 @@ class CustomObjectParser extends ObjectParser {
     const modified = transformSchema(schema);
     return super.applyPreProcessors(modified);
   }
-  
+
   protected applyPostProcessors(builder: ZodBuilder, schema: JsonSchema): ZodBuilder {
     let result = super.applyPostProcessors(builder, schema);
     // Custom postprocessing
@@ -220,7 +221,7 @@ Determine which method to override:
 ```typescript
 class MyCustomParser extends BaseParser<'custom'> {
   readonly typeKind = 'custom' as const;
-  
+
   // Override the methods you need
   protected parseImpl(schema: JsonSchema): ZodBuilder {
     // Your implementation
@@ -265,7 +266,7 @@ export function parseCustom(schema, refs) {
 // New: src/JsonSchema/parsers/CustomParser.ts
 export class CustomParser extends BaseParser<'custom'> {
   readonly typeKind = 'custom' as const;
-  
+
   protected parseImpl(schema: JsonSchema): ZodBuilder {
     return parseCustom(schema, this.refs);
   }
@@ -279,7 +280,7 @@ class PreprocessingParser extends ObjectParser {
   protected applyPreProcessors(schema: JsonSchema): JsonSchema {
     // Custom preprocessing
     const modified = { ...schema, additionalProperties: false };
-    
+
     // Continue with standard preprocessing
     return super.applyPreProcessors(modified);
   }
@@ -293,12 +294,12 @@ class PostprocessingParser extends ObjectParser {
   protected applyPostProcessors(builder: ZodBuilder, schema: JsonSchema): ZodBuilder {
     // Standard postprocessing first
     let result = super.applyPostProcessors(builder, schema);
-    
+
     // Custom postprocessing
     if (is.objectBuilder(result)) {
       result = result.strict();
     }
-    
+
     return result;
   }
 }
@@ -309,14 +310,14 @@ class PostprocessingParser extends ObjectParser {
 ```typescript
 class ConditionalParser extends BaseParser<'conditional'> {
   readonly typeKind = 'conditional' as const;
-  
+
   protected parseImpl(schema: JsonSchema): ZodBuilder {
     if (this.shouldUseSpecialLogic(schema)) {
       return this.parseSpecial(schema);
     }
     return this.parseNormal(schema);
   }
-  
+
   private shouldUseSpecialLogic(schema: JsonSchema): boolean {
     // Decision logic
   }
@@ -333,14 +334,14 @@ describe('CustomParser', () => {
     it('should handle basic schema', () => {
       const schema = { type: 'custom' };
       const refs = { seen: new Map(), path: [], build: buildV4 };
-      
+
       const parser = new CustomParser(schema, refs);
       const builder = parser.parseImpl(schema);
-      
+
       expect(builder).toBeDefined();
     });
   });
-  
+
   describe('canProduceType', () => {
     it('should return true for custom type', () => {
       const parser = new CustomParser({}, defaultRefs);
@@ -364,10 +365,10 @@ describe('CustomParser Integration', () => {
         { processor: (builder) => builder.optional() }
       ]
     };
-    
+
     const parser = new CustomParser(schema, refs);
     const builder = parser.parse();
-    
+
     expect(builder.text()).toContain('.optional()');
   });
 });

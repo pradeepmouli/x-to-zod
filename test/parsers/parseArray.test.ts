@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseArray as parseArrayImpl } from '../../src/JsonSchema/parsers/parseArray.js';
+import { parse } from '../../src/JsonSchema/parsers/index.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -10,9 +10,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseArray = (
-	schema: Parameters<typeof parseArrayImpl>[0],
+	schema: Parameters<typeof parse.array>[0],
 	refs: Context = refsV4,
-) => parseArrayImpl(schema, refs);
+) => parse.array(schema as any, refs);
 
 describe('parseArray', () => {
 	it('should create tuple with items array', () => {

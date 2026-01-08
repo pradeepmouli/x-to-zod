@@ -169,4 +169,17 @@ describe('Type Guards', () => {
 			expect(is.objectBuilder(buildV4.object({}))).toBe(true);
 		});
 	});
+
+	describe('is.zodBuilder', () => {
+		it('returns true for any ZodBuilder instance', () => {
+			expect(is.zodBuilder(buildV4.string())).toBe(true);
+			expect(is.zodBuilder(buildV4.object({}))).toBe(true);
+		});
+
+		it('returns false for non-builders', () => {
+			expect(is.zodBuilder({})).toBe(false);
+			expect(is.zodBuilder(null)).toBe(false);
+			expect(is.zodBuilder(undefined)).toBe(false);
+		});
+	});
 });
