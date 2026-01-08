@@ -18,7 +18,10 @@ export class ObjectParser extends BaseParser<'object'> {
 		let result = '' as string;
 
 		// Step 1: Build base object from properties
-		if (objectSchema.properties && Object.keys(objectSchema.properties).length > 0) {
+		if (
+			objectSchema.properties &&
+			Object.keys(objectSchema.properties).length > 0
+		) {
 			const properties: Record<string, ZodBuilder> = {};
 			const propsWithJsdocs: string[] = [];
 
@@ -126,7 +129,10 @@ export class ObjectParser extends BaseParser<'object'> {
 			refineFn += 'for (const key in value) {\n';
 
 			if (additionalPropertiesZod) {
-				if (objectSchema.properties && Object.keys(objectSchema.properties).length > 0) {
+				if (
+					objectSchema.properties &&
+					Object.keys(objectSchema.properties).length > 0
+				) {
 					const propKeys = Object.keys(objectSchema.properties)
 						.map((k) => JSON.stringify(k))
 						.join(', ');
@@ -160,7 +166,9 @@ export class ObjectParser extends BaseParser<'object'> {
 			refineFn += '}\n';
 			refineFn += '}';
 
-			result = ObjectBuilder.fromCode(result, this.refs).superRefine(refineFn).text();
+			result = ObjectBuilder.fromCode(result, this.refs)
+				.superRefine(refineFn)
+				.text();
 		} else if (result && additionalPropertiesZod) {
 			const builder = ObjectBuilder.fromCode(result, this.refs);
 			const apText = additionalPropertiesZod.text();
@@ -192,7 +200,9 @@ export class ObjectParser extends BaseParser<'object'> {
 						typeof x === 'object' &&
 						!('$ref' in x) &&
 						!(x as any).type &&
-						((x as any).properties || (x as any).additionalProperties || (x as any).patternProperties)
+						((x as any).properties ||
+							(x as any).additionalProperties ||
+							(x as any).patternProperties)
 							? { ...(x as any), type: 'object' }
 							: x,
 					),
@@ -210,7 +220,9 @@ export class ObjectParser extends BaseParser<'object'> {
 						typeof x === 'object' &&
 						!('$ref' in x) &&
 						!(x as any).type &&
-						((x as any).properties || (x as any).additionalProperties || (x as any).patternProperties)
+						((x as any).properties ||
+							(x as any).additionalProperties ||
+							(x as any).patternProperties)
 							? { ...(x as any), type: 'object' }
 							: x,
 					),
@@ -228,7 +240,9 @@ export class ObjectParser extends BaseParser<'object'> {
 						typeof x === 'object' &&
 						!('$ref' in x) &&
 						!(x as any).type &&
-						((x as any).properties || (x as any).additionalProperties || (x as any).patternProperties)
+						((x as any).properties ||
+							(x as any).additionalProperties ||
+							(x as any).patternProperties)
 							? { ...(x as any), type: 'object' }
 							: x,
 					),

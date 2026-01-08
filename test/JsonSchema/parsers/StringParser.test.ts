@@ -22,7 +22,8 @@ describe('StringParser', () => {
 		const parser = new StringParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parse.string(schema as any, ctx())
+		const expected = parse
+			.string(schema as any, ctx())
 			.describe('desc')
 			.default('def')
 			.text();

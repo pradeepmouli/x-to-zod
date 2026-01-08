@@ -22,7 +22,7 @@ export const parse = {
 	anyOf: classParse.anyOf,
 	allOf: classParse.allOf,
 	oneOf: classParse.oneOf,
-		enum: parseEnum,
+	enum: parseEnum,
 
 	// functional helpers that remain
 	const: parseConst,

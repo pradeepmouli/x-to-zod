@@ -32,8 +32,10 @@ export const parseSchema = (
 	blockMeta?: boolean,
 ): ZodBuilder => {
 	const path = refs.path || [];
-	const pathString = refs.pathString ?? (path.length ? `$.${path.join('.')}` : '$');
-	const matchPath = refs.matchPath ?? ((pattern: string) => matchPattern(path, pattern));
+	const pathString =
+		refs.pathString ?? (path.length ? `$.${path.join('.')}` : '$');
+	const matchPath =
+		refs.matchPath ?? ((pattern: string) => matchPattern(path, pattern));
 
 	if (typeof schema !== 'object')
 		return schema ? refs.build.any() : refs.build.never();

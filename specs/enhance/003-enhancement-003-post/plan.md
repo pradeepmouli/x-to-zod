@@ -8,14 +8,14 @@ Add a post-processing API into the parser class architecture so ZodBuilders can 
 
 ## Technical Context
 
-**Language/Version**: TypeScript (strict) targeting Node 18+ builds (ESM+CJS outputs)  
-**Primary Dependencies**: Zod builder utilities (internal), dev: vitest, oxlint; no new runtime deps planned  
-**Storage**: N/A (in-memory code generation only)  
-**Testing**: vitest with existing test layout under test/  
-**Target Platform**: Node library emitting code strings; CLI wrapper must remain compatible  
-**Project Type**: Single library project (src/, test/)  
-**Performance Goals**: Maintain no measurable regression vs current parsing; path matching should be cached  
-**Constraints**: Backward compatible API; dual ESM/CJS outputs unchanged; avoid new runtime dependencies  
+**Language/Version**: TypeScript (strict) targeting Node 18+ builds (ESM+CJS outputs)
+**Primary Dependencies**: Zod builder utilities (internal), dev: vitest, oxlint; no new runtime deps planned
+**Storage**: N/A (in-memory code generation only)
+**Testing**: vitest with existing test layout under test/
+**Target Platform**: Node library emitting code strings; CLI wrapper must remain compatible
+**Project Type**: Single library project (src/, test/)
+**Performance Goals**: Maintain no measurable regression vs current parsing; path matching should be cached
+**Constraints**: Backward compatible API; dual ESM/CJS outputs unchanged; avoid new runtime dependencies
 **Scale/Scope**: Handles single- and multi-file JSON Schemas across v3/v4 parsers; large schemas should not regress noticeably
 
 ## Constitution Check

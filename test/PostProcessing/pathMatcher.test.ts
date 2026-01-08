@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { matchPath, clearPathPatternCache } from '../../src/PostProcessing/pathMatcher.js';
+import {
+	matchPath,
+	clearPathPatternCache,
+} from '../../src/PostProcessing/pathMatcher.js';
 
 const root = (): (string | number)[] => [];
 
@@ -15,12 +18,16 @@ describe('matchPath', () => {
 
 	it('matches exact segments', () => {
 		expect(matchPath(['properties', 'user'], '$.properties.user')).toBe(true);
-		expect(matchPath(['properties', 'account'], '$.properties.user')).toBe(false);
+		expect(matchPath(['properties', 'account'], '$.properties.user')).toBe(
+			false,
+		);
 	});
 
 	it('supports single-level wildcard *', () => {
 		expect(matchPath(['properties', 'user'], '$.properties.*')).toBe(true);
-		expect(matchPath(['properties', 'user', 'properties', 'name'], '$.properties.*')).toBe(false);
+		expect(
+			matchPath(['properties', 'user', 'properties', 'name'], '$.properties.*'),
+		).toBe(false);
 	});
 
 	it('supports deep wildcard **', () => {
@@ -35,10 +42,7 @@ describe('matchPath', () => {
 
 	it('supports recursive descent $..field', () => {
 		expect(
-			matchPath(
-				['properties', 'contact', 'properties', 'email'],
-				'$..email',
-			),
+			matchPath(['properties', 'contact', 'properties', 'email'], '$..email'),
 		).toBe(true);
 		expect(matchPath(['properties', 'contact'], '$..email')).toBe(false);
 	});

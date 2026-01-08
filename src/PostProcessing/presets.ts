@@ -20,7 +20,8 @@ export const postProcessors = {
 	nonemptyArrays: (): PostProcessor =>
 		guardAndApply(is.arrayBuilder, (builder) => builder.min(1)),
 
-	brandIds: (brand: string = 'ID'): PostProcessor =>
+	brandIds:
+		(brand: string = 'ID'): PostProcessor =>
 		(builder, context) => {
 			if (
 				context.path.length > 0 &&

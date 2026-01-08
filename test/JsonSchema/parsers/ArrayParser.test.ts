@@ -30,7 +30,8 @@ describe('ArrayParser', () => {
 		const parser = new ArrayParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parse.array(schema as any, ctx())
+		const expected = parse
+			.array(schema as any, ctx())
 			.describe('desc')
 			.default(['a'])
 			.text();
@@ -51,7 +52,8 @@ describe('ArrayParser', () => {
 		const parser = new ArrayParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parse.array(schema as any, ctx())
+		const expected = parse
+			.array(schema as any, ctx())
 			.describe(undefined as any)
 			.text();
 

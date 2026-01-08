@@ -7,7 +7,8 @@ const ctx = (pathString: string = '$.properties.field') => ({
 	pathString,
 	schema: {},
 	build: buildV4,
-	matchPath: (pattern: string): boolean => pattern === pathString || pattern === '$..id',
+	matchPath: (pattern: string): boolean =>
+		pattern === pathString || pattern === '$..id',
 });
 
 describe('postProcessors presets', () => {

@@ -28,7 +28,8 @@ describe('ObjectParser', () => {
 		const parser = new ObjectParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parse.object(schema as any, ctx())
+		const expected = parse
+			.object(schema as any, ctx())
 			.describe('desc')
 			.default({ name: 'a' })
 			.text();

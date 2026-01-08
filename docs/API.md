@@ -11,16 +11,16 @@ Abstract base class for all parser implementations using the Template Method pat
 ```typescript
 abstract class BaseParser<TypeKind extends string = string> {
   abstract readonly typeKind: TypeKind;
-  
+
   protected constructor(
     protected readonly schema: JsonSchema,
     protected readonly refs: Context
   );
-  
+
   // Public API
   parse(): ZodBuilder;
   static setParseSchema(parseSchema: Function): void;
-  
+
   // Protected API (for subclasses)
   protected abstract parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -48,7 +48,7 @@ abstract class BaseParser<TypeKind extends string = string> {
 
 Main entry point that executes the full parsing pipeline:
 1. Apply pre-processors
-2. Call `parseImpl()` 
+2. Call `parseImpl()`
 3. Apply post-processors
 4. Apply metadata
 
@@ -188,7 +188,7 @@ Parser for object schemas.
 ```typescript
 class ObjectParser extends BaseParser<'object'> {
   readonly typeKind = 'object' as const;
-  
+
   constructor(schema: JsonSchemaObject & { type?: string }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -206,7 +206,7 @@ Parser for array schemas.
 ```typescript
 class ArrayParser extends BaseParser<'array'> {
   readonly typeKind = 'array' as const;
-  
+
   constructor(schema: JsonSchemaArray & { type?: string }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -224,7 +224,7 @@ Parser for string schemas.
 ```typescript
 class StringParser extends BaseParser<'string'> {
   readonly typeKind = 'string' as const;
-  
+
   constructor(schema: { type: 'string'; [key: string]: any }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -242,7 +242,7 @@ Parser for number and integer schemas.
 ```typescript
 class NumberParser extends BaseParser<'number' | 'integer'> {
   readonly typeKind: 'number' | 'integer';
-  
+
   constructor(schema: { type: 'number' | 'integer'; [key: string]: any }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -260,7 +260,7 @@ Parser for boolean schemas.
 ```typescript
 class BooleanParser extends BaseParser<'boolean'> {
   readonly typeKind = 'boolean' as const;
-  
+
   constructor(schema: { type: 'boolean' }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -278,7 +278,7 @@ Parser for null schemas.
 ```typescript
 class NullParser extends BaseParser<'null'> {
   readonly typeKind = 'null' as const;
-  
+
   constructor(schema: { type: 'null' }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -296,7 +296,7 @@ Parser for anyOf (union) schemas.
 ```typescript
 class AnyOfParser extends BaseParser<'anyOf'> {
   readonly typeKind = 'anyOf' as const;
-  
+
   constructor(schema: { anyOf: JsonSchema[] }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -314,7 +314,7 @@ Parser for allOf (intersection) schemas.
 ```typescript
 class AllOfParser extends BaseParser<'allOf'> {
   readonly typeKind = 'allOf' as const;
-  
+
   constructor(schema: { allOf: JsonSchema[] }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -332,7 +332,7 @@ Parser for oneOf (discriminated union) schemas.
 ```typescript
 class OneOfParser extends BaseParser<'oneOf'> {
   readonly typeKind = 'oneOf' as const;
-  
+
   constructor(schema: { oneOf: JsonSchema[] }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
   protected canProduceType(type: string): boolean;
@@ -602,9 +602,9 @@ import { buildV4 } from 'x-to-zod/v4';
 const refs = { seen: new Map(), path: [], build: buildV4 };
 
 const stringBuilder = parse.string({ type: 'string' }, refs);
-const arrayBuilder = parse.array({ 
-  type: 'array', 
-  items: { type: 'number' } 
+const arrayBuilder = parse.array({
+  type: 'array',
+  items: { type: 'number' }
 }, refs);
 
 console.log(stringBuilder.text()); // z.string()
@@ -642,11 +642,11 @@ class StrictObjectParser extends ObjectParser {
     schema: JsonSchema
   ): ZodBuilder {
     let result = super.applyPostProcessors(builder, schema);
-    
+
     if (is.objectBuilder(result)) {
       result = result.strict();
     }
-    
+
     return result;
   }
 }

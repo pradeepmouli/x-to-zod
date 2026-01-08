@@ -92,8 +92,11 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		let current = builder;
 		for (const processor of this.postProcessors) {
 			const path = this.refs.path || [];
-			const pathString = this.refs.pathString || (path.length ? `$.${path.join('.')}` : '$');
-			const matchPath = this.refs.matchPath || ((pattern: string) => matchPattern(path, pattern));
+			const pathString =
+				this.refs.pathString || (path.length ? `$.${path.join('.')}` : '$');
+			const matchPath =
+				this.refs.matchPath ||
+				((pattern: string) => matchPattern(path, pattern));
 			const output = processor(current, {
 				path,
 				pathString,
@@ -206,9 +209,7 @@ export abstract class BaseParser<TypeKind extends string = string> {
 
 	protected createChildContext(...pathSegments: (string | number)[]): Context {
 		const childPath = [...(this.refs.path || []), ...pathSegments];
-		const childPathString = childPath.length
-			? `$.${childPath.join('.')}`
-			: '$';
+		const childPathString = childPath.length ? `$.${childPath.join('.')}` : '$';
 		return {
 			...this.refs,
 			path: childPath,
