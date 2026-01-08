@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### Minor Changes
+
+- post processor support
+
 ## 0.5.0
 
 ### Minor Changes
@@ -18,6 +24,7 @@
 - **Users upgrading to or already on Zod v4:**
   - No changes are required; the default behavior now generates v4-compatible output via the default builder / `buildV4`.
 - If you maintain libraries or tools built on top of this package, consider exposing a configuration option that allows consumers to choose between `buildV3` and `buildV4`, with v4 as the recommended default.
+
 ## 0.4.0
 
 ### Minor Changes
