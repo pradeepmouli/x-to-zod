@@ -25,17 +25,16 @@ export const parseSchema = (
 	refs: Context = {
 		seen: new Map(),
 		path: [],
-		pathString: '$',
 		matchPath: (pattern: string) => matchPattern([], pattern),
 		build: buildV4,
 	},
 	blockMeta?: boolean,
 ): ZodBuilder => {
 	const path = refs.path || [];
-	const pathString =
-		refs.pathString ?? (path.length ? `$.${path.join('.')}` : '$');
-	const matchPath =
-		refs.matchPath ?? ((pattern: string) => matchPattern(path, pattern));
+	// Always compute pathString from path, don't use cached value when path changes
+	const pathString = path.length ? `$.${path.join('.')}` : '$';
+	// Always recompute matchPath when path changes
+	const matchPath = (pattern: string) => matchPattern(path, pattern);
 
 	if (typeof schema !== 'object')
 		return schema ? refs.build.any() : refs.build.never();

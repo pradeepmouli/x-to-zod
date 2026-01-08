@@ -1,6 +1,6 @@
 # Implementation Tasks: Multi-Schema Projects
 
-**Feature**: `004-multi-schema-projects` | **Branch**: `004-multi-schema-projects`  
+**Feature**: `004-multi-schema-projects` | **Branch**: `004-multi-schema-projects`
 **Created**: 2026-01-07 | **Spec**: [spec.md](spec.md) | **Plan**: [plan.md](plan.md)
 
 ## Overview

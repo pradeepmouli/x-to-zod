@@ -35,7 +35,7 @@ describe('postProcessors integration', () => {
 
 		expect(code).toContain('.strict()');
 		expect(code).toContain('.optional()');
-		expect(code).toContain('metadata:');
+		expect(code).toContain('"metadata"');
 		expect(code).toContain('.brand("ID")');
 	});
 });
