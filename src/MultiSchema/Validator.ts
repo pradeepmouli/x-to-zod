@@ -145,7 +145,10 @@ export class Validator {
 
 		for (const entry of this.registry.getAllEntries()) {
 			// Check if schema is a valid object or boolean
-			if (typeof entry.schema !== 'object' && typeof entry.schema !== 'boolean') {
+			if (
+				typeof entry.schema !== 'object' &&
+				typeof entry.schema !== 'boolean'
+			) {
 				errors.push({
 					code: 'INVALID_SCHEMA',
 					message: `Invalid schema for "${entry.id}": must be an object or boolean`,
@@ -167,7 +170,10 @@ export class Validator {
 	/**
 	 * Extract all $refs from a schema (recursive)
 	 */
-	private extractRefsFromSchema(schema: any, visited = new Set<any>()): string[] {
+	private extractRefsFromSchema(
+		schema: any,
+		visited = new Set<any>(),
+	): string[] {
 		const refs: string[] = [];
 
 		// Avoid infinite loops
@@ -207,8 +213,13 @@ export class Validator {
 		}
 
 		// Recurse into additionalProperties
-		if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-			refs.push(...this.extractRefsFromSchema(schema.additionalProperties, visited));
+		if (
+			schema.additionalProperties &&
+			typeof schema.additionalProperties === 'object'
+		) {
+			refs.push(
+				...this.extractRefsFromSchema(schema.additionalProperties, visited),
+			);
 		}
 
 		return refs;
