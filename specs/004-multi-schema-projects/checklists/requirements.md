@@ -1,7 +1,7 @@
 # Specification Quality Checklist: Multi-Schema Projects
 
-**Purpose**: Validate specification completeness and quality before proceeding to planning  
-**Created**: 2026-01-07  
+**Purpose**: Validate specification completeness and quality before proceeding to planning
+**Created**: 2026-01-07
 **Feature**: [004-multi-schema-projects/spec.md](../spec.md)
 
 ## Content Quality

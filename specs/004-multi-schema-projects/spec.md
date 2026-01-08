@@ -1,8 +1,8 @@
 # Feature Specification: Multi-Schema Projects
 
-**Feature Branch**: `004-multi-schema-projects`  
-**Created**: 2026-01-07  
-**Status**: Draft  
+**Feature Branch**: `004-multi-schema-projects`
+**Created**: 2026-01-07
+**Status**: Draft
 **Input**: Add support for multi-schema projects that can convert multiple JSON Schema files into a coordinated TypeScript/JavaScript project with proper imports, exports, and cross-schema references
 
 ## User Scenarios & Testing
@@ -85,9 +85,9 @@ A developer wants automatic rebuilding when schema files change during local dev
 
 ### Edge Cases
 
-- What happens when two schemas have the same export name?
-- How does the system handle circular $ref dependencies across files?
-- What occurs if a $ref points to a non-existent schema?
+- **What happens when two schemas have the same export name?** → System detects during validation phase and fails with clear error message identifying the conflicting schemas; user must rename one or more schemas to resolve
+- **How does the system handle circular $ref dependencies across files?** → System detects cycles, reports them with warning, but generates lazy builders/type-only imports to allow build to succeed and unblock users
+- **What occurs if a $ref points to a non-existent schema?** → Build succeeds with placeholder type (`z.unknown()`) for missing reference; warning is logged listing all unresolved $refs so user can address them
 - How are nested schemas (definitions within a schema) organized in the output?
 - What happens when post-processors conflict or produce invalid output?
 - How does the system handle remote schema URLs in $refs?
@@ -98,14 +98,18 @@ A developer wants automatic rebuilding when schema files change during local dev
 
 - **FR-001**: System MUST accept multiple JSON Schema objects or files through `addSchema()` and `addSchemaFromFile()` methods
 - **FR-002**: System MUST resolve $ref references both within a schema (internal) and across schemas (external)
+- **FR-002a**: System MUST handle unresolved $refs by generating placeholder validators (`z.unknown()`) and logging warnings with lists of unresolved references
 - **FR-003**: System MUST generate individual TypeScript source files for each schema with proper exports
 - **FR-004**: System MUST automatically generate import statements for cross-schema references using correct relative paths
 - **FR-005**: System MUST generate an index file that re-exports all schema validators for convenient importing
 - **FR-006**: System MUST build schemas in dependency order (schemas with no dependencies first)
 - **FR-007**: System MUST detect and report circular dependencies before attempting to build
+- **FR-007a**: System MUST generate lazy builders for circular $ref patterns and use type-only imports where appropriate to allow build completion even with cycles
 - **FR-008**: System MUST provide a dependency graph API that shows which schemas depend on which others
 - **FR-009**: System MUST validate all schemas before building and report validation errors clearly
+- **FR-009a**: System MUST detect export name conflicts and fail validation with specific error identifying conflicting schema IDs and their derived export names
 - **FR-010**: System MUST support both CommonJS and ESM module formats in output
+- **FR-010a**: System MUST emit dual-format outputs to dist/esm and dist/cjs directories using separate TypeScript configurations and post-build scripts (consistent with existing postcjs.js/postesm.js pattern)
 - **FR-011**: System MUST support post-processing at the individual schema level
 - **FR-012**: System MUST provide a programmatic API (SchemaProject class) and a CLI interface
 - **FR-013**: System MUST use ts-morph for managing source files to ensure proper TypeScript integration
@@ -145,6 +149,7 @@ A developer wants automatic rebuilding when schema files change during local dev
 - Output directory is writable and users can manage file permissions
 - Remote schema URLs will not be fetched automatically (security-first approach)
 - Circular dependencies are detected and reported but generation continues with lazy builders to unblock users
+- Export name conflicts detected during validation result in failure (user must resolve manually by renaming schemas)
 
 ## Out of Scope
 
@@ -154,8 +159,17 @@ A developer wants automatic rebuilding when schema files change during local dev
 - Direct support for non-JSON-Schema formats (OpenAPI, GraphQL, etc.) beyond what matches JSON Schema
 - Incremental builds (all-or-nothing rebuild required)
 - Plugin system for extensibility
+- Watch mode (file watching / rebuild on change) deferred to post-MVP; users can rely on external watchers (e.g., nodemon/chokidar)
 
-## Glossary
+## Clarifications
+
+### Session 2026-01-07
+
+- Q: When two schemas have the same export name, what should the system do? → A: Fail fast during validation with clear error message requiring user to rename one schema
+- Q: How should circular $ref dependencies be handled? → A: Build succeeds with lazy builders and type-only imports; cycles are detected and reported with warning but do not block generation
+- Q: When a $ref points to a non-existent schema, what should happen? → A: Build succeeds but generates type placeholder (`z.unknown()`) for missing refs with warnings logged
+- Q: When `moduleFormat` includes CommonJS, how should output be generated? → A: System generates both dist/esm and dist/cjs using dual TypeScript configurations + post-build scripts (aligns with constitution Principle II)
+- Q: Should watch mode be part of MVP? → A: Defer watch mode post-MVP; treat as optional enhancement and recommend external watchers (e.g., nodemon/chokidar)
 
 - **$ref**: JSON Schema reference to another schema or definition
 - **Zod Builder**: Intermediate representation of a Zod validator before code generation
