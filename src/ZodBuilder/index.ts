@@ -48,6 +48,9 @@ export { DiscriminatedUnionBuilder } from './discriminatedUnion.js';
 export { TupleBuilder } from './tuple.js';
 export { RecordBuilder } from './record.js';
 
+// Multi-schema project builders
+export { ReferenceBuilder } from './reference.js';
+
 // Additional type builders
 export { VoidBuilder } from './void.js';
 export { UndefinedBuilder } from './undefined.js';
