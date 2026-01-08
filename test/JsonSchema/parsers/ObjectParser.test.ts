@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Context, JsonSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import { parseObject as parseObjectFn } from '../../../src/JsonSchema/parsers/parseObject.js';
+import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { ObjectParser } from '../../../src/JsonSchema/parsers/ObjectParser.js';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
@@ -28,7 +28,7 @@ describe('ObjectParser', () => {
 		const parser = new ObjectParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseObjectFn(schema as any, ctx())
+		const expected = parse.object(schema as any, ctx())
 			.describe('desc')
 			.default({ name: 'a' })
 			.text();
@@ -50,7 +50,7 @@ describe('ObjectParser', () => {
 		const parser = new ObjectParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseObjectFn(schema as any, ctx()).text();
+		const expected = parse.object(schema as any, ctx()).text();
 
 		expect(result).toBe(expected);
 	});

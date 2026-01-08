@@ -82,7 +82,8 @@ Core parsing logic specific to each parser type. Must be implemented by subclass
 **Example**:
 ```typescript
 protected parseImpl(schema: JsonSchema): ZodBuilder {
-  return parseObject(schema as JsonSchemaObject, this.refs);
+  // Build directly using the builder API
+  return this.refs.build.object({});
 }
 ```
 

@@ -1,42 +1,36 @@
 export { toZod } from './toZod.js';
-import { parseAllOf } from './parsers/parseAllOf.js';
-import { parseAnyOf } from './parsers/parseAnyOf.js';
-import { parseArray } from './parsers/parseArray.js';
-import { parseBoolean } from './parsers/parseBoolean.js';
+import { parse as classParse } from './parsers/index.js';
 import { parseConst } from './parsers/parseConst.js';
 import { parseDefault } from './parsers/parseDefault.js';
 import { parseEnum } from './parsers/parseEnum.js';
 import { parseIfThenElse } from './parsers/parseIfThenElse.js';
 import { parseMultipleType } from './parsers/parseMultipleType.js';
 import { parseNot } from './parsers/parseNot.js';
-import { parseNull } from './parsers/parseNull.js';
 import { parseNullable } from './parsers/parseNullable.js';
-import { parseNumber } from './parsers/parseNumber.js';
-import { parseObject } from './parsers/parseObject.js';
-import { parseOneOf } from './parsers/parseOneOf.js';
 import { parseSchema } from './parsers/parseSchema.js';
-import { parseString } from './parsers/parseString.js';
 import { its } from './its.js';
 import type { JsonSchemaObject, Context } from '../Types.js';
 
 export const parse = {
-	array: parseArray,
-	object: parseObject,
-	integer: parseInt,
-	boolean: parseBoolean,
-	string: parseString,
-	number: parseNumber,
-	null: parseNull,
-	enum: parseEnum,
-	allOf: parseAllOf,
-	anyOf: parseAnyOf,
+	// class-based parse methods
+	array: classParse.array,
+	object: classParse.object,
+	boolean: classParse.boolean,
+	string: classParse.string,
+	number: classParse.number,
+	null: classParse.null,
+	anyOf: classParse.anyOf,
+	allOf: classParse.allOf,
+	oneOf: classParse.oneOf,
+		enum: parseEnum,
+
+	// functional helpers that remain
 	const: parseConst,
 	default: parseDefault,
 	ifThenElse: parseIfThenElse,
 	multipleType: parseMultipleType,
 	not: parseNot,
 	nullable: parseNullable,
-	oneOf: parseOneOf,
 	schema: parseSchema,
 	discriminator: undefined, // to be implemented
 };

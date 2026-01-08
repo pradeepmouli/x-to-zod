@@ -46,6 +46,11 @@
       "types": "./dist/types/JsonSchema/index.d.ts",
       "import": "./dist/esm/JsonSchema/index.js",
       "require": "./dist/cjs/JsonSchema/index.js"
+    },
+    "./post-processing": {
+      "types": "./dist/types/PostProcessing/index.d.ts",
+      "import": "./dist/esm/PostProcessing/index.js",
+      "require": "./dist/cjs/PostProcessing/index.js"
     }
   },
   "scripts": {

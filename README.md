@@ -390,7 +390,7 @@ baseObject.extend(otherObject)
 
 When implemented, error messages will use different parameter names:
 
-**v3 mode:** `{ message: "error text" }`  
+**v3 mode:** `{ message: "error text" }`
 **v4 mode:** `{ error: "error text" }`
 
 ### Builder API with Version Support

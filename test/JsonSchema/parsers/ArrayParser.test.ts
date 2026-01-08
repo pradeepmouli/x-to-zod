@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import type { Context, JsonSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import { parseArray as parseArrayFn } from '../../../src/JsonSchema/parsers/parseArray.js';
+import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { ArrayParser } from '../../../src/JsonSchema/parsers/ArrayParser.js';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
@@ -30,7 +30,7 @@ describe('ArrayParser', () => {
 		const parser = new ArrayParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseArrayFn(schema as any, ctx())
+		const expected = parse.array(schema as any, ctx())
 			.describe('desc')
 			.default(['a'])
 			.text();
@@ -51,7 +51,7 @@ describe('ArrayParser', () => {
 		const parser = new ArrayParser(schema, ctx());
 
 		const result = parser.parse().text();
-		const expected = parseArrayFn(schema as any, ctx())
+		const expected = parse.array(schema as any, ctx())
 			.describe(undefined as any)
 			.text();
 

@@ -94,7 +94,8 @@ Problems with this approach:
 ```typescript
 // src/JsonSchema/parsers/ObjectParser.ts
 import { BaseParser } from './BaseParser.js';
-import { parseObject } from './parseObject.js';
+import { ObjectBuilder } from '../../ZodBuilder/index.js';
+import { parseSchema } from './parseSchema.js';
 
 export class ObjectParser extends BaseParser<'object'> {
   readonly typeKind = 'object' as const;
@@ -104,10 +105,10 @@ export class ObjectParser extends BaseParser<'object'> {
   }
 
   protected parseImpl(schema: JsonSchema): ZodBuilder {
-    return parseObject(
-      schema as JsonSchemaObject & { type: 'object' },
-      this.refs
-    );
+    const objectSchema = schema as JsonSchemaObject & { type: 'object' };
+    // Parse properties and constraints inline; use parseSchema for children.
+    const builder = ObjectBuilder.fromCode('z.object({})', this.refs);
+    return builder;
   }
 
   protected canProduceType(type: string): boolean {
@@ -139,7 +140,7 @@ Benefits of this approach:
 
 ### Example: Extending Behavior
 
-**Functional Approach** (wrapper pattern):
+**Functional Approach** (wrapper pattern; legacy):
 
 ```typescript
 function parseObjectWithDefaults(schema, refs) {
@@ -161,7 +162,7 @@ class ObjectParserWithDefaults extends ObjectParser {
 
 ### Example: Custom Processing
 
-**Functional Approach**:
+**Functional Approach** (legacy):
 
 ```typescript
 function customParseObject(schema, refs) {

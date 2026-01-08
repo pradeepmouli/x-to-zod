@@ -147,4 +147,19 @@ describe('cli', () => {
 			stderr.includes('Value of argument module must be one of esm,cjs,none'),
 		).toBeTruthy();
 	});
+
+	it('loads post-processors module via CLI flag', () => {
+		const { stdout, stderr } = spawnSync(
+			tsxBin,
+			['src/cli.ts', '--postProcessors', 'test/fixtures/postProcessors.cli.js'],
+			{
+				input: '{"type":"object","properties":{"id":{"type":"string"}}}',
+				encoding: 'utf8',
+			},
+		);
+		expect(stderr || '').toBe('');
+		// Verify post-processor was loaded and applied to id field
+		expect(stdout).toContain('id');
+		expect(stdout).toContain('.brand("CLI")');
+	});
 });

@@ -6,6 +6,7 @@ import type {
 	PostProcessorConfig,
 	ProcessorConfig,
 } from '../../Types.js';
+import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
 // Forward declaration to avoid circular dependency
@@ -90,10 +91,15 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	): ZodBuilder {
 		let current = builder;
 		for (const processor of this.postProcessors) {
+			const path = this.refs.path || [];
+			const pathString = this.refs.pathString || (path.length ? `$.${path.join('.')}` : '$');
+			const matchPath = this.refs.matchPath || ((pattern: string) => matchPattern(path, pattern));
 			const output = processor(current, {
-				path: this.refs.path,
+				path,
+				pathString,
 				schema,
 				build: this.refs.build,
+				matchPath,
 			});
 			if (output !== undefined) {
 				current = output;
@@ -165,6 +171,8 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		const patterns = Array.isArray(processor.pathPattern)
 			? processor.pathPattern
 			: [processor.pathPattern];
+		// Special case: '*' matches all paths
+		if (patterns.includes('*')) return true;
 		return patterns.some((pattern: string) => this.matchesPath(pattern, path));
 	}
 
@@ -190,16 +198,22 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		pattern: string,
 		path: (string | number)[] = this.refs.path,
 	): boolean {
-		const currentPath = (path || []).join('.');
-		if (pattern === '*') return true;
-		return currentPath === pattern;
+		const matcher = this.refs.matchPath
+			? this.refs.matchPath
+			: (candidate: string) => matchPattern(path || [], candidate);
+		return matcher(pattern);
 	}
 
 	protected createChildContext(...pathSegments: (string | number)[]): Context {
 		const childPath = [...(this.refs.path || []), ...pathSegments];
+		const childPathString = childPath.length
+			? `$.${childPath.join('.')}`
+			: '$';
 		return {
 			...this.refs,
 			path: childPath,
+			pathString: childPathString,
+			matchPath: (pattern: string) => matchPattern(childPath, pattern),
 			preProcessors: this.refs.preProcessors
 				? this.filterPreProcessors(this.refs.preProcessors, childPath)
 				: undefined,
