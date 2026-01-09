@@ -79,7 +79,8 @@ export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
 	if (its.a.not(schema)) {
 		return NotParser;
 	}
-	if (its.an.enum(schema)) {
+	// Check for enum keyword directly (including empty arrays)
+	if ('enum' in schema && Array.isArray((schema as any).enum)) {
 		return EnumParser;
 	}
 	if (its.a.const(schema)) {

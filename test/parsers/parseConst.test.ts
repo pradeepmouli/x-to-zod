@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseConst as parseConstImpl } from '../../src/JsonSchema/parsers/parseConst.js';
+import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -10,9 +10,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseConst = (
-	schema: Parameters<typeof parseConstImpl>[0],
+	schema: Parameters<typeof parseSchema>[0],
 	refs: Context = refsV4,
-) => parseConstImpl(schema, refs);
+) => parseSchema(schema, refs);
 
 describe('parseConst', () => {
 	it('should handle falsy constants', () => {

@@ -1,12 +1,6 @@
 export { toZod } from './toZod.js';
 import { parse as classParse } from './parsers/index.js';
-import { parseConst } from './parsers/parseConst.js';
 import { parseDefault } from './parsers/parseDefault.js';
-import { parseEnum } from './parsers/parseEnum.js';
-import { parseIfThenElse } from './parsers/parseIfThenElse.js';
-import { parseMultipleType } from './parsers/parseMultipleType.js';
-import { parseNot } from './parsers/parseNot.js';
-import { parseNullable } from './parsers/parseNullable.js';
 import { parseSchema } from './parsers/parseSchema.js';
 import { parseRef } from '../MultiSchema/parseRef.js';
 import { its } from './its.js';
@@ -23,19 +17,12 @@ export const parse = {
 	anyOf: classParse.anyOf,
 	allOf: classParse.allOf,
 	oneOf: classParse.oneOf,
-	enum: parseEnum,
 
-	// functional helpers that remain
-	const: parseConst,
+	// functional helpers
 	default: parseDefault,
-	ifThenElse: parseIfThenElse,
-	multipleType: parseMultipleType,
-	not: parseNot,
-	nullable: parseNullable,
-	schema: parseSchema,
 	discriminator: undefined, // to be implemented
 
-	// New exports for multi-schema support (capital names for clarity)
+	// Multi-schema support (capital names for clarity)
 	Schema: parseSchema,
 	Ref: parseRef,
 };
@@ -61,9 +48,7 @@ export function select(schema: any) {
 		return parse.boolean;
 	} else if (its.a.primitive(schema, 'null')) {
 		return parse.null;
-	} else if (its.an.enum(schema)) {
-		return parse.enum;
-	} else {
-		return parse.schema;
 	}
+	// For enum and all other cases, use Schema
+	return parse.Schema;
 }
