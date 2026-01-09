@@ -139,7 +139,37 @@ export class SchemaProject {
 			// Step 2: Topological sort for build order
 			const buildOrder = this.topologicalSort();
 
-			// Step 3: Generate source files
+			// Step 3: Parse schemas (in dependency order)
+			const { parseSchema } = await import('../JsonSchema/parsers/parseSchema.js');
+			for (const schemaId of buildOrder) {
+				const entry = this.registry.getEntry(schemaId);
+				if (!entry) continue;
+
+				try {
+					// Parse with context for $refs and post-processing
+					const builder = parseSchema(entry.schema as Record<string, any>, {
+						path: [],
+						seen: new Map(),
+						build: (await import('../ZodBuilder/index.js')).buildV4, // Use default v4 builder
+						zodVersion: this.options.zodVersion || 'v4',
+						currentSchemaId: schemaId,
+						refResolver: this.refResolver,
+						builderRegistry: this.builderRegistry,
+					} as any);
+
+					entry.builder = builder;
+				} catch (parseError) {
+					errors.push({
+						code: 'PARSE_FAILED',
+						schemaId,
+						message: `Failed to parse schema: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+						details: { error: parseError },
+					});
+					continue;
+				}
+			}
+
+			// Step 4: Generate source files
 			const fileGenerator = new SourceFileGenerator(
 				this.options.outDir,
 				!!this.options.prettier,
@@ -147,39 +177,48 @@ export class SchemaProject {
 
 			for (const schemaId of buildOrder) {
 				const entry = this.registry.getEntry(schemaId);
-				if (!entry) continue;
+				if (!entry || !entry.builder) continue;
 
-				// TODO: Parse schema and generate builder
-				// builder = parseSchema(entry.schema, entry.metadata);
-				// entry.builder = builder;
+				try {
+					// Create import manager for this file
+					const format =
+						this.options.moduleFormat === 'both'
+							? 'esm'
+							: this.options.moduleFormat || 'esm';
+					const importMgr = new ImportManager(format);
 
-				// Create import manager for this file
-				const format =
-					this.options.moduleFormat === 'both'
-						? 'esm'
-						: this.options.moduleFormat || 'esm';
-				const _importMgr = new ImportManager(format);
+					// TODO: Populate import manager from ReferenceBuilder instances in builder tree
+					// This would require traversing the builder and extracting ImportInfo from ReferenceBuilders
 
-				// Generate source file
-				// const sourceFile = fileGenerator.generateFile(
-				//   schemaId,
-				//   builder,
-				//   importMgr,
-				//   entry.exportName,
-				// );
-				// if (sourceFile) {
-				//   entry.sourceFile = sourceFile;
-				// }
+					// Generate source file
+					const sourceFile = fileGenerator.generateFile(
+						schemaId,
+						entry.builder,
+						importMgr,
+						entry.exportName,
+					);
+					if (sourceFile) {
+						entry.sourceFile = sourceFile;
+					}
+				} catch (genError) {
+					errors.push({
+						code: 'GENERATION_FAILED',
+						schemaId,
+						message: `Failed to generate source file: ${genError instanceof Error ? genError.message : String(genError)}`,
+						details: { error: genError },
+					});
+					continue;
+				}
 			}
 
-			// Step 4: Save files
+			// Step 5: Save files
 			const saved = await fileGenerator.saveAll();
 			generatedFiles.push(...saved);
 
 			fileGenerator.dispose();
 
 			return {
-				success: true,
+				success: errors.length === 0,
 				errors,
 				warnings,
 				generatedFiles,
