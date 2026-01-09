@@ -72,9 +72,15 @@ export class ImportManager {
 
 		// Generate statements
 		for (const [modulePath, imports] of byModule) {
-			const namedImports = imports.filter((info) => info.importKind === 'named');
-			const defaultImport = imports.find((info) => info.importKind === 'default');
-			const namespaceImport = imports.find((info) => info.importKind === 'namespace');
+			const namedImports = imports.filter(
+				(info) => info.importKind === 'named',
+			);
+			const defaultImport = imports.find(
+				(info) => info.importKind === 'default',
+			);
+			const namespaceImport = imports.find(
+				(info) => info.importKind === 'namespace',
+			);
 
 			let statement = 'import ';
 
@@ -138,11 +144,15 @@ export class ImportManager {
 
 		// Generate statements
 		for (const [modulePath, imports] of byModule) {
-			const namespaceImport = imports.find((info) => info.importKind === 'namespace');
+			const namespaceImport = imports.find(
+				(info) => info.importKind === 'namespace',
+			);
 
 			if (namespaceImport) {
 				// Namespace import: const ns = require('module')
-				statements.push(`const ${namespaceImport.importName} = require("${modulePath}")`);
+				statements.push(
+					`const ${namespaceImport.importName} = require("${modulePath}")`,
+				);
 			} else {
 				// Named and/or default imports: const { name1, name2 } = require('module')
 				const importNames = imports.map((info) => info.importName).join(', ');

@@ -1,4 +1,11 @@
-import type { SchemaProjectOptions, SchemaEntry, SchemaOptions, SchemaFileOptions, RefResolution, BuildResult } from './types.js';
+import type {
+	SchemaProjectOptions,
+	SchemaEntry,
+	SchemaOptions,
+	SchemaFileOptions,
+	RefResolution,
+	BuildResult,
+} from './types.js';
 import type { JsonSchema } from '../Types.js';
 import { SchemaRegistry } from './SchemaRegistry.js';
 import { DefaultNameResolver } from './NameResolver.js';
@@ -8,6 +15,7 @@ import { Validator } from './Validator.js';
 import { ImportManager } from './ImportManager.js';
 import { SourceFileGenerator } from './SourceFileGenerator.js';
 import { BuilderRegistry } from './BuilderRegistry.js';
+import { extractRefs } from './parseRef.js';
 import { readFileSync } from 'fs';
 import path from 'path';
 
@@ -27,11 +35,20 @@ export class SchemaProject {
 	constructor(options: SchemaProjectOptions) {
 		this.options = options;
 		this.registry = new SchemaRegistry();
-		this.nameResolver = options.nameResolver as DefaultNameResolver || new DefaultNameResolver();
+		this.nameResolver =
+			(options.nameResolver as DefaultNameResolver) ||
+			new DefaultNameResolver();
 		this.builderRegistry = new BuilderRegistry();
-		this.refResolver = options.refResolver as DefaultRefResolver || new DefaultRefResolver(this.registry);
+		this.refResolver =
+			(options.refResolver as DefaultRefResolver) ||
+			new DefaultRefResolver(this.registry);
 		this.dependencyGraph = new DependencyGraphBuilder();
-		this.validator = new Validator(this.registry, this.nameResolver, this.refResolver, this.dependencyGraph);
+		this.validator = new Validator(
+			this.registry,
+			this.nameResolver,
+			this.refResolver,
+			this.dependencyGraph,
+		);
 	}
 
 	/**
@@ -66,7 +83,11 @@ export class SchemaProject {
 	 * @param id - Optional unique identifier; defaults to relative file path
 	 * @param options - Additional schema options
 	 */
-	addSchemaFromFile(filePath: string, id?: string, options?: SchemaFileOptions): void {
+	addSchemaFromFile(
+		filePath: string,
+		id?: string,
+		options?: SchemaFileOptions,
+	): void {
 		const content = readFileSync(filePath, options?.encoding || 'utf8');
 		const schema = JSON.parse(content.toString());
 		const schemaId = id || path.relative(process.cwd(), filePath);
@@ -87,6 +108,7 @@ export class SchemaProject {
 	 * @returns ValidationResult with errors and warnings
 	 */
 	validate() {
+		this.rebuildDependencyGraph();
 		return this.validator.validate();
 	}
 
@@ -132,7 +154,10 @@ export class SchemaProject {
 				// entry.builder = builder;
 
 				// Create import manager for this file
-				const format = this.options.moduleFormat === 'both' ? 'esm' : (this.options.moduleFormat || 'esm');
+				const format =
+					this.options.moduleFormat === 'both'
+						? 'esm'
+						: this.options.moduleFormat || 'esm';
 				const _importMgr = new ImportManager(format);
 
 				// Generate source file
@@ -179,6 +204,7 @@ export class SchemaProject {
 	 * Get the dependency graph for schemas.
 	 */
 	getDependencyGraph() {
+		this.rebuildDependencyGraph();
 		return this.dependencyGraph;
 	}
 
@@ -208,25 +234,29 @@ export class SchemaProject {
 	 * Returns schema IDs in build order (dependencies first).
 	 */
 	private topologicalSort(): string[] {
-		const visited = new Set<string>();
-		const result: string[] = [];
+		try {
+			return this.dependencyGraph.topologicalSort();
+		} catch (error) {
+			throw new Error(
+				`Dependency cycle detected: ${error instanceof Error ? error.message : String(error)}`,
+			);
+		}
+	}
 
-		const visit = (nodeId: string) => {
-			if (visited.has(nodeId)) return;
-			visited.add(nodeId);
+	private rebuildDependencyGraph(): void {
+		this.dependencyGraph.clear();
 
-			const deps = this.dependencyGraph.edges.get(nodeId) || new Set();
-			for (const dep of deps) {
-				visit(dep);
+		for (const entry of this.registry.getAllEntries()) {
+			this.dependencyGraph.addNode(entry.id);
+			const refs = extractRefs(entry.schema as JsonSchema);
+			for (const ref of refs) {
+				const resolution = this.refResolver.resolve(ref, entry.id);
+				if (resolution && resolution.isExternal && resolution.targetSchemaId) {
+					this.dependencyGraph.addEdge(entry.id, resolution.targetSchemaId);
+				}
 			}
-
-			result.push(nodeId);
-		};
-
-		for (const nodeId of this.dependencyGraph.nodes) {
-			visit(nodeId);
 		}
 
-		return result;
+		this.dependencyGraph.detectCycles();
 	}
 }

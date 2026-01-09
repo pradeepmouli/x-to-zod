@@ -3,110 +3,101 @@ import type { DefaultRefResolver } from './RefResolver.js';
 import { ReferenceBuilder } from '../ZodBuilder/reference.js';
 
 /**
- * Detects and parses $ref in a JSON schema.
- * Returns ReferenceBuilder for external refs or null for non-refs.
- *
- * @param schema - JSON schema to check for $ref
- * @param refResolver - Resolver for resolving $refs
- * @param _path - Current path in the schema tree (for error messages)
- * @returns ReferenceBuilder for external refs, or null if not a $ref or internal $ref
+ * Detects and parses external $ref entries in a JSON schema.
+ * Returns ReferenceBuilder for external refs or null for non-refs/internal refs.
  */
 export function parseRef(
-	schema: JsonSchema | undefined,
-	refResolver: DefaultRefResolver,
-	_path: string[],
+  schema: JsonSchema | undefined,
+  refResolver: DefaultRefResolver,
+  fromSchemaId: string,
 ): ReferenceBuilder | null {
-	if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
-		return null;
-	}
+  if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
+    return null;
+  }
 
-	const ref = schema.$ref;
-	if (!ref || typeof ref !== 'string') {
-		return null;
-	}
+  const ref = (schema as { $ref?: unknown }).$ref;
+  if (!ref || typeof ref !== 'string') {
+    return null;
+  }
 
-	// Check if this is an internal or external reference
-	const isInternal = isInternalRef(ref);
+  if (ref.startsWith('#')) {
+    return null;
+  }
 
-	if (isInternal) {
-		// Internal refs are resolved and parsed normally by parseSchema
-		return null;
-	}
+  try {
+    const resolved = refResolver.resolve(ref, fromSchemaId);
+    if (!resolved || !resolved.importInfo || !resolved.isExternal) {
+      console.warn(`Failed to resolve external $ref: ${ref}`);
+      return null;
+    }
 
-	// External ref: create ReferenceBuilder
-	try {
-		const resolved = refResolver.resolve(ref, 'unknown');
-		if (!resolved || !resolved.importInfo) {
-			// Unresolved external ref - could be a warning or error
-			console.warn(`Failed to resolve external $ref: ${ref}`);
-			return null;
-		}
+    const importInfo = resolved.importInfo;
+    const targetImportName = importInfo.importName;
+    const targetExportName =
+      importInfo.importKind === 'default'
+        ? 'default'
+        : importInfo.importName;
 
-		const refBuilder = new ReferenceBuilder(
-			resolved.targetSchemaId,
-			'default',
-			resolved.importInfo,
-		);
-		return refBuilder;
-	} catch (error) {
-		console.error(`Error resolving $ref "${ref}":`, error);
-		return null;
-	}
-}
-
-/**
- * Check if a $ref is internal (starts with # or local path).
- */
-function isInternalRef(ref: string): boolean {
-	return ref.startsWith('#') || !ref.includes('://');
+    return new ReferenceBuilder(
+      targetImportName,
+      targetExportName,
+      importInfo,
+    );
+  } catch (error) {
+    console.error(`Error resolving $ref "${ref}":`, error);
+    return null;
+  }
 }
 
 /**
  * Extract all $refs from a schema recursively.
  * Useful for dependency analysis.
  */
-export function extractRefs(schema: JsonSchema, refs: Set<string> = new Set()): Set<string> {
-	if (!schema || typeof schema !== 'object') {
-		return refs;
-	}
+export function extractRefs(
+  schema: JsonSchema,
+  refs: Set<string> = new Set(),
+): Set<string> {
+  if (!schema || typeof schema !== 'object') {
+    return refs;
+  }
 
-	if (Array.isArray(schema)) {
-		for (const item of schema) {
-			extractRefs(item, refs);
-		}
-		return refs;
-	}
+  if (Array.isArray(schema)) {
+    for (const item of schema) {
+      extractRefs(item as JsonSchema, refs);
+    }
+    return refs;
+  }
 
-	// Check for $ref
-	if (schema.$ref && typeof schema.$ref === 'string') {
-		refs.add(schema.$ref);
-	}
+  const refValue = (schema as { $ref?: unknown }).$ref;
+  if (refValue && typeof refValue === 'string') {
+    refs.add(refValue);
+  }
 
-	// Recurse into schema properties
-	if (schema.properties && typeof schema.properties === 'object') {
-		for (const propSchema of Object.values(schema.properties)) {
-			extractRefs(propSchema, refs);
-		}
-	}
+  if (schema.properties && typeof schema.properties === 'object') {
+    for (const propSchema of Object.values(schema.properties)) {
+      extractRefs(propSchema as JsonSchema, refs);
+    }
+  }
 
-	// Recurse into array items
-	if (schema.items) {
-		extractRefs(schema.items, refs);
-	}
+  if (schema.items) {
+    extractRefs(schema.items as JsonSchema, refs);
+  }
 
-	// Recurse into allOf, anyOf, oneOf
-	for (const combiner of ['allOf', 'anyOf', 'oneOf'] as const) {
-		if (schema[combiner] && Array.isArray(schema[combiner])) {
-			for (const subSchema of schema[combiner]) {
-				extractRefs(subSchema, refs);
-			}
-		}
-	}
+  for (const combiner of ['allOf', 'anyOf', 'oneOf'] as const) {
+    const combined = (schema as Record<string, unknown>)[combiner];
+    if (combined && Array.isArray(combined)) {
+      for (const subSchema of combined as JsonSchema[]) {
+        extractRefs(subSchema, refs);
+      }
+    }
+  }
 
-	// Recurse into additionalProperties
-	if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
-		extractRefs(schema.additionalProperties, refs);
-	}
+  if (
+    schema.additionalProperties &&
+    typeof schema.additionalProperties === 'object'
+  ) {
+    extractRefs(schema.additionalProperties as JsonSchema, refs);
+  }
 
-	return refs;
+  return refs;
 }

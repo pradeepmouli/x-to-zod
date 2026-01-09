@@ -105,7 +105,10 @@ export class SourceFileGenerator {
 			// Add export statements for all schemas
 			for (const entry of entries) {
 				const filePath = this.computeFilePath(entry.id);
-				const relativePath = path.relative(this.outDir, filePath).replace(/\.ts$/, '').replace(/\\/g, '/');
+				const relativePath = path
+					.relative(this.outDir, filePath)
+					.replace(/\.ts$/, '')
+					.replace(/\\/g, '/');
 
 				const exportStatement = `export { default as ${entry.exportName} } from "./${relativePath}";`;
 				sourceFile.addStatements(exportStatement);

@@ -9,6 +9,12 @@ export class DependencyGraphBuilder implements DependencyGraph {
 	edges: Map<string, Set<string>> = new Map();
 	cycles: Set<Set<string>> = new Set();
 
+	clear(): void {
+		this.nodes.clear();
+		this.edges.clear();
+		this.cycles.clear();
+	}
+
 	/**
 	 * Add a node to the graph.
 	 */
