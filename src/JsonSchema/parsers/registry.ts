@@ -21,21 +21,21 @@ import { its } from '../its.js';
  * Uses typeof to capture the actual class type including protected constructor.
  */
 type ParserClass =
-  | typeof ObjectParser
-  | typeof ArrayParser
-  | typeof StringParser
-  | typeof NumberParser
-  | typeof BooleanParser
-  | typeof NullParser
-  | typeof AnyOfParser
-  | typeof AllOfParser
-  | typeof OneOfParser
-  | typeof EnumParser
-  | typeof ConstParser
-  | typeof NotParser
-  | typeof NullableParser
-  | typeof MultipleTypeParser
-  | typeof ConditionalParser;
+	| typeof ObjectParser
+	| typeof ArrayParser
+	| typeof StringParser
+	| typeof NumberParser
+	| typeof BooleanParser
+	| typeof NullParser
+	| typeof AnyOfParser
+	| typeof AllOfParser
+	| typeof OneOfParser
+	| typeof EnumParser
+	| typeof ConstParser
+	| typeof NotParser
+	| typeof NullableParser
+	| typeof MultipleTypeParser
+	| typeof ConditionalParser;
 
 /**
  * Registry mapping JSON Schema types to parser classes.
@@ -67,73 +67,73 @@ export const parserRegistry = new Map<string, ParserClass>([
  * @returns Parser class constructor or undefined if no match
  */
 export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
-  // Schema must be an object to have a parser
-  if (typeof schema !== 'object' || schema === null) {
-    return undefined;
-  }
+	// Schema must be an object to have a parser
+	if (typeof schema !== 'object' || schema === null) {
+		return undefined;
+	}
 
-  // Check special cases first (highest priority)
-  if (its.a.nullable(schema)) {
-    return NullableParser;
-  }
-  if (its.a.not(schema)) {
-    return NotParser;
-  }
-  if (its.an.enum(schema)) {
-    return EnumParser;
-  }
-  if (its.a.const(schema)) {
-    return ConstParser;
-  }
-  if (its.a.multipleType(schema)) {
-    return MultipleTypeParser;
-  }
-  if (its.a.conditional(schema)) {
-    return ConditionalParser;
-  }
+	// Check special cases first (highest priority)
+	if (its.a.nullable(schema)) {
+		return NullableParser;
+	}
+	if (its.a.not(schema)) {
+		return NotParser;
+	}
+	if (its.an.enum(schema)) {
+		return EnumParser;
+	}
+	if (its.a.const(schema)) {
+		return ConstParser;
+	}
+	if (its.a.multipleType(schema)) {
+		return MultipleTypeParser;
+	}
+	if (its.a.conditional(schema)) {
+		return ConditionalParser;
+	}
 
-  // Check combinators
-  if (its.an.anyOf(schema)) {
-    return parserRegistry.get('anyOf');
-  }
-  if (its.an.allOf(schema)) {
-    return parserRegistry.get('allOf');
-  }
-  if (its.a.oneOf(schema)) {
-    return parserRegistry.get('oneOf');
-  }
+	// Check combinators
+	if (its.an.anyOf(schema)) {
+		return parserRegistry.get('anyOf');
+	}
+	if (its.an.allOf(schema)) {
+		return parserRegistry.get('allOf');
+	}
+	if (its.a.oneOf(schema)) {
+		return parserRegistry.get('oneOf');
+	}
 
-  // Check explicit type field
-  if ('type' in schema && typeof schema.type === 'string') {
-    const parser = parserRegistry.get(schema.type);
-    if (parser) {
-      return parser;
-    }
-  }
+	// Check explicit type field
+	if ('type' in schema && typeof schema.type === 'string') {
+		const parser = parserRegistry.get(schema.type);
+		if (parser) {
+			return parser;
+		}
+	}
 
-  // Type inference using its.* utilities
-  if (its.an.object(schema)) {
-    return parserRegistry.get('object');
-  }
-  if (its.an.array(schema)) {
-    return parserRegistry.get('array');
-  }
-  if (its.a.primitive(schema, 'string')) {
-    return parserRegistry.get('string');
-  }
-  if (its.a.primitive(schema, 'number')) {
-    return parserRegistry.get('number');
-  }
-  if (its.a.primitive(schema, 'integer')) {
-    return parserRegistry.get('integer');
-  }
-  if (its.a.primitive(schema, 'boolean')) {
-    return parserRegistry.get('boolean');
-  }
-  if (its.a.primitive(schema, 'null')) {
-    return parserRegistry.get('null');
-  }
+	// Type inference using its.* utilities
+	if (its.an.object(schema)) {
+		return parserRegistry.get('object');
+	}
+	if (its.an.array(schema)) {
+		return parserRegistry.get('array');
+	}
+	if (its.a.primitive(schema, 'string')) {
+		return parserRegistry.get('string');
+	}
+	if (its.a.primitive(schema, 'number')) {
+		return parserRegistry.get('number');
+	}
+	if (its.a.primitive(schema, 'integer')) {
+		return parserRegistry.get('integer');
+	}
+	if (its.a.primitive(schema, 'boolean')) {
+		return parserRegistry.get('boolean');
+	}
+	if (its.a.primitive(schema, 'null')) {
+		return parserRegistry.get('null');
+	}
 
-  // No matching parser - caller should use functional fallback
-  return undefined;
+	// No matching parser - caller should use functional fallback
+	return undefined;
 }

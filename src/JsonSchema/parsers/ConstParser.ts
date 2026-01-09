@@ -3,9 +3,9 @@ import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
 export class ConstParser extends BaseParser<
-  JsonSchemaObject & { const: Serializable }
+	JsonSchemaObject & { const: Serializable }
 > {
-  parse(): ZodBuilder {
-    return this.refs.build.literal(this.schema.const);
-  }
+	parse(): ZodBuilder {
+		return this.refs.build.literal(this.schema.const);
+	}
 }

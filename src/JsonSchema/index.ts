@@ -8,6 +8,7 @@ import { parseMultipleType } from './parsers/parseMultipleType.js';
 import { parseNot } from './parsers/parseNot.js';
 import { parseNullable } from './parsers/parseNullable.js';
 import { parseSchema } from './parsers/parseSchema.js';
+import { parseRef } from '../MultiSchema/parseRef.js';
 import { its } from './its.js';
 import type { JsonSchemaObject, Context } from '../Types.js';
 
@@ -33,6 +34,10 @@ export const parse = {
 	nullable: parseNullable,
 	schema: parseSchema,
 	discriminator: undefined, // to be implemented
+
+	// New exports for multi-schema support (capital names for clarity)
+	Schema: parseSchema,
+	Ref: parseRef,
 };
 
 export type transformer = (

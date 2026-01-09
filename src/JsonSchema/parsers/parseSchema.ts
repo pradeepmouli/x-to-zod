@@ -1,5 +1,10 @@
 import { parseDefault } from './parseDefault.js';
-import { ParserSelector, Context, JsonSchemaObject, JsonSchema } from '../../Types.js';
+import {
+	ParserSelector,
+	Context,
+	JsonSchemaObject,
+	JsonSchema,
+} from '../../Types.js';
 import { BaseBuilder } from '../../ZodBuilder/index.js';
 import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
@@ -119,15 +124,15 @@ const addAnnotations = (
 };
 
 const selectParser: ParserSelector = (schema, refs) => {
-  // Try registry-based parser classes (handles all types including special cases)
-  const ParserClass = selectParserClass(schema);
-  if (ParserClass) {
-    const parser = new ParserClass(schema as any, refs);
-    return parser.parse();
-  }
+	// Try registry-based parser classes (handles all types including special cases)
+	const ParserClass = selectParserClass(schema);
+	if (ParserClass) {
+		const parser = new ParserClass(schema as any, refs);
+		return parser.parse();
+	}
 
-  // Default fallback
-  return parseDefault(schema, refs);
+	// Default fallback
+	return parseDefault(schema, refs);
 };
 
 // Initialize BaseParser with parseSchema reference to break circular dependency

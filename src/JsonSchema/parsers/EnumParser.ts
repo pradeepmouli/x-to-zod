@@ -4,9 +4,9 @@ import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
 export class EnumParser extends BaseParser<
-  JSONSchema.Interface & { enum: Serializable[] }
+	JSONSchema.Interface & { enum: Serializable[] }
 > {
-  parse(): ZodBuilder {
-    return this.refs.build.enum(this.schema.enum);
-  }
+	parse(): ZodBuilder {
+		return this.refs.build.enum(this.schema.enum);
+	}
 }
