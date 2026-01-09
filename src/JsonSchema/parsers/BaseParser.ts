@@ -49,6 +49,23 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		_parseSchema = parseSchema;
 	}
 
+	/**
+	 * Parse a child schema. This delegates to the parseSchema function.
+	 * Used by parser classes to recursively parse nested schemas.
+	 */
+	static parseSchema(
+		schema: JsonSchema,
+		refs: Context,
+		blockMeta?: boolean,
+	): ZodBuilder {
+		if (!_parseSchema) {
+			throw new Error(
+				'BaseParser.setParseSchema() must be called before using BaseParser.parseSchema()',
+			);
+		}
+		return _parseSchema(schema, refs, blockMeta);
+	}
+
 	parse(): ZodBuilder {
 		// Filter processors now that typeKind is initialized
 		if (!this.preProcessors.length && this.refs.preProcessors) {

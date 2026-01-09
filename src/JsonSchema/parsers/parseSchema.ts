@@ -1,19 +1,7 @@
 import { parseDefault } from './parseDefault.js';
-import { parseMultipleType } from './parseMultipleType.js';
-import { parseNot } from './parseNot.js';
-import { parseConst } from './parseConst.js';
-import { parseEnum } from './parseEnum.js';
-import { parseIfThenElse } from './parseIfThenElse.js';
-import { parseNullable } from './parseNullable.js';
-import {
-	ParserSelector,
-	Context,
-	JsonSchemaObject,
-	JsonSchema,
-} from '../../Types.js';
+import { ParserSelector, Context, JsonSchemaObject, JsonSchema } from '../../Types.js';
 import { BaseBuilder } from '../../ZodBuilder/index.js';
 import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { its } from '../its.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { selectParserClass } from './registry.js';
 import { is } from '../../utils/is.js';
@@ -131,31 +119,15 @@ const addAnnotations = (
 };
 
 const selectParser: ParserSelector = (schema, refs) => {
-	// Check for special cases FIRST (nullable, not, enum, const, etc)
-	// These can wrap other types
-	if (its.a.nullable(schema)) {
-		return parseNullable(schema, refs);
-	} else if (its.a.not(schema)) {
-		return parseNot(schema, refs);
-	} else if (its.an.enum(schema)) {
-		return parseEnum(schema, refs); //<-- needs to come before primitives
-	} else if (its.a.const(schema)) {
-		return parseConst(schema, refs);
-	} else if (its.a.multipleType(schema)) {
-		return parseMultipleType(schema, refs);
-	} else if (its.a.conditional(schema)) {
-		return parseIfThenElse(schema, refs);
-	}
+  // Try registry-based parser classes (handles all types including special cases)
+  const ParserClass = selectParserClass(schema);
+  if (ParserClass) {
+    const parser = new ParserClass(schema as any, refs);
+    return parser.parse();
+  }
 
-	// Try registry-based parser classes (for converted parsers)
-	const ParserClass = selectParserClass(schema);
-	if (ParserClass) {
-		const parser = new ParserClass(schema as any, refs);
-		return parser.parse();
-	}
-
-	// Default fallback
-	return parseDefault(schema, refs);
+  // Default fallback
+  return parseDefault(schema, refs);
 };
 
 // Initialize BaseParser with parseSchema reference to break circular dependency

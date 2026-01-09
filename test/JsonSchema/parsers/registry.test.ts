@@ -13,6 +13,9 @@ import { NullParser } from '../../../src/JsonSchema/parsers/NullParser.js';
 import { AnyOfParser } from '../../../src/JsonSchema/parsers/AnyOfParser.js';
 import { AllOfParser } from '../../../src/JsonSchema/parsers/AllOfParser.js';
 import { OneOfParser } from '../../../src/JsonSchema/parsers/OneOfParser.js';
+import { EnumParser } from '../../../src/JsonSchema/parsers/EnumParser.js';
+import { ConstParser } from '../../../src/JsonSchema/parsers/ConstParser.js';
+import { MultipleTypeParser } from '../../../src/JsonSchema/parsers/MultipleTypeParser.js';
 
 describe('Parser Registry', () => {
 	describe('parserRegistry', () => {
@@ -134,8 +137,8 @@ describe('Parser Registry', () => {
 				enum: [true, false],
 			};
 			const result = selectParserClass(schema);
-			// enum-based inference depends on its.a.primitive() implementation
-			expect([BooleanParser, undefined]).toContain(result);
+			// Now handled by EnumParser (special case)
+			expect(result).toBe(EnumParser);
 		});
 
 		it('infers null type from const: null', () => {
@@ -143,8 +146,8 @@ describe('Parser Registry', () => {
 				const: null,
 			};
 			const result = selectParserClass(schema);
-			// const: null inference depends on its.a.primitive() implementation
-			expect([NullParser, undefined]).toContain(result);
+			// Now handled by ConstParser (special case)
+			expect(result).toBe(ConstParser);
 		});
 
 		it('returns undefined for schemas without detectable type', () => {
@@ -159,14 +162,13 @@ describe('Parser Registry', () => {
 			expect(selectParserClass(schema)).toBeUndefined();
 		});
 
-		it('handles mixed type arrays by returning undefined', () => {
-			// types: ["string", "null"] as array is handled elsewhere in parseSchema
-			// Registry only handles single string types
+		it('handles mixed type arrays with MultipleTypeParser', () => {
+			// types: ["string", "null"] as array is now handled by MultipleTypeParser
 			const schema: JsonSchema = {
 				type: ['string', 'null'] as any,
 			};
-			// Note: type as array is not handled by registry's simple string check
-			expect(selectParserClass(schema)).toBeUndefined();
+			// Now handled by MultipleTypeParser (special case)
+			expect(selectParserClass(schema)).toBe(MultipleTypeParser);
 		});
 
 		it('prioritizes explicit type over inference', () => {
