@@ -140,22 +140,26 @@ export class SchemaProject {
 			const buildOrder = this.topologicalSort();
 
 			// Step 3: Parse schemas (in dependency order)
-			const { parseSchema } = await import('../JsonSchema/parsers/parseSchema.js');
+			const { parseSchema } =
+				await import('../JsonSchema/parsers/parseSchema.js');
 			for (const schemaId of buildOrder) {
 				const entry = this.registry.getEntry(schemaId);
 				if (!entry) continue;
 
 				try {
 					// Parse with context for $refs and post-processing
-					const builder = parseSchema(entry.schema as Record<string, any>, {
-						path: [],
-						seen: new Map(),
-						build: (await import('../ZodBuilder/index.js')).buildV4, // Use default v4 builder
-						zodVersion: this.options.zodVersion || 'v4',
-						currentSchemaId: schemaId,
-						refResolver: this.refResolver,
-						builderRegistry: this.builderRegistry,
-					} as any);
+					const builder = parseSchema(
+						entry.schema as Record<string, any>,
+						{
+							path: [],
+							seen: new Map(),
+							build: (await import('../ZodBuilder/index.js')).buildV4, // Use default v4 builder
+							zodVersion: this.options.zodVersion || 'v4',
+							currentSchemaId: schemaId,
+							refResolver: this.refResolver,
+							builderRegistry: this.builderRegistry,
+						} as any,
+					);
 
 					entry.builder = builder;
 				} catch (parseError) {
@@ -211,9 +215,26 @@ export class SchemaProject {
 				}
 			}
 
-			// Step 5: Save files
+			// Step 5: Generate index file if enabled
+			if (this.options.generateIndex !== false) {
+				const format =
+					this.options.moduleFormat === 'both'
+						? 'esm'
+						: this.options.moduleFormat || 'esm';
+				const indexImportMgr = new ImportManager(format);
+				const indexFile = fileGenerator.generateIndex(
+					this.registry.getAllEntries(),
+					indexImportMgr,
+				);
+				if (indexFile) {
+					const indexPath = indexFile.getFilePath();
+					generatedFiles.push(indexPath);
+				}
+			}
+
+			// Step 6: Save files
 			const saved = await fileGenerator.saveAll();
-			generatedFiles.push(...saved);
+			generatedFiles.push(...saved.filter((f) => !generatedFiles.includes(f)));
 
 			fileGenerator.dispose();
 

@@ -38,8 +38,8 @@ describe('SchemaProject', () => {
 			expect(entry).toBeDefined();
 			expect(entry?.id).toBe('user');
 			expect(entry?.schema).toEqual(schema);
-		// exportName is derived from ID via NameResolver (converts to PascalCase)
-		expect(entry?.exportName).toBe('User');
+			// exportName is derived from ID via NameResolver (converts to PascalCase)
+			expect(entry?.exportName).toBe('User');
 		});
 
 		it('should generate export name from schema ID', () => {
