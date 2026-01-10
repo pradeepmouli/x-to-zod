@@ -44,6 +44,7 @@ export const parseSchema = (
 			schema as any,
 			refs.refResolver,
 			refs.currentSchemaId || '',
+			refs.dependencyGraph,
 		);
 		if (refBuilder) {
 			return refBuilder;

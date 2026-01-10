@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "type": "integer" },
+    "title": { "type": "string" },
+    "content": { "type": "string" },
+    "authorId": { "type": "integer" }
+  },
+  "required": ["id", "title", "content", "authorId"]
+}

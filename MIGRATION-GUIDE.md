@@ -168,3 +168,29 @@ If you need to revert to npm:
 - [pnpm documentation](https://pnpm.io/)
 - [Changesets documentation](https://github.com/changesets/changesets)
 - [GitHub Actions documentation](https://docs.github.com/en/actions)
+
+## Multi-Schema Projects (v0.6.0+)
+
+Multi-schema support introduces the SchemaProject API and project-mode CLI so you can build several schemas together, resolve cross-schema $refs, and emit an index.
+
+Quick migration steps:
+
+1. Swap single-schema conversion for SchemaProject:
+   ```ts
+   import { SchemaProject } from 'x-to-zod';
+
+   const project = new SchemaProject({ outDir: './generated', zodVersion: 'v4', generateIndex: true });
+   project.addSchemaFromFile('./schemas/user.json', 'user');
+   project.addSchemaFromFile('./schemas/post.json', 'post');
+   await project.build();
+   ```
+2. CLI equivalent:
+   ```bash
+   x-to-zod --project \
+     --schemas "./schemas/*.json" \
+     --out ./generated \
+     --generate-index
+   ```
+3. Resolve conflicts/warnings: rename IDs on export conflicts; missing refs and cycles are warnings (handled via lazy builders).
+
+For a full walkthrough (including troubleshooting and before/after examples), see [docs/MULTI_SCHEMA_MIGRATION.md](docs/MULTI_SCHEMA_MIGRATION.md).

@@ -168,6 +168,7 @@ export class SchemaProject {
 							currentSchemaId: schemaId,
 							refResolver: this.refResolver,
 							builderRegistry: this.builderRegistry,
+							dependencyGraph: this.dependencyGraph,
 						} as any,
 					);
 

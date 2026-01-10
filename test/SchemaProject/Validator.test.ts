@@ -126,4 +126,20 @@ describe('Validator', () => {
 		expect(result.valid).toBe(true);
 		expect(result.errors.length).toBe(0);
 	});
+
+	it('flags invalid schema types as errors', () => {
+		registry.addEntry(makeEntry('invalid', 'not-an-object' as any));
+
+		const validator = new Validator(
+			registry,
+			nameResolver as any,
+			refResolver as any,
+			depGraph,
+		);
+
+		const result = validator.validate();
+		expect(result.valid).toBe(false);
+		const invalid = result.errors.find((e) => e.code === 'INVALID_SCHEMA');
+		expect(invalid?.schemaId).toBe('invalid');
+	});
 });

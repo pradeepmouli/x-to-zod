@@ -67,9 +67,32 @@ describe('parseRef', () => {
 		expect(text.length).toBeGreaterThan(0);
 	});
 
+	it('marks references inside a cycle as lazy and type-only', () => {
+		const dependencyGraph = {
+			nodes: new Set<string>(['user', 'models/post']),
+			edges: new Map<string, Set<string>>(),
+			cycles: new Set<Set<string>>([new Set(['user', 'models/post'])]),
+		};
+
+		const result = parseRef(
+			{ $ref: 'models/post#' } as any,
+			resolver,
+			'user',
+			dependencyGraph,
+		);
+
+		expect(result).not.toBeNull();
+		expect(result!.isLazy).toBe(true);
+		expect(result!.importInfo.isTypeOnly).toBe(true);
+		expect(result!.text()).toContain('z.lazy(');
+	});
+
 	it('returns null when resolver cannot resolve target', () => {
 		const result = parseRef({ $ref: 'missing#' } as any, resolver, 'user');
-		expect(result).toBeNull();
+		expect(result).not.toBeNull();
+		expect(result!.text()).toBe('z.unknown()');
+		expect(result!.shouldEmitImport).toBe(false);
+		expect(result!.getImportInfo()).toBeNull();
 	});
 });
 

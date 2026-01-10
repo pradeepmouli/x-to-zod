@@ -15,20 +15,23 @@ export class ReferenceBuilder extends ZodBuilder<'reference'> {
 	readonly importInfo: ImportInfo;
 	readonly isLazy: boolean;
 	readonly isTypeOnly: boolean;
+	readonly unknownFallback: boolean;
+	readonly shouldEmitImport: boolean;
 
 	constructor(
 		targetImportName: string,
 		targetExportName: string,
 		importInfo: ImportInfo,
-		isLazy: boolean = false,
-		isTypeOnly: boolean = false,
+		options?: { isLazy?: boolean; isTypeOnly?: boolean; unknownFallback?: boolean },
 	) {
 		super();
 		this.targetImportName = targetImportName;
 		this.targetExportName = targetExportName;
 		this.importInfo = importInfo;
-		this.isLazy = isLazy;
-		this.isTypeOnly = isTypeOnly;
+		this.isLazy = !!options?.isLazy;
+		this.isTypeOnly = !!options?.isTypeOnly;
+		this.unknownFallback = !!options?.unknownFallback;
+		this.shouldEmitImport = !this.unknownFallback && !!importInfo.modulePath;
 	}
 
 	/**
@@ -37,6 +40,10 @@ export class ReferenceBuilder extends ZodBuilder<'reference'> {
 	 * For normal references, returns the import directly.
 	 */
 	protected base(): string {
+		if (this.unknownFallback) {
+			return 'z.unknown()';
+		}
+
 		const importRef = `${this.targetImportName}.${this.targetExportName}`;
 
 		if (this.isLazy) {
@@ -53,6 +60,11 @@ export class ReferenceBuilder extends ZodBuilder<'reference'> {
 		let result = this.base();
 		result = this.applyModifiers(result);
 		return result;
+	}
+
+	getImportInfo(): ImportInfo | null {
+		if (!this.shouldEmitImport) return null;
+		return this.importInfo;
 	}
 
 	/**

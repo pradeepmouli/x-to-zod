@@ -104,4 +104,6 @@ export type Context = Options & {
 	importManager?: import('./SchemaProject/ImportManager.js').ImportManager;
 	/** Optional builder registry for caching builders across schemas */
 	builderRegistry?: import('./SchemaProject/BuilderRegistry.js').BuilderRegistry;
+	/** Optional dependency graph for cycle detection in SchemaProject */
+	dependencyGraph?: import('./SchemaProject/types.js').DependencyGraph;
 };

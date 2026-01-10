@@ -54,6 +54,7 @@ describe('NameResolver - Default Implementation', () => {
 			expect(resolver.resolveExportName('test-@#$-name')).toMatch(
 				/^[a-zA-Z_$][a-zA-Z0-9_$]*$/,
 			);
+			expect(resolver.resolveExportName('api user.schema@id')).toBe('ApiUserSchemaid');
 		});
 
 		it('should handle empty or invalid input', () => {

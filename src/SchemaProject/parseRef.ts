@@ -1,5 +1,6 @@
 import type { JsonSchema } from '../Types.js';
 import type { DefaultRefResolver } from './RefResolver.js';
+import type { DependencyGraph } from './types.js';
 import { ReferenceBuilder } from '../ZodBuilder/reference.js';
 
 /**
@@ -10,6 +11,7 @@ export function parseRef(
 	schema: JsonSchema | undefined,
 	refResolver: DefaultRefResolver,
 	fromSchemaId: string,
+	dependencyGraph?: DependencyGraph,
 ): ReferenceBuilder | null {
 	if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
 		return null;
@@ -26,9 +28,20 @@ export function parseRef(
 
 	try {
 		const resolved = refResolver.resolve(ref, fromSchemaId);
+
 		if (!resolved || !resolved.importInfo || !resolved.isExternal) {
 			console.warn(`Failed to resolve external $ref: ${ref}`);
-			return null;
+			return new ReferenceBuilder(
+				'UnknownRef',
+				'UnknownRef',
+				{
+					importName: 'UnknownRef',
+					importKind: 'named',
+					modulePath: '',
+					isTypeOnly: true,
+				},
+				{ unknownFallback: true },
+			);
 		}
 
 		const importInfo = resolved.importInfo;
@@ -36,11 +49,35 @@ export function parseRef(
 		const targetExportName =
 			importInfo.importKind === 'default' ? 'default' : importInfo.importName;
 
-		return new ReferenceBuilder(targetImportName, targetExportName, importInfo);
+		const inCycle = isInCycle(fromSchemaId, resolved.targetSchemaId, dependencyGraph);
+		if (inCycle) {
+			importInfo.isTypeOnly = true;
+		}
+
+		return new ReferenceBuilder(targetImportName, targetExportName, importInfo, {
+			isLazy: inCycle,
+			isTypeOnly: !!importInfo.isTypeOnly,
+		});
 	} catch (error) {
 		console.error(`Error resolving $ref "${ref}":`, error);
 		return null;
 	}
+}
+
+function isInCycle(
+	fromSchemaId: string,
+	targetSchemaId: string,
+	dependencyGraph?: DependencyGraph,
+): boolean {
+	if (!dependencyGraph || !dependencyGraph.cycles.size) return false;
+
+	for (const scc of dependencyGraph.cycles) {
+		if (scc.has(fromSchemaId) && scc.has(targetSchemaId)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**

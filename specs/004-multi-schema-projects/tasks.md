@@ -20,8 +20,8 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 - [X] T001 [P] Install ts-morph (^27.0.2) and update package.json/pnpm-lock.yaml ✓ (implemented as src/SchemaProject/)
 - [X] T002 [P] Create src/SchemaProject/ directory structure (project, registry, refs, imports, graph, types) ✓
 - [X] T003 [P] Create test/SchemaProject/ directory for unit tests ✓
-- [ ] T004 Verify dual-module output (dist/esm, dist/cjs) via existing postcjs.js/postesm.js for generated code samples
-- [ ] T005 Update AGENTS.md with ts-morph addition and SchemaProject module notes
+- [X] T004 Verify dual-module output (dist/esm, dist/cjs) via existing postcjs.js/postesm.js for generated code samples
+- [X] T005 Update AGENTS.md with ts-morph addition and SchemaProject module notes
 
 ### Type Definitions
 
@@ -151,16 +151,16 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 
 ### Lazy Builder Implementation
 
-- [ ] T049 Extend ZodBuilder/ReferenceBuilder to support lazy flag: ReferenceBuilder(lazy=true) emits type-only import + lazy z.lazy(() => ...) or z.unknown() as fallback
-- [ ] T050 [P] Update DependencyGraph cycle detection: mark nodes in SCCs, pass lazy flag to ReferenceBuilder during parseRef
-- [ ] T051 [P] Update parseRef to check for cycles: if (graphHasCycle(fromSchemaId, targetSchemaId)) { return ReferenceBuilder({lazy: true}) }
-- [ ] T052 [P] Unit test lazy builders: cycle A→B→A generates type-only imports, z.lazy() for one direction, warnings logged
+- [X] T049 Extend ZodBuilder/ReferenceBuilder to support lazy flag: ReferenceBuilder(lazy=true) emits type-only import + lazy z.lazy(() => ...) or z.unknown() as fallback
+- [X] T050 [P] Update DependencyGraph cycle detection: mark nodes in SCCs, pass lazy flag to ReferenceBuilder during parseRef
+- [X] T051 [P] Update parseRef to check for cycles: if (graphHasCycle(fromSchemaId, targetSchemaId)) { return ReferenceBuilder({lazy: true}) }
+- [X] T052 [P] Unit test lazy builders: cycle A→B→A generates type-only imports, z.lazy() for one direction, warnings logged
   - File: test/MultiSchema/LazyBuilders.test.ts
 
 ### Missing Ref Placeholders
 
-- [ ] T053 Update parseRef to handle missing target schema: return ReferenceBuilder with z.unknown() builder, warnings logged
-- [ ] T054 [P] Unit test missing ref handling: logs warning, generates z.unknown() placeholder, build proceeds
+- [X] T053 Update parseRef to handle missing target schema: return ReferenceBuilder with z.unknown() builder, warnings logged
+- [X] T054 [P] Unit test missing ref handling: logs warning, generates z.unknown() placeholder, build proceeds
   - File: test/MultiSchema/MissingRefs.test.ts (extend existing)
 
 ---
@@ -171,15 +171,15 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 
 ### Conflict Detection & Reporting
 
-- [ ] T055 Validator.detectExportConflicts(): for each schemaId, derive export name; detect duplicates; populate ValidationResult.errors with NameConflict details (conflicting schemaIds, derived names)
-- [ ] T056 [P] Test conflict reporting: two schemas (user.json, user/model.json) both export UserSchema, error identifies both IDs and names
+- [X] T055 Validator.detectExportConflicts(): for each schemaId, derive export name; detect duplicates; populate ValidationResult.errors with NameConflict details (conflicting schemaIds, derived names)
+- [X] T056 [P] Test conflict reporting: two schemas (user.json, user/model.json) both export UserSchema, error identifies both IDs and names
   - File: test/MultiSchema/Validator.test.ts
 
 ### Missing & Cycle Warnings
 
-- [ ] T057 Validator.detectMissingRefs(): walk all $refs, check against registry, populate warnings (not errors; build proceeds)
-- [ ] T058 Validator.detectCycles(): delegate to DependencyGraph, populate warnings (not errors; lazy builders enabled)
-- [ ] T059 [P] Test warnings: build succeeds, warnings returned, no errors
+- [X] T057 Validator.detectMissingRefs(): walk all $refs, check against registry, populate warnings (not errors; build proceeds)
+- [X] T058 Validator.detectCycles(): delegate to DependencyGraph, populate warnings (not errors; lazy builders enabled)
+- [X] T059 [P] Test warnings: build succeeds, warnings returned, no errors
   - File: test/MultiSchema/Validator.test.ts
 
 ---
@@ -190,18 +190,18 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 
 ### User Story 1: OpenAPI Components (P1)
 
-- [ ] T060 Create test fixture: OpenAPI-like schema with User, Post, Comment components (cross-refs)
-- [ ] T061 [P] E2E test US1: SchemaProject.addSchema (3 schemas), build(), verify 3 .ts files, index.ts, imports correct, code type-checks via tsc
+- [X] T060 Create test fixture: OpenAPI-like schema with User, Post, Comment components (cross-refs) ✓
+- [X] T061 [P] E2E test US1: SchemaProject.addSchema (3 schemas), build(), verify 3 .ts files, index.ts, imports correct, code type-checks via tsc
   - File: test/MultiSchema/UserStory1.e2e.test.ts
-- [ ] T062 [P] E2E test US1 CLI: x-to-zod --project --schemas test/fixtures/openapi/*.json --out /tmp/test-out --generate-index, verify same output
+- [X] T062 [P] E2E test US1 CLI: x-to-zod --project --schemas test/fixtures/openapi/*.json --out /tmp/test-out --generate-index, verify same output
   - File: test/cli.test.ts
 
 ### User Story 2: Domain-Driven Design (P2)
 
-- [ ] T063 Create test fixture: common/types.json (ID, Timestamp), user/schema.json (references common/ID), post/schema.json (references common/ID + user/User)
-- [ ] T064 [P] E2E test US2: SchemaProject.addSchemaFromFile ×3, build(), verify imports (user imports from ../common/types), DependencyGraph order, code type-checks
+- [X] T063 Create test fixture: common/types.json (ID, Timestamp), user/schema.json (references common/ID), post/schema.json (references common/ID + user/User)
+- [X] T064 [P] E2E test US2: SchemaProject.addSchemaFromFile ×3, build(), verify imports (user imports from ../common/types), DependencyGraph order, code type-checks
   - File: test/MultiSchema/UserStory2.e2e.test.ts
-- [ ] T065 [P] Test circular refs (user/schema → post/schema → user/schema): validate warns on cycle, build succeeds with lazy builders
+- [X] T065 [P] Test circular refs (user/schema → post/schema → user/schema): validate warns on cycle, build succeeds with lazy builders
   - File: test/MultiSchema/UserStory2.e2e.test.ts
 
 ### User Story 3: Monorepo (P3) — Deferred (Post-MVP)
@@ -217,14 +217,14 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 ### API Exports
 
 - [X] T067 Update src/index.ts: export SchemaProject and related types ✓
-- [ ] T068 [P] Update src/index.ts JSDoc: document multi-schema entry points, link to quickstart.md
+- [X] T068 [P] Update src/index.ts JSDoc: document multi-schema entry points, link to quickstart.md
 - [X] T069 [P] Ensure types are accessible: verify src/SchemaProject/index.ts re-exports public types ✓
 
 ### Documentation
 
 - [X] T070 Create docs/multi-schema-projects.md ✓
 - [X] T071 [P] Update README.md ✓
-- [ ] T072 [P] Update MIGRATION-GUIDE.md or create new section: how to migrate from single-schema to SchemaProject
+- [X] T072 [P] Update MIGRATION-GUIDE.md or create new section: how to migrate from single-schema to SchemaProject
 
 ### Version & Release
 
@@ -245,6 +245,8 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 - [ ] T078 [P] Handle very large schemas: test with 50+ component project, verify performance <5s
 - [ ] T079 [P] Handle special characters in schema IDs: validate NameResolver escapes properly (e.g., user-profile → userProfile or user_profile)
 - [ ] T080 [P] Test with invalid JSON Schema: parseSchema errors caught, validation reports, build fails gracefully
+- [X] T079 [P] Handle special characters in schema IDs: validate NameResolver escapes properly (e.g., user-profile → userProfile or user_profile)
+- [X] T080 [P] Test with invalid JSON Schema: parseSchema errors caught, validation reports, build fails gracefully
 
 ### Post-Processor Integration
 

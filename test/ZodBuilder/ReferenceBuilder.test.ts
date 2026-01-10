@@ -17,6 +17,8 @@ describe('ReferenceBuilder', () => {
 		);
 		const text = builder.text();
 		expect(text).toBe('UserSchema.UserSchema');
+		expect(builder.shouldEmitImport).toBe(true);
+		expect(builder.getImportInfo()).not.toBeNull();
 	});
 
 	it('generates direct reference for default import using default export', () => {
@@ -32,7 +34,7 @@ describe('ReferenceBuilder', () => {
 		expect(text).toBe('PostSchema.default');
 	});
 
-	it('supports lazy references via z.lazy', () => {
+	it('supports lazy references via getter/lazy fallback', () => {
 		const importInfo: ImportInfo = {
 			importName: 'CommentSchema',
 			importKind: 'named',
@@ -43,7 +45,7 @@ describe('ReferenceBuilder', () => {
 			'CommentSchema',
 			'CommentSchema',
 			importInfo,
-			true,
+			{ isLazy: true },
 		);
 		const text = builder.text();
 		expect(text).toContain('z.lazy(() => CommentSchema.CommentSchema)');
@@ -88,8 +90,27 @@ describe('ReferenceBuilder', () => {
 			'TypeOnlySchema',
 			'TypeOnlySchema',
 			importInfo,
+			{ isTypeOnly: true },
 		);
 		const text = builder.text();
 		expect(text).toBe('TypeOnlySchema.TypeOnlySchema');
+	});
+
+	it('falls back to z.unknown when flagged', () => {
+		const importInfo: ImportInfo = {
+			importName: 'MissingSchema',
+			importKind: 'named',
+			modulePath: './missing',
+			isTypeOnly: true,
+		};
+		const builder = new ReferenceBuilder(
+			'MissingSchema',
+			'MissingSchema',
+			importInfo,
+			{ unknownFallback: true },
+		);
+		expect(builder.text()).toBe('z.unknown()');
+		expect(builder.shouldEmitImport).toBe(false);
+		expect(builder.getImportInfo()).toBeNull();
 	});
 });
