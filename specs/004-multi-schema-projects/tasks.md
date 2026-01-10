@@ -64,15 +64,15 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 ### Parser Integration
 
 - [X] T017 Create src/SchemaProject/parseRef.ts ✓
-- [ ] T018 [P] Update src/JsonSchema/parsers/parseSchema.ts: detect $ref at root/in properties, call parseRef instead of inline handling, pass refResolver context
-- [ ] T019 [P] Update src/JsonSchema/Types.ts Context: add refResolver?, currentSchemaId?, importManager?, builderRegistry?
-- [ ] T020 [P] Unit test parseRef: internal refs (same schema), external refs (different schema), missing refs, circular indicators
+- [X] T018 [P] Update src/JsonSchema/parsers/parseSchema.ts: detect $ref at root/in properties, call parseRef instead of inline handling, pass refResolver context
+- [X] T019 [P] Update src/JsonSchema/Types.ts Context: add refResolver?, currentSchemaId?, importManager?, builderRegistry?
+- [X] T020 [P] Unit test parseRef: internal refs (same schema), external refs (different schema), missing refs, circular indicators
   - File: test/JsonSchema/parsers/parseRef.test.ts
 
 ### ReferenceBuilder
 
 - [X] T021 Create src/ZodBuilder/reference.ts ✓
-- [ ] T022 [P] Unit test ReferenceBuilder: named import, type-only import, lazy builder flag, code generation for ES modules
+- [X] T022 [P] Unit test ReferenceBuilder: named import, type-only import, lazy builder flag, code generation for ES modules
   - File: test/ZodBuilder/ReferenceBuilder.test.ts
 
 ---
@@ -84,13 +84,13 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 ### Import Manager
 
 - [X] T023 Create src/SchemaProject/ImportManager.ts ✓
-- [ ] T024 [P] Unit test ImportManager: add single/multiple imports, deduplication, relative path computation, ESM/CJS syntax output
+- [X] T024 [P] Unit test ImportManager: add single/multiple imports, deduplication, relative path computation, ESM/CJS syntax output
   - File: test/SchemaProject/ImportManager.test.ts
 
 ### Source File Generator
 
 - [X] T025 Create src/SchemaProject/SourceFileGenerator.ts ✓
-- [ ] T026 [P] Unit test SourceFileGenerator: file creation, import statement ordering, export statement, code formatting with/without prettier
+- [X] T026 [P] Unit test SourceFileGenerator: file creation, import statement ordering, export statement, code formatting with/without prettier
   - File: test/SchemaProject/SourceFileGenerator.test.ts
 
 ### Validation Engine

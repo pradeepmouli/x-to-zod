@@ -12,6 +12,7 @@ import { selectParserClass } from './registry.js';
 import { is } from '../../utils/is.js';
 import { BaseParser } from './BaseParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
+import { parseRef } from '../../SchemaProject/parseRef.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
@@ -31,6 +32,16 @@ export const parseSchema = (
 
 	if (typeof schema !== 'object')
 		return schema ? refs.build.any() : refs.build.never();
+
+	// Phase 3: Handle top-level $ref via SchemaProject parseRef when available
+	// This delegates external reference handling to ReferenceBuilder.
+	if (refs.refResolver && (schema as any).$ref && typeof (schema as any).$ref === 'string') {
+		const refBuilder = parseRef(schema as any, refs.refResolver, refs.currentSchemaId || '');
+		if (refBuilder) {
+			return refBuilder;
+		}
+		// For internal refs (#...), fall through to normal parsing.
+	}
 
 	if (refs.preprocessors) {
 		for (const preprocessor of refs.preprocessors) {
