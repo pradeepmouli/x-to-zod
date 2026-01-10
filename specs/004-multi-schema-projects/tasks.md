@@ -96,7 +96,7 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 ### Validation Engine
 
 - [X] T027 Create src/SchemaProject/Validator.ts ✓
-- [ ] T028 [P] Unit test Validator: conflict detection (two schemas same export), missing refs (warns, doesn't error), cycles (detects, reports SCC), resolution success
+- [X] T028 [P] Unit test Validator: conflict detection (two schemas same export), missing refs (warns, doesn't error), cycles (detects, reports SCC), resolution success
   - File: test/SchemaProject/Validator.test.ts
 
 ---
