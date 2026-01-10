@@ -247,7 +247,7 @@ export const UserSchema = z.object({ id: z.string(), name: z.string() });
 
 // post.ts
 import { UserSchema } from './user';
-export const PostSchema = z.object({ 
+export const PostSchema = z.object({
   authorId: UserSchema.shape.id  // References imported schema
 });
 ```

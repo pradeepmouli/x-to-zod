@@ -12,7 +12,8 @@ const params = {
 		shorthand: 'i',
 		value: 'string',
 		required: false, // Will be checked conditionally in main based on project mode
-		description: 'JSON or a source file path. Required if no data is piped (single-schema mode).',
+		description:
+			'JSON or a source file path. Required if no data is piped (single-schema mode).',
 	},
 	output: {
 		shorthand: 'o',
@@ -133,9 +134,7 @@ async function loadPostProcessors(modulePath: string) {
  */
 function expandGlobPattern(pattern: string): string[] {
 	const cwd = process.cwd();
-	const fullPattern = isAbsolute(pattern)
-		? pattern
-		: resolve(cwd, pattern);
+	const fullPattern = isAbsolute(pattern) ? pattern : resolve(cwd, pattern);
 
 	// If pattern has no wildcards, treat as literal file path
 	if (!pattern.includes('*') && !pattern.includes('?')) {
@@ -146,7 +145,10 @@ function expandGlobPattern(pattern: string): string[] {
 			} else if (stat.isDirectory()) {
 				// If directory, find JSON files
 				return readdirSync(fullPattern)
-					.filter((f) => f.endsWith('.json') || f.endsWith('.yaml') || f.endsWith('.yml'))
+					.filter(
+						(f) =>
+							f.endsWith('.json') || f.endsWith('.yaml') || f.endsWith('.yml'),
+					)
 					.map((f) => resolve(fullPattern, f));
 			}
 		} catch {
@@ -244,7 +246,7 @@ async function projectMode(args: Record<string, unknown>): Promise<void> {
 	// Resolve schema glob patterns
 	const schemaPatterns = Array.isArray(args.schemas)
 		? (args.schemas as string[])
-		: [(args.schemas as string)];
+		: [args.schemas as string];
 
 	const schemaFiles: string[] = [];
 	for (const pattern of schemaPatterns) {
@@ -375,7 +377,9 @@ async function main() {
 
 	// Single-schema mode - input is required
 	if (!args.input && process.stdin.isTTY) {
-		console.error('Error: input is required when no JSON or file path is piped');
+		console.error(
+			'Error: input is required when no JSON or file path is piped',
+		);
 		process.exit(1);
 	}
 

@@ -1,4 +1,8 @@
-import type { Serializable, JsonSchema, JsonSchemaObject } from '../../Types.js';
+import type {
+	Serializable,
+	JsonSchema,
+	JsonSchemaObject,
+} from '../../Types.js';
 import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
