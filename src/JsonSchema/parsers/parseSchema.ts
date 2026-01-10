@@ -35,8 +35,16 @@ export const parseSchema = (
 
 	// Phase 3: Handle top-level $ref via SchemaProject parseRef when available
 	// This delegates external reference handling to ReferenceBuilder.
-	if (refs.refResolver && (schema as any).$ref && typeof (schema as any).$ref === 'string') {
-		const refBuilder = parseRef(schema as any, refs.refResolver, refs.currentSchemaId || '');
+	if (
+		refs.refResolver &&
+		(schema as any).$ref &&
+		typeof (schema as any).$ref === 'string'
+	) {
+		const refBuilder = parseRef(
+			schema as any,
+			refs.refResolver,
+			refs.currentSchemaId || '',
+		);
 		if (refBuilder) {
 			return refBuilder;
 		}

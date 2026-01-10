@@ -326,14 +326,21 @@ describe('ImportManager', () => {
 
 			const statements = manager.getImportStatements();
 			expect(statements).toHaveLength(2);
-			expect(statements).toContain('const { UserSchema } = require("./user.js")');
-			expect(statements).toContain('const { PostSchema } = require("./post.js")');
+			expect(statements).toContain(
+				'const { UserSchema } = require("./user.js")',
+			);
+			expect(statements).toContain(
+				'const { PostSchema } = require("./post.js")',
+			);
 		});
 	});
 
 	describe('computeRelativePath', () => {
 		it('should compute relative path from one file to another in same directory', () => {
-			const result = manager.computeRelativePath('./src/user.ts', './src/post.ts');
+			const result = manager.computeRelativePath(
+				'./src/user.ts',
+				'./src/post.ts',
+			);
 			expect(result).toBe('post');
 		});
 
