@@ -231,7 +231,7 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 - [X] T073 Update package.json: ts-morph dependency added ✓ (note: version is 0.6.0, not alpha)
 - [X] T074 [P] Update CHANGELOG.md ✓
 - [X] T075 [P] Verify tests pass: npm test && npm run lint ✓ (595 tests passing, 3 skipped, 0 lint errors)
-- [ ] T076 Create PR: feature/004-multi-schema-projects → master with draft status pending review
+- [X] T076 Create PR: feature/004-multi-schema-projects → master with draft status pending review ✓ (PR #39)
 
 ---
 
