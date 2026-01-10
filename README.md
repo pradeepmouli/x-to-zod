@@ -211,51 +211,115 @@ const enhanced = jsonSchemaToZod(schema, {
 
 **See [Post-Processing Guide](./docs/post-processing.md) for more examples and use cases.**
 
+## Multi-Schema Projects
+
+**NEW in v0.6.0**: Support for multi-schema projects with cross-schema references.
+
+Work with multiple JSON Schemas that reference each other, automatically resolving `$ref` dependencies and generating organized TypeScript/Zod output files. Perfect for:
+
+- **OpenAPI/Swagger** components with shared schemas
+- **Domain-Driven Design** with separate schema files per domain entity
+- **Monorepo** projects with isolated schema packages
+
+### Quick Example
+
+```typescript
+import { SchemaProject } from 'x-to-zod';
+
+const project = new SchemaProject.SchemaProject({
+  outDir: './generated',
+  moduleFormat: 'both',       // Generate both ESM and CJS
+  zodVersion: 'v4',
+  generateIndex: true,
+});
+
+// Add schemas with cross-references
+project.addSchema('user', {
+  $id: 'user',
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    name: { type: 'string' }
+  }
+});
+
+project.addSchema('post', {
+  $id: 'post',
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    title: { type: 'string' },
+    authorId: { $ref: 'user#/properties/id' }  // Cross-schema reference
+  }
+});
+
+await project.build();
+// Generates: generated/user.ts, generated/post.ts, generated/index.ts
+```
+
+### CLI Project Mode
+
+```bash
+# Basic usage
+x-to-zod --project --schemas "./schemas/*.json" --out ./generated
+
+# With options
+x-to-zod --project \
+  --schemas "./schemas/users/*.json" \
+  --schemas "./schemas/posts/*.json" \
+  --out ./generated \
+  --module-format both \
+  --zod-version v4 \
+  --generate-index
+```
+
+**See [Multi-Schema Projects Guide](./docs/multi-schema-projects.md) for complete documentation, API reference, and examples.**
+
 ## Builder API
 
 The `build.*` factory creates fluent builders that mirror Zod's API. Each builder supports `.text()` to produce code and shares common modifiers like `.optional()`, `.nullable()`, `.default()`, `.describe()`, `.brand()`, `.readonly()`, `.catch()`, `.refine()`, `.superRefine()`, `.meta()`, `.transform()`.
 
 - **Primitives:**
-  - `build.string()` → `StringBuilder`
-  - `build.number()` → `NumberBuilder`
-  - `build.boolean()` → `BooleanBuilder`
-  - `build.bigint()` → `BigintBuilder`
-  - `build.symbol()` → `SymbolBuilder`
-  - `build.nan()` → `NanBuilder`
-  - `build.null()` → `NullBuilder`
-  - `build.undefined()` → `UndefinedBuilder`
-  - `build.void()` → `VoidBuilder`
+  - `build.string()` → `z.string()`
+  - `build.number()` → `z.number()`
+  - `build.boolean()` → `z.boolean()`
+  - `build.bigint()` → `z.bigint()`
+  - `build.symbol()` → `z.symbol()`
+  - `build.nan()` → `z.nan()`
+  - `build.null()` → `z.null()`
+  - `build.undefined()` → `z.undefined()`
+  - `build.void()` → `z.void()`
 
 - **Structured:**
-  - `build.object(props)` → `ObjectBuilder`
+  - `build.object(props)` → `z.object({ ... })`
     - Helpers: `.strict()`, `.loose()`, `.catchall(schema)`, `.superRefine(fn)`, `.and(schema)`, `.extend(schema|string)`, `.merge(schema|string)`, `.pick(keys)`, `.omit(keys)`
-  - `build.array(item)` → `ArrayBuilder`
-  - `build.tuple(items)` → `TupleBuilder`
-  - `build.record(key, value)` → `RecordBuilder`
-  - `build.map(key, value)` → `MapBuilder`
-  - `build.set(item)` → `SetBuilder`
+  - `build.array(item)` → `z.array(item)`
+  - `build.tuple(items)` → `z.tuple(items)`
+  - `build.record(key, value)` → `z.record(key, value)`
+  - `build.map(key, value)` → `z.map(key, value)`
+  - `build.set(item)` → `z.set(item)`
 
 - **Enums and Literals:**
-  - `build.enum(values)` → `EnumBuilder`
-  - `build.literal(value)` → `LiteralBuilder`
-  - `build.nativeEnum(enumObj)` → `NativeEnumBuilder`
+  - `build.enum(values)` → `z.enum(values)`
+  - `build.literal(value)` → `z.literal(value)`
+  - `build.nativeEnum(enumObj)` → `z.nativeEnum(enumObj)`
 
 - **Unions and Intersections:**
-  - `build.union(schemas)` → `UnionBuilder`
-  - `build.intersection(a, b)` → `IntersectionBuilder`
-  - `build.discriminatedUnion(tag, options)` → `DiscriminatedUnionBuilder`
-  - `build.xor(schemas)` → `XorBuilder` (exactly one must match)
+  - `build.union(schemas)` → `z.union(...)`
+  - `build.intersection(a, b)` → `z.intersection(a, b)`
+  - `build.discriminatedUnion(tag, options)` → `z.discriminatedUnion(tag, options)`
+  - `build.xor(schemas)` → `z.xor(schemas)` (exactly one must match)
 
 - **Functions and Lazy:**
-  - `build.function()` → `FunctionBuilder`
+  - `build.function()` → `z.function()`
     - `.args(...schemas)`, `.returns(schema)`
-  - `build.lazy(getter)` → `LazyBuilder`
+  - `build.lazy(getter)` → `z.lazy()`
 
 - **Pipes and Transforms:**
-  - `build.pipe(input)` → `PipeBuilder`
-  - `build.preprocess(fn, schema)` → `PreprocessBuilder`
-  - `build.codec(parseFn, serializeFn)` → `CodecBuilder`
-  - `build.json()` → `JsonBuilder`
+  - `build.pipe(input)` → `z.pipe()`
+  - `build.preprocess(fn, schema)` → `z.preprocess()`
+  - `build.codec(parseFn, serializeFn)` → `z.codec()`
+  - `build.json()` → `z.json()`
 
 - **Strings (validators):**
   - `build.string().url()`, `.httpUrl()`, `.hostname()`, `.emoji()`, `.base64url()`, `.hex()`, `.jwt()`, `.nanoid()`, `.cuid()`, `.cuid2()`, `.ulid()`, `.ipv4()`, `.ipv6()`, `.mac()`, `.cidrv4()`, `.cidrv6()`, `.hash(algorithm)`, `.isoDate()`, `.isoTime()`, `.isoDatetime()`, `.isoDuration()`, `.uuidv4()`, `.uuidv6()`, `.uuidv7()`
@@ -264,8 +328,8 @@ The `build.*` factory creates fluent builders that mirror Zod's API. Each builde
   - `build.number().int()`, `.min(n)`, `.max(n)`, `.positive()`, `.negative()`, `.nonnegative()`, `.nonpositive()`, `.multipleOf(n)`
 
 - **Templates and Keys:**
-  - `build.templateLiteral(parts)` → `TemplateLiteralBuilder`
-  - `build.keyof(obj)` → `KeyofBuilder`
+  - `build.templateLiteral(parts)` → `z.templateLiteral(parts)`
+  - `build.keyof(obj)` → `z.keyof(obj)`
 
 ### Examples
 
@@ -362,7 +426,7 @@ The `zodVersion` option affects how certain Zod constructs are generated:
 z.object({ name: z.string() }).strict()
 
 // passthrough behavior (using .loose() method)
-z.object({ name: z.string() }).loose()
+z.object({ name: z.string() }).passthrough()
 ```
 
 **v4 mode:**

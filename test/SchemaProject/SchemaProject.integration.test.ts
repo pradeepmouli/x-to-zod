@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { SchemaProject } from '../../src/MultiSchema/SchemaProject.js';
+import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import type { JsonSchema } from '../../src/Types.js';
 import { mkdtempSync, rmSync, existsSync, readdirSync, readFileSync } from 'fs';
 import path from 'path';

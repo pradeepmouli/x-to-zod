@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { DependencyGraphBuilder } from '../../src/MultiSchema/DependencyGraph.js';
+import { DependencyGraphBuilder } from '../../src/SchemaProject/DependencyGraph.js';
 
 describe('DependencyGraph', () => {
 	let graph: DependencyGraphBuilder;

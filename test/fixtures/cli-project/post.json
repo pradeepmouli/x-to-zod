@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Post",
+  "properties": {
+    "id": { "type": "integer" },
+    "title": { "type": "string" },
+    "userId": { "type": "integer" },
+    "content": { "type": "string" }
+  },
+  "required": ["id", "title", "userId"]
+}

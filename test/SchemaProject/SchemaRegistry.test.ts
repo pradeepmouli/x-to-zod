@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { SchemaRegistry } from '../../src/MultiSchema/SchemaRegistry.js';
-import type { SchemaEntry } from '../../src/MultiSchema/types.js';
+import { SchemaRegistry } from '../../src/SchemaProject/SchemaRegistry.js';
+import type { SchemaEntry } from '../../src/SchemaProject/types.js';
 
 describe('SchemaRegistry', () => {
 	let registry: SchemaRegistry;

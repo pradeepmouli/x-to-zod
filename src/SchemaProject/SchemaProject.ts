@@ -58,6 +58,16 @@ export class SchemaProject {
 	 * @param options - Additional schema options
 	 */
 	addSchema(id: string, schema: JsonSchema, options?: SchemaOptions): void {
+		// Check if we should extract definitions
+		const shouldExtract =
+			options?.extractDefinitions !== undefined
+				? options.extractDefinitions
+				: this.shouldExtractDefinitions();
+
+		if (shouldExtract) {
+			this.extractAndAddDefinitions(id, schema, options);
+		}
+
 		const exportName = this.nameResolver.resolveExportName(id);
 
 		const entry: SchemaEntry = {
@@ -318,5 +328,122 @@ export class SchemaProject {
 		}
 
 		this.dependencyGraph.detectCycles();
+	}
+
+	/**
+	 * Check if definitions should be extracted based on configuration
+	 */
+	private shouldExtractDefinitions(): boolean {
+		const extract = this.options.extractDefinitions;
+		if (typeof extract === 'boolean') {
+			return extract;
+		}
+		if (extract && typeof extract === 'object') {
+			return extract.enabled;
+		}
+		return false;
+	}
+
+	/**
+	 * Extract definitions/components from a schema and add them as separate schemas
+	 */
+	private extractAndAddDefinitions(
+		parentId: string,
+		schema: JsonSchema,
+		options?: SchemaOptions,
+	): void {
+		const schemaObj = schema as Record<string, any>;
+
+		// Get subdir configuration
+		const extractConfig = this.options.extractDefinitions;
+		const subdir =
+			typeof extractConfig === 'object' ? extractConfig.subdir : undefined;
+		const namePattern =
+			typeof extractConfig === 'object' ? extractConfig.namePattern : undefined;
+
+		// Extract from definitions (JSON Schema standard)
+		if (schemaObj.definitions && typeof schemaObj.definitions === 'object') {
+			for (const [defName, defSchema] of Object.entries(
+				schemaObj.definitions,
+			)) {
+				const defId = this.buildDefinitionId(
+					parentId,
+					defName,
+					subdir,
+					namePattern,
+				);
+				this.addSchema(defId, defSchema as JsonSchema, {
+					...options,
+					extractDefinitions: false, // Prevent recursive extraction
+				});
+
+				// Update parent schema to reference extracted definition
+				schemaObj.definitions[defName] = { $ref: `${defId}#/` };
+			}
+		}
+
+		// Extract from components/schemas (OpenAPI)
+		if (
+			schemaObj.components?.schemas &&
+			typeof schemaObj.components.schemas === 'object'
+		) {
+			for (const [compName, compSchema] of Object.entries(
+				schemaObj.components.schemas,
+			)) {
+				const compId = this.buildDefinitionId(
+					parentId,
+					compName,
+					subdir || 'components/schemas',
+					namePattern,
+				);
+				this.addSchema(compId, compSchema as JsonSchema, {
+					...options,
+					extractDefinitions: false,
+				});
+
+				// Update parent schema to reference extracted component
+				schemaObj.components.schemas[compName] = { $ref: `${compId}#/` };
+			}
+		}
+
+		// Extract from $defs (JSON Schema 2020-12)
+		if (schemaObj.$defs && typeof schemaObj.$defs === 'object') {
+			for (const [defName, defSchema] of Object.entries(schemaObj.$defs)) {
+				const defId = this.buildDefinitionId(
+					parentId,
+					defName,
+					subdir,
+					namePattern,
+				);
+				this.addSchema(defId, defSchema as JsonSchema, {
+					...options,
+					extractDefinitions: false,
+				});
+
+				// Update parent schema to reference extracted definition
+				schemaObj.$defs[defName] = { $ref: `${defId}#/` };
+			}
+		}
+	}
+
+	/**
+	 * Build a definition ID based on parent ID, definition name, and configuration
+	 */
+	private buildDefinitionId(
+		parentId: string,
+		defName: string,
+		subdir?: string,
+		namePattern?: (schemaId: string, defName: string) => string,
+	): string {
+		if (namePattern) {
+			return namePattern(parentId, defName);
+		}
+
+		if (subdir) {
+			return `${subdir}/${defName}`;
+		}
+
+		// Default: definitions/{name}
+		return `definitions/${defName}`;
 	}
 }

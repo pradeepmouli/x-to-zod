@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { BuilderRegistry } from '../../src/MultiSchema/BuilderRegistry.js';
+import { BuilderRegistry } from '../../src/SchemaProject/BuilderRegistry.js';
 import { StringBuilder } from '../../src/ZodBuilder/string.js';
 
 describe('BuilderRegistry', () => {

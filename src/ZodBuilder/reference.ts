@@ -1,4 +1,4 @@
-import type { ImportInfo } from '../MultiSchema/types.js';
+import type { ImportInfo } from '../SchemaProject/types.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**

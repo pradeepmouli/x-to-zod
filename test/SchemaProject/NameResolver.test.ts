@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DefaultNameResolver } from '../../src/MultiSchema/NameResolver.js';
+import { DefaultNameResolver } from '../../src/SchemaProject/NameResolver.js';
 
 describe('NameResolver - Default Implementation', () => {
 	describe('resolveExportName', () => {

@@ -16,6 +16,16 @@ export interface SchemaProjectOptions {
 	globalPostProcessors?: PostProcessorConfig[];
 	prettier?: boolean | PrettierOptions;
 	importPathTransformer?: (from: string, to: string) => string;
+	extractDefinitions?: boolean | ExtractDefinitionsOptions;
+}
+
+/**
+ * Options for extracting definitions into separate files
+ */
+export interface ExtractDefinitionsOptions {
+	enabled: boolean;
+	subdir?: string; // Subdirectory for definitions (e.g., 'definitions', 'components/schemas')
+	namePattern?: (schemaId: string, defName: string) => string;
 }
 
 /**
@@ -24,6 +34,7 @@ export interface SchemaProjectOptions {
 export interface SchemaOptions {
 	postProcessors?: PostProcessorConfig[];
 	moduleFormatOverride?: 'esm' | 'cjs' | 'both';
+	extractDefinitions?: boolean;
 }
 
 /**

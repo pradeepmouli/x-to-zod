@@ -54,21 +54,40 @@ specs/[###-feature]/
 
 ```text
 src/
-├── MultiSchema/        # new: SchemaProject, registry, ref resolver, import manager, dependency graph
-├── JsonSchema/         # existing parsers; may extend parseRef/parseSchema integration
-├── ZodBuilder/         # add ReferenceBuilder for external refs
-├── cli.ts              # CLI entry (add project mode)
+├── SchemaProject/      # Multi-schema project support (IMPLEMENTED)
+│   ├── SchemaProject.ts      # Main API class
+│   ├── SchemaRegistry.ts     # Schema storage and management
+│   ├── NameResolver.ts       # Export name resolution
+│   ├── RefResolver.ts        # Cross-schema $ref resolution
+│   ├── BuilderRegistry.ts    # Builder cache management
+│   ├── DependencyGraph.ts    # Graph analysis and topological sort
+│   ├── ImportManager.ts      # Import statement management
+│   ├── SourceFileGenerator.ts # Code generation via ts-morph
+│   ├── Validator.ts          # Validation and conflict detection
+│   ├── parseRef.ts           # $ref parsing integration
+│   ├── types.ts              # Type definitions
+│   └── index.ts              # Public API exports
+├── JsonSchema/         # existing parsers; parseRef integration
+├── ZodBuilder/         # add reference.ts for external refs
+├── cli.ts              # CLI entry (project mode implemented)
 └── index.ts            # export SchemaProject and multi-schema APIs
 
 test/
-├── MultiSchema/        # unit + integration for registry/ref resolver/imports/graph
-└── cli.test.ts         # extend for project mode scenarios
+├── SchemaProject/      # unit + integration tests (IMPLEMENTED)
+│   ├── SchemaRegistry.test.ts      # 24 tests
+│   ├── NameResolver.test.ts        # 20 tests
+│   ├── RefResolver.test.ts         # 28 tests
+│   ├── BuilderRegistry.test.ts     # 27 tests
+│   ├── DependencyGraph.test.ts     # 41 tests
+│   ├── SchemaProject.test.ts       # 13 tests
+│   └── SchemaProject.integration.test.ts # 7 tests
+└── cli.test.ts         # extended for project mode scenarios (4 tests)
 
 docs/
-└── multi-schema-projects.md (later phase)
+└── multi-schema-projects.md (to be created)
 ```
 
-**Structure Decision**: Single library/CLI project; extend existing `src` and `test` roots with MultiSchema modules and CLI coverage.
+**Structure Decision**: Single library/CLI project; extended existing `src` and `test` roots with SchemaProject modules and CLI coverage. Name changed from MultiSchema to SchemaProject for clarity.
 
 ## Complexity Tracking
 

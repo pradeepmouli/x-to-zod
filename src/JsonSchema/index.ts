@@ -2,7 +2,7 @@ export { toZod } from './toZod.js';
 import { parse as classParse } from './parsers/index.js';
 import { parseDefault } from './parsers/parseDefault.js';
 import { parseSchema } from './parsers/parseSchema.js';
-import { parseRef } from '../MultiSchema/parseRef.js';
+import { parseRef } from '../SchemaProject/parseRef.js';
 import { its } from './its.js';
 import type { JsonSchemaObject, Context } from '../Types.js';
 

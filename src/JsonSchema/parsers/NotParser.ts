@@ -2,11 +2,12 @@ import type { JsonSchemaObject, JsonSchema } from '../../Types.js';
 import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class NotParser extends BaseParser<
-	JsonSchemaObject & { not: JsonSchema }
-> {
-	parse(): ZodBuilder {
-		const notSchema = BaseParser.parseSchema(this.schema.not, {
+export class NotParser extends BaseParser<'not'> {
+	readonly typeKind = 'not' as const;
+
+	protected parseImpl(schema: JsonSchema): ZodBuilder {
+		const s = schema as JsonSchemaObject & { not: JsonSchema };
+		const notSchema = BaseParser.parseSchema(s.not, {
 			...this.refs,
 			path: [...this.refs.path, 'not'],
 		}).text();
