@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+### Minor Changes
+
+- project support
+
 ## 0.6.0
 
 ### Major Features
@@ -24,32 +30,34 @@
     - Critical for large OpenAPI/Swagger documents
 
 **Example:**
+
 ```typescript
-import { SchemaProject } from 'x-to-zod';
+import { SchemaProject } from "x-to-zod";
 
 const project = new SchemaProject.SchemaProject({
-  outDir: './generated',
-  moduleFormat: 'both',
-  zodVersion: 'v4',
+  outDir: "./generated",
+  moduleFormat: "both",
+  zodVersion: "v4",
   generateIndex: true,
 });
 
-project.addSchema('user', userSchema);
-project.addSchema('post', postSchema);  // Can reference 'user'
+project.addSchema("user", userSchema);
+project.addSchema("post", postSchema); // Can reference 'user'
 
 // Extract OpenAPI components into separate files
-project.addSchema('api', openApiSchema, {
+project.addSchema("api", openApiSchema, {
   extractDefinitions: {
     enabled: true,
-    subdir: 'components',
-    namePattern: '{name}Schema'
-  }
+    subdir: "components",
+    namePattern: "{name}Schema",
+  },
 });
 
 await project.build();
 ```
 
 **CLI:**
+
 ```bash
 # Basic project mode
 x-to-zod --project --schemas "./schemas/*.json" --out ./generated
