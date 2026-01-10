@@ -22,7 +22,11 @@ export class ReferenceBuilder extends ZodBuilder<'reference'> {
 		targetImportName: string,
 		targetExportName: string,
 		importInfo: ImportInfo,
-		options?: { isLazy?: boolean; isTypeOnly?: boolean; unknownFallback?: boolean },
+		options?: {
+			isLazy?: boolean;
+			isTypeOnly?: boolean;
+			unknownFallback?: boolean;
+		},
 	) {
 		super();
 		this.targetImportName = targetImportName;

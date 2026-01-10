@@ -49,15 +49,24 @@ export function parseRef(
 		const targetExportName =
 			importInfo.importKind === 'default' ? 'default' : importInfo.importName;
 
-		const inCycle = isInCycle(fromSchemaId, resolved.targetSchemaId, dependencyGraph);
+		const inCycle = isInCycle(
+			fromSchemaId,
+			resolved.targetSchemaId,
+			dependencyGraph,
+		);
 		if (inCycle) {
 			importInfo.isTypeOnly = true;
 		}
 
-		return new ReferenceBuilder(targetImportName, targetExportName, importInfo, {
-			isLazy: inCycle,
-			isTypeOnly: !!importInfo.isTypeOnly,
-		});
+		return new ReferenceBuilder(
+			targetImportName,
+			targetExportName,
+			importInfo,
+			{
+				isLazy: inCycle,
+				isTypeOnly: !!importInfo.isTypeOnly,
+			},
+		);
 	} catch (error) {
 		console.error(`Error resolving $ref "${ref}":`, error);
 		return null;

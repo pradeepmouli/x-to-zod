@@ -52,9 +52,18 @@ describe('User Story 2: Domain-Driven Design with Shared Types (E2E)', () => {
 
 	it('should properly handle dependency graph with multiple schemas', () => {
 		// T064: Verify dependency graph ordering
-		const commonTypes = { type: 'object', properties: { id: { type: 'string' } } };
-		const userSchema = { type: 'object', properties: { id: { type: 'string' } } };
-		const postSchema = { type: 'object', properties: { id: { type: 'string' } } };
+		const commonTypes = {
+			type: 'object',
+			properties: { id: { type: 'string' } },
+		};
+		const userSchema = {
+			type: 'object',
+			properties: { id: { type: 'string' } },
+		};
+		const postSchema = {
+			type: 'object',
+			properties: { id: { type: 'string' } },
+		};
 
 		project.addSchema('common/types', commonTypes);
 		project.addSchema('user/schema', userSchema);
@@ -69,8 +78,14 @@ describe('User Story 2: Domain-Driven Design with Shared Types (E2E)', () => {
 
 	it('should detect cycles in dependency graph', () => {
 		// T065: Cycle detection without validation errors
-		const userSchema = { type: 'object', properties: { id: { type: 'string' } } };
-		const postSchema = { type: 'object', properties: { id: { type: 'string' } } };
+		const userSchema = {
+			type: 'object',
+			properties: { id: { type: 'string' } },
+		};
+		const postSchema = {
+			type: 'object',
+			properties: { id: { type: 'string' } },
+		};
 
 		project.addSchema('user/schema', userSchema);
 		project.addSchema('post/schema', postSchema);
