@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import type { JsonSchema } from '../../src/Types.js';
-import { mkdtempSync, rmSync, existsSync, readdirSync, readFileSync } from 'fs';
+import { mkdtempSync, rmSync, existsSync, readFileSync } from 'fs';
 import path from 'path';
 
 describe('SchemaProject Build Integration', () => {
@@ -170,8 +170,6 @@ describe('SchemaProject Build Integration', () => {
 
 		expect(result.success).toBe(true);
 
-		// Index file should not exist (or not be in generatedFiles if it was)
-		const indexPath = path.join(tempDir, 'index.ts');
 		// Check that no index-specific file is generated when disabled
 		expect(result.generatedFiles.length).toBeGreaterThanOrEqual(1);
 	});

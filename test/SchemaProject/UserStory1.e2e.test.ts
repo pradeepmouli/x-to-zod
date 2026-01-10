@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import type { JsonSchema } from '../../src/Types.js';
-import { mkdtempSync, rmSync, existsSync, readFileSync } from 'fs';
+import { mkdtempSync, rmSync, readFileSync } from 'fs';
 import path from 'path';
 
 describe('User Story 1: OpenAPI Components (E2E)', () => {
