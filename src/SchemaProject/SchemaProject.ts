@@ -5,8 +5,10 @@ import type {
 	SchemaFileOptions,
 	RefResolution,
 	BuildResult,
+	PostProcessorConfig as ProjectPostProcessorConfig,
 } from './types.js';
-import type { JsonSchema } from '../Types.js';
+import type { JsonSchema, PostProcessorConfig } from '../Types.js';
+import { postProcessors } from '../PostProcessing/presets.js';
 import { SchemaRegistry } from './SchemaRegistry.js';
 import { DefaultNameResolver } from './NameResolver.js';
 import { DefaultRefResolver } from './RefResolver.js';
@@ -52,22 +54,43 @@ export class SchemaProject {
 	}
 
 	/**
-	 * Add a schema from a JSON object.
-	 * @param id - Unique schema identifier
-	 * @param schema - JSON schema object
+	 * Resolve post-processor configs (name+options) to actual PostProcessor functions.
+	 * @private
+	 */
+	private resolvePostProcessors(
+		configs: ProjectPostProcessorConfig[] | undefined,
+	): PostProcessorConfig[] {
+		if (!configs || configs.length === 0) return [];
+
+		return configs
+			.map((config) => {
+				const factory = (postProcessors as any)[config.name];
+				if (typeof factory !== 'function') {
+					console.warn(
+						`Post-processor "${config.name}" not found in presets, skipping.`,
+					);
+					return null;
+				}
+
+				const processor = config.options
+					? factory(...Object.values(config.options))
+					: factory();
+
+				return {
+					processor,
+					name: config.name,
+				};
+			})
+			.filter(Boolean) as PostProcessorConfig[];
+	}
+
+	/**
+	 * Add a schema to the project.
+	 * @param id - Unique identifier for the schema
+	 * @param schema - JSON Schema object
 	 * @param options - Additional schema options
 	 */
 	addSchema(id: string, schema: JsonSchema, options?: SchemaOptions): void {
-		// Check if we should extract definitions
-		const shouldExtract =
-			options?.extractDefinitions !== undefined
-				? options.extractDefinitions
-				: this.shouldExtractDefinitions();
-
-		if (shouldExtract) {
-			this.extractAndAddDefinitions(id, schema, options);
-		}
-
 		const exportName = this.nameResolver.resolveExportName(id);
 
 		const entry: SchemaEntry = {
@@ -157,6 +180,18 @@ export class SchemaProject {
 				if (!entry) continue;
 
 				try {
+					// Merge global and per-schema post-processors
+					const globalProcessors = this.resolvePostProcessors(
+						this.options.globalPostProcessors,
+					);
+					const schemaProcessors = this.resolvePostProcessors(
+						entry.metadata.postProcessors as ProjectPostProcessorConfig[] | undefined,
+					);
+					const allPostProcessors = [
+						...globalProcessors,
+						...schemaProcessors,
+					];
+
 					// Parse with context for $refs and post-processing
 					const builder = parseSchema(
 						entry.schema as Record<string, any>,
@@ -169,6 +204,10 @@ export class SchemaProject {
 							refResolver: this.refResolver,
 							builderRegistry: this.builderRegistry,
 							dependencyGraph: this.dependencyGraph,
+							postProcessors:
+								allPostProcessors.length > 0
+									? allPostProcessors
+									: undefined,
 						} as any,
 					);
 

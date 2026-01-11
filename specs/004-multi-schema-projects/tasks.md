@@ -241,18 +241,16 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 
 ### Edge Case Handling
 
-- [ ] T077 [P] Handle deeply nested $refs: validate parseRef chain doesn't exceed reasonable depth (prevent stack overflow)
-- [ ] T078 [P] Handle very large schemas: test with 50+ component project, verify performance <5s
-- [ ] T079 [P] Handle special characters in schema IDs: validate NameResolver escapes properly (e.g., user-profile → userProfile or user_profile)
-- [ ] T080 [P] Test with invalid JSON Schema: parseSchema errors caught, validation reports, build fails gracefully
+- [X] T077 [P] Handle deeply nested $refs: validate parseRef chain doesn't exceed reasonable depth (prevent stack overflow)
+- [X] T078 [P] Handle very large schemas: test with 50+ component project, verify performance <5s
 - [X] T079 [P] Handle special characters in schema IDs: validate NameResolver escapes properly (e.g., user-profile → userProfile or user_profile)
 - [X] T080 [P] Test with invalid JSON Schema: parseSchema errors caught, validation reports, build fails gracefully
 
 ### Post-Processor Integration
 
-- [ ] T081 Extend SchemaProject to accept globalPostProcessors config
-- [ ] T082 [P] Apply post-processors after per-schema parsing, before source file generation
-- [ ] T083 [P] Unit test: post-processor modifies builder, result reflects changes, errors caught
+- [X] T081 Extend SchemaProject to accept globalPostProcessors config
+- [X] T082 [P] Apply post-processors after per-schema parsing, before source file generation
+- [X] T083 [P] Unit test: post-processor modifies builder, result reflects changes, errors caught
 
 ### Performance Optimization
 
@@ -263,8 +261,8 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 
 ### Type Safety & Strict Mode
 
-- [ ] T088 [P] Verify all generated code type-checks under strict TS: no implicit any, exact typing for builders
-- [ ] T089 [P] Test generated code with tsc --strict in integration tests
+- [X] T088 [P] Verify all generated code type-checks under strict TS: no implicit any, exact typing for builders
+- [X] T089 [P] Test generated code with tsc --strict in integration tests
 
 ---
 

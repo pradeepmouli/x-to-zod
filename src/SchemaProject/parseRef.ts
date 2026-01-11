@@ -3,6 +3,8 @@ import type { DefaultRefResolver } from './RefResolver.js';
 import type { DependencyGraph } from './types.js';
 import { ReferenceBuilder } from '../ZodBuilder/reference.js';
 
+const MAX_REF_DEPTH = 100;
+
 /**
  * Detects and parses external $ref entries in a JSON schema.
  * Returns ReferenceBuilder for external refs or null for non-refs/internal refs.
@@ -12,7 +14,24 @@ export function parseRef(
 	refResolver: DefaultRefResolver,
 	fromSchemaId: string,
 	dependencyGraph?: DependencyGraph,
+	depth: number = 0,
 ): ReferenceBuilder | null {
+	if (depth > MAX_REF_DEPTH) {
+		console.warn(
+			`Maximum reference depth (${MAX_REF_DEPTH}) exceeded in schema "${fromSchemaId}". Stopping to prevent stack overflow.`,
+		);
+		return new ReferenceBuilder(
+			'MaxDepthExceeded',
+			'MaxDepthExceeded',
+			{
+				importName: 'MaxDepthExceeded',
+				importKind: 'named',
+				modulePath: '',
+				isTypeOnly: true,
+			},
+			{ unknownFallback: true },
+		);
+	}
 	if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
 		return null;
 	}
@@ -96,14 +115,22 @@ function isInCycle(
 export function extractRefs(
 	schema: JsonSchema,
 	refs: Set<string> = new Set(),
+	depth: number = 0,
 ): Set<string> {
+	if (depth > MAX_REF_DEPTH) {
+		console.warn(
+			`Maximum depth (${MAX_REF_DEPTH}) exceeded during ref extraction. Stopping to prevent stack overflow.`,
+		);
+		return refs;
+	}
+
 	if (!schema || typeof schema !== 'object') {
 		return refs;
 	}
 
 	if (Array.isArray(schema)) {
 		for (const item of schema) {
-			extractRefs(item as JsonSchema, refs);
+			extractRefs(item as JsonSchema, refs, depth + 1);
 		}
 		return refs;
 	}
@@ -115,19 +142,19 @@ export function extractRefs(
 
 	if (schema.properties && typeof schema.properties === 'object') {
 		for (const propSchema of Object.values(schema.properties)) {
-			extractRefs(propSchema as JsonSchema, refs);
+			extractRefs(propSchema as JsonSchema, refs, depth + 1);
 		}
 	}
 
 	if (schema.items) {
-		extractRefs(schema.items as JsonSchema, refs);
+		extractRefs(schema.items as JsonSchema, refs, depth + 1);
 	}
 
 	for (const combiner of ['allOf', 'anyOf', 'oneOf'] as const) {
 		const combined = (schema as Record<string, unknown>)[combiner];
 		if (combined && Array.isArray(combined)) {
 			for (const subSchema of combined as JsonSchema[]) {
-				extractRefs(subSchema, refs);
+				extractRefs(subSchema, refs, depth + 1);
 			}
 		}
 	}
@@ -136,7 +163,7 @@ export function extractRefs(
 		schema.additionalProperties &&
 		typeof schema.additionalProperties === 'object'
 	) {
-		extractRefs(schema.additionalProperties as JsonSchema, refs);
+		extractRefs(schema.additionalProperties as JsonSchema, refs, depth + 1);
 	}
 
 	return refs;
