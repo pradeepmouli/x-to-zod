@@ -149,7 +149,10 @@ describe('Strict TypeScript Validation (T088-T089)', () => {
 			expect(result.success).toBe(true);
 			expect(result.errors).toEqual([]);
 
-			const complexFile = readFileSync(path.join(tempDir, 'complex.ts'), 'utf8');
+			const complexFile = readFileSync(
+				path.join(tempDir, 'complex.ts'),
+				'utf8',
+			);
 
 			// Verify code uses Zod builders
 			expect(complexFile).toContain('z.object(');

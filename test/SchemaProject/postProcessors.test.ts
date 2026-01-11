@@ -158,7 +158,9 @@ describe('Post-Processor Integration (T081-T083)', () => {
 
 			expect(result.success).toBe(true); // Should still succeed
 			expect(consoleWarnSpy).toHaveBeenCalledWith(
-				expect.stringContaining('Post-processor "nonExistentProcessor" not found'),
+				expect.stringContaining(
+					'Post-processor "nonExistentProcessor" not found',
+				),
 			);
 
 			// Verify valid processor was still applied
@@ -203,7 +205,7 @@ describe('Post-Processor Integration (T081-T083)', () => {
 			expect(result.errors).toEqual([]);
 
 			const testFile = readFileSync(path.join(tempDir, 'test.ts'), 'utf8');
-			
+
 			// Both post-processors should be applied
 			expect(testFile).toContain('.strict()');
 			expect(testFile).toContain('.min(1)');

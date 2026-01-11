@@ -185,12 +185,11 @@ export class SchemaProject {
 						this.options.globalPostProcessors,
 					);
 					const schemaProcessors = this.resolvePostProcessors(
-						entry.metadata.postProcessors as ProjectPostProcessorConfig[] | undefined,
+						entry.metadata.postProcessors as
+							| ProjectPostProcessorConfig[]
+							| undefined,
 					);
-					const allPostProcessors = [
-						...globalProcessors,
-						...schemaProcessors,
-					];
+					const allPostProcessors = [...globalProcessors, ...schemaProcessors];
 
 					// Parse with context for $refs and post-processing
 					const builder = parseSchema(
@@ -205,9 +204,7 @@ export class SchemaProject {
 							builderRegistry: this.builderRegistry,
 							dependencyGraph: this.dependencyGraph,
 							postProcessors:
-								allPostProcessors.length > 0
-									? allPostProcessors
-									: undefined,
+								allPostProcessors.length > 0 ? allPostProcessors : undefined,
 						} as any,
 					);
 

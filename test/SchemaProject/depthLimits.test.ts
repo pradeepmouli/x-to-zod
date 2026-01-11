@@ -13,7 +13,10 @@ describe('parseRef depth limits (T077)', () => {
 		for (let i = 0; i < 110; i++) {
 			registry.addEntry({
 				id: `schema${i}`,
-				schema: { type: 'object', properties: { id: { type: 'string' } } } as any,
+				schema: {
+					type: 'object',
+					properties: { id: { type: 'string' } },
+				} as any,
 				builder: null,
 				sourceFile: null,
 				exportName: `Schema${i}`,
