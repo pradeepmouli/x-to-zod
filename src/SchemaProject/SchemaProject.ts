@@ -108,6 +108,15 @@ export class SchemaProject {
 
 		this.registry.addEntry(entry);
 		this.dependencyGraph.addNode(id);
+
+		// Optionally extract definitions/components/$defs into separate schemas
+		const shouldExtract =
+			options?.extractDefinitions !== undefined
+				? !!options?.extractDefinitions
+				: this.shouldExtractDefinitions();
+		if (shouldExtract) {
+			this.extractAndAddDefinitions(id, entry.schema as JsonSchema, options);
+		}
 	}
 
 	/**
