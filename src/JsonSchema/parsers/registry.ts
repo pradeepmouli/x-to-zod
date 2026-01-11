@@ -8,6 +8,12 @@ import { NullParser } from './NullParser.js';
 import { AnyOfParser } from './AnyOfParser.js';
 import { AllOfParser } from './AllOfParser.js';
 import { OneOfParser } from './OneOfParser.js';
+import { EnumParser } from './EnumParser.js';
+import { ConstParser } from './ConstParser.js';
+import { NotParser } from './NotParser.js';
+import { NullableParser } from './NullableParser.js';
+import { MultipleTypeParser } from './MultipleTypeParser.js';
+import { ConditionalParser } from './ConditionalParser.js';
 import { its } from '../its.js';
 
 /**
@@ -23,7 +29,13 @@ type ParserClass =
 	| typeof NullParser
 	| typeof AnyOfParser
 	| typeof AllOfParser
-	| typeof OneOfParser;
+	| typeof OneOfParser
+	| typeof EnumParser
+	| typeof ConstParser
+	| typeof NotParser
+	| typeof NullableParser
+	| typeof MultipleTypeParser
+	| typeof ConditionalParser;
 
 /**
  * Registry mapping JSON Schema types to parser classes.
@@ -60,7 +72,28 @@ export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
 		return undefined;
 	}
 
-	// Check combinators first (highest priority)
+	// Check special cases first (highest priority)
+	if (its.a.nullable(schema)) {
+		return NullableParser;
+	}
+	if (its.a.not(schema)) {
+		return NotParser;
+	}
+	// Check for enum keyword directly (including empty arrays)
+	if ('enum' in schema && Array.isArray((schema as any).enum)) {
+		return EnumParser;
+	}
+	if (its.a.const(schema)) {
+		return ConstParser;
+	}
+	if (its.a.multipleType(schema)) {
+		return MultipleTypeParser;
+	}
+	if (its.a.conditional(schema)) {
+		return ConditionalParser;
+	}
+
+	// Check combinators
 	if (its.an.anyOf(schema)) {
 		return parserRegistry.get('anyOf');
 	}

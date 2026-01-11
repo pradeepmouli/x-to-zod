@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "id": { "$ref": "common-types#/properties/id" },
+    "title": { "type": "string" },
+    "content": { "type": "string" },
+    "userId": { "$ref": "user-schema#/properties/id" },
+    "createdAt": { "$ref": "common-types#/properties/createdAt" }
+  },
+  "required": ["id", "title", "content", "userId"]
+}

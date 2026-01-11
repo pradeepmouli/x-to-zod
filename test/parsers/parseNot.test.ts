@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseNot as parseNotImpl } from '../../src/JsonSchema/parsers/parseNot.js';
+import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -10,9 +10,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseNot = (
-	schema: Parameters<typeof parseNotImpl>[0],
+	schema: Parameters<typeof parseSchema>[0],
 	refs: Context = refsV4,
-) => parseNotImpl(schema, refs);
+) => parseSchema(schema, refs);
 
 describe('parseNot', () => {
 	it('', () => {

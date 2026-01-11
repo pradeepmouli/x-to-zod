@@ -96,4 +96,14 @@ export type Context = Options & {
 	>;
 	preProcessors?: PreProcessor[];
 	postProcessors?: PostProcessorConfig[];
+	/** Optional SchemaProject resolver for cross-schema $refs */
+	refResolver?: import('./SchemaProject/RefResolver.js').DefaultRefResolver;
+	/** Current schema ID (used for resolving relative refs) */
+	currentSchemaId?: string;
+	/** Optional import manager for collecting import statements */
+	importManager?: import('./SchemaProject/ImportManager.js').ImportManager;
+	/** Optional builder registry for caching builders across schemas */
+	builderRegistry?: import('./SchemaProject/BuilderRegistry.js').BuilderRegistry;
+	/** Optional dependency graph for cycle detection in SchemaProject */
+	dependencyGraph?: import('./SchemaProject/types.js').DependencyGraph;
 };

@@ -162,4 +162,138 @@ describe('cli', () => {
 		expect(stdout).toContain('id');
 		expect(stdout).toContain('.brand("CLI")');
 	});
+
+	it('project mode: error without --out flag', () => {
+		const { stderr } = spawnSync(
+			tsxBin,
+			[
+				'src/cli.ts',
+				'--project',
+				'--schemas',
+				'test/fixtures/cli-project/user.json',
+			],
+			{
+				encoding: 'utf8',
+			},
+		);
+		expect(stderr).toContain('--out flag is required in project mode');
+	});
+
+	it('project mode: error without --schemas flag', () => {
+		const { stderr } = spawnSync(
+			tsxBin,
+			['src/cli.ts', '--project', '--out', '/tmp/test-project'],
+			{
+				encoding: 'utf8',
+			},
+		);
+		expect(stderr).toContain('--schemas flag is required in project mode');
+	});
+
+	it('project mode: invalid module-format', () => {
+		const { stderr, status } = spawnSync(
+			tsxBin,
+			[
+				'src/cli.ts',
+				'--project',
+				'--schemas',
+				'test/fixtures/cli-project/user.json',
+				'--out',
+				'/tmp/test-project-invalid-format',
+				'--moduleFormat',
+				'invalid',
+			],
+			{
+				encoding: 'utf8',
+			},
+		);
+		expect(status).not.toBe(0);
+	});
+
+	it('project mode: invalid zod-version', () => {
+		const { stderr, status } = spawnSync(
+			tsxBin,
+			[
+				'src/cli.ts',
+				'--project',
+				'--schemas',
+				'test/fixtures/cli-project/user.json',
+				'--out',
+				'/tmp/test-project-invalid-zv',
+				'--zodVersion',
+				'v2',
+			],
+			{
+				encoding: 'utf8',
+			},
+		);
+		expect(status).not.toBe(0);
+	});
+});
+
+it('project mode: error without --out flag', () => {
+	const { stderr } = spawnSync(
+		tsxBin,
+		[
+			'src/cli.ts',
+			'--project',
+			'--schemas',
+			'test/fixtures/cli-project/user.json',
+		],
+		{
+			encoding: 'utf8',
+		},
+	);
+	expect(stderr).toContain('--out flag is required in project mode');
+});
+
+it('project mode: error without --schemas flag', () => {
+	const { stderr } = spawnSync(
+		tsxBin,
+		['src/cli.ts', '--project', '--out', '/tmp/test-project'],
+		{
+			encoding: 'utf8',
+		},
+	);
+	expect(stderr).toContain('--schemas flag is required in project mode');
+});
+
+it('project mode: invalid module-format', () => {
+	const { status } = spawnSync(
+		tsxBin,
+		[
+			'src/cli.ts',
+			'--project',
+			'--schemas',
+			'test/fixtures/cli-project/user.json',
+			'--out',
+			'/tmp/test-project-invalid-format-1',
+			'--moduleFormat',
+			'invalid',
+		],
+		{
+			encoding: 'utf8',
+		},
+	);
+	expect(status).not.toBe(0);
+});
+
+it('project mode: invalid zod-version', () => {
+	const { status } = spawnSync(
+		tsxBin,
+		[
+			'src/cli.ts',
+			'--project',
+			'--schemas',
+			'test/fixtures/cli-project/user.json',
+			'--out',
+			'/tmp/test-project-invalid-zv-1',
+			'--zodVersion',
+			'v2',
+		],
+		{
+			encoding: 'utf8',
+		},
+	);
+	expect(status).not.toBe(0);
 });

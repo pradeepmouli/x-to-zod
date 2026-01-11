@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseEnum as parseEnumImpl } from '../../src/JsonSchema/parsers/parseEnum.js';
+import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import type { Context } from '../../src/Types';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
@@ -10,9 +10,9 @@ const refsV4: Context = {
 	zodVersion: 'v4',
 };
 const parseEnum = (
-	schema: Parameters<typeof parseEnumImpl>[0],
+	schema: Parameters<typeof parseSchema>[0],
 	refs: Context = refsV4,
-) => parseEnumImpl(schema, refs);
+) => parseSchema(schema, refs);
 
 describe('parseEnum', () => {
 	it('should create never with empty enum', () => {

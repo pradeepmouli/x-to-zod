@@ -20,6 +20,7 @@ This repository is TypeScript-only and outputs Zod builder strings. Follow these
 ## Tooling
 - Lint: oxlint. Format: oxfmt aligned with style rules above.
 - CI expectation: tests + lint must pass. Run `npm test && npm run lint` (or pnpm equivalents) before PRs.
+- Codegen: ts-morph (dev-only) drives SchemaProject outputs; keep dual ESM/CJS targets and index generation intact.
 
 ## PR/Review etiquette
 - Do not revert user changes. If unexpected local edits appear, pause and ask.
@@ -30,3 +31,4 @@ This repository is TypeScript-only and outputs Zod builder strings. Follow these
 - Support multiple agents (Copilot, Claude, Gemini, Codex). Avoid tool- or vendor-specific steps.
 - Avoid introducing unrelated stacks (e.g., databases, ORMs, cloud infra) unless explicitly requested.
 - Prefer environment variables for sensitive data; none should be hardcoded.
+- SchemaProject module owns multi-schema support (registry, dependency graph, ref resolver, ts-morph emit, CLI project mode); align new work with its APIs and tests.

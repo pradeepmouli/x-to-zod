@@ -1,10 +1,4 @@
 import { parseDefault } from './parseDefault.js';
-import { parseMultipleType } from './parseMultipleType.js';
-import { parseNot } from './parseNot.js';
-import { parseConst } from './parseConst.js';
-import { parseEnum } from './parseEnum.js';
-import { parseIfThenElse } from './parseIfThenElse.js';
-import { parseNullable } from './parseNullable.js';
 import {
 	ParserSelector,
 	Context,
@@ -13,32 +7,50 @@ import {
 } from '../../Types.js';
 import { BaseBuilder } from '../../ZodBuilder/index.js';
 import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { its } from '../its.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { selectParserClass } from './registry.js';
 import { is } from '../../utils/is.js';
 import { BaseParser } from './BaseParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
+import { parseRef } from '../../SchemaProject/parseRef.js';
 
 export const parseSchema = (
 	schema: JsonSchema,
 	refs: Context = {
 		seen: new Map(),
 		path: [],
-		pathString: '$',
 		matchPath: (pattern: string) => matchPattern([], pattern),
 		build: buildV4,
 	},
 	blockMeta?: boolean,
 ): ZodBuilder => {
 	const path = refs.path || [];
-	const pathString =
-		refs.pathString ?? (path.length ? `$.${path.join('.')}` : '$');
-	const matchPath =
-		refs.matchPath ?? ((pattern: string) => matchPattern(path, pattern));
+	// Always compute pathString from path, don't use cached value when path changes
+	const pathString = path.length ? `$.${path.join('.')}` : '$';
+	// Always recompute matchPath when path changes
+	const matchPath = (pattern: string) => matchPattern(path, pattern);
 
 	if (typeof schema !== 'object')
 		return schema ? refs.build.any() : refs.build.never();
+
+	// Phase 3: Handle top-level $ref via SchemaProject parseRef when available
+	// This delegates external reference handling to ReferenceBuilder.
+	if (
+		refs.refResolver &&
+		(schema as any).$ref &&
+		typeof (schema as any).$ref === 'string'
+	) {
+		const refBuilder = parseRef(
+			schema as any,
+			refs.refResolver,
+			refs.currentSchemaId || '',
+			refs.dependencyGraph,
+		);
+		if (refBuilder) {
+			return refBuilder;
+		}
+		// For internal refs (#...), fall through to normal parsing.
+	}
 
 	if (refs.preprocessors) {
 		for (const preprocessor of refs.preprocessors) {
@@ -132,23 +144,7 @@ const addAnnotations = (
 };
 
 const selectParser: ParserSelector = (schema, refs) => {
-	// Check for special cases FIRST (nullable, not, enum, const, etc)
-	// These can wrap other types
-	if (its.a.nullable(schema)) {
-		return parseNullable(schema, refs);
-	} else if (its.a.not(schema)) {
-		return parseNot(schema, refs);
-	} else if (its.an.enum(schema)) {
-		return parseEnum(schema, refs); //<-- needs to come before primitives
-	} else if (its.a.const(schema)) {
-		return parseConst(schema, refs);
-	} else if (its.a.multipleType(schema)) {
-		return parseMultipleType(schema, refs);
-	} else if (its.a.conditional(schema)) {
-		return parseIfThenElse(schema, refs);
-	}
-
-	// Try registry-based parser classes (for converted parsers)
+	// Try registry-based parser classes (handles all types including special cases)
 	const ParserClass = selectParserClass(schema);
 	if (ParserClass) {
 		const parser = new ParserClass(schema as any, refs);

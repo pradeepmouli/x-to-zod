@@ -23,14 +23,8 @@
 import { buildV4 } from './ZodBuilder/index.js';
 import type { V4BuildAPI } from './ZodBuilder/versions.js';
 
-// Re-export core functionality (excluding legacy parseX functions)
-export * from './JsonSchema/parsers/parseConst.js';
+// Re-export core functionality
 export * from './JsonSchema/parsers/parseDefault.js';
-export * from './JsonSchema/parsers/parseEnum.js';
-export * from './JsonSchema/parsers/parseIfThenElse.js';
-export * from './JsonSchema/parsers/parseMultipleType.js';
-export * from './JsonSchema/parsers/parseNot.js';
-export * from './JsonSchema/parsers/parseNullable.js';
 export * from './JsonSchema/parsers/parseSchema.js';
 export * from './Types.js';
 
@@ -38,6 +32,7 @@ export { toZod as jsonSchemaToZod } from './JsonSchema/toZod.js';
 export { toZod as default } from './JsonSchema/toZod.js';
 
 export * as JsonSchema from './JsonSchema/index.js';
+export * as SchemaProject from './SchemaProject/index.js';
 export * as ZodBuilder from './ZodBuilder/index.js';
 
 // Export build with v4 type signature (full API)
