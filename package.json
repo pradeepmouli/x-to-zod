@@ -57,7 +57,7 @@
     "build:types": "tsgo -p tsconfig.types.json",
     "build:cjs": "tsgo -p tsconfig.cjs.json && node postcjs.js",
     "build:esm": "tsgo -p tsconfig.esm.json && node postesm.js",
-    "build": "pnpm test && rimraf ./dist && pnpm run build:types && pnpm run build:cjs && pnpm run build:esm",
+    "build": "rimraf ./dist && pnpm run build:types && pnpm run build:cjs && pnpm run build:esm",
     "dry": "pnpm run build && pnpm publish --dry-run",
     "dev": "vitest",
     "test": "vitest run --test-timeout=60000",
