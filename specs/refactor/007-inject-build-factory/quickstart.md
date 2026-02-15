@@ -134,7 +134,7 @@ const code = refs.build.string().min(5).text();
 npm test
 
 # Verify TypeScript compilation
-npx tsc --noEmit
+npx tsgo --noEmit
 
 # Build both targets
 npm run build:esm

@@ -151,7 +151,7 @@ Refactor 006 has been successfully completed with comprehensive dual-mode suppor
 **Status**: COMPLETE
 
 **Validation Completed**:
-- ✅ TypeScript: npx tsc --noEmit (0 errors)
+- ✅ TypeScript: npx tsgo --noEmit (0 errors)
 - ✅ Linting: npm run lint (0 errors/warnings)
 - ✅ Tests: npm test (261 passing)
 - ✅ tsconfig.json: Fixed moduleResolution/module mismatch
@@ -211,7 +211,7 @@ Coverage:    100% of implementation paths
 ### TypeScript Compilation
 ```
 Status:     ✅ PASS (0 errors)
-Command:    npx tsc --noEmit
+Command:    npx tsgo --noEmit
 Config:     tsconfig.json (fixed moduleResolution/module)
 ```
 

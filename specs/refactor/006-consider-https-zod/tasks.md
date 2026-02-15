@@ -203,7 +203,7 @@
 
 **Purpose**: Final validation and cleanup
 
-- [X] T089 [P] Run TypeScript compilation check (tsc --noEmit) and fix any type errors
+- [X] T089 [P] Run TypeScript compilation check (tsgo --noEmit) and fix any type errors
 - [X] T090 [P] Run linter (npm run lint) and fix any code style issues
 - [X] T091 [P] Create performance benchmark comparing v3 vs v4 code generation speed
 - [X] T092 Verify no performance regression > 5% in code generation

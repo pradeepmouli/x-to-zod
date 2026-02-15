@@ -14,4 +14,4 @@
 ## Notes
 - Story 3 (T066) deferred per tasks.md.
 - T038 (dual-output via ts-morph pipeline) intentionally excluded per request.
-- Pending polish items: T077–T089 (depth guard, perf baselines, post-processors, strict tsc checks).
+- Pending polish items: T077–T089 (depth guard, perf baselines, post-processors, strict tsgo checks).

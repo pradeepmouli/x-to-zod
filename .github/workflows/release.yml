@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
@@ -33,14 +34,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create Release Pull Request or Publish
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          publish: pnpm run release
-          version: pnpm run version
-          commit: 'chore: version packages'
-          title: 'chore: version packages'
+      - name: Configure npm for publishing
+        run: |
+          npm config delete //registry.npmjs.org/:_authToken 2>/dev/null || true
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Version and publish
+        run: |
+          CHANGESET_COUNT=$(find .changeset -maxdepth 1 -name '*.md' ! -name 'README.md' | wc -l)
+          
+          if [ "$CHANGESET_COUNT" -gt 0 ]; then
+            echo "Found $CHANGESET_COUNT changesets, proceeding with publishing..."
+            
+            pnpm run version
+            
+            git add -A
+            git commit -m "chore: version packages" || echo "No version changes to commit"
+            git push origin master
+            
+            pnpm run build
+            npm publish --provenance --access public
+          else
+            echo "No changesets found, skipping publication"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true

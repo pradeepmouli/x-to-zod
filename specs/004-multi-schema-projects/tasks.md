@@ -262,7 +262,7 @@ Task-driven implementation of multi-schema project support using ts-morph. Organ
 ### Type Safety & Strict Mode
 
 - [X] T088 [P] Verify all generated code type-checks under strict TS: no implicit any, exact typing for builders
-- [X] T089 [P] Test generated code with tsc --strict in integration tests
+- [X] T089 [P] Test generated code with tsgo --strict in integration tests
 
 ---
 

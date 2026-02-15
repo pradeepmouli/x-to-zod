@@ -230,7 +230,7 @@ Record with single argument (where possible)
   - **Rollback**: Revert if >10% regression
 
 - **Risk 4**: TypeScript type inference breaks
-  - **Mitigation**: Test with tsc --noEmit, verify exported types
+  - **Mitigation**: Test with tsgo --noEmit, verify exported types
   - **Rollback**: Revert immediately
 
 ### Safety Measures
