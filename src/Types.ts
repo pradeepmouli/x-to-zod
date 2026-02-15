@@ -5,8 +5,6 @@ import type { JSONSchema as JSONSchema2019 } from 'json-schema-typed/draft-2019-
 import type { transformer } from './JsonSchema/index.js';
 import type { ZodBuilder as BaseBuilder } from './ZodBuilder/BaseBuilder.js';
 
-
-
 export type Serializable = Jsonifiable;
 
 // Type aliases for backward compatibility
@@ -17,19 +15,17 @@ export * as JSONSchema2019 from 'json-schema-typed/draft-2019-09';
 
 export * as JSONSchema07 from 'json-schema-typed/draft-07';
 
-import {JSONSchema} from 'json-schema-typed/draft-2020-12';
+import { JSONSchema } from 'json-schema-typed/draft-2020-12';
 
-type JSONSchemaMap =
-{
-	'2020-12': JSONSchema2020.Interface,
-	'2019-09': JSONSchema2019.Interface,
-	'07': JSONSchema07.Interface,
-}
-
+type JSONSchemaMap = {
+	'2020-12': JSONSchema2020.Interface;
+	'2019-09': JSONSchema2019.Interface;
+	'07': JSONSchema07.Interface;
+};
 
 export type JSONSchema = JSONSchema;
 
-export type JsonSchemaObject = JSONSchema& {
+export type JsonSchemaObject = JSONSchema & {
 	// Custom extensions
 	errorMessage?: { [key: string]: string | undefined };
 	nullable?: boolean; // OpenAPI 3.0 extension
@@ -43,7 +39,6 @@ export type ParserOverride = (
 	schema: JSONSchema.Interface,
 	refs: Context,
 ) => BaseBuilder | string | void;
-
 
 export type BuildFunctions =
 	| typeof import('./ZodBuilder/v3.js').buildV3
@@ -59,7 +54,10 @@ export interface ProcessorConfig {
  * Pre-processor: transforms schema before parsing.
  */
 export interface PreProcessor extends ProcessorConfig {
-	(schema: JSONSchema07.Interface, refs: Context): JSONSchema07.Interface | undefined;
+	(
+		schema: JSONSchema07.Interface,
+		refs: Context,
+	): JSONSchema07.Interface | undefined;
 }
 
 export interface PostProcessorContext {
