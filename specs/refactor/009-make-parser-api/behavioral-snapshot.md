@@ -1,7 +1,7 @@
 # Behavioral Snapshot: Refactor 009 - Parser/Builder API Symmetry
 
 **Purpose**: Document observable behaviors before refactoring to verify they're preserved after.
-**Refactor ID**: refactor-009  
+**Refactor ID**: refactor-009
 **Created**: 2026-02-15
 
 ## Key Behaviors to Preserve
@@ -17,9 +17,9 @@ const arraySchema = { type: 'array', items: {} };
 const anyOfSchema = { anyOf: [{ type: 'string' }, { type: 'number' }] };
 ```
 
-**Expected Output**: 
+**Expected Output**:
 - stringSchema → StringParser
-- objectSchema → ObjectParser  
+- objectSchema → ObjectParser
 - arraySchema → ArrayParser
 - anyOfSchema → AnyOfParser
 
@@ -41,19 +41,19 @@ pnpm test -- parseSchema.test.ts
 import { parse } from 'x-to-zod/JsonSchema';
 import { buildV4 } from 'x-to-zod/ZodBuilder/v4';
 
-const refs = { 
-  seen: new Map(), 
-  path: [], 
+const refs = {
+  seen: new Map(),
+  path: [],
   matchPath: () => false,
-  build: buildV4 
+  build: buildV4
 };
 
-const objectSchema = { 
-  type: 'object', 
-  properties: { 
-    name: { type: 'string' }, 
-    age: { type: 'number' } 
-  } 
+const objectSchema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    age: { type: 'number' }
+  }
 };
 const arraySchema = { type: 'array', items: { type: 'string' } };
 const stringSchema = { type: 'string', minLength: 5 };
@@ -89,22 +89,22 @@ pnpm test -- parsers/index.test.ts
 import { ObjectParser } from 'x-to-zod/JsonSchema/parsers/ObjectParser';
 import { buildV4 } from 'x-to-zod/ZodBuilder/v4';
 
-const schema = { 
-  type: 'object', 
-  properties: { id: { type: 'number' } } 
+const schema = {
+  type: 'object',
+  properties: { id: { type: 'number' } }
 };
-const refs = { 
-  seen: new Map(), 
-  path: [], 
+const refs = {
+  seen: new Map(),
+  path: [],
   matchPath: () => false,
-  build: buildV4 
+  build: buildV4
 };
 
 const parser = new ObjectParser(schema, refs);
 const builder = parser.parse();
 ```
 
-**Expected Output**: 
+**Expected Output**:
 - parser instance created successfully
 - builder.toString() returns "z.object({ id: z.number() })"
 
@@ -141,7 +141,7 @@ const nestedSchema = {
 };
 ```
 
-**Expected Output**: 
+**Expected Output**:
 - All nested objects parsed correctly
 - Path tracking preserved (refs.path)
 - Circular reference detection works (refs.seen)
@@ -177,7 +177,7 @@ const refs = {
 const builder = parseSchema(schema, refs);
 ```
 
-**Expected Output**: 
+**Expected Output**:
 - Post-processor addOptional is applied
 - builder.toString() includes ".optional()"
 
@@ -205,7 +205,7 @@ const schema = {
 };
 ```
 
-**Expected Output**: 
+**Expected Output**:
 - Circular reference detected via refs.seen
 - Builder uses lazy() or appropriate Zod construct
 - No infinite recursion
@@ -228,7 +228,7 @@ pnpm test -- jsonSchemaToZod.test.ts --grep "circular"
 import { parse, toZod, JsonSchema } from 'x-to-zod';
 ```
 
-**Expected Output**: 
+**Expected Output**:
 - parse object has all expected methods
 - parse.object, parse.array, etc. are functions
 - parse.Schema and parse.schema both exist (latter new, former aliased)
@@ -304,4 +304,3 @@ pnpm test -- --grep "circular"
 - Document actual outputs during Phase 1 (Baseline)
 - Re-run all verifications during Phase 3 (Validation)
 - Any difference in output is a regression and must be fixed before merging
-

@@ -254,11 +254,11 @@ export class TupleParser extends BaseParser<'tuple'> {
 
   protected parseImpl(schema: JsonSchema): ZodBuilder {
     const s = schema as JsonSchemaObject;
-    
+
     // JSON Schema 2020-12 uses prefixItems
-    const items = s.prefixItems || 
+    const items = s.prefixItems ||
                  (Array.isArray(s.items) ? s.items : undefined);
-    
+
     if (!items || items.length === 0) {
       // Empty tuple
       return this.refs.build.tuple([]);
@@ -354,12 +354,12 @@ type ParserClass =
 ```typescript
 export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
   // ... existing checks ...
-  
+
   // Check for const (before tuple to handle const arrays)
   if (its.a.const(schema)) {
     return ConstParser;
   }
-  
+
   // Check for tuple (prefixItems is 2020-12, items array is draft-07)
   if ('prefixItems' in schema && Array.isArray((schema as any).prefixItems)) {
     return TupleParser;
@@ -367,7 +367,7 @@ export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
   if ('items' in schema && Array.isArray((schema as any).items)) {
     return TupleParser;
   }
-  
+
   // ... continue with existing checks ...
 }
 ```
@@ -547,7 +547,7 @@ export const parse = {
    * @deprecated Use parse.schema instead
    */
   Schema: parseSchema,
-  
+
   /**
    * @deprecated Use parse.ref instead
    */
@@ -803,10 +803,10 @@ export class RecordParser extends BaseParser<'record'> {
 
   protected parseImpl(schema: JsonSchema): ZodBuilder {
     const s = schema as JsonSchemaObject;
-    
+
     // additionalProperties defines the value type
     const valueSchema = s.additionalProperties;
-    
+
     if (typeof valueSchema === 'boolean') {
       if (valueSchema === true) {
         // additionalProperties: true → record(string(), any())
@@ -820,11 +820,11 @@ export class RecordParser extends BaseParser<'record'> {
         return this.refs.build.object({});
       }
     }
-    
+
     // additionalProperties is a schema
     const keyBuilder = this.refs.build.string(); // keys are always strings
     const valueBuilder = this.parseChild(valueSchema || {}, 'additionalProperties');
-    
+
     return this.refs.build.record(keyBuilder, valueBuilder);
   }
 
@@ -1419,10 +1419,10 @@ console.log('Symmetry ratio:', symmetryRatio);
 - **Naming Consistency**: Renamed parse.Schema → parse.schema (lowercase)
   - Old names (parse.Schema, parse.Ref) still work but are deprecated
   - All internal usages updated to lowercase convention
-  
+
 ### Documentation
 - Added `docs/api-symmetry.md` - comprehensive parser/builder reference
-- Updated `docs/API.md` - parser vs builder comparison  
+- Updated `docs/API.md` - parser vs builder comparison
 - Updated `docs/parser-architecture.md` - API design principles
 
 ### Improved

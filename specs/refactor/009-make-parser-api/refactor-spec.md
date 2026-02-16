@@ -48,13 +48,13 @@ User description: "make parser api, and builder api symmetrical"
 Add missing parser classes (EnumParser, ConstParser, TupleParser) following the existing BaseParser template method pattern. Expand parser API with new methods using JSON Schema naming conventions (parse.const, parse.enum, parse.tuple). Add convenience aliases for Zod terminology (parse.union, parse.intersection). Phase 1 focuses on core parsers, Phase 2 adds aliases and RecordParser. All changes are additive and maintain backward compatibility.
 
 **Files Affected**:
-- **Modified**: 
+- **Modified**:
   - src/JsonSchema/parsers/index.ts (add new parser methods)
   - src/JsonSchema/index.ts (align naming: parse.Schema → parse.schema)
   - src/JsonSchema/parsers/registry.ts (register new parsers)
   - docs/parser-architecture.md (document API symmetry)
   - docs/API.md (update API docs)
-- **Created**: 
+- **Created**:
   - src/JsonSchema/parsers/TupleParser.ts
   - docs/api-symmetry.md (new doc)
 - **Discovered (already exist, need API exposure)**:
@@ -296,7 +296,7 @@ Revert if any of these occur:
    - Write comprehensive unit tests (> 90% coverage)
 
 2. Create ConstParser.ts extending BaseParser
-   - Implement parseImpl() for const keyword  
+   - Implement parseImpl() for const keyword
    - Return ConstBuilder via refs.build.literal()
    - Write comprehensive unit tests (> 90% coverage)
 
