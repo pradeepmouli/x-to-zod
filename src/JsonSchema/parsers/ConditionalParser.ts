@@ -10,7 +10,7 @@ export class ConditionalParser extends BaseParser<'conditional'> {
 
 	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
 		const s = schema as any;
-		
+
 		// Runtime checks for required properties
 		if (!s.if || !s.then || !s.else) {
 			throw new Error(
