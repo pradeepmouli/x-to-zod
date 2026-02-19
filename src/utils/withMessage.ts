@@ -7,7 +7,7 @@ type Closer = string;
 type Builder = [Opener, Closer] | [Opener, MessagePrefix, Closer];
 
 export function withMessage(
-	schema: JSONSchemaObject<'OpenAPI3.0'>,
+	schema: JSONSchemaObject,
 	key: string,
 	get: (props: { value: unknown; json: string }) => Builder | void,
 ) {

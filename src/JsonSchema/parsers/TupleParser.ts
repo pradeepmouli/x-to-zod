@@ -5,7 +5,6 @@ import type {
 } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { BaseParser } from './BaseParser.js';
-import { parseSchema } from './parseSchema.js';
 
 /**
  * Parser for JSON Schema tuple types.
@@ -33,14 +32,11 @@ export class TupleParser extends BaseParser<'tuple'> {
 			(Array.isArray(tupleSchema.items) ? tupleSchema.items : []);
 
 		const itemSchemas = tupleItems.map((item, i) =>
-			parseSchema(item, {
-				...this.refs,
-				path: [
-					...this.refs.path,
-					tupleSchema.prefixItems ? 'prefixItems' : 'items',
-					i,
-				],
-			}),
+			this.parseChild(
+				item,
+				tupleSchema.prefixItems ? 'prefixItems' : 'items',
+				i,
+			),
 		);
 
 		return this.refs.build.tuple(itemSchemas);
