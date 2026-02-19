@@ -78,7 +78,7 @@ jobs:
                     'Please review the changelog and test thoroughly before merging.'
             });
 
-      - name: Enable auto-merge for approved updates
+      - name: Comment on auto-merge eligibility
         if: |
           steps.pr-details.outputs.is_minor_or_patch == 'true' &&
           steps.pr-details.outputs.is_major_update == 'false' &&
@@ -87,25 +87,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Enable auto-merge for this PR
-            await github.graphql(`
-              mutation($pullRequestId: ID!) {
-                enablePullRequestAutoMerge(input: {
-                  pullRequestId: $pullRequestId,
-                  mergeMethod: SQUASH
-                }) {
-                  pullRequest {
-                    autoMergeRequest {
-                      enabledAt
-                    }
-                  }
-                }
-              }
-            `, {
-              pullRequestId: context.payload.pull_request.node_id
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 This PR is eligible for auto-merge.\n\n' +
+                    'Auto-merge will be enabled automatically once CI checks pass.'
             });
-
-            console.log('Auto-merge enabled for this PR');
 
   report:
     name: Report dependency update
