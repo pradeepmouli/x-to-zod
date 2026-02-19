@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 import { mkdtempSync, rmSync } from 'fs';
 import path from 'path';
 
@@ -24,7 +24,7 @@ describe('SchemaProject', () => {
 
 	describe('addSchema', () => {
 		it('should add a schema to the project', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					name: { type: 'string' },
@@ -43,7 +43,7 @@ describe('SchemaProject', () => {
 		});
 
 		it('should generate export name from schema ID', () => {
-			const schema: JsonSchema = { type: 'string' };
+			const schema: JSONSchema = { type: 'string' };
 			project.addSchema('user-profile', schema);
 
 			const entry = project.getRegistry().getEntry('user-profile');
@@ -53,7 +53,7 @@ describe('SchemaProject', () => {
 
 	describe('validate', () => {
 		it('should validate a simple schema', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },
@@ -68,11 +68,11 @@ describe('SchemaProject', () => {
 		});
 
 		it('should handle multiple schemas without conflicts', () => {
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: { name: { type: 'string' } },
 			};
-			const postSchema: JsonSchema = {
+			const postSchema: JSONSchema = {
 				type: 'object',
 				properties: { title: { type: 'string' } },
 			};
@@ -86,7 +86,7 @@ describe('SchemaProject', () => {
 
 		it('should detect circular dependencies', () => {
 			// Schema A references Schema B
-			const schemaA: JsonSchema = {
+			const schemaA: JSONSchema = {
 				type: 'object',
 				properties: {
 					ref: { $ref: '#/definitions/B' },
@@ -97,7 +97,7 @@ describe('SchemaProject', () => {
 			};
 
 			// Schema B references back to Schema A (creating a cycle)
-			const schemaB: JsonSchema = {
+			const schemaB: JSONSchema = {
 				type: 'object',
 				properties: {
 					ref: { $ref: 'schemaA.json#/definitions/A' },
@@ -116,7 +116,7 @@ describe('SchemaProject', () => {
 
 	describe('getDependencyGraph', () => {
 		it('should return dependency graph with single node', () => {
-			const schema: JsonSchema = { type: 'string' };
+			const schema: JSONSchema = { type: 'string' };
 			project.addSchema('simple', schema);
 
 			const graph = project.getDependencyGraph();
@@ -126,14 +126,14 @@ describe('SchemaProject', () => {
 		});
 
 		it('should track dependencies between schemas', () => {
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					profile: { $ref: 'profile.json#' },
 				},
 			};
 
-			const profileSchema: JsonSchema = {
+			const profileSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					bio: { type: 'string' },
@@ -150,7 +150,7 @@ describe('SchemaProject', () => {
 
 	describe('resolveRef', () => {
 		it('should resolve internal references', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },
@@ -174,7 +174,7 @@ describe('SchemaProject', () => {
 
 	describe('build', () => {
 		it('should build a simple schema project', async () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					name: { type: 'string' },
@@ -195,12 +195,12 @@ describe('SchemaProject', () => {
 		});
 
 		it('should handle multiple schemas in build order', async () => {
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: { name: { type: 'string' } },
 			};
 
-			const postSchema: JsonSchema = {
+			const postSchema: JSONSchema = {
 				type: 'object',
 				properties: { author: { $ref: 'user#' } },
 			};
@@ -235,7 +235,7 @@ describe('SchemaProject', () => {
 
 	describe('getRegistry', () => {
 		it('should provide access to schema registry', () => {
-			const schema: JsonSchema = { type: 'string' };
+			const schema: JSONSchema = { type: 'string' };
 			project.addSchema('test', schema);
 
 			const registry = project.getRegistry();

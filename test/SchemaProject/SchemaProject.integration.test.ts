@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 import { mkdtempSync, rmSync, existsSync, readdirSync, readFileSync } from 'fs';
 import path from 'path';
 
@@ -25,7 +25,7 @@ describe('SchemaProject Build Integration', () => {
 
 	it('should build a multi-schema project with index file', async () => {
 		// Define three related schemas
-		const userSchema: JsonSchema = {
+		const userSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },
@@ -35,7 +35,7 @@ describe('SchemaProject Build Integration', () => {
 			required: ['id', 'name'],
 		};
 
-		const postSchema: JsonSchema = {
+		const postSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },
@@ -47,7 +47,7 @@ describe('SchemaProject Build Integration', () => {
 			required: ['id', 'title', 'authorId'],
 		};
 
-		const commentSchema: JsonSchema = {
+		const commentSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },
@@ -102,7 +102,7 @@ describe('SchemaProject Build Integration', () => {
 	});
 
 	it('should handle build with schema-specific options', async () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'string', format: 'uuid' },
@@ -124,17 +124,17 @@ describe('SchemaProject Build Integration', () => {
 
 	it('should build schemas in dependency order', async () => {
 		// Create schemas with dependencies (though not using $refs in this simple case)
-		const schema1: JsonSchema = {
+		const schema1: JSONSchema = {
 			type: 'object',
 			properties: { id: { type: 'integer' } },
 		};
 
-		const schema2: JsonSchema = {
+		const schema2: JSONSchema = {
 			type: 'object',
 			properties: { ref1Id: { type: 'integer' } },
 		};
 
-		const schema3: JsonSchema = {
+		const schema3: JSONSchema = {
 			type: 'object',
 			properties: { ref2Id: { type: 'integer' } },
 		};
@@ -160,7 +160,7 @@ describe('SchemaProject Build Integration', () => {
 			generateIndex: false,
 		});
 
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			type: 'object',
 			properties: { name: { type: 'string' } },
 		};
@@ -178,7 +178,7 @@ describe('SchemaProject Build Integration', () => {
 
 	it('should handle parsing errors gracefully', async () => {
 		// Add a valid schema
-		const validSchema: JsonSchema = {
+		const validSchema: JSONSchema = {
 			type: 'object',
 			properties: { id: { type: 'integer' } },
 		};
@@ -186,7 +186,7 @@ describe('SchemaProject Build Integration', () => {
 		project.addSchema('valid', validSchema);
 
 		// Add a schema that might cause parsing issues
-		const problematicSchema: JsonSchema = {
+		const problematicSchema: JSONSchema = {
 			// Schema with conflicting/ambiguous type info
 			type: 'string',
 			properties: {
@@ -214,7 +214,7 @@ describe('SchemaProject Build Integration', () => {
 			moduleFormat: 'esm',
 		});
 
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			type: 'object',
 			properties: { value: { type: 'string' } },
 		};

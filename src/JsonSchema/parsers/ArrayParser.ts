@@ -1,22 +1,31 @@
-import type { Context, JsonSchema, JsonSchemaObject } from '../../Types.js';
+import type { Context } from '../../Types.js';
+import type {
+	JSONSchema,
+	JSONSchemaObject,
+	SchemaVersion,
+} from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { BaseParser } from './BaseParser.js';
-import { parseSchema } from './parseSchema.js';
 
-export class ArrayParser extends BaseParser<'array'> {
+export class ArrayParser<
+	Version extends SchemaVersion = SchemaVersion,
+> extends BaseParser<'array', Version> {
 	readonly typeKind = 'array' as const;
 
-	constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
+	constructor(
+		schema: JSONSchemaObject<Version> & { type?: string },
+		refs: Context,
+	) {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const s = schema as JsonSchemaObject & { type?: string };
+	protected parseImpl(schema: JSONSchema<Version, any, 'array'>): ZodBuilder {
+		const s = schema as any; // Array schemas cannot be boolean
 
 		// Handle tuple (array of schemas) vs array (single schema)
 		if (Array.isArray(s.items)) {
-			const itemSchemas = s.items.map((v, i) =>
-				parseSchema(v, { ...this.refs, path: [...this.refs.path, 'items', i] }),
+			const itemSchemas = s.items.map((v: unknown, i: number) =>
+				this.parseChild(v as any, 'items', i),
 			);
 
 			const builder = this.refs.build.array(itemSchemas);
@@ -33,10 +42,7 @@ export class ArrayParser extends BaseParser<'array'> {
 
 		const itemSchema = !s.items
 			? this.refs.build.any()
-			: parseSchema(s.items, {
-					...this.refs,
-					path: [...this.refs.path, 'items'],
-				});
+			: this.parseChild(s.items as any, 'items');
 
 		const builder = this.refs.build.array(itemSchema);
 
@@ -49,9 +55,5 @@ export class ArrayParser extends BaseParser<'array'> {
 		}
 
 		return builder;
-	}
-
-	protected canProduceType(type: string): boolean {
-		return type === this.typeKind || type === 'ArrayBuilder';
 	}
 }

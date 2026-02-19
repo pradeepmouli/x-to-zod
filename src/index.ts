@@ -5,7 +5,7 @@ export * from './Types.js';
 export { toZod as jsonSchemaToZod } from './JsonSchema/toZod.js';
 export { toZod as default } from './JsonSchema/toZod.js';
 
-export * as JsonSchema from './JsonSchema/index.js';
+export * as JSONSchema from './JsonSchema/index.js';
 
 /**
  * Multi-schema project support.

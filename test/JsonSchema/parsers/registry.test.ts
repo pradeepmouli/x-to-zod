@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { JsonSchema } from '../../../src/Types.js';
+import type { JSONSchema } from '../../../src/Types.js';
 import {
 	selectParserClass,
 	parserRegistry,
@@ -16,6 +16,7 @@ import { OneOfParser } from '../../../src/JsonSchema/parsers/OneOfParser.js';
 import { EnumParser } from '../../../src/JsonSchema/parsers/EnumParser.js';
 import { ConstParser } from '../../../src/JsonSchema/parsers/ConstParser.js';
 import { MultipleTypeParser } from '../../../src/JsonSchema/parsers/MultipleTypeParser.js';
+import { TupleParser } from '../../../src/JsonSchema/parsers/TupleParser.js';
 
 describe('Parser Registry', () => {
 	describe('parserRegistry', () => {
@@ -50,21 +51,21 @@ describe('Parser Registry', () => {
 		});
 
 		it('returns AnyOfParser for anyOf schemas', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				anyOf: [{ type: 'string' }, { type: 'number' }],
 			};
 			expect(selectParserClass(schema)).toBe(AnyOfParser);
 		});
 
 		it('returns AllOfParser for allOf schemas', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				allOf: [{ type: 'object' }, { properties: { x: { type: 'string' } } }],
 			};
 			expect(selectParserClass(schema)).toBe(AllOfParser);
 		});
 
 		it('returns OneOfParser for oneOf schemas', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				oneOf: [{ type: 'string' }, { type: 'number' }],
 			};
 			expect(selectParserClass(schema)).toBe(OneOfParser);
@@ -72,7 +73,7 @@ describe('Parser Registry', () => {
 
 		it('prioritizes combinators over explicit type field', () => {
 			// Even if type: string is present, anyOf takes priority
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'string',
 				anyOf: [{ type: 'number' }, { type: 'boolean' }],
 			};
@@ -92,7 +93,7 @@ describe('Parser Registry', () => {
 		it('infers type from object properties', () => {
 			// Note: its.an.object() uses structural inference
 			// It checks for properties or additionalProperties
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				properties: {
 					name: { type: 'string' },
 				},
@@ -104,7 +105,7 @@ describe('Parser Registry', () => {
 
 		it('infers type from array items', () => {
 			// Note: its.an.array() uses structural inference
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				items: { type: 'string' },
 			};
 			const result = selectParserClass(schema);
@@ -114,7 +115,7 @@ describe('Parser Registry', () => {
 
 		it('infers string type from string-specific keywords', () => {
 			// Note: its.a.primitive() requires explicit type or enum-based inference
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				minLength: 1,
 			};
 			const result = selectParserClass(schema);
@@ -124,7 +125,7 @@ describe('Parser Registry', () => {
 
 		it('infers number type from numeric keywords', () => {
 			// Note: its.a.primitive() requires explicit type or enum-based inference
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				minimum: 0,
 			};
 			const result = selectParserClass(schema);
@@ -133,7 +134,7 @@ describe('Parser Registry', () => {
 		});
 
 		it('infers boolean type from enum with booleans', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				enum: [true, false],
 			};
 			const result = selectParserClass(schema);
@@ -142,7 +143,7 @@ describe('Parser Registry', () => {
 		});
 
 		it('infers null type from const: null', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				const: null,
 			};
 			const result = selectParserClass(schema);
@@ -151,20 +152,36 @@ describe('Parser Registry', () => {
 		});
 
 		it('returns undefined for schemas without detectable type', () => {
-			const schema: JsonSchema = {};
+			const schema: JSONSchema = {};
 			expect(selectParserClass(schema)).toBeUndefined();
 		});
 
 		it('returns undefined for schemas with unknown type string', () => {
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'unknown' as any,
 			};
 			expect(selectParserClass(schema)).toBeUndefined();
 		});
 
+		it('returns TupleParser for prefixItems tuples', () => {
+			const schema: JSONSchema = {
+				type: 'array',
+				prefixItems: [{ type: 'string' }, { type: 'number' }],
+			} as any;
+			expect(selectParserClass(schema)).toBe(TupleParser);
+		});
+
+		it('returns TupleParser for items array tuples', () => {
+			const schema: JSONSchema = {
+				type: 'array',
+				items: [{ type: 'string' }, { type: 'boolean' }],
+			} as any;
+			expect(selectParserClass(schema)).toBe(TupleParser);
+		});
+
 		it('handles mixed type arrays with MultipleTypeParser', () => {
 			// types: ["string", "null"] as array is now handled by MultipleTypeParser
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: ['string', 'null'] as any,
 			};
 			// Now handled by MultipleTypeParser (special case)
@@ -173,7 +190,7 @@ describe('Parser Registry', () => {
 
 		it('prioritizes explicit type over inference', () => {
 			// Has both type: string and properties (which would infer object)
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'string',
 				properties: { x: { type: 'string' } }, // This is usually invalid but test priority
 			};

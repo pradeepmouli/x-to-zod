@@ -7,7 +7,7 @@ import type {
 	PostProcessorContext,
 	ProcessorConfig,
 	ProcessorPathPattern,
-	JsonSchema,
+	JSONSchema,
 	Context,
 } from '../src/Types.js';
 import { buildV4 } from '../src/ZodBuilder/index.js';
@@ -51,7 +51,7 @@ describe('Processor Types', () => {
 
 	describe('PreProcessor', () => {
 		it('is a function that transforms schema', () => {
-			const processor: PreProcessor = (schema: JsonSchema) => {
+			const processor: PreProcessor = (schema: JSONSchema) => {
 				if (typeof schema === 'object' && schema !== null) {
 					return {
 						...schema,
@@ -61,7 +61,7 @@ describe('Processor Types', () => {
 				return schema;
 			};
 
-			const input: JsonSchema = { type: 'string' };
+			const input: JSONSchema = { type: 'string' };
 			const output = processor(input, {} as Context);
 
 			expect(output).toEqual(
@@ -72,14 +72,14 @@ describe('Processor Types', () => {
 		it('can return undefined to skip transformation', () => {
 			const processor: PreProcessor = () => undefined;
 
-			const input: JsonSchema = { type: 'string' };
+			const input: JSONSchema = { type: 'string' };
 			const output = processor(input, {} as Context);
 
 			expect(output).toBeUndefined();
 		});
 
 		it('can have pathPattern configuration', () => {
-			const processor: PreProcessor = function (schema: JsonSchema) {
+			const processor: PreProcessor = function (schema: JSONSchema) {
 				return schema;
 			};
 			processor.pathPattern = 'properties.name';
@@ -88,7 +88,7 @@ describe('Processor Types', () => {
 		});
 
 		it('receives context with path information', () => {
-			const processor: PreProcessor = (schema: JsonSchema, refs: Context) => {
+			const processor: PreProcessor = (schema: JSONSchema, refs: Context) => {
 				expect(refs.path).toBeDefined();
 				return schema;
 			};

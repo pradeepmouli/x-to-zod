@@ -1,11 +1,12 @@
-import { Options, JsonSchema } from '../Types.js';
+import type { Options } from '../Types.js';
+import type { JSONSchemaAny as JSONSchema } from './types/index.js';
 import { parseSchema } from './parsers/parseSchema.js';
 import { expandJsdocs } from '../utils/jsdocs.js';
 import { buildV3 } from '../ZodBuilder/v3.js';
 import { buildV4 } from '../ZodBuilder/v4.js';
 
 export const toZod = (
-	schema: JsonSchema,
+	schema: JSONSchema,
 	{ module, name, type, noImport, ...rest }: Options = {},
 ): string => {
 	if (type && (!name || module !== 'esm')) {

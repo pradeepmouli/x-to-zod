@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 import { mkdtempSync, rmSync, existsSync, readFileSync } from 'fs';
 import path from 'path';
 
@@ -25,7 +25,7 @@ describe('User Story 1: OpenAPI Components (E2E)', () => {
 
 	it('should generate 3 separate files for User, Post, Comment with index', async () => {
 		// T060: Use OpenAPI-like component schemas
-		const userSchema: JsonSchema = {
+		const userSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },
@@ -35,7 +35,7 @@ describe('User Story 1: OpenAPI Components (E2E)', () => {
 			required: ['id', 'name'],
 		};
 
-		const postSchema: JsonSchema = {
+		const postSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },
@@ -46,7 +46,7 @@ describe('User Story 1: OpenAPI Components (E2E)', () => {
 			required: ['id', 'title', 'content', 'authorId'],
 		};
 
-		const commentSchema: JsonSchema = {
+		const commentSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },
@@ -94,7 +94,7 @@ describe('User Story 1: OpenAPI Components (E2E)', () => {
 
 	it('should correctly resolve dependencies for referenced schemas', async () => {
 		// Create schemas with cross-references (if supported via refResolver)
-		const userSchema: JsonSchema = {
+		const userSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },
@@ -103,7 +103,7 @@ describe('User Story 1: OpenAPI Components (E2E)', () => {
 			required: ['id', 'name'],
 		};
 
-		const postSchema: JsonSchema = {
+		const postSchema: JSONSchema = {
 			type: 'object',
 			properties: {
 				id: { type: 'integer' },

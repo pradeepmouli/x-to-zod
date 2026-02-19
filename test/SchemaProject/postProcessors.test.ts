@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import { mkdtempSync, rmSync, readFileSync } from 'fs';
 import path from 'path';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 
 describe('Post-Processor Integration (T081-T083)', () => {
 	it('should apply global post-processors to all schemas', async () => {
@@ -20,7 +20,7 @@ describe('Post-Processor Integration (T081-T083)', () => {
 				],
 			});
 
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },
@@ -58,7 +58,7 @@ describe('Post-Processor Integration (T081-T083)', () => {
 				],
 			});
 
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },
@@ -101,7 +101,7 @@ describe('Post-Processor Integration (T081-T083)', () => {
 				],
 			});
 
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'string' },
@@ -145,7 +145,7 @@ describe('Post-Processor Integration (T081-T083)', () => {
 				],
 			});
 
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },
@@ -189,7 +189,7 @@ describe('Post-Processor Integration (T081-T083)', () => {
 				],
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },

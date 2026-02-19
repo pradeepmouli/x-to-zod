@@ -4,7 +4,7 @@ import { writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
 import { dirname, isAbsolute, resolve, extname } from 'path';
 import { pathToFileURL } from 'url';
 import { parseArgs, parseOrReadJSON, readPipe } from './utils/cliTools.js';
-import { JsonSchema } from './Types.js';
+import type { JSONSchemaAny as JSONSchema } from './JsonSchema/types/index.js';
 import { SchemaProject } from './SchemaProject/SchemaProject.js';
 
 const params = {
@@ -389,7 +389,7 @@ async function main() {
 	const postProcessors = args.postProcessors
 		? await loadPostProcessors(args.postProcessors)
 		: undefined;
-	const zodSchema = jsonSchemaToZod(jsonSchema as JsonSchema, {
+	const zodSchema = jsonSchemaToZod(jsonSchema as JSONSchema, {
 		name: args.name,
 		depth: args.depth,
 		module: args.module || 'esm',

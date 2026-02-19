@@ -1,4 +1,5 @@
-import type { JsonSchemaObject, Context, JsonSchema } from '../../Types.js';
+import type { Context } from '../../Types.js';
+import type { JSONSchemaObject } from '../types/index.js';
 import { BaseParser } from './BaseParser.js';
 import { parseSchema } from './parseSchema.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
@@ -6,12 +7,22 @@ import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 export class StringParser extends BaseParser<'string'> {
 	readonly typeKind = 'string' as const;
 
-	constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
+	constructor(schema: JSONSchemaObject, refs: Context) {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const s = schema as JsonSchemaObject & { type?: string };
+	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
+		const s = schema as JSONSchemaObject & {
+			type?: string;
+			format?: string;
+			pattern?: string;
+			minLength?: number;
+			maxLength?: number;
+			contentEncoding?: string;
+			contentMediaType?: string;
+			contentSchema?: unknown;
+			errorMessage?: Record<string, string | undefined>;
+		};
 		const builder = this.refs.build.string();
 
 		if (s.format) {
@@ -46,9 +57,5 @@ export class StringParser extends BaseParser<'string'> {
 		}
 
 		return builder;
-	}
-
-	protected canProduceType(type: string): boolean {
-		return type === this.typeKind || type === 'StringBuilder';
 	}
 }

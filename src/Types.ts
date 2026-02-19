@@ -1,48 +1,24 @@
 import { Jsonifiable } from 'type-fest';
-import type { JSONSchema as JSONSchema2020 } from 'json-schema-typed/draft-2020-12';
 import type { JSONSchema as JSONSchema07 } from 'json-schema-typed/draft-07';
-import type { JSONSchema as JSONSchema2019 } from 'json-schema-typed/draft-2019-09';
-import type { transformer } from './JsonSchema/index.js';
+import type {
+	JSONSchemaAny as JSONSchema,
+	transformer,
+} from './JsonSchema/types/index.js';
 import type { ZodBuilder as BaseBuilder } from './ZodBuilder/BaseBuilder.js';
 
 export type Serializable = Jsonifiable;
 
-// Type aliases for backward compatibility
-
-export * as JSONSchema2020 from 'json-schema-typed/draft-2020-12';
-
-export * as JSONSchema2019 from 'json-schema-typed/draft-2019-09';
-
-export * as JSONSchema07 from 'json-schema-typed/draft-07';
-
-import { JSONSchema } from 'json-schema-typed/draft-2020-12';
-
-type JSONSchemaMap = {
-	'2020-12': JSONSchema2020.Interface;
-	'2019-09': JSONSchema2019.Interface;
-	'07': JSONSchema07.Interface;
-};
-
-export type JSONSchema = JSONSchema;
-
-export type JsonSchemaObject = JSONSchema & {
-	// Custom extensions
-	errorMessage?: { [key: string]: string | undefined };
-	nullable?: boolean; // OpenAPI 3.0 extension
-};
-
-export type ParserSelector = (
-	schema: JSONSchema.Interface,
-	refs: Context,
-) => BaseBuilder;
+export type ParserSelector = (schema: JSONSchema, refs: Context) => BaseBuilder;
 export type ParserOverride = (
-	schema: JSONSchema.Interface,
+	schema: JSONSchema,
 	refs: Context,
 ) => BaseBuilder | string | void;
 
 export type BuildFunctions =
 	| typeof import('./ZodBuilder/v3.js').buildV3
 	| typeof import('./ZodBuilder/v4.js').buildV4;
+
+export type ZodVersion = 'v3' | 'v4';
 
 export type ProcessorPathPattern = string | string[];
 
@@ -63,7 +39,7 @@ export interface PreProcessor extends ProcessorConfig {
 export interface PostProcessorContext {
 	path: (string | number)[];
 	pathString: string;
-	schema: JSONSchema.Interface;
+	schema: JSONSchema;
 	build: BuildFunctions;
 	matchPath: (pattern: string) => boolean;
 }

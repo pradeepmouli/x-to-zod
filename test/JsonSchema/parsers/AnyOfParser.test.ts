@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
-import type { JsonSchema, Context } from '../../../src/Types.js';
+import type { JSONSchema, Context } from '../../../src/Types.js';
 import { buildV4, buildV3 } from '../../../src/ZodBuilder/index.js';
 import { AnyOfParser } from '../../../src/JsonSchema/parsers/AnyOfParser.js';
 
@@ -14,7 +14,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('AnyOfParser', () => {
 	it('returns union for multiple anyOf options', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			anyOf: [{ type: 'string' }, { type: 'number' }],
 		};
 
@@ -28,7 +28,7 @@ describe('AnyOfParser', () => {
 	});
 
 	it('returns single schema when anyOf has one option', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			anyOf: [{ type: 'string' }],
 		};
 
@@ -41,7 +41,7 @@ describe('AnyOfParser', () => {
 	});
 
 	it('returns any() for empty anyOf', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			anyOf: [],
 		};
 
@@ -53,7 +53,7 @@ describe('AnyOfParser', () => {
 	});
 
 	it('handles nested anyOf schemas', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			anyOf: [
 				{ type: 'string' },
 				{ anyOf: [{ type: 'number' }, { type: 'boolean' }] },

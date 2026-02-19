@@ -1,4 +1,4 @@
-import type { JsonSchema } from '../../Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
 import { ObjectParser } from './ObjectParser.js';
 import { ArrayParser } from './ArrayParser.js';
 import { StringParser } from './StringParser.js';
@@ -14,6 +14,7 @@ import { NotParser } from './NotParser.js';
 import { NullableParser } from './NullableParser.js';
 import { MultipleTypeParser } from './MultipleTypeParser.js';
 import { ConditionalParser } from './ConditionalParser.js';
+import { TupleParser } from './TupleParser.js';
 import { its } from '../its.js';
 
 /**
@@ -35,7 +36,8 @@ type ParserClass =
 	| typeof NotParser
 	| typeof NullableParser
 	| typeof MultipleTypeParser
-	| typeof ConditionalParser;
+	| typeof ConditionalParser
+	| typeof TupleParser;
 
 /**
  * Registry mapping JSON Schema types to parser classes.
@@ -66,41 +68,48 @@ export const parserRegistry = new Map<string, ParserClass>([
  * @param schema - JSON Schema to analyze
  * @returns Parser class constructor or undefined if no match
  */
-export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
+export function selectParserClass(schema: JSONSchema): ParserClass | undefined {
 	// Schema must be an object to have a parser
 	if (typeof schema !== 'object' || schema === null) {
 		return undefined;
 	}
 
 	// Check special cases first (highest priority)
-	if (its.a.nullable(schema)) {
+	if (its.nullable(schema)) {
 		return NullableParser;
 	}
-	if (its.a.not(schema)) {
+	if (its.not(schema)) {
 		return NotParser;
 	}
 	// Check for enum keyword directly (including empty arrays)
 	if ('enum' in schema && Array.isArray((schema as any).enum)) {
 		return EnumParser;
 	}
-	if (its.a.const(schema)) {
+	if (its.const(schema)) {
 		return ConstParser;
 	}
-	if (its.a.multipleType(schema)) {
+	// Check for tuple: prefixItems (2020-12) or items as array (draft-07)
+	if ('prefixItems' in schema && Array.isArray((schema as any).prefixItems)) {
+		return TupleParser;
+	}
+	if ('items' in schema && Array.isArray((schema as any).items)) {
+		return TupleParser;
+	}
+	if (its.multipleType(schema)) {
 		return MultipleTypeParser;
 	}
-	if (its.a.conditional(schema)) {
+	if (its.conditional(schema)) {
 		return ConditionalParser;
 	}
 
 	// Check combinators
-	if (its.an.anyOf(schema)) {
+	if (its.anyOf(schema)) {
 		return parserRegistry.get('anyOf');
 	}
-	if (its.an.allOf(schema)) {
+	if (its.allOf(schema)) {
 		return parserRegistry.get('allOf');
 	}
-	if (its.a.oneOf(schema)) {
+	if (its.oneOf(schema)) {
 		return parserRegistry.get('oneOf');
 	}
 
@@ -113,25 +122,25 @@ export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
 	}
 
 	// Type inference using its.* utilities
-	if (its.an.object(schema)) {
+	if (its.object(schema)) {
 		return parserRegistry.get('object');
 	}
-	if (its.an.array(schema)) {
+	if (its.array(schema)) {
 		return parserRegistry.get('array');
 	}
-	if (its.a.primitive(schema, 'string')) {
+	if (its.primitive(schema, 'string')) {
 		return parserRegistry.get('string');
 	}
-	if (its.a.primitive(schema, 'number')) {
+	if (its.primitive(schema, 'number')) {
 		return parserRegistry.get('number');
 	}
-	if (its.a.primitive(schema, 'integer')) {
+	if (its.primitive(schema, 'integer')) {
 		return parserRegistry.get('integer');
 	}
-	if (its.a.primitive(schema, 'boolean')) {
+	if (its.primitive(schema, 'boolean')) {
 		return parserRegistry.get('boolean');
 	}
-	if (its.a.primitive(schema, 'null')) {
+	if (its.primitive(schema, 'null')) {
 		return parserRegistry.get('null');
 	}
 

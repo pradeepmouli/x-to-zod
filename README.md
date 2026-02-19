@@ -165,6 +165,9 @@ const justTheSchema = jsonSchemaToZod(myObject);
 
 Transform Zod builders after parsing with post-processors:
 
+`typeFilter` matches parser `typeKind` values (for example `object`, `array`, `oneOf`).
+It does not match builder class names such as `ObjectBuilder`.
+
 ```typescript
 import { jsonSchemaToZod } from "x-to-zod";
 import { is } from "x-to-zod/utils";

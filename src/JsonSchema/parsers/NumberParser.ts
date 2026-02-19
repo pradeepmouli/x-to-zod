@@ -1,16 +1,26 @@
-import type { JsonSchemaObject, Context, JsonSchema } from '../../Types.js';
+import type { Context } from '../../Types.js';
+import { type JSONSchemaObject } from '../types/index.js';
 import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class NumberParser extends BaseParser<'number'> {
+export class NumberParser extends BaseParser<'number' | 'integer'> {
 	readonly typeKind = 'number' as const;
 
-	constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
+	constructor(schema: JSONSchemaObject, refs: Context) {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const s = schema as JsonSchemaObject & { type?: string };
+	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
+		const s = schema as JSONSchemaObject & {
+			type?: string;
+			format?: string;
+			multipleOf?: number;
+			minimum?: number;
+			exclusiveMinimum?: number;
+			maximum?: number;
+			exclusiveMaximum?: number;
+			errorMessage?: Record<string, string | undefined>;
+		};
 		const builder = this.refs.build.number();
 
 		if (s.type === 'integer') {
@@ -38,9 +48,4 @@ export class NumberParser extends BaseParser<'number'> {
 		return builder;
 	}
 
-	protected canProduceType(type: string): boolean {
-		return (
-			type === this.typeKind || type === 'integer' || type === 'NumberBuilder'
-		);
-	}
 }

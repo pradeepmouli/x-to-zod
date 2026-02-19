@@ -1,5 +1,5 @@
 import { BaseParser } from './BaseParser.js';
-import type { JsonSchema } from '../../Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { parseSchema } from './parseSchema.js';
 import { half } from '../../utils/half.js';
@@ -9,7 +9,7 @@ const originalIndex = Symbol('Original index');
 /**
  * Ensures all items in array have originalIndex for tracking.
  */
-const ensureOriginalIndex = (arr: JsonSchema[]) => {
+const ensureOriginalIndex = (arr: JSONSchema[]) => {
 	const newArr = [];
 
 	for (let i = 0; i < arr.length; i++) {
@@ -35,8 +35,8 @@ const ensureOriginalIndex = (arr: JsonSchema[]) => {
 export class AllOfParser extends BaseParser<'allOf'> {
 	readonly typeKind = 'allOf' as const;
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const allOfSchema = schema as { allOf?: JsonSchema[] };
+	protected parseImpl(schema: JSONSchema): ZodBuilder {
+		const allOfSchema = schema as { allOf?: JSONSchema[] };
 		const allOf = allOfSchema.allOf || [];
 
 		if (allOf.length === 0) {
@@ -52,7 +52,7 @@ export class AllOfParser extends BaseParser<'allOf'> {
 			});
 		}
 
-		const [left, right] = half(ensureOriginalIndex(allOf)) as JsonSchema[][];
+		const [left, right] = half(ensureOriginalIndex(allOf)) as JSONSchema[][];
 		const leftBuilder = new AllOfParser({ allOf: left }, this.refs).parseImpl({
 			allOf: left,
 		});
@@ -63,9 +63,5 @@ export class AllOfParser extends BaseParser<'allOf'> {
 		);
 
 		return this.refs.build.intersection(leftBuilder, rightBuilder);
-	}
-
-	protected canProduceType(type: string): boolean {
-		return type === this.typeKind || type === 'IntersectionBuilder';
 	}
 }

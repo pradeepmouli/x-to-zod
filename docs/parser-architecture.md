@@ -73,10 +73,17 @@ parse(): ZodBuilder {
 - `applyMetadata(builder, schema)`: Add description and default values
 - `parseChild(schema, ...pathSegments)`: Parse nested schemas
 - `createChildContext(...pathSegments)`: Create context for nested parsing
-- `canProduceType(type)`: Check if parser can produce a builder type
 
-**Hook Methods** (can be overridden):
-- `canProduceType(type)`: Customize type matching logic
+### Post-Processor Type Filtering
+
+`typeFilter` values are matched against a parser's `typeKind` only.
+
+Examples:
+- `ObjectParser` → `typeKind = 'object'`
+- `ArrayParser` → `typeKind = 'array'`
+- `OneOfParser` → `typeKind = 'oneOf'`
+
+Builder class names (for example `ObjectBuilder`) are not used for filtering.
 
 ## Parser Selection Algorithm
 
@@ -196,10 +203,6 @@ export class CustomParser extends BaseParser<'custom'> {
 
   protected parseImpl(schema: JsonSchema): ZodBuilder {
     return parseCustom(schema as any, this.refs);
-  }
-
-  protected canProduceType(type: string): boolean {
-    return type === this.typeKind || type === 'CustomBuilder';
   }
 }
 ```

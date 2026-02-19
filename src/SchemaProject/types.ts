@@ -50,7 +50,7 @@ export interface SchemaFileOptions extends SchemaOptions {
  */
 export interface SchemaEntry {
 	id: string;
-	schema: Record<string, any>; // JsonSchema
+	schema: Record<string, any>; // JSONSchema
 	builder: ZodBuilder | null;
 	sourceFile: SourceFile | null;
 	exportName: string;

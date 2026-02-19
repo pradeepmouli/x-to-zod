@@ -4,39 +4,19 @@ import { parseDefault } from './parsers/parseDefault.js';
 import { parseSchema } from './parsers/parseSchema.js';
 import { parseRef } from '../SchemaProject/parseRef.js';
 import { its } from './its.js';
-import * as JSONSchema07 from './types/draft07.js';
-import * as JSONSchema2019 from './types/draft2019-9.js';
-import * as JSONSchema2020 from './types/draft2020-12.js';
-import type { JsonSchemaObject } from '../Types.js';
-import type { Simplify } from 'type-fest';
-import { Interface } from 'readline/promises';
+import type {
+	JSONSchema,
+	SchemaVersion,
+	TypeValue,
+	transformer,
+} from './types/index.js';
 
-export type SchemaVersion = '2020-12' | '2019-09' | '07' | 'OpenAPI3.0';
-
-export type TypeValue =
-	| 'object'
-	| 'array'
-	| 'string'
-	| 'number'
-	| 'integer'
-	| 'boolean'
-	| 'null'
-	| 'any';
-
-type JSONSchemaMap<T, V extends TypeValue> = {
-	'2020-12': JSONSchema2020.default.Interface<T, V>;
-	'2019-09': JSONSchema2019.default.Interface<T, V>;
-	'07': JSONSchema07.default.Interface<T, V>;
-	'OpenAPI3.0': JSONSchema2020.default.Interface<T, V>; // OpenAPI 3.0 uses a subset of Draft 2020-12
-};
-
-export type JSONSchema<
-	Version extends SchemaVersion,
-	T,
-	V extends TypeValue,
-> = Simplify<JSONSchemaMap<T, V>[Version]>;
-
-type test = JSONSchema<'07', any, any>;
+export type {
+	JSONSchema,
+	SchemaVersion,
+	TypeValue,
+	transformer,
+} from './types/index.js';
 
 export const parse = {
 	// class-based parse methods
@@ -49,40 +29,54 @@ export const parse = {
 	anyOf: classParse.anyOf,
 	allOf: classParse.allOf,
 	oneOf: classParse.oneOf,
+	enum: classParse.enum,
+	const: classParse.const,
+	tuple: classParse.tuple,
+	record: classParse.record,
+
+	// convenience aliases
+	union: classParse.union,
+	intersection: classParse.intersection,
+	discriminatedUnion: classParse.discriminatedUnion,
+
+	// special types
+	any: classParse.any,
+	unknown: classParse.unknown,
+	never: classParse.never,
 
 	// functional helpers
 	default: parseDefault,
 	discriminator: undefined, // to be implemented
 
-	// Multi-schema support (capital names for clarity)
+	// Multi-schema support (lowercase for consistency)
+	schema: parseSchema,
+	ref: parseRef,
+
+	/** @deprecated Use `parse.schema` instead. */
 	Schema: parseSchema,
+	/** @deprecated Use `parse.ref` instead. */
 	Ref: parseRef,
 };
 
-export type transformer = <Version extends SchemaVersion = '2020-12'>(
-	schema: JSONSchema<Version, object, any>,
-	refs: any,
-) => JsonSchemaObject | undefined;
-
 export function select<S extends SchemaVersion = '2020-12'>(
-	schema: JSONSchema<S, any, any>,
+	schema: JSONSchema<S, any, TypeValue>,
 ) {
-	if (its.an.object(schema)) {
+	if (its.object(schema)) {
 		return parse.object;
-	} else if (its.an.array(schema)) {
+	} else if (its.array(schema)) {
 		return parse.array;
-	} else if (its.a.primitive(schema, 'string')) {
+	} else if (its.primitive(schema, 'string')) {
 		return parse.string;
 	} else if (
-		its.a.primitive(schema, 'number') ||
-		its.a.primitive(schema, 'integer')
+		its.primitive(schema, 'number') ||
+		its.primitive(schema, 'integer')
 	) {
 		return parse.number;
-	} else if (its.a.primitive(schema, 'boolean')) {
+	} else if (its.primitive(schema, 'boolean')) {
 		return parse.boolean;
-	} else if (its.a.primitive(schema, 'null')) {
+	} else if (its.primitive(schema, 'null')) {
 		return parse.null;
 	}
-	// For enum and all other cases, use Schema
-	return parse.Schema;
+	// For enum and all other cases, use schema
+	return parse.schema;
 }

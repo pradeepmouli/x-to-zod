@@ -110,10 +110,6 @@ export class ObjectParser extends BaseParser<'object'> {
     const builder = ObjectBuilder.fromCode('z.object({})', this.refs);
     return builder;
   }
-
-  protected canProduceType(type: string): boolean {
-    return type === this.typeKind || type === 'ObjectBuilder';
-  }
 }
 ```
 
@@ -214,7 +210,8 @@ Determine which method to override:
 - **Custom parsing**: Override `parseImpl()`
 - **After parsing**: Override `applyPostProcessors()`
 - **Metadata handling**: Override `applyMetadata()`
-- **Type checking**: Override `canProduceType()`
+
+Note: `typeFilter` matching uses parser `typeKind` values directly.
 
 ### Step 3: Create Your Parser Class
 
@@ -342,10 +339,10 @@ describe('CustomParser', () => {
     });
   });
 
-  describe('canProduceType', () => {
-    it('should return true for custom type', () => {
+  describe('typeKind', () => {
+    it('should expose custom type kind for typeFilter matching', () => {
       const parser = new CustomParser({}, defaultRefs);
-      expect(parser.canProduceType('custom')).toBe(true);
+      expect(parser.typeKind).toBe('custom');
     });
   });
 });

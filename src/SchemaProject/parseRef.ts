@@ -1,4 +1,4 @@
-import type { JsonSchema } from '../Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../JsonSchema/types/index.js';
 import type { DefaultRefResolver } from './RefResolver.js';
 import type { DependencyGraph } from './types.js';
 import { ReferenceBuilder } from '../ZodBuilder/reference.js';
@@ -10,7 +10,7 @@ const MAX_REF_DEPTH = 100;
  * Returns ReferenceBuilder for external refs or null for non-refs/internal refs.
  */
 export function parseRef(
-	schema: JsonSchema | undefined,
+	schema: JSONSchema | undefined,
 	refResolver: DefaultRefResolver,
 	fromSchemaId: string,
 	dependencyGraph?: DependencyGraph,
@@ -113,7 +113,7 @@ function isInCycle(
  * Useful for dependency analysis.
  */
 export function extractRefs(
-	schema: JsonSchema,
+	schema: JSONSchema,
 	refs: Set<string> = new Set(),
 	depth: number = 0,
 ): Set<string> {
@@ -130,7 +130,7 @@ export function extractRefs(
 
 	if (Array.isArray(schema)) {
 		for (const item of schema) {
-			extractRefs(item as JsonSchema, refs, depth + 1);
+			extractRefs(item as JSONSchema, refs, depth + 1);
 		}
 		return refs;
 	}
@@ -142,18 +142,18 @@ export function extractRefs(
 
 	if (schema.properties && typeof schema.properties === 'object') {
 		for (const propSchema of Object.values(schema.properties)) {
-			extractRefs(propSchema as JsonSchema, refs, depth + 1);
+			extractRefs(propSchema as JSONSchema, refs, depth + 1);
 		}
 	}
 
 	if (schema.items) {
-		extractRefs(schema.items as JsonSchema, refs, depth + 1);
+		extractRefs(schema.items as JSONSchema, refs, depth + 1);
 	}
 
 	for (const combiner of ['allOf', 'anyOf', 'oneOf'] as const) {
 		const combined = (schema as Record<string, unknown>)[combiner];
 		if (combined && Array.isArray(combined)) {
-			for (const subSchema of combined as JsonSchema[]) {
+			for (const subSchema of combined as JSONSchema[]) {
 				extractRefs(subSchema, refs, depth + 1);
 			}
 		}
@@ -163,7 +163,7 @@ export function extractRefs(
 		schema.additionalProperties &&
 		typeof schema.additionalProperties === 'object'
 	) {
-		extractRefs(schema.additionalProperties as JsonSchema, refs, depth + 1);
+		extractRefs(schema.additionalProperties as JSONSchema, refs, depth + 1);
 	}
 
 	return refs;

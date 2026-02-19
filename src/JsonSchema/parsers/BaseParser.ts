@@ -1,32 +1,47 @@
 import type {
 	Context,
-	JsonSchema,
 	PreProcessor,
 	PostProcessor,
 	PostProcessorConfig,
 	ProcessorConfig,
 } from '../../Types.js';
+import type {
+	JSONSchema,
+	JSONSchemaAny,
+	JSONSchemaObject,
+	SchemaVersion,
+	TypeValue,
+	TypeValueToTypeMap,
+} from '../types/index.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
 // Forward declaration to avoid circular dependency
 let _parseSchema: (
-	schema: JsonSchema,
+	schema: JSONSchemaAny | boolean,
 	refs: Context,
 	blockMeta?: boolean,
 ) => ZodBuilder;
 
+export type ApplicableType<TypeKind extends string> = TypeKind extends TypeValue
+	? JSONSchema<SchemaVersion, TypeValueToTypeMap[TypeKind], TypeKind>
+	: Exclude<JSONSchema<SchemaVersion, any, Exclude<TypeValue,'array'>>,boolean>;
+
 /**
  * Abstract base class implementing the template method for schema parsing.
  */
-export abstract class BaseParser<TypeKind extends string = string> {
+export abstract class BaseParser<
+	TypeKind extends string = string,
+	Version extends SchemaVersion = SchemaVersion,
+	JS extends JSONSchemaAny<Version> = JSONSchemaAny<Version>,
+> {
 	abstract readonly typeKind: TypeKind;
 
 	protected readonly preProcessors: PreProcessor[];
 	protected readonly postProcessors: PostProcessor[];
 
 	protected constructor(
-		protected readonly schema: JsonSchema,
+		protected readonly schema: JSONSchemaObject<Version>,
 		protected readonly refs: Context,
 	) {
 		// Note: this.typeKind is not yet initialized when parent constructor runs
@@ -41,7 +56,7 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	 */
 	static setParseSchema(
 		parseSchema: (
-			schema: JsonSchema,
+			schema: JSONSchemaAny | boolean,
 			refs: Context,
 			blockMeta?: boolean,
 		) => ZodBuilder,
@@ -54,7 +69,7 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	 * Used by parser classes to recursively parse nested schemas.
 	 */
 	static parseSchema(
-		schema: JsonSchema,
+		schema: JSONSchemaAny | boolean,
 		refs: Context,
 		blockMeta?: boolean,
 	): ZodBuilder {
@@ -80,23 +95,21 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		}
 
 		const processedSchema = this.applyPreProcessors(this.schema);
-		let builder = this.parseImpl(processedSchema);
-		builder = this.applyPostProcessors(builder, processedSchema);
+		let builder = this.parseImpl(processedSchema as JS);
+		builder = this.applyPostProcessors(builder, processedSchema as any);
 		return this.applyMetadata(builder, processedSchema);
 	}
 
-	protected abstract parseImpl(schema: JsonSchema): ZodBuilder;
+	protected abstract parseImpl(schema: JS): ZodBuilder;
 
-	protected canProduceType(type: string): boolean {
-		return type === this.typeKind;
-	}
-
-	protected applyPreProcessors(schema: JsonSchema): JsonSchema {
+	protected applyPreProcessors(
+		schema: JSONSchemaAny<Version>,
+	): JSONSchemaAny<Version> {
 		let current = schema;
 		for (const processor of this.preProcessors) {
-			const output = processor(current, this.refs);
+			const output = processor(current as any, this.refs) as any;
 			if (output !== undefined) {
-				current = output;
+				current = output as JSONSchemaAny<Version>;
 			}
 		}
 		return current;
@@ -104,7 +117,7 @@ export abstract class BaseParser<TypeKind extends string = string> {
 
 	protected applyPostProcessors(
 		builder: ZodBuilder,
-		schema: JsonSchema,
+		schema: JSONSchemaAny<Version>,
 	): ZodBuilder {
 		let current = builder;
 		for (const processor of this.postProcessors) {
@@ -117,7 +130,7 @@ export abstract class BaseParser<TypeKind extends string = string> {
 			const output = processor(current, {
 				path,
 				pathString,
-				schema,
+				schema: schema as any,
 				build: this.refs.build,
 				matchPath,
 			});
@@ -128,7 +141,10 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		return current;
 	}
 
-	protected applyMetadata(builder: ZodBuilder, schema: JsonSchema): ZodBuilder {
+	protected applyMetadata(
+		builder: ZodBuilder,
+		schema: JSONSchemaAny<Version>,
+	): ZodBuilder {
 		if (schema && typeof schema === 'object') {
 			let current = builder;
 			const description = (schema as Record<string, unknown>).description;
@@ -211,7 +227,7 @@ export abstract class BaseParser<TypeKind extends string = string> {
 		const filter = candidate?.typeFilter;
 		if (!filter) return true;
 		const filters = Array.isArray(filter) ? filter : [filter];
-		return filters.some((type) => this.canProduceType(type));
+		return filters.some((type) => type === this.typeKind);
 	}
 
 	protected matchesPath(
@@ -245,7 +261,7 @@ export abstract class BaseParser<TypeKind extends string = string> {
 	}
 
 	protected parseChild(
-		schema: JsonSchema,
+		schema: JSONSchemaAny<Version>,
 		...pathSegments: (string | number)[]
 	): ZodBuilder {
 		if (!_parseSchema) {
@@ -253,6 +269,10 @@ export abstract class BaseParser<TypeKind extends string = string> {
 				'BaseParser.setParseSchema() must be called before using parseChild()',
 			);
 		}
-		return _parseSchema(schema, this.createChildContext(...pathSegments));
+
+		return _parseSchema(
+			schema as JSONSchemaAny,
+			this.createChildContext(...pathSegments),
+		);
 	}
 }

@@ -1,63 +1,150 @@
-import type { JsonSchemaObject, JsonSchema, Serializable } from '../Types.js';
+import type { Serializable } from '../Types.js';
+import type {
+	JSONSchemaObject,
+	JSONSchemaAny as JSONSchema,
+} from './types/index.js';
+
+const isSchemaObject = (value: unknown): value is JSONSchemaObject =>
+	typeof value === 'object' && value !== null;
+
+export function isObjectSchema(
+	value: unknown,
+): value is JSONSchemaObject & { type: 'object' } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return schema.type === 'object';
+}
+
+export function isArraySchema(
+	value: unknown,
+): value is JSONSchemaObject & { type: 'array' } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return schema.type === 'array';
+}
+
+export function isAnyOfSchema(
+	value: unknown,
+): value is JSONSchemaObject & { anyOf: JSONSchema[] } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return schema.anyOf !== undefined;
+}
+
+export function isAllOfSchema(
+	value: unknown,
+): value is JSONSchemaObject & { allOf: JSONSchema[] } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return schema.allOf !== undefined;
+}
+
+export function isEnumSchema(
+	value: unknown,
+): value is JSONSchemaObject & { enum: Serializable[] } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	return Array.isArray((value as any).enum) && (value as any).enum.length > 0;
+}
+
+export function isNullableSchema(
+	value: unknown,
+): value is JSONSchemaObject & { nullable: true } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	return (value as any).nullable === true;
+}
+
+export function isMultipleTypeSchema(
+	value: unknown,
+): value is JSONSchemaObject & { type: string[] } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return Array.isArray(schema.type);
+}
+
+export function isNotSchema(
+	value: unknown,
+): value is JSONSchemaObject & { not: JSONSchema } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return schema.not !== undefined;
+}
+
+export function isConstSchema(
+	value: unknown,
+): value is JSONSchemaObject & { const: Serializable } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	return (value as any).const !== undefined;
+}
+
+export function isPrimitiveSchema<
+	T extends 'string' | 'number' | 'integer' | 'boolean' | 'null',
+>(value: unknown, primitive: T): value is JSONSchemaObject & { type: T } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return schema.type === primitive;
+}
+
+export function isConditionalSchema(
+	value: unknown,
+): value is JSONSchemaObject & {
+	if: JSONSchema;
+	then: JSONSchema;
+	else: JSONSchema;
+} {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	return Boolean(
+		'if' in value &&
+		(value as any).if &&
+		'then' in value &&
+		'else' in value &&
+		(value as any).then &&
+		(value as any).else,
+	);
+}
+
+export function isOneOfSchema(
+	value: unknown,
+): value is JSONSchemaObject & { oneOf: JSONSchema[] } {
+	if (!isSchemaObject(value)) {
+		return false;
+	}
+	const schema = value as any;
+	return schema.oneOf !== undefined;
+}
 
 export const its = {
-	an: {
-		object: (x: JsonSchemaObject): x is JsonSchemaObject & { type: 'object' } =>
-			x.type === 'object',
-		array: (x: JsonSchemaObject): x is JsonSchemaObject & { type: 'array' } =>
-			x.type === 'array',
-		anyOf: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & {
-			anyOf: JsonSchema[];
-		} => x.anyOf !== undefined,
-		allOf: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & {
-			allOf: JsonSchema[];
-		} => x.allOf !== undefined,
-		enum: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & {
-			enum: Serializable[];
-		} => Array.isArray(x.enum) && x.enum.length > 0,
-	},
-	a: {
-		nullable: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & { nullable: true } =>
-			(x as any).nullable === true,
-		multipleType: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & { type: string[] } => Array.isArray(x.type),
-		not: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & {
-			not: JsonSchema;
-		} => x.not !== undefined,
-		const: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & {
-			const: Serializable;
-		} => x.const !== undefined,
-		primitive: <T extends 'string' | 'number' | 'integer' | 'boolean' | 'null'>(
-			x: JsonSchemaObject,
-			p: T,
-		): x is JsonSchemaObject & { type: T } => x.type === p,
-		conditional: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & {
-			if: JsonSchema;
-			then: JsonSchema;
-			else: JsonSchema;
-		} =>
-			Boolean(
-				'if' in x && x.if && 'then' in x && 'else' in x && x.then && x.else,
-			),
-		oneOf: (
-			x: JsonSchemaObject,
-		): x is JsonSchemaObject & {
-			oneOf: JsonSchema[];
-		} => x.oneOf !== undefined,
-	},
+	object: isObjectSchema,
+	array: isArraySchema,
+	anyOf: isAnyOfSchema,
+	allOf: isAllOfSchema,
+	enum: isEnumSchema,
+	nullable: isNullableSchema,
+	multipleType: isMultipleTypeSchema,
+	not: isNotSchema,
+	const: isConstSchema,
+	primitive: isPrimitiveSchema,
+	conditional: isConditionalSchema,
+	oneOf: isOneOfSchema,
 };
