@@ -93,7 +93,7 @@ export function isConstSchema<V extends SchemaVersion>(
 	if (!isSchemaObject(value)) {
 		return false;
 	}
-	return (value).const !== undefined;
+	return value.const !== undefined;
 }
 
 export function isPrimitiveSchema<
