@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 import { mkdtempSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -27,7 +27,7 @@ describe('SchemaProject - Extract Definitions', () => {
 				extractDefinitions: true,
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					address: { $ref: '#/definitions/Address' },
@@ -104,7 +104,7 @@ describe('SchemaProject - Extract Definitions', () => {
 				extractDefinitions: true,
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					contact: { $ref: '#/$defs/Contact' },
@@ -139,7 +139,7 @@ describe('SchemaProject - Extract Definitions', () => {
 				},
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				definitions: {
 					MyType: {
@@ -165,7 +165,7 @@ describe('SchemaProject - Extract Definitions', () => {
 				},
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				definitions: {
 					Address: {
@@ -189,7 +189,7 @@ describe('SchemaProject - Extract Definitions', () => {
 				extractDefinitions: false,
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					address: { $ref: '#/definitions/Address' },
@@ -224,7 +224,7 @@ describe('SchemaProject - Extract Definitions', () => {
 				extractDefinitions: true,
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				properties: {
 					address: { $ref: '#/definitions/Address' },
@@ -254,7 +254,7 @@ describe('SchemaProject - Extract Definitions', () => {
 				extractDefinitions: true,
 			});
 
-			const schema: JsonSchema = {
+			const schema: JSONSchema = {
 				type: 'object',
 				definitions: {
 					Level1: {

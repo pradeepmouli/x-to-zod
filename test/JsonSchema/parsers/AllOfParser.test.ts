@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
-import type { JsonSchema, Context } from '../../../src/Types.js';
+import type { JSONSchema, Context } from '../../../src/Types.js';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { AllOfParser } from '../../../src/JsonSchema/parsers/AllOfParser.js';
 
@@ -14,7 +14,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('AllOfParser', () => {
 	it('returns intersection for multiple allOf options', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			allOf: [{ type: 'string', minLength: 1 }, { maxLength: 100 }],
 		};
 
@@ -26,7 +26,7 @@ describe('AllOfParser', () => {
 	});
 
 	it('returns single schema when allOf has one option', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			allOf: [{ type: 'string' }],
 		};
 
@@ -39,7 +39,7 @@ describe('AllOfParser', () => {
 	});
 
 	it('returns never() for empty allOf', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			allOf: [],
 		};
 
@@ -51,7 +51,7 @@ describe('AllOfParser', () => {
 	});
 
 	it('combines nested allOf recursively', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			allOf: [
 				{ type: 'object', properties: { name: { type: 'string' } } },
 				{ properties: { age: { type: 'number' } } },

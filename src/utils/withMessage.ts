@@ -1,4 +1,4 @@
-import { JsonSchemaObject } from '../Types.js';
+import type { JSONSchemaObject } from '../JsonSchema/types/index.js';
 
 type Opener = string;
 type MessagePrefix = string;
@@ -7,7 +7,7 @@ type Closer = string;
 type Builder = [Opener, Closer] | [Opener, MessagePrefix, Closer];
 
 export function withMessage(
-	schema: JsonSchemaObject,
+	schema: JSONSchemaObject,
 	key: string,
 	get: (props: { value: unknown; json: string }) => Builder | void,
 ) {
@@ -24,9 +24,11 @@ export function withMessage(
 			const closer = got.length === 3 ? got[2] : got[1];
 
 			r += opener;
-
-			if (schema.errorMessage?.[key] !== undefined) {
-				r += prefix + JSON.stringify(schema.errorMessage[key]);
+			const errorMessage = (schema as any).errorMessage as
+				| Record<string, unknown>
+				| undefined;
+			if (errorMessage?.[key] !== undefined) {
+				r += prefix + JSON.stringify(errorMessage[key]);
 			}
 			r += closer;
 		}

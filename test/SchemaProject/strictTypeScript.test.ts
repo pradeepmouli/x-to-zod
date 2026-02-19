@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import { mkdtempSync, rmSync, readFileSync } from 'fs';
 import path from 'path';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 
 describe('Strict TypeScript Validation (T088-T089)', () => {
 	it('should generate code with proper imports and no implicit any', async () => {
@@ -18,7 +18,7 @@ describe('Strict TypeScript Validation (T088-T089)', () => {
 			});
 
 			// Add various schema types to test comprehensive type safety
-			const userSchema: JsonSchema = {
+			const userSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },
@@ -38,7 +38,7 @@ describe('Strict TypeScript Validation (T088-T089)', () => {
 				required: ['id', 'name', 'email'],
 			};
 
-			const productSchema: JsonSchema = {
+			const productSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'string' },
@@ -52,7 +52,7 @@ describe('Strict TypeScript Validation (T088-T089)', () => {
 				required: ['id', 'name', 'price'],
 			};
 
-			const orderSchema: JsonSchema = {
+			const orderSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'string' },
@@ -121,7 +121,7 @@ describe('Strict TypeScript Validation (T088-T089)', () => {
 			});
 
 			// Schema with complex types that require exact typing
-			const complexSchema: JsonSchema = {
+			const complexSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'string' },
@@ -185,7 +185,7 @@ describe('Strict TypeScript Validation (T088-T089)', () => {
 			});
 
 			// Simple schema to verify export structure
-			const simpleSchema: JsonSchema = {
+			const simpleSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					id: { type: 'integer' },
@@ -233,7 +233,7 @@ describe('Strict TypeScript Validation (T088-T089)', () => {
 			});
 
 			// Schema covering all JSON Schema primitive types
-			const allTypesSchema: JsonSchema = {
+			const allTypesSchema: JSONSchema = {
 				type: 'object',
 				properties: {
 					stringField: { type: 'string' },

@@ -1,5 +1,5 @@
 import { BaseParser } from './BaseParser.js';
-import type { JsonSchema } from '../../Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import type { buildV4 } from '../../ZodBuilder/v4.js';
 import { parseSchema } from './parseSchema.js';
@@ -11,8 +11,8 @@ import { parseSchema } from './parseSchema.js';
 export class OneOfParser extends BaseParser<'oneOf'> {
 	readonly typeKind = 'oneOf' as const;
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const oneOfSchema = schema as { oneOf?: JsonSchema[] };
+	protected parseImpl(schema: JSONSchema): ZodBuilder {
+		const oneOfSchema = schema as { oneOf?: JSONSchema[] };
 		const oneOf = oneOfSchema.oneOf || [];
 
 		if (oneOf.length === 0) {
@@ -23,7 +23,7 @@ export class OneOfParser extends BaseParser<'oneOf'> {
 			return this.parseChild(oneOf[0], 'oneOf', 0);
 		}
 
-		const schemaBuilders = oneOf.map((subSchema: JsonSchema, i: number) =>
+		const schemaBuilders = oneOf.map((subSchema: JSONSchema, i: number) =>
 			parseSchema(subSchema, {
 				...this.refs,
 				path: [...(this.refs.path || []), 'oneOf', i],
@@ -36,11 +36,5 @@ export class OneOfParser extends BaseParser<'oneOf'> {
 		}
 
 		return this.refs.build.union(schemaBuilders);
-	}
-
-	protected canProduceType(type: string): boolean {
-		return (
-			type === this.typeKind || type === 'OneOfBuilder' || type === 'XorBuilder'
-		);
 	}
 }

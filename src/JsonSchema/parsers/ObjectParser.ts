@@ -1,4 +1,8 @@
-import type { Context, JsonSchema, JsonSchemaObject } from '../../Types.js';
+import type { Context } from '../../Types.js';
+import type {
+	JSONSchemaAny as JSONSchema,
+	JSONSchemaObject,
+} from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { BaseParser } from './BaseParser.js';
 import { ObjectBuilder } from '../../ZodBuilder/index.js';
@@ -9,12 +13,21 @@ import { its } from '../its.js';
 export class ObjectParser extends BaseParser<'object'> {
 	readonly typeKind = 'object' as const;
 
-	constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
+	constructor(schema: JSONSchemaObject & { type?: string }, refs: Context) {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const objectSchema = schema as JsonSchemaObject & { type: 'object' };
+	protected parseImpl(schema: JSONSchema): ZodBuilder {
+		const objectSchema = schema as JSONSchemaObject & {
+			type: 'object';
+			properties?: Record<string, JSONSchema>;
+			required?: string[];
+			additionalProperties?: JSONSchema | boolean;
+			patternProperties?: Record<string, JSONSchema>;
+			anyOf?: JSONSchema[];
+			oneOf?: JSONSchema[];
+			allOf?: JSONSchema[];
+		};
 		let result = '' as string;
 
 		// Step 1: Build base object from properties
@@ -192,11 +205,11 @@ export class ObjectParser extends BaseParser<'object'> {
 		// Step 4: Handle combinators (anyOf, oneOf, allOf)
 		let builder = ObjectBuilder.fromCode(result, this.refs);
 
-		if (its.an.anyOf(objectSchema)) {
+		if (its.anyOf(objectSchema as any)) {
 			const anyOfZod = parseSchema(
 				{
-					...objectSchema,
-					anyOf: (objectSchema.anyOf || []).map((x: JsonSchema) =>
+					...(objectSchema as any),
+					anyOf: (objectSchema.anyOf || []).map((x: JSONSchema) =>
 						typeof x === 'object' &&
 						!('$ref' in x) &&
 						!(x as any).type &&
@@ -212,11 +225,11 @@ export class ObjectParser extends BaseParser<'object'> {
 			builder.and(anyOfZod);
 		}
 
-		if (its.a.oneOf(objectSchema)) {
+		if (its.oneOf(objectSchema as any)) {
 			const oneOfZod = parseSchema(
 				{
-					...objectSchema,
-					oneOf: (objectSchema.oneOf || []).map((x: JsonSchema) =>
+					...(objectSchema as any),
+					oneOf: (objectSchema.oneOf || []).map((x: JSONSchema) =>
 						typeof x === 'object' &&
 						!('$ref' in x) &&
 						!(x as any).type &&
@@ -232,11 +245,11 @@ export class ObjectParser extends BaseParser<'object'> {
 			builder.and(oneOfZod);
 		}
 
-		if (its.an.allOf(objectSchema)) {
+		if (its.allOf(objectSchema as any)) {
 			const allOfZod = parseSchema(
 				{
-					...objectSchema,
-					allOf: (objectSchema.allOf || []).map((x: JsonSchema) =>
+					...(objectSchema as any),
+					allOf: (objectSchema.allOf || []).map((x: JSONSchema) =>
 						typeof x === 'object' &&
 						!('$ref' in x) &&
 						!(x as any).type &&
@@ -253,9 +266,5 @@ export class ObjectParser extends BaseParser<'object'> {
 		}
 
 		return builder;
-	}
-
-	protected canProduceType(type: string): boolean {
-		return type === this.typeKind || type === 'ObjectBuilder';
 	}
 }

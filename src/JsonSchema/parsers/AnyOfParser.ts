@@ -1,5 +1,5 @@
-import { BaseParser } from './BaseParser.js';
-import type { JsonSchema } from '../../Types.js';
+import { BaseParser, type ApplicableType } from './BaseParser.js';
+import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { parseSchema } from './parseSchema.js';
 
@@ -10,19 +10,19 @@ import { parseSchema } from './parseSchema.js';
 export class AnyOfParser extends BaseParser<'anyOf'> {
 	readonly typeKind = 'anyOf' as const;
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const anyOfSchema = schema as { anyOf?: JsonSchema[] };
+	protected parseImpl(schema: ApplicableType<'anyOf'>): ZodBuilder {
+		const anyOfSchema = schema as { anyOf?: JSONSchema[] };
 		const anyOf = anyOfSchema.anyOf || [];
 
 		if (anyOf.length === 0) {
 			return this.refs.build.any();
 		}
 
-		if (anyOf.length === 1) {
+		if (anyOf.length === 1 && typeof anyOf[0] !== 'boolean') {
 			return this.parseChild(anyOf[0], 'anyOf', 0);
 		}
 
-		const schemas = anyOf.map((subSchema: JsonSchema, i: number) =>
+		const schemas = anyOf.map((subSchema: JSONSchema, i: number) =>
 			parseSchema(subSchema, {
 				...this.refs,
 				path: [...(this.refs.path || []), 'anyOf', i],
@@ -30,9 +30,5 @@ export class AnyOfParser extends BaseParser<'anyOf'> {
 		);
 
 		return this.refs.build.union(schemas);
-	}
-
-	protected canProduceType(type: string): boolean {
-		return type === this.typeKind || type === 'UnionBuilder';
 	}
 }

@@ -264,6 +264,82 @@ describe('parse API', () => {
 		});
 	});
 
+	describe('new parser methods', () => {
+		it('should parse enum schemas with parse.enum()', () => {
+			const schema = { enum: ['a', 'b'] };
+			const result = parse.enum(schema as any, defaultContext);
+			expect(result.text()).toBe('z.enum(["a","b"])');
+		});
+
+		it('should parse const schemas with parse.const()', () => {
+			const schema = { const: 'x' };
+			const result = parse.const(schema as any, defaultContext);
+			expect(result.text()).toBe('z.literal("x")');
+		});
+
+		it('should parse tuple schemas with parse.tuple()', () => {
+			const schema = {
+				type: 'array' as const,
+				prefixItems: [{ type: 'string' as const }, { type: 'number' as const }],
+			};
+			const result = parse.tuple(schema as any, defaultContext);
+			expect(result.text()).toBe('z.tuple([z.string(),z.number()])');
+		});
+
+		it('should support convenience aliases', () => {
+			const anyOfSchema = {
+				anyOf: [{ type: 'string' as const }, { type: 'number' as const }],
+			};
+			expect(parse.union(anyOfSchema as any, defaultContext).text()).toBe(
+				parse.anyOf(anyOfSchema as any, defaultContext).text(),
+			);
+
+			const allOfSchema = {
+				allOf: [
+					{
+						type: 'object' as const,
+						properties: { a: { type: 'string' as const } },
+					},
+					{
+						type: 'object' as const,
+						properties: { b: { type: 'number' as const } },
+					},
+				],
+			};
+			expect(
+				parse.intersection(allOfSchema as any, defaultContext).text(),
+			).toBe(parse.allOf(allOfSchema as any, defaultContext).text());
+
+			const oneOfSchema = {
+				oneOf: [{ type: 'string' as const }, { type: 'number' as const }],
+			};
+			expect(
+				parse.discriminatedUnion(oneOfSchema as any, defaultContext).text(),
+			).toBe(parse.oneOf(oneOfSchema as any, defaultContext).text());
+		});
+
+		it('should support special type methods', () => {
+			expect(parse.any(undefined as any, defaultContext).text()).toBe(
+				'z.any()',
+			);
+			expect(parse.unknown(undefined as any, defaultContext).text()).toBe(
+				'z.unknown()',
+			);
+			expect(parse.never(undefined as any, defaultContext).text()).toBe(
+				'z.never()',
+			);
+		});
+
+		it('should parse record schemas with parse.record()', () => {
+			const schema = {
+				type: 'object' as const,
+				additionalProperties: { type: 'string' as const },
+			};
+			const result = parse.record(schema as any, defaultContext);
+			expect(result.text()).toContain('z.record(z.string(), z.string())');
+		});
+	});
+
 	describe('parse.* vs parseSchema() consistency', () => {
 		it('should produce identical output for object schemas', () => {
 			const schema = {

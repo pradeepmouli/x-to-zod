@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import { mkdtempSync, rmSync } from 'fs';
 import path from 'path';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 
 describe('Large Schema Performance (T078)', () => {
 	it('should build 50+ schemas in under 5 seconds', async () => {
@@ -20,7 +20,7 @@ describe('Large Schema Performance (T078)', () => {
 			// Create 60 schemas with cross-references
 			const schemaCount = 60;
 			for (let i = 0; i < schemaCount; i++) {
-				const schema: JsonSchema = {
+				const schema: JSONSchema = {
 					type: 'object',
 					properties: {
 						id: { type: 'integer' },
@@ -88,7 +88,7 @@ describe('Large Schema Performance (T078)', () => {
 			// Create 100 simple schemas
 			const schemaCount = 100;
 			for (let i = 0; i < schemaCount; i++) {
-				const schema: JsonSchema = {
+				const schema: JSONSchema = {
 					type: 'object',
 					properties: {
 						id: { type: 'integer' },

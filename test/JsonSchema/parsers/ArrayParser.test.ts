@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
-import type { Context, JsonSchemaObject } from '../../../src/Types';
+import type { Context, JSONSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { ArrayParser } from '../../../src/JsonSchema/parsers/ArrayParser.js';
@@ -15,7 +15,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('ArrayParser', () => {
 	it('parses simple array with min/max and metadata', () => {
-		const schema: JsonSchemaObject & { type: 'array' } = {
+		const schema: JSONSchemaObject & { type: 'array' } = {
 			type: 'array',
 			items: { type: 'string' },
 			minItems: 1,
@@ -40,11 +40,11 @@ describe('ArrayParser', () => {
 	});
 
 	it('parses tuple array', () => {
-		const schema: JsonSchemaObject & { type: 'array' } = {
+		const schema: JSONSchemaObject & { type: 'array' } = {
 			type: 'array',
 			items: [
-				{ type: 'string' } as JsonSchemaObject,
-				{ type: 'number' } as JsonSchemaObject,
+				{ type: 'string' } as JSONSchemaObject,
+				{ type: 'number' } as JSONSchemaObject,
 			],
 			minItems: 2,
 			errorMessage: { minItems: 'too-few' },

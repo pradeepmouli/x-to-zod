@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
-import type { JsonSchema, Context } from '../../../src/Types.js';
+import type { JSONSchema, Context } from '../../../src/Types.js';
 import { buildV4, buildV3 } from '../../../src/ZodBuilder/index.js';
 import { OneOfParser } from '../../../src/JsonSchema/parsers/OneOfParser.js';
 
@@ -14,7 +14,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('OneOfParser', () => {
 	it('uses xor for v4 with multiple oneOf options', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			oneOf: [{ type: 'string' }, { type: 'number' }],
 		};
 
@@ -26,7 +26,7 @@ describe('OneOfParser', () => {
 	});
 
 	it('falls back to union for v3', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			oneOf: [{ type: 'string' }, { type: 'number' }],
 		};
 
@@ -41,7 +41,7 @@ describe('OneOfParser', () => {
 	});
 
 	it('returns single schema when oneOf has one option', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			oneOf: [{ type: 'string' }],
 		};
 
@@ -54,7 +54,7 @@ describe('OneOfParser', () => {
 	});
 
 	it('returns any() for empty oneOf', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			oneOf: [],
 		};
 
@@ -66,7 +66,7 @@ describe('OneOfParser', () => {
 	});
 
 	it('handles nested oneOf schemas', () => {
-		const schema: JsonSchema = {
+		const schema: JSONSchema = {
 			oneOf: [
 				{ type: 'string' },
 				{ oneOf: [{ type: 'number' }, { type: 'boolean' }] },

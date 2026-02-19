@@ -1,3 +1,5 @@
-import { JSONSchema } from 'json-schema-typed/draft-2019-09';
+import type { JSONSchema } from 'json-schema-typed/draft-2019-09';
 
-export default JSONSchema;
+const JSONSchema2019 = {} as unknown as JSONSchema;
+
+export default JSONSchema2019;

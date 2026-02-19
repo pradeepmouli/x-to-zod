@@ -23,7 +23,6 @@ abstract class BaseParser<TypeKind extends string = string> {
 
   // Protected API (for subclasses)
   protected abstract parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
   protected applyPreProcessors(schema: JsonSchema): JsonSchema;
   protected applyPostProcessors(builder: ZodBuilder, schema: JsonSchema): ZodBuilder;
   protected applyMetadata(builder: ZodBuilder, schema: JsonSchema): ZodBuilder;
@@ -98,23 +97,16 @@ readonly typeKind = 'object' as const;
 
 #### Protected Methods
 
-##### `canProduceType(type: string): boolean`
+##### `typeKind` and `typeFilter`
 
-Checks if this parser can produce a given builder type. Used for type filtering in post-processors.
+Post-processor `typeFilter` values are matched against parser `typeKind` values only.
 
-**Parameters**:
-- `type`: Type string to check (e.g., 'object', 'ObjectBuilder')
+**Examples**:
+- `'object'` matches `ObjectParser` (`typeKind = 'object'`)
+- `'array'` matches `ArrayParser` (`typeKind = 'array'`)
+- `'oneOf'` matches `OneOfParser` (`typeKind = 'oneOf'`)
 
-**Returns**: `true` if parser produces this type
-
-**Default Implementation**: Matches against `typeKind`
-
-**Override Example**:
-```typescript
-protected canProduceType(type: string): boolean {
-  return type === this.typeKind || type === 'ObjectBuilder';
-}
-```
+Builder class names (for example `'ObjectBuilder'`) are not part of matching.
 
 ##### `applyPreProcessors(schema: JsonSchema): JsonSchema`
 
@@ -191,11 +183,10 @@ class ObjectParser extends BaseParser<'object'> {
 
   constructor(schema: JsonSchemaObject & { type?: string }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'object'` or `'ObjectBuilder'`
+**Type Matching**: `'object'`
 
 ---
 
@@ -209,11 +200,10 @@ class ArrayParser extends BaseParser<'array'> {
 
   constructor(schema: JsonSchemaArray & { type?: string }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'array'` or `'ArrayBuilder'`
+**Type Matching**: `'array'`
 
 ---
 
@@ -227,11 +217,10 @@ class StringParser extends BaseParser<'string'> {
 
   constructor(schema: { type: 'string'; [key: string]: any }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'string'` or `'StringBuilder'`
+**Type Matching**: `'string'`
 
 ---
 
@@ -245,11 +234,10 @@ class NumberParser extends BaseParser<'number' | 'integer'> {
 
   constructor(schema: { type: 'number' | 'integer'; [key: string]: any }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'number'`, `'integer'`, or `'NumberBuilder'`
+**Type Matching**: `'number'` or `'integer'`
 
 ---
 
@@ -263,11 +251,10 @@ class BooleanParser extends BaseParser<'boolean'> {
 
   constructor(schema: { type: 'boolean' }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'boolean'` or `'BooleanBuilder'`
+**Type Matching**: `'boolean'`
 
 ---
 
@@ -281,11 +268,10 @@ class NullParser extends BaseParser<'null'> {
 
   constructor(schema: { type: 'null' }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'null'` or `'NullBuilder'`
+**Type Matching**: `'null'`
 
 ---
 
@@ -299,11 +285,10 @@ class AnyOfParser extends BaseParser<'anyOf'> {
 
   constructor(schema: { anyOf: JsonSchema[] }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'anyOf'` or `'UnionBuilder'`
+**Type Matching**: `'anyOf'`
 
 ---
 
@@ -317,11 +302,10 @@ class AllOfParser extends BaseParser<'allOf'> {
 
   constructor(schema: { allOf: JsonSchema[] }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'allOf'` or `'IntersectionBuilder'`
+**Type Matching**: `'allOf'`
 
 ---
 
@@ -335,11 +319,10 @@ class OneOfParser extends BaseParser<'oneOf'> {
 
   constructor(schema: { oneOf: JsonSchema[] }, refs: Context);
   protected parseImpl(schema: JsonSchema): ZodBuilder;
-  protected canProduceType(type: string): boolean;
 }
 ```
 
-**Type Matching**: `'oneOf'` or `'XorBuilder'`
+**Type Matching**: `'oneOf'`
 
 ---
 

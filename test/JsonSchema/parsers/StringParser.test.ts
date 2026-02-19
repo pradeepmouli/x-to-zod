@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { Context, JsonSchemaObject } from '../../../src/Types';
+import type { Context, JSONSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { StringParser } from '../../../src/JsonSchema/parsers/StringParser.js';
@@ -14,7 +14,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('StringParser', () => {
 	it('parses base string with metadata', () => {
-		const schema: JsonSchemaObject & { type: 'string' } = {
+		const schema: JSONSchemaObject & { type: 'string' } = {
 			type: 'string',
 			description: 'desc',
 			default: 'def',
@@ -32,7 +32,7 @@ describe('StringParser', () => {
 	});
 
 	it('applies format, pattern, min/max length', () => {
-		const schema: JsonSchemaObject & { type: 'string' } = {
+		const schema: JSONSchemaObject & { type: 'string' } = {
 			type: 'string',
 			format: 'email',
 			pattern: '^foo',
@@ -54,7 +54,7 @@ describe('StringParser', () => {
 	});
 
 	it('handles base64 encoding', () => {
-		const schema: JsonSchemaObject & { type: 'string' } = {
+		const schema: JSONSchemaObject & { type: 'string' } = {
 			type: 'string',
 			contentEncoding: 'base64',
 			errorMessage: { contentEncoding: 'encode-error' },
@@ -68,7 +68,7 @@ describe('StringParser', () => {
 	});
 
 	it('handles contentMediaType json with contentSchema pipe', () => {
-		const schema: JsonSchemaObject & { type: 'string' } = {
+		const schema: JSONSchemaObject & { type: 'string' } = {
 			type: 'string',
 			contentMediaType: 'application/json',
 			contentSchema: { type: 'number', minimum: 1 },

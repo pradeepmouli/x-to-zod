@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { describe, it, expect, vi } from 'vitest';
 import type {
-	JsonSchema,
-	JsonSchemaObject,
+	JSONSchema,
+	JSONSchemaObject,
 	Context,
 	PostProcessorConfig,
 	PreProcessor,
@@ -22,7 +22,7 @@ class StringTestParser extends BaseParser<'string'> {
 	readonly typeKind = 'string' as const;
 
 	constructor(
-		schema: JsonSchema,
+		schema: JSONSchema,
 		refs: Context,
 		private stepsTracker?: string[],
 	) {
@@ -35,16 +35,12 @@ class StringTestParser extends BaseParser<'string'> {
 		}
 		return this.refs.build.string();
 	}
-
-	protected canProduceType(type: string): boolean {
-		return type === 'string' || type === 'StringBuilder';
-	}
 }
 
 describe('BaseParser', () => {
 	it('instantiates with schema and refs', () => {
 		const parser = new StringTestParser(
-			{ type: 'string' } as JsonSchema,
+			{ type: 'string' } as JSONSchema,
 			ctx(),
 		);
 		expect(parser).toBeInstanceOf(BaseParser);
@@ -55,9 +51,9 @@ describe('BaseParser', () => {
 		const pre: PreProcessor = (schema) => {
 			steps.push('pre');
 			return {
-				...(schema as JsonSchemaObject),
+				...(schema as JSONSchemaObject),
 				description: 'from-pre',
-			} as JsonSchema;
+			} as JSONSchema;
 		};
 		const post: PostProcessorConfig = {
 			processor: (builder: any) => {
@@ -68,7 +64,7 @@ describe('BaseParser', () => {
 		};
 
 		const parser = new StringTestParser(
-			{ type: 'string', description: 'orig', default: 'abc' } as JsonSchema,
+			{ type: 'string', description: 'orig', default: 'abc' } as JSONSchema,
 			ctx({ preProcessors: [pre], postProcessors: [post] }),
 			steps,
 		);
@@ -84,7 +80,7 @@ describe('BaseParser', () => {
 
 	it('applies metadata for description and default', () => {
 		const parser = new StringTestParser(
-			{ type: 'string', description: 'desc', default: 'x' } as JsonSchema,
+			{ type: 'string', description: 'desc', default: 'x' } as JSONSchema,
 			ctx(),
 		);
 
@@ -99,7 +95,7 @@ describe('BaseParser', () => {
 		const postSkip = vi.fn((builder) => builder.max(2));
 
 		const parser = new StringTestParser(
-			{ type: 'string' } as JsonSchema,
+			{ type: 'string' } as JSONSchema,
 			ctx({
 				postProcessors: [
 					{ processor: postHit, typeFilter: 'string' },

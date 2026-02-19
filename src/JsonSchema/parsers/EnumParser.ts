@@ -1,16 +1,16 @@
+import type { Serializable } from '../../Types.js';
 import type {
-	Serializable,
-	JsonSchema,
-	JsonSchemaObject,
-} from '../../Types.js';
+	JSONSchemaAny as JSONSchema,
+	JSONSchemaObject,
+} from '../types/index.js';
 import { BaseParser } from './BaseParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
 export class EnumParser extends BaseParser<'enum'> {
 	readonly typeKind = 'enum' as const;
 
-	protected parseImpl(schema: JsonSchema): ZodBuilder {
-		const s = schema as JsonSchemaObject & { enum: Serializable[] };
+	protected parseImpl(schema: JSONSchema): ZodBuilder {
+		const s = schema as JSONSchemaObject & { enum: Serializable[] };
 		return this.refs.build.enum(s.enum);
 	}
 }

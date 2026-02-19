@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
-import type { Context, JsonSchemaObject } from '../../../src/Types';
+import type { Context, JSONSchemaObject } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { ObjectParser } from '../../../src/JsonSchema/parsers/ObjectParser.js';
@@ -15,7 +15,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('ObjectParser', () => {
 	it('parses properties with required and optional', () => {
-		const schema: JsonSchemaObject & { type: 'object' } = {
+		const schema: JSONSchemaObject & { type: 'object' } = {
 			type: 'object',
 			properties: {
 				name: { type: 'string' },
@@ -38,7 +38,7 @@ describe('ObjectParser', () => {
 	});
 
 	it('applies additionalProperties and patternProperties', () => {
-		const schema: JsonSchemaObject & { type: 'object' } = {
+		const schema: JSONSchemaObject & { type: 'object' } = {
 			type: 'object',
 			properties: {
 				header: { type: 'string' },

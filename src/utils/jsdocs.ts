@@ -1,4 +1,4 @@
-import { JsonSchemaObject } from '../Types';
+import type { JSONSchemaObject } from '../JsonSchema/types/index.js';
 
 export const expandJsdocs = (jsdocs: string): string => {
 	const lines = jsdocs.split('\n');
@@ -10,7 +10,7 @@ export const expandJsdocs = (jsdocs: string): string => {
 	return `/**${result}*/\n`;
 };
 
-export const addJsdocs = (schema: JsonSchemaObject, parsed: string): string => {
+export const addJsdocs = (schema: JSONSchemaObject, parsed: string): string => {
 	const description = schema.description as string;
 	if (!description) {
 		return parsed;

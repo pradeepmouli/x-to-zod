@@ -7,7 +7,8 @@ import type {
 	BuildResult,
 	PostProcessorConfig as ProjectPostProcessorConfig,
 } from './types.js';
-import type { JsonSchema, PostProcessorConfig } from '../Types.js';
+import type { PostProcessorConfig } from '../Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../JsonSchema/types/index.js';
 import { postProcessors } from '../PostProcessing/presets.js';
 import { SchemaRegistry } from './SchemaRegistry.js';
 import { DefaultNameResolver } from './NameResolver.js';
@@ -90,7 +91,7 @@ export class SchemaProject {
 	 * @param schema - JSON Schema object
 	 * @param options - Additional schema options
 	 */
-	addSchema(id: string, schema: JsonSchema, options?: SchemaOptions): void {
+	addSchema(id: string, schema: JSONSchema, options?: SchemaOptions): void {
 		const exportName = this.nameResolver.resolveExportName(id);
 
 		const entry: SchemaEntry = {
@@ -115,7 +116,7 @@ export class SchemaProject {
 				? !!options?.extractDefinitions
 				: this.shouldExtractDefinitions();
 		if (shouldExtract) {
-			this.extractAndAddDefinitions(id, entry.schema as JsonSchema, options);
+			this.extractAndAddDefinitions(id, entry.schema as JSONSchema, options);
 		}
 	}
 
@@ -364,7 +365,7 @@ export class SchemaProject {
 
 		for (const entry of this.registry.getAllEntries()) {
 			this.dependencyGraph.addNode(entry.id);
-			const refs = extractRefs(entry.schema as JsonSchema);
+			const refs = extractRefs(entry.schema as JSONSchema);
 			for (const ref of refs) {
 				const resolution = this.refResolver.resolve(ref, entry.id);
 				if (resolution && resolution.isExternal && resolution.targetSchemaId) {
@@ -395,7 +396,7 @@ export class SchemaProject {
 	 */
 	private extractAndAddDefinitions(
 		parentId: string,
-		schema: JsonSchema,
+		schema: JSONSchema,
 		options?: SchemaOptions,
 	): void {
 		const schemaObj = schema as Record<string, any>;
@@ -418,7 +419,7 @@ export class SchemaProject {
 					subdir,
 					namePattern,
 				);
-				this.addSchema(defId, defSchema as JsonSchema, {
+				this.addSchema(defId, defSchema as JSONSchema, {
 					...options,
 					extractDefinitions: false, // Prevent recursive extraction
 				});
@@ -442,7 +443,7 @@ export class SchemaProject {
 					subdir || 'components/schemas',
 					namePattern,
 				);
-				this.addSchema(compId, compSchema as JsonSchema, {
+				this.addSchema(compId, compSchema as JSONSchema, {
 					...options,
 					extractDefinitions: false,
 				});
@@ -461,7 +462,7 @@ export class SchemaProject {
 					subdir,
 					namePattern,
 				);
-				this.addSchema(defId, defSchema as JsonSchema, {
+				this.addSchema(defId, defSchema as JSONSchema, {
 					...options,
 					extractDefinitions: false,
 				});

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { parseRef, extractRefs } from '../../src/SchemaProject/parseRef.js';
 import { DefaultRefResolver } from '../../src/SchemaProject/RefResolver.js';
 import { SchemaRegistry } from '../../src/SchemaProject/SchemaRegistry.js';
-import type { JsonSchema } from '../../src/Types.js';
+import type { JSONSchema } from '../../src/Types.js';
 
 describe('parseRef depth limits (T077)', () => {
 	it('should handle deeply nested schemas without stack overflow', () => {
@@ -42,7 +42,7 @@ describe('parseRef depth limits (T077)', () => {
 describe('extractRefs depth limits (T077)', () => {
 	it('should handle deeply nested schema structures without stack overflow', () => {
 		// Create a deeply nested schema (120 levels deep)
-		let schema: JsonSchema = { type: 'string' };
+		let schema: JSONSchema = { type: 'string' };
 		for (let i = 0; i < 120; i++) {
 			schema = {
 				type: 'object',
@@ -63,7 +63,7 @@ describe('extractRefs depth limits (T077)', () => {
 
 	it('should extract all refs from moderately nested schema', () => {
 		// Create a reasonably nested schema (50 levels deep)
-		let schema: JsonSchema = { type: 'string' };
+		let schema: JSONSchema = { type: 'string' };
 		for (let i = 0; i < 50; i++) {
 			schema = {
 				type: 'object',
