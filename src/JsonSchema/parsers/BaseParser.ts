@@ -25,7 +25,10 @@ let _parseSchema: (
 
 export type ApplicableType<TypeKind extends string> = TypeKind extends TypeValue
 	? JSONSchema<SchemaVersion, TypeValueToTypeMap[TypeKind], TypeKind>
-	: Exclude<JSONSchema<SchemaVersion, any, Exclude<TypeValue,'array'>>,boolean>;
+	: Exclude<
+			JSONSchema<SchemaVersion, any, Exclude<TypeValue, 'array'>>,
+			boolean
+		>;
 
 /**
  * Abstract base class implementing the template method for schema parsing.

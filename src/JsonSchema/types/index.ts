@@ -4,7 +4,12 @@ import type { JSONSchema as JSONSchema2020 } from 'json-schema-typed/draft-2020-
 import type { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import type { Merge } from 'type-fest';
 
-export type SchemaVersion = '2020-12' | '2019-09' | '07' | 'OpenAPI3.0' | 'OpenAPI3.1';
+export type SchemaVersion =
+	| '2020-12'
+	| '2019-09'
+	| '07'
+	| 'OpenAPI3.0'
+	| 'OpenAPI3.1';
 
 export type TypeValueToTypeMap = {
 	object: object;
@@ -42,10 +47,15 @@ export type TypeValue =
 	| 'null'
 	| 'any';
 
+export type OpenAPISchemaV3<
+	T,
+	V extends TypeValue = TypeToTypeValue<T>,
+> = Merge<OpenAPIV3.BaseSchemaObject, Exclude<JSONSchema2020<T, V>, boolean>>;
 
-export type OpenAPISchemaV3<T, V extends TypeValue = TypeToTypeValue<T>> =  Merge<OpenAPIV3.BaseSchemaObject, Exclude<JSONSchema2020<T,V>, boolean>>;
-
-export type OpenAPISchemaV3_1<T, V extends TypeValue = TypeToTypeValue<T>> = Merge<OpenAPIV3_1.BaseSchemaObject, Exclude<JSONSchema2020<T,V>, boolean>>;
+export type OpenAPISchemaV3_1<
+	T,
+	V extends TypeValue = TypeToTypeValue<T>,
+> = Merge<OpenAPIV3_1.BaseSchemaObject, Exclude<JSONSchema2020<T, V>, boolean>>;
 
 type JSONSchemaMap<T, V extends TypeValue = TypeToTypeValue<T>> = {
 	'2020-12': JSONSchema2020<T, V>;
@@ -53,7 +63,6 @@ type JSONSchemaMap<T, V extends TypeValue = TypeToTypeValue<T>> = {
 	'07': JSONSchema07<T, V>;
 	'OpenAPI3.0': OpenAPISchemaV3<T, V>;
 	'OpenAPI3.1': OpenAPISchemaV3_1<T, V>;
-
 };
 
 export type JSONSchema<

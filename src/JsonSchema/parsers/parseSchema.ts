@@ -3,7 +3,7 @@ import { ParserSelector, Context } from '../../Types.js';
 import {
 	isJSONSchema,
 	type JSONSchemaAny as JSONSchema,
-	type SchemaVersion
+	type SchemaVersion,
 } from '../types/index.js';
 import { BaseBuilder } from '../../ZodBuilder/index.js';
 import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
@@ -24,9 +24,7 @@ export const parseSchema = <Version extends SchemaVersion>(
 	},
 	blockMeta?: boolean,
 ): ZodBuilder => {
-
 	if (isJSONSchema(schema)) {
-
 		const path = refs.path || [];
 		// Always compute pathString from path, don't use cached value when path changes
 		const pathString = path.length ? `$.${path.join('.')}` : '$';
@@ -104,8 +102,7 @@ export const parseSchema = <Version extends SchemaVersion>(
 		seen.r = parsed;
 
 		return parsed;
-	}
-	else {
+	} else {
 		// Non-object schemas (e.g., boolean) are not valid JSON Schemas, but we can still handle them.
 		return refs.build.any() ?? refs.build.never();
 	}

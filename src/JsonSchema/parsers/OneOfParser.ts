@@ -37,5 +37,4 @@ export class OneOfParser extends BaseParser<'oneOf'> {
 
 		return this.refs.build.union(schemaBuilders);
 	}
-
 }

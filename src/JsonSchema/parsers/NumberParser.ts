@@ -47,5 +47,4 @@ export class NumberParser extends BaseParser<'number' | 'integer'> {
 
 		return builder;
 	}
-
 }
