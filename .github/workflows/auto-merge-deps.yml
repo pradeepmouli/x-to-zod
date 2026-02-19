@@ -1,0 +1,136 @@
+name: Auto-merge Dependency Updates
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Enable auto-merge after CI passes
+    runs-on: ubuntu-latest
+    # Only run if the workflow run was successful
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'pull_request'
+
+    steps:
+      - name: Get PR information
+        id: pr-info
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pulls = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: `${context.repo.owner}:${github.event.workflow_run.head_branch}`
+            });
+            
+            if (pulls.data.length === 0) {
+              console.log('No open PR found for this branch');
+              return;
+            }
+            
+            const pr = pulls.data[0];
+            console.log(`Found PR #${pr.number}: ${pr.title}`);
+            
+            core.setOutput('pr_number', pr.number);
+            core.setOutput('pr_node_id', pr.node_id);
+            core.setOutput('pr_title', pr.title);
+            core.setOutput('pr_labels', JSON.stringify(pr.labels.map(l => l.name)));
+            core.setOutput('pr_user', pr.user.login);
+
+      - name: Check if PR is eligible for auto-merge
+        id: check-eligible
+        if: steps.pr-info.outputs.pr_number
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prUser = '${{ steps.pr-info.outputs.pr_user }}';
+            const prTitle = '${{ steps.pr-info.outputs.pr_title }}'.toLowerCase();
+            const prLabels = JSON.parse('${{ steps.pr-info.outputs.pr_labels }}');
+            
+            // Check if PR is from a trusted bot
+            const isTrustedBot = 
+              prUser === 'dependabot[bot]' ||
+              prUser === 'renovate[bot]' ||
+              prUser === 'github-actions[bot]';
+            
+            // Check if it's a dependency PR
+            const isDependencyPR = prLabels.includes('dependencies');
+            
+            // Determine if this is a minor/patch update
+            const isMinorOrPatch =
+              prLabels.includes('minor') ||
+              prLabels.includes('patch') ||
+              prTitle.includes('patch') ||
+              prTitle.includes('minor') ||
+              (!prTitle.includes('major') && !prLabels.includes('major'));
+            
+            // Check if it's a major update or security vulnerability
+            const isMajorUpdate = prLabels.includes('major') || prTitle.includes('major');
+            const isSecurityUpdate = prLabels.includes('security');
+            
+            const isEligible = 
+              isTrustedBot &&
+              isDependencyPR &&
+              isMinorOrPatch &&
+              !isMajorUpdate &&
+              !isSecurityUpdate;
+            
+            console.log(`Trusted bot: ${isTrustedBot}`);
+            console.log(`Dependency PR: ${isDependencyPR}`);
+            console.log(`Minor/patch: ${isMinorOrPatch}`);
+            console.log(`Major update: ${isMajorUpdate}`);
+            console.log(`Security update: ${isSecurityUpdate}`);
+            console.log(`Eligible for auto-merge: ${isEligible}`);
+            
+            core.setOutput('is_eligible', isEligible);
+
+      - name: Enable auto-merge
+        if: |
+          steps.pr-info.outputs.pr_number &&
+          steps.check-eligible.outputs.is_eligible == 'true'
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              await github.graphql(`
+                mutation($pullRequestId: ID!) {
+                  enablePullRequestAutoMerge(input: {
+                    pullRequestId: $pullRequestId,
+                    mergeMethod: SQUASH
+                  }) {
+                    pullRequest {
+                      autoMergeRequest {
+                        enabledAt
+                      }
+                    }
+                  }
+                }
+              `, {
+                pullRequestId: '${{ steps.pr-info.outputs.pr_node_id }}'
+              });
+
+              console.log('✅ Auto-merge enabled for PR #${{ steps.pr-info.outputs.pr_number }} after CI passed');
+              
+              // Add a comment to the PR
+              await github.rest.issues.createComment({
+                issue_number: ${{ steps.pr-info.outputs.pr_number }},
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '✅ CI checks passed! Auto-merge has been enabled for this PR.'
+              });
+            } catch (error) {
+              console.error('Failed to enable auto-merge:', error.message);
+              throw error;
+            }

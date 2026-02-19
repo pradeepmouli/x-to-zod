@@ -78,7 +78,7 @@ jobs:
                     'Please review the changelog and test thoroughly before merging.'
             });
 
-      - name: Enable auto-merge for approved updates
+      - name: Comment on auto-merge eligibility
         if: |
           steps.pr-details.outputs.is_minor_or_patch == 'true' &&
           steps.pr-details.outputs.is_major_update == 'false' &&
@@ -87,38 +87,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            try {
-              // Enable auto-merge for this PR
-              await github.graphql(`
-                mutation($pullRequestId: ID!) {
-                  enablePullRequestAutoMerge(input: {
-                    pullRequestId: $pullRequestId,
-                    mergeMethod: SQUASH
-                  }) {
-                    pullRequest {
-                      autoMergeRequest {
-                        enabledAt
-                      }
-                    }
-                  }
-                }
-              `, {
-                pullRequestId: context.payload.pull_request.node_id
-              });
-
-              console.log('✅ Auto-merge enabled for this PR');
-            } catch (error) {
-              // If the PR is in unstable status (CI checks haven't started/completed yet),
-              // this is expected and not a failure. The PR will need to be manually merged
-              // or auto-merge can be enabled later once CI stabilizes.
-              if (error.message && error.message.includes('unstable status')) {
-                console.log('⚠️ Cannot enable auto-merge yet: PR is in unstable status (CI checks pending)');
-                console.log('Auto-merge can be enabled manually once CI checks complete.');
-              } else {
-                // Re-throw unexpected errors
-                throw error;
-              }
-            }
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 This PR is eligible for auto-merge.\n\n' +
+                    'Auto-merge will be enabled automatically once CI checks pass.'
+            });
 
   report:
     name: Report dependency update
