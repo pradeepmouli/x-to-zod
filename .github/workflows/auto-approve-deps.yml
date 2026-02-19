@@ -87,25 +87,38 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // Enable auto-merge for this PR
-            await github.graphql(`
-              mutation($pullRequestId: ID!) {
-                enablePullRequestAutoMerge(input: {
-                  pullRequestId: $pullRequestId,
-                  mergeMethod: SQUASH
-                }) {
-                  pullRequest {
-                    autoMergeRequest {
-                      enabledAt
+            try {
+              // Enable auto-merge for this PR
+              await github.graphql(`
+                mutation($pullRequestId: ID!) {
+                  enablePullRequestAutoMerge(input: {
+                    pullRequestId: $pullRequestId,
+                    mergeMethod: SQUASH
+                  }) {
+                    pullRequest {
+                      autoMergeRequest {
+                        enabledAt
+                      }
                     }
                   }
                 }
-              }
-            `, {
-              pullRequestId: context.payload.pull_request.node_id
-            });
+              `, {
+                pullRequestId: context.payload.pull_request.node_id
+              });
 
-            console.log('Auto-merge enabled for this PR');
+              console.log('✅ Auto-merge enabled for this PR');
+            } catch (error) {
+              // If the PR is in unstable status (CI checks haven't started/completed yet),
+              // this is expected and not a failure. The PR will need to be manually merged
+              // or auto-merge can be enabled later once CI stabilizes.
+              if (error.message && error.message.includes('unstable status')) {
+                console.log('⚠️ Cannot enable auto-merge yet: PR is in unstable status (CI checks pending)');
+                console.log('Auto-merge can be enabled manually once CI checks complete.');
+              } else {
+                // Re-throw unexpected errors
+                throw error;
+              }
+            }
 
   report:
     name: Report dependency update
