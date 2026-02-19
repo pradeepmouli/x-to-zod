@@ -104,7 +104,7 @@ export const parseSchema = <Version extends SchemaVersion>(
 		return parsed;
 	} else {
 		// Non-object schemas (e.g., boolean) are not valid JSON Schemas, but we can still handle them.
-		return refs.build.any() ?? refs.build.never();
+		return schema ? refs.build.any() : refs.build.never();
 	}
 };
 
