@@ -92,18 +92,18 @@ The `selectParserClass()` function determines which parser class to use:
 ```typescript
 function selectParserClass(schema: JsonSchema): ParserClass | undefined {
   // 1. Check combinators first (highest priority)
-  if (its.an.anyOf(schema)) return AnyOfParser;
-  if (its.an.allOf(schema)) return AllOfParser;
-  if (its.a.oneOf(schema)) return OneOfParser;
+  if (is.anyOf(schema)) return AnyOfParser;
+  if (is.allOf(schema)) return AllOfParser;
+  if (is.oneOf(schema)) return OneOfParser;
   
   // 2. Check explicit type field
   if (schema.type === 'object') return ObjectParser;
   if (schema.type === 'array') return ArrayParser;
   // ... etc
   
-  // 3. Type inference using its.* utilities
-  if (its.an.object(schema)) return ObjectParser;
-  if (its.an.array(schema)) return ArrayParser;
+  // 3. Type inference using is.* utilities
+  if (is.object(schema)) return ObjectParser;
+  if (is.array(schema)) return ArrayParser;
   // ... etc
   
   // 4. Return undefined (fallback to functional parsers)
@@ -115,7 +115,7 @@ function selectParserClass(schema: JsonSchema): ParserClass | undefined {
 
 1. **Combinators**: `anyOf`, `allOf`, `oneOf` (highest priority)
 2. **Explicit `type` field**: Direct type field in schema
-3. **Type inference**: Use `its.*` utilities to detect implicit types
+3. **Type inference**: Use `is.*` utilities to detect implicit types
 4. **Fallback**: Return undefined for functional parser fallback
 
 ## Type Guards
@@ -225,7 +225,7 @@ export const parserRegistry = new Map<string, ParserClass>([
 // src/JsonSchema/parsers/registry.ts
 export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
   // Check for custom schema
-  if (its.a.custom(schema)) {
+  if ('customField' in schema) {
     return parserRegistry.get('custom');
   }
   

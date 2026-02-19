@@ -134,7 +134,7 @@ export function isOneOfSchema(
 	return schema.oneOf !== undefined;
 }
 
-export const its = {
+export const is = {
 	object: isObjectSchema,
 	array: isArraySchema,
 	anyOf: isAnyOfSchema,

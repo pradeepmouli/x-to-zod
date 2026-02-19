@@ -3,7 +3,7 @@ import { parse as classParse } from './parsers/index.js';
 import { parseDefault } from './parsers/parseDefault.js';
 import { parseSchema } from './parsers/parseSchema.js';
 import { parseRef } from '../SchemaProject/parseRef.js';
-import { its } from './its.js';
+import { is } from './its.js';
 import type {
 	JSONSchema,
 	SchemaVersion,
@@ -61,20 +61,20 @@ export const parse = {
 export function select<S extends SchemaVersion = '2020-12'>(
 	schema: JSONSchema<S, any, TypeValue>,
 ) {
-	if (its.object(schema)) {
+	if (is.object(schema)) {
 		return parse.object;
-	} else if (its.array(schema)) {
+	} else if (is.array(schema)) {
 		return parse.array;
-	} else if (its.primitive(schema, 'string')) {
+	} else if (is.primitive(schema, 'string')) {
 		return parse.string;
 	} else if (
-		its.primitive(schema, 'number') ||
-		its.primitive(schema, 'integer')
+		is.primitive(schema, 'number') ||
+		is.primitive(schema, 'integer')
 	) {
 		return parse.number;
-	} else if (its.primitive(schema, 'boolean')) {
+	} else if (is.primitive(schema, 'boolean')) {
 		return parse.boolean;
-	} else if (its.primitive(schema, 'null')) {
+	} else if (is.primitive(schema, 'null')) {
 		return parse.null;
 	}
 	// For enum and all other cases, use schema

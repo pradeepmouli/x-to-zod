@@ -15,7 +15,7 @@ import { NullableParser } from './NullableParser.js';
 import { MultipleTypeParser } from './MultipleTypeParser.js';
 import { ConditionalParser } from './ConditionalParser.js';
 import { TupleParser } from './TupleParser.js';
-import { its } from '../its.js';
+import { is } from '../its.js';
 
 /**
  * Type for parser class constructors.
@@ -62,7 +62,7 @@ export const parserRegistry = new Map<string, ParserClass>([
  * Selection priority:
  * 1. Combinators (anyOf, allOf, oneOf) - highest priority
  * 2. Explicit type field lookup in registry
- * 3. Type inference using its.* utilities
+ * 3. Type inference using is.* utilities
  * 4. Default fallback (returns undefined, caller uses functional fallback)
  *
  * @param schema - JSON Schema to analyze
@@ -75,17 +75,17 @@ export function selectParserClass(schema: JSONSchema): ParserClass | undefined {
 	}
 
 	// Check special cases first (highest priority)
-	if (its.nullable(schema)) {
+	if (is.nullable(schema)) {
 		return NullableParser;
 	}
-	if (its.not(schema)) {
+	if (is.not(schema)) {
 		return NotParser;
 	}
 	// Check for enum keyword directly (including empty arrays)
 	if ('enum' in schema && Array.isArray((schema as any).enum)) {
 		return EnumParser;
 	}
-	if (its.const(schema)) {
+	if (is.const(schema)) {
 		return ConstParser;
 	}
 	// Check for tuple: prefixItems (2020-12) or items as array (draft-07)
@@ -95,21 +95,21 @@ export function selectParserClass(schema: JSONSchema): ParserClass | undefined {
 	if ('items' in schema && Array.isArray((schema as any).items)) {
 		return TupleParser;
 	}
-	if (its.multipleType(schema)) {
+	if (is.multipleType(schema)) {
 		return MultipleTypeParser;
 	}
-	if (its.conditional(schema)) {
+	if (is.conditional(schema)) {
 		return ConditionalParser;
 	}
 
 	// Check combinators
-	if (its.anyOf(schema)) {
+	if (is.anyOf(schema)) {
 		return parserRegistry.get('anyOf');
 	}
-	if (its.allOf(schema)) {
+	if (is.allOf(schema)) {
 		return parserRegistry.get('allOf');
 	}
-	if (its.oneOf(schema)) {
+	if (is.oneOf(schema)) {
 		return parserRegistry.get('oneOf');
 	}
 
@@ -121,26 +121,26 @@ export function selectParserClass(schema: JSONSchema): ParserClass | undefined {
 		}
 	}
 
-	// Type inference using its.* utilities
-	if (its.object(schema)) {
+	// Type inference using is.* utilities
+	if (is.object(schema)) {
 		return parserRegistry.get('object');
 	}
-	if (its.array(schema)) {
+	if (is.array(schema)) {
 		return parserRegistry.get('array');
 	}
-	if (its.primitive(schema, 'string')) {
+	if (is.primitive(schema, 'string')) {
 		return parserRegistry.get('string');
 	}
-	if (its.primitive(schema, 'number')) {
+	if (is.primitive(schema, 'number')) {
 		return parserRegistry.get('number');
 	}
-	if (its.primitive(schema, 'integer')) {
+	if (is.primitive(schema, 'integer')) {
 		return parserRegistry.get('integer');
 	}
-	if (its.primitive(schema, 'boolean')) {
+	if (is.primitive(schema, 'boolean')) {
 		return parserRegistry.get('boolean');
 	}
-	if (its.primitive(schema, 'null')) {
+	if (is.primitive(schema, 'null')) {
 		return parserRegistry.get('null');
 	}
 

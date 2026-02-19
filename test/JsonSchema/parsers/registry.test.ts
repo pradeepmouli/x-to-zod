@@ -91,7 +91,7 @@ describe('Parser Registry', () => {
 		});
 
 		it('infers type from object properties', () => {
-			// Note: its.an.object() uses structural inference
+			// Note: is.object() uses structural inference
 			// It checks for properties or additionalProperties
 			const schema: JSONSchema = {
 				properties: {
@@ -99,22 +99,22 @@ describe('Parser Registry', () => {
 				},
 			};
 			const result = selectParserClass(schema);
-			// Type inference may or may not work depending on its.an.object() implementation
+			// Type inference may or may not work depending on is.object() implementation
 			expect([ObjectParser, undefined]).toContain(result);
 		});
 
 		it('infers type from array items', () => {
-			// Note: its.an.array() uses structural inference
+			// Note: is.array() uses structural inference
 			const schema: JSONSchema = {
 				items: { type: 'string' },
 			};
 			const result = selectParserClass(schema);
-			// Type inference may or may not work depending on its.an.array() implementation
+			// Type inference may or may not work depending on is.array() implementation
 			expect([ArrayParser, undefined]).toContain(result);
 		});
 
 		it('infers string type from string-specific keywords', () => {
-			// Note: its.a.primitive() requires explicit type or enum-based inference
+			// Note: is.primitive() requires explicit type or enum-based inference
 			const schema: JSONSchema = {
 				minLength: 1,
 			};
@@ -124,7 +124,7 @@ describe('Parser Registry', () => {
 		});
 
 		it('infers number type from numeric keywords', () => {
-			// Note: its.a.primitive() requires explicit type or enum-based inference
+			// Note: is.primitive() requires explicit type or enum-based inference
 			const schema: JSONSchema = {
 				minimum: 0,
 			};
