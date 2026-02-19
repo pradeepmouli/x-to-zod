@@ -8,7 +8,7 @@ import { BaseParser } from './BaseParser.js';
 import { ObjectBuilder } from '../../ZodBuilder/index.js';
 import { addJsdocs } from '../../utils/jsdocs.js';
 import { parseSchema } from './parseSchema.js';
-import { is } from '../its.js';
+import { is } from '../is.js';
 
 export class ObjectParser extends BaseParser<'object'> {
 	readonly typeKind = 'object' as const;

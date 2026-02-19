@@ -15,7 +15,7 @@ import { NullableParser } from './NullableParser.js';
 import { MultipleTypeParser } from './MultipleTypeParser.js';
 import { ConditionalParser } from './ConditionalParser.js';
 import { TupleParser } from './TupleParser.js';
-import { is } from '../its.js';
+import { is } from '../is.js';
 
 /**
  * Type for parser class constructors.
