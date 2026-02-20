@@ -70,7 +70,9 @@
     "version": "changeset version",
     "release": "pnpm run build && changeset publish",
     "prepare": "simple-git-hooks",
-    "type-check": "tsgo --noEmit"
+    "type-check": "tsgo --noEmit",
+    "changeset:version": "changeset version",
+    "changeset:publish": "pnpm run build && changeset publish"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
