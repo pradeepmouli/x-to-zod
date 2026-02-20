@@ -45,8 +45,9 @@ jobs:
         id: audit
         run: |
           # Run audit and capture output
-          pnpm audit --audit-level moderate --json > audit-report.json
-          audit_exit_code=$?
+          # Use || to prevent bash -e from exiting when audit finds vulnerabilities (exit code 1)
+          audit_exit_code=0
+          pnpm audit --audit-level moderate --json > audit-report.json || audit_exit_code=$?
 
           # If pnpm audit failed for reasons other than "vulnerabilities found",
           # fail the step instead of silently ignoring the error.
