@@ -8,7 +8,7 @@ import { BaseParser } from './BaseParser.js';
 import { ObjectBuilder } from '../../ZodBuilder/index.js';
 import { addJsdocs } from '../../utils/jsdocs.js';
 import { parseSchema } from './parseSchema.js';
-import { its } from '../its.js';
+import { is } from '../is.js';
 
 export class ObjectParser extends BaseParser<'object'> {
 	readonly typeKind = 'object' as const;
@@ -205,7 +205,7 @@ export class ObjectParser extends BaseParser<'object'> {
 		// Step 4: Handle combinators (anyOf, oneOf, allOf)
 		let builder = ObjectBuilder.fromCode(result, this.refs);
 
-		if (its.anyOf(objectSchema as any)) {
+		if (is.anyOf(objectSchema as any)) {
 			const anyOfZod = parseSchema(
 				{
 					...(objectSchema as any),
@@ -225,7 +225,7 @@ export class ObjectParser extends BaseParser<'object'> {
 			builder.and(anyOfZod);
 		}
 
-		if (its.oneOf(objectSchema as any)) {
+		if (is.oneOf(objectSchema as any)) {
 			const oneOfZod = parseSchema(
 				{
 					...(objectSchema as any),
@@ -245,7 +245,7 @@ export class ObjectParser extends BaseParser<'object'> {
 			builder.and(oneOfZod);
 		}
 
-		if (its.allOf(objectSchema as any)) {
+		if (is.allOf(objectSchema as any)) {
 			const allOfZod = parseSchema(
 				{
 					...(objectSchema as any),

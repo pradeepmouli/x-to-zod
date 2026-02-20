@@ -356,7 +356,7 @@ export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
   // ... existing checks ...
 
   // Check for const (before tuple to handle const arrays)
-  if (its.a.const(schema)) {
+  if (is.const(schema)) {
     return ConstParser;
   }
 

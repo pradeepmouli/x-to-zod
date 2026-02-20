@@ -344,7 +344,7 @@ function selectParserClass(schema: JsonSchema): ParserClass | undefined
 **Selection Priority**:
 1. Combinators (`anyOf`, `allOf`, `oneOf`)
 2. Explicit `type` field
-3. Type inference via `its.*` utilities
+3. Type inference via `is.*` utilities
 4. `undefined` (fallback to functional parsers)
 
 **Example**:

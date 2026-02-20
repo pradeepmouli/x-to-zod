@@ -1,7 +1,9 @@
+import type { SetReadonly, SetRequired } from 'type-fest';
 import type { Serializable } from '../Types.js';
 import type {
 	JSONSchemaObject,
 	JSONSchemaAny as JSONSchema,
+	SchemaVersion,
 } from './types/index.js';
 
 const isSchemaObject = (value: unknown): value is JSONSchemaObject =>
@@ -85,13 +87,13 @@ export function isNotSchema(
 	return schema.not !== undefined;
 }
 
-export function isConstSchema(
+export function isConstSchema<V extends SchemaVersion>(
 	value: unknown,
-): value is JSONSchemaObject & { const: Serializable } {
+): value is SetRequired<JSONSchemaObject<V>, 'const'> {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
-	return (value as any).const !== undefined;
+	return value.const !== undefined;
 }
 
 export function isPrimitiveSchema<
@@ -134,7 +136,7 @@ export function isOneOfSchema(
 	return schema.oneOf !== undefined;
 }
 
-export const its = {
+export const is = {
 	object: isObjectSchema,
 	array: isArraySchema,
 	anyOf: isAnyOfSchema,

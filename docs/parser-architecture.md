@@ -49,13 +49,13 @@ The `BaseParser` class implements the Template Method pattern, defining the over
 parse(): ZodBuilder {
   // 1. Apply pre-processors
   const processedSchema = this.applyPreProcessors(this.schema);
-  
+
   // 2. Parse the schema (subclass-specific)
   let builder = this.parseImpl(processedSchema);
-  
+
   // 3. Apply post-processors
   builder = this.applyPostProcessors(builder, processedSchema);
-  
+
   // 4. Apply metadata (description, default)
   return this.applyMetadata(builder, processedSchema);
 }
@@ -92,20 +92,20 @@ The `selectParserClass()` function determines which parser class to use:
 ```typescript
 function selectParserClass(schema: JsonSchema): ParserClass | undefined {
   // 1. Check combinators first (highest priority)
-  if (its.an.anyOf(schema)) return AnyOfParser;
-  if (its.an.allOf(schema)) return AllOfParser;
-  if (its.a.oneOf(schema)) return OneOfParser;
-  
+  if (is.anyOf(schema)) return AnyOfParser;
+  if (is.allOf(schema)) return AllOfParser;
+  if (is.oneOf(schema)) return OneOfParser;
+
   // 2. Check explicit type field
   if (schema.type === 'object') return ObjectParser;
   if (schema.type === 'array') return ArrayParser;
   // ... etc
-  
-  // 3. Type inference using its.* utilities
-  if (its.an.object(schema)) return ObjectParser;
-  if (its.an.array(schema)) return ArrayParser;
+
+  // 3. Type inference using is.* utilities
+  if (is.object(schema)) return ObjectParser;
+  if (is.array(schema)) return ArrayParser;
   // ... etc
-  
+
   // 4. Return undefined (fallback to functional parsers)
   return undefined;
 }
@@ -115,7 +115,7 @@ function selectParserClass(schema: JsonSchema): ParserClass | undefined {
 
 1. **Combinators**: `anyOf`, `allOf`, `oneOf` (highest priority)
 2. **Explicit `type` field**: Direct type field in schema
-3. **Type inference**: Use `its.*` utilities to detect implicit types
+3. **Type inference**: Use `is.*` utilities to detect implicit types
 4. **Fallback**: Return undefined for functional parser fallback
 
 ## Type Guards
@@ -156,7 +156,7 @@ const context = { seen: new Map(), path: [], build: buildV4 };
 
 // Direct parser instantiation
 const stringBuilder = parse.string({ type: 'string' }, context);
-const objectBuilder = parse.object({ 
+const objectBuilder = parse.object({
   type: 'object',
   properties: { name: { type: 'string' } }
 }, context);
@@ -225,10 +225,10 @@ export const parserRegistry = new Map<string, ParserClass>([
 // src/JsonSchema/parsers/registry.ts
 export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
   // Check for custom schema
-  if (its.a.custom(schema)) {
+  if ('customField' in schema) {
     return parserRegistry.get('custom');
   }
-  
+
   // ... existing selection logic
 }
 ```
@@ -239,7 +239,7 @@ export function selectParserClass(schema: JsonSchema): ParserClass | undefined {
 // src/JsonSchema/parsers/index.ts
 export const parse = {
   // ... existing methods
-  
+
   custom(schema: JsonSchema & { customField: string }, refs: Context): ZodBuilder {
     const parser = new (CustomParser as any)(schema, refs);
     return parser.parse();
@@ -259,10 +259,10 @@ describe('CustomParser', () => {
   it('should parse custom schema', () => {
     const schema = { customField: 'value' };
     const refs = { seen: new Map(), path: [], build: buildV4 };
-    
+
     const parser = new (CustomParser as any)(schema, refs);
     const builder = parser.parse();
-    
+
     expect(builder.text()).toContain('z.custom');
   });
 });
@@ -324,10 +324,10 @@ class EnhancedObjectParser extends ObjectParser {
   protected parseImpl(schema: JsonSchema): ZodBuilder {
     // Custom logic before parsing
     const modified = { ...schema, additionalProperties: false };
-    
+
     // Call parent implementation
     const builder = super.parseImpl(modified);
-    
+
     // Custom logic after parsing
     return builder.strict();
   }
@@ -344,11 +344,11 @@ function processBuilder(builder: ZodBuilder): ZodBuilder {
   if (is.objectBuilder(builder)) {
     return builder.strict();
   }
-  
+
   if (is.arrayBuilder(builder)) {
     return builder.nonempty();
   }
-  
+
   return builder;
 }
 ```
