@@ -4,7 +4,7 @@ import {
 	isObjectSchema,
 	isPrimitiveSchema,
 	isAnyOfSchema,
-} from '../../src/JsonSchema/its.js';
+} from '../../src/JsonSchema/is.js';
 
 describe('JSONSchema is guards', () => {
 	it('supports flat guard API on is', () => {
