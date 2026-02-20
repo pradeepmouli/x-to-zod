@@ -2,7 +2,7 @@
   "name": "x-to-zod",
   "version": "0.7.0",
   "description": "Enhanced fork of json-schema-to-zod - Converts JSON Schema into Zod schemas with fluent builder pattern",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.6.2",
   "types": "./dist/types/index.d.ts",
   "bin": "./dist/cjs/cli.js",
   "main": "./dist/cjs/index.js",
@@ -69,10 +69,12 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "pnpm run build && changeset publish",
-    "postinstall": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "type-check": "tsgo --noEmit"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm run lint && pnpm run format"
+    "pre-commit": "pnpm lint-staged",
+    "pre-push": "pnpm run type-check"
   },
   "c8": {
     "exclude": [
@@ -132,7 +134,8 @@
     "type-fest": "^5.4.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "lint-staged": "^16.2.7"
   },
   "dependencies": {
     "json-schema-typed": "^8.0.2"
