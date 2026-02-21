@@ -6,10 +6,7 @@ import { AbstractParser } from '../../Parser/AbstractParser.js';
 export class ArrayParser extends AbstractParser<'array'> {
 	readonly typeKind = 'array' as const;
 
-	constructor(
-		schema: JSONSchemaObject & { type?: string },
-		refs: Context,
-	) {
+	constructor(schema: JSONSchemaObject & { type?: string }, refs: Context) {
 		super(schema, refs);
 	}
 

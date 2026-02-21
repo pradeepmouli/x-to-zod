@@ -13,10 +13,7 @@ export class JsonSchemaAdapter implements SchemaInputAdapter {
 		return isJSONSchema(input as any);
 	}
 
-	selectParser(
-		input: unknown,
-		_refs: Context,
-	): ParserConstructor | undefined {
+	selectParser(input: unknown, _refs: Context): ParserConstructor | undefined {
 		return selectParserClass(input as any);
 	}
 
@@ -39,7 +36,10 @@ export class JsonSchemaAdapter implements SchemaInputAdapter {
 		if (typeof s.description === 'string') {
 			meta.description = s.description;
 		}
-		if (Object.prototype.hasOwnProperty.call(s, 'default') && s.default !== undefined) {
+		if (
+			Object.prototype.hasOwnProperty.call(s, 'default') &&
+			s.default !== undefined
+		) {
 			meta.default = s.default;
 		}
 		if (s.readOnly === true) {

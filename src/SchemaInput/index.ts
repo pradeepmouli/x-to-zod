@@ -28,10 +28,7 @@ export interface SchemaMetadata {
  */
 export interface SchemaInputAdapter {
 	isValid(input: unknown): boolean;
-	selectParser(
-		input: unknown,
-		refs: Context,
-	): ParserConstructor | undefined;
+	selectParser(input: unknown, refs: Context): ParserConstructor | undefined;
 	getRef(input: unknown): string | undefined;
 	getMetadata(input: unknown): SchemaMetadata;
 }
@@ -57,7 +54,7 @@ export function getGlobalAdapter(): SchemaInputAdapter {
 	if (_globalAdapter === undefined) {
 		throw new Error(
 			'No SchemaInputAdapter registered. Call registerAdapter(jsonSchemaAdapter) first, ' +
-			'or import from "x-to-zod" which auto-initialises the default adapter.',
+				'or import from "x-to-zod" which auto-initialises the default adapter.',
 		);
 	}
 	return _globalAdapter;

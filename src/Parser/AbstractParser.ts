@@ -24,8 +24,7 @@ let _parseSchema:
 export abstract class AbstractParser<
 	TypeKind extends string = string,
 	S extends object = object,
-> implements Parser
-{
+> implements Parser {
 	abstract readonly typeKind: TypeKind;
 
 	protected readonly preProcessors: PreProcessor[];
@@ -123,8 +122,27 @@ export abstract class AbstractParser<
 		return current;
 	}
 
-	protected applyMetadata(builder: Builder, schema: unknown): Builder {
-		if (schema && typeof schema === 'object') {
+	protected applyMetadata(builder: Builder, _schema: unknown): Builder {
+		const adapter = this.refs.adapter;
+		if (adapter) {
+			const meta = adapter.getMetadata(this.schema);
+			let current = builder;
+			if (
+				!this.refs.withoutDescribes &&
+				typeof meta.description === 'string' &&
+				meta.description.length > 0
+			) {
+				current = current.describe(meta.description);
+			}
+			if (!this.refs.withoutDefaults && meta.default !== undefined) {
+				current = current.default(meta.default);
+			}
+			return current;
+		}
+
+		// Legacy field-access for when no adapter is set (use the processed schema)
+		if (_schema && typeof _schema === 'object') {
+			const schema = _schema;
 			let current = builder;
 			const s = schema as Record<string, unknown>;
 			const description = s.description;

@@ -8,7 +8,10 @@
  */
 import { describe, it, expect, beforeEach } from 'vitest';
 import type { Parser } from '../../src/Parser/index.js';
-import { registerParser, parserRegistry } from '../../src/JsonSchema/parsers/registry.js';
+import {
+	registerParser,
+	parserRegistry,
+} from '../../src/JsonSchema/parsers/registry.js';
 import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 import type { Context } from '../../src/Types.js';
@@ -63,7 +66,10 @@ describe('registerParser — Gap 5b', () => {
 	it('registerParser throws when class lacks parse() method', () => {
 		class BadParser {
 			readonly typeKind = 'x-custom' as const;
-			constructor(private _schema: any, private _refs: any) {}
+			constructor(
+				private _schema: any,
+				private _refs: any,
+			) {}
 			// Missing parse() method
 		}
 

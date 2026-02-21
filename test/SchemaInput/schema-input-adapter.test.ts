@@ -1,8 +1,9 @@
 /**
- * T031 + T032: SchemaInputAdapter interface + JsonSchemaAdapter tests (Gap 5).
+ * T031 + T032 + T037: SchemaInputAdapter interface + JsonSchemaAdapter + pipeline tests.
  *
  * T031: JsonSchemaAdapter method contract tests.
  * T032: registerAdapter replaces the global default without throwing.
+ * T037: per-call adapter (Context.adapter) is dispatched correctly.
  */
 import { describe, it, expect, afterEach } from 'vitest';
 import {
@@ -14,6 +15,10 @@ import {
 	getGlobalAdapter,
 } from '../../src/SchemaInput/index.js';
 import type { SchemaInputAdapter } from '../../src/SchemaInput/index.js';
+import type { ParserConstructor } from '../../src/Parser/index.js';
+import type { Parser } from '../../src/Parser/index.js';
+import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
+import { AbstractParser } from '../../src/Parser/AbstractParser.js';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 import type { Context } from '../../src/Types.js';
 
@@ -123,5 +128,82 @@ describe('registerAdapter — T032', () => {
 		registerAdapter(jsonSchemaAdapter);
 		const active = getGlobalAdapter();
 		expect(active).toBe(jsonSchemaAdapter);
+	});
+});
+
+describe('Adapter pipeline integration — T037', () => {
+	it('per-call adapter overrides parser selection via Context.adapter', () => {
+		// A custom parser that always returns z.number()
+		class AlwaysNumberParser implements Parser {
+			readonly typeKind = 'always-number' as const;
+			constructor(
+				private _schema: unknown,
+				private _refs: Context,
+			) {}
+			parse() {
+				return this._refs.build.number();
+			}
+		}
+
+		// A custom adapter that routes all valid schemas to AlwaysNumberParser
+		const customAdapter: SchemaInputAdapter = {
+			isValid: (input) => typeof input === 'object' && input !== null,
+			selectParser: (): ParserConstructor => AlwaysNumberParser,
+			getRef: () => undefined,
+			getMetadata: () => ({}),
+		};
+
+		const refs: Context = {
+			build: buildV4,
+			path: [],
+			seen: new Map(),
+			zodVersion: 'v4',
+			adapter: customAdapter,
+		};
+
+		// Even though the schema says "string", the custom adapter routes to AlwaysNumberParser
+		const result = parseSchema({ type: 'string' } as any, refs);
+		expect(result.text()).toContain('z.number()');
+	});
+
+	it('default JsonSchemaAdapter behavior preserved when no per-call adapter set', () => {
+		const refs: Context = {
+			build: buildV4,
+			path: [],
+			seen: new Map(),
+			zodVersion: 'v4',
+		};
+
+		const result = parseSchema({ type: 'string' } as any, refs);
+		expect(result.text()).toContain('z.string()');
+	});
+
+	it('custom adapter getMetadata is used by AbstractParser.applyMetadata', () => {
+		// Use AbstractParser subclass so applyMetadata is called
+		class AlwaysStringParser extends AbstractParser<'always-string'> {
+			readonly typeKind = 'always-string' as const;
+			protected parseImpl() {
+				return this.refs.build.string();
+			}
+		}
+
+		const metadataAdapter: SchemaInputAdapter = {
+			isValid: (input) => typeof input === 'object' && input !== null,
+			selectParser: (): ParserConstructor => AlwaysStringParser,
+			getRef: () => undefined,
+			// Custom metadata extraction: ignores schema, always returns description
+			getMetadata: () => ({ description: 'from-adapter' }),
+		};
+
+		const refs: Context = {
+			build: buildV4,
+			path: [],
+			seen: new Map(),
+			zodVersion: 'v4',
+			adapter: metadataAdapter,
+		};
+
+		const result = parseSchema({ type: 'string' } as any, refs);
+		expect(result.text()).toContain('.describe("from-adapter")');
 	});
 });

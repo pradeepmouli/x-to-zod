@@ -101,4 +101,6 @@ export type Context = Options & {
 	builderRegistry?: import('./SchemaProject/BuilderRegistry.js').BuilderRegistry;
 	/** Optional dependency graph for cycle detection in SchemaProject */
 	dependencyGraph?: import('./SchemaProject/types.js').DependencyGraph;
+	/** Optional per-call adapter override; defaults to the global adapter */
+	adapter?: import('./SchemaInput/index.js').SchemaInputAdapter;
 };

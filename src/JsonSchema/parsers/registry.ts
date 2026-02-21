@@ -43,10 +43,7 @@ export const parserRegistry = new Map<string, ParserConstructor>([
  * @param typeKind - The schema type identifier this parser handles
  * @param cls - The parser constructor to register
  */
-export function registerParser(
-	typeKind: string,
-	cls: ParserConstructor,
-): void {
+export function registerParser(typeKind: string, cls: ParserConstructor): void {
 	// Runtime validation: check the constructor produces a structurally valid Parser
 	// We validate the prototype rather than constructing an instance to avoid side-effects
 	const proto = cls.prototype as { typeKind?: unknown; parse?: unknown };
