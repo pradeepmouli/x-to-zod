@@ -4,7 +4,6 @@ import type {
 	JSONSchemaObject,
 	SchemaVersion,
 	TypeValue,
-	TypeValueToTypeMap,
 } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
 import { parseSchema } from './parseSchema.js';
