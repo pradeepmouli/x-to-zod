@@ -32,8 +32,8 @@ User description: "abstract parser/schema project surface to permit non third-pa
 - `src/JsonSchema/types/index.ts`: `JSONSchemaAny`, `JSONSchemaObject`, and `SchemaVersion` are re-exported from the top-level `src/index.ts`, surfacing the JSON Schema dependency as a first-class part of the public API contract rather than an implementation detail.
 - `src/JsonSchema/parsers/BaseParser.ts` line 47: Constructor expects `JSONSchemaObject<Version>` directly, so third-party input format adapters cannot subclass `BaseParser` without first converting their input to a `JSONSchemaObject`.
 - `src/JsonSchema/parsers/BaseParser.ts` (entire class): `BaseParser` conflates two concerns — the **contract** (what every parser must do: expose `typeKind` and `parse()`) and the **infrastructure** (pre/post-processor filtering, child context creation, circular-ref tracking, metadata application). Third-party parsers that don't need the template method infrastructure cannot satisfy the registry's `ParserClass` type without inheriting all of `BaseParser`'s machinery. There is no way to register a lightweight, standalone parser function or class that only implements `parse(): Builder`.
-- `src/Types.ts` lines 12-15: `ParserOverride` is typed as `(schema, refs) => BaseBuilder | string | void`. The `string` return is an untyped escape hatch that completely bypasses the output contract — callers can emit arbitrary text without going through the `Builder` abstraction, making it impossible to validate, transform, or re-target the output (e.g., swap Zod v3 ↔ v4 code generation).
-- `src/Types.ts` line 11: `ParserSelector` returns the concrete `BaseBuilder` class rather than an interface. This couples all callers to the implementation class, preventing alternative output implementations (e.g., a dry-run builder, an AST builder) without modifying the core types.
+- `src/Types.ts` lines 12-15: `ParserOverride` is typed as `(schema, refs) => ZodBuilder | string | void`. The `string` return is an untyped escape hatch that completely bypasses the output contract — callers can emit arbitrary text without going through the `Builder` abstraction, making it impossible to validate, transform, or re-target the output (e.g., swap Zod v3 ↔ v4 code generation).
+- `src/Types.ts` line 11: `ParserSelector` returns the concrete `ZodBuilder` class rather than an interface. This couples all callers to the implementation class, preventing alternative output implementations (e.g., a dry-run builder, an AST builder) without modifying the core types.
 
 ### Business/Technical Justification
 - [x] Blocking new features — adding TypeScript type, GraphQL schema, Protobuf, or other first-class input adapters is impossible without forking or duplicating the core pipeline.
@@ -58,17 +58,18 @@ Finally, separate the **parser contract** from the **parser infrastructure**: sp
 **Files Affected**:
 - **Modified**:
   - `src/JsonSchema/parsers/parseSchema.ts` — accept `SchemaInput | JSONSchemaAny | boolean`, delegate `isJSONSchema` guard to adapter; update internal `parserOverride` coercion to enforce `Builder` return; update `ParserClass` references to use new `Parser` interface
-  - `src/JsonSchema/parsers/registry.ts` — widen `ParserClass` from `typeof BaseParser` union to `new(schema: unknown, refs: Context) => Parser`; expose `registerParser` / `registerInputAdapter` hooks
-  - `src/Types.ts` — add `SchemaInput`, `SchemaInputAdapter`, `SchemaInputPlugin` interfaces to `Context`; change `ParserOverride` from `BaseBuilder | string | void` to `Builder | void` (raw `string` removed); change `ParserSelector` from `BaseBuilder` to `Builder`; keep `JSONSchema` types as concrete implementations
-  - `src/index.ts` — export `Builder`, `Parser`, `SchemaInput`, `SchemaInputAdapter`, `registerAdapter`
+  - `src/JsonSchema/parsers/registry.ts` — widen `ParserClass` from `typeof BaseParser` union to `new(schema: unknown, refs: Context) => Parser`; expose `registerParser` hook from both `registry.ts` and `src/index.ts`
+  - `src/Types.ts` — add `SchemaInput`, `SchemaInputAdapter`, `SchemaInputPlugin` interfaces to `Context`; change `ParserOverride` from `ZodBuilder | string | void` to `Builder | void` (raw `string` removed — breaking change); change `ParserSelector` from `ZodBuilder` to `Builder`; keep `JSONSchema` types as concrete implementations
+  - `src/index.ts` — export `Builder`, `Parser`, `ParserConstructor`, `AbstractParser`, `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `registerParser`, `jsonSchemaAdapter`
 - **Created**:
   - `src/Builder/index.ts` — `Builder` interface extracted from `ZodBuilder`: `typeKind: string`, `text(): string`, `optional(): Builder`, `nullable(): Builder`, `default(v): Builder`, `describe(s): Builder`, `brand(s): Builder`, `readonly(): Builder`, `catch(v): Builder`, `refine(fn, msg?): Builder`, `superRefine(fn): Builder`, `meta(obj): Builder`, `transform(fn): Builder`
   - `src/Parser/index.ts` — `Parser` interface: minimal contract every parser must satisfy — `typeKind: string`, `parse(): Builder`
   - `src/SchemaInput/index.ts` — `SchemaInput` interface, `SchemaInputAdapter` protocol, and `registerAdapter` API
   - `src/SchemaInput/JsonSchemaAdapter.ts` — wraps existing JSON Schema logic; satisfies `SchemaInputAdapter`
-- **Moved**:
-  - `src/JsonSchema/parsers/BaseParser.ts` → `src/JsonSchema/parsers/AbstractParser.ts` — renamed to `AbstractParser`; implements `Parser`; retains all template-method infrastructure (pre/post-processor filtering, `createChildContext`, `parseChild`, `applyMetadata`); `JSONSchemaAny<Version>` generic replaced with `SchemaInput` generic
-- **Deleted**: none (`BaseParser` name kept as a re-export alias for one release cycle to avoid immediate breakage)
+- **Created (from move)**:
+  - `src/JsonSchema/parsers/AbstractParser.ts` — content moved from `BaseParser.ts`; class renamed `AbstractParser`; implements `Parser`; retains all template-method infrastructure (pre/post-processor filtering, `createChildContext`, `parseChild`, `applyMetadata`); `JSONSchemaAny<Version>` generic replaced with `SchemaInput` generic
+- **Deleted**:
+  - `src/JsonSchema/parsers/BaseParser.ts` — removed entirely; no re-export shim (breaking change: consumers importing `BaseParser` get a compile error)
 
 ### Design Improvements
 **Before**:
@@ -234,12 +235,12 @@ This refactoring modifies `parseSchema` (core entry point called by every user),
   - **Rollback**: Revert `Types.ts` to original `PostProcessorContext` definition
 
 - **Risk 5**: Removing the raw `string` return from `ParserOverride` is a breaking change for any caller currently using `parserOverride: () => 'z.custom()'`
-  - **Mitigation**: In Step 0, emit a TypeScript deprecation warning (`@deprecated`) on the `string` overload for one release cycle rather than removing it immediately; the implementation wraps it automatically via `GenericBuilder` and logs a `console.warn`; the public type narrows to `Builder | void` only in the following release
+  - **Decision**: Accept as a breaking change. Remove the `typeof custom === 'string'` branch in Step 0a entirely; no shim, no `console.warn`. Callers must switch to `refs.build.code('z.custom()')`.
   - **Rollback**: Revert `Types.ts` `ParserOverride` definition; restore `typeof custom === 'string'` branch in `parseSchema.ts`
 
 - **Risk 6**: Renaming `BaseParser` → `AbstractParser` breaks any third-party code importing `BaseParser` directly
-  - **Mitigation**: Keep `export { AbstractParser as BaseParser }` re-export with `@deprecated` for one release cycle; TypeScript deprecation makes usages visible without breaking compilation
-  - **Rollback**: Remove the rename — restore `BaseParser` as the class name and keep `AbstractParser` as an alias
+  - **Decision**: Accept as a breaking change. Delete `BaseParser.ts` entirely in Step 0b; no re-export alias. Consumers importing `BaseParser` will get a TypeScript compile error.
+  - **Rollback**: Restore `BaseParser.ts` with the original class content; update all 18 parsers to `extend BaseParser` again
 
 - **Risk 7**: Widening `ParserClass` from the explicit class union to `new(...) => Parser` may allow structurally-compatible but semantically incorrect objects to be registered as parsers
   - **Mitigation**: Add a runtime assertion in `registerParser` that the registered class produces an object satisfying `typeof parser.parse === 'function' && typeof parser.typeKind === 'string'`
