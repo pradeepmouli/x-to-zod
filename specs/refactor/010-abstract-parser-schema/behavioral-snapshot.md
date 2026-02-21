@@ -305,6 +305,50 @@ parseSchema({ type: 'string' }, {
 
 ---
 
+### Behavior 26: `Parser` interface — third-party lightweight parser (no `AbstractParser` inheritance)
+
+**Input**:
+```js
+// A minimal parser that satisfies only the Parser interface
+class CustomStringParser {
+  typeKind = 'custom-string';
+  parse() { return refs.build.code('z.string().min(1)'); }
+}
+registerParser('custom-string', CustomStringParser);
+parseSchema({ type: 'custom-string' }, defaultRefs)
+```
+**Expected Output**: result emits `z.string().min(1)`
+
+**Actual Output (before)**: N/A — not possible before this refactoring (registry only accepted subclasses of `BaseParser`)
+**Actual Output (after)**: [ ] Must work — third-party parser registered and dispatched correctly
+
+---
+
+### Behavior 27: `AbstractParser` (renamed `BaseParser`) — all built-in parsers still work
+
+**Input**: Run existing integration tests for all 15+ parser types (object, array, string, number, boolean, null, anyOf, allOf, oneOf, enum, const, nullable, tuple, multipleType, conditional, not) after the `extend BaseParser` → `extend AbstractParser` rename
+
+**Expected Output**: All outputs identical to pre-refactoring baseline
+
+**Actual Output (before)**: [ ] Baseline captured from full test run
+**Actual Output (after)**: [ ] Must match — no regression across any parser type
+
+---
+
+### Behavior 28: `BaseParser` re-export alias — deprecated import still compiles
+
+**Input**:
+```ts
+import { BaseParser } from 'x-to-zod';
+class MyParser extends BaseParser { ... }  // deprecated but must not be a compile error
+```
+**Expected Output**: TypeScript compiles with deprecation warning (not error); runtime behaviour unchanged
+
+**Actual Output (before)**: N/A
+**Actual Output (after)**: [ ] Must compile (deprecation, not breaking)
+
+---
+
 ### Behavior 25: `Builder` interface — chained modifier methods produce correct output
 
 **Input**:

@@ -57,6 +57,10 @@ BEFORE the baseline is captured.
   - Classes: `ZodBuilder` — the class that will be made to implement the new `Builder` interface
   - Methods: `text()`, `optional()`, `nullable()`, `default()`, `describe()`, `brand()`, `readonly()`, `catch()`, `refine()`, `superRefine()`, `meta()`, `transform()`
 
+- [x] File: `src/JsonSchema/parsers/BaseParser.ts` → renamed to `AbstractParser.ts`
+  - Classes: `BaseParser` (renamed `AbstractParser`) — split into `Parser` interface + `AbstractParser` base class
+  - All 15+ concrete parser classes that `extend BaseParser` are affected by the rename
+
 **Downstream dependencies** (code that calls the above and must not regress):
 - [x] `src/JsonSchema/toZod.ts` → calls `parseSchema()`
 - [x] `src/jsonSchemaToZod.ts` → wraps `toZod()`
@@ -187,14 +191,26 @@ These gaps prevent us from validating behavior preservation:
    - **Priority**: 🔴 Critical
    - **Action**: Add a type-level test (using `satisfies` or `expectType`) verifying `ZodBuilder implements Builder` and that all chained calls on a `Builder` reference compile and produce identical `text()` output
 
+5. **Gap 5**: `Parser` interface contract — `AbstractParser` satisfies `Parser`; third-party parser (not extending `AbstractParser`) can be registered
+   - **Impact**: The `ParserClass` type in `registry.ts` changes from the explicit `typeof ObjectParser | typeof ArrayParser | ...` union to `new(...) => Parser`. If the structural check is too loose, incorrect objects can be registered. If too tight, the new extensibility goal fails.
+   - **Priority**: 🔴 Critical
+   - **Action**: Add two tests:
+     a. Type-level: a minimal hand-written class `class MyParser { typeKind = 'string'; parse() { return build.any(); } }` satisfies `Parser` and can be passed to `registerParser` without TypeScript error
+     b. Runtime: `registerParser('custom', MyParser)` and call `parseSchema({ type: 'custom' }, ...)` — verifies the registry dispatches to the lightweight parser
+
+6. **Gap 6**: All 15+ concrete parser classes still work after `extend BaseParser` → `extend AbstractParser` rename
+   - **Impact**: This is a mechanical rename but touches every parser class. A missed import or class name collision would silently break a specific schema type.
+   - **Priority**: 🔴 Critical
+   - **Action**: After the rename, run the full integration test suite; add a smoke test that exercises one schema for each parser type (object, array, string, number, boolean, null, anyOf, allOf, oneOf, enum, const, nullable, tuple, multipleType, conditional, not)
+
 ### Important Gaps (SHOULD fix before baseline)
 These gaps reduce confidence but don't block refactoring:
 
-1. **Gap 4**: `ConditionalParser` coverage — `if/then/else` schema handling
+1. **Gap 7**: `ConditionalParser` coverage — `if/then/else` schema handling
    - **Impact**: Lower confidence that conditional logic is preserved through adapter
    - **Priority**: 🟡 Important
 
-2. **Gap 5**: `MultipleTypeParser` coverage — `type: ["string", "null"]` schemas
+2. **Gap 8**: `MultipleTypeParser` coverage — `type: ["string", "null"]` schemas
    - **Impact**: Multi-type arrays are a common JSON Schema pattern
    - **Priority**: 🟡 Important
 
@@ -275,6 +291,24 @@ These can be addressed later:
 
 10. ✅ Test (type-level): `ZodBuilder satisfies Builder` — `ZodBuilder` implements full `Builder` interface
     - Verify: chaining `builder.optional().describe('x').nullable()` on a `Builder`-typed reference compiles and `text()` returns the expected string
+    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+
+11. ✅ Test (type-level): `AbstractParser satisfies Parser` — `AbstractParser` implements `Parser` interface
+    - Verify: a concrete subclass of `AbstractParser` can be assigned to a `Parser`-typed variable
+    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+
+12. ✅ Test (runtime): third-party `Parser` implementation registered via `registerParser` and dispatched correctly
+    - Input: `class MinimalParser { typeKind = 'test'; parse() { return build.any(); } }` registered then invoked
+    - Expected: `parseSchema({ type: 'test' }, ...)` returns `z.any()`
+    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+
+13. ✅ Test: `BaseParser` re-export alias compiles (deprecated, not removed)
+    - Verify: `import { BaseParser } from 'x-to-zod'; class X extends BaseParser {}` compiles without error
+    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+
+14. ✅ Test: smoke test — one schema per parser type after rename
+    - Covers: ObjectParser, ArrayParser, StringParser, NumberParser, BooleanParser, NullParser, AnyOfParser, AllOfParser, OneOfParser, EnumParser, ConstParser, NullableParser, TupleParser, MultipleTypeParser, ConditionalParser, NotParser
+    - Expected: identical output to pre-rename baseline for all 15+ types
     - Status: [ ] Not Started [ ] In Progress [ ] Complete
 
 ---
