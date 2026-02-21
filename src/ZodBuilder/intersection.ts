@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,10 +7,10 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class IntersectionBuilder extends ZodBuilder<'intersection'> {
 	readonly typeKind = 'intersection' as const;
-	private readonly _left: ZodBuilder;
-	private readonly _right: ZodBuilder;
+	private readonly _left: Builder;
+	private readonly _right: Builder;
 
-	constructor(left: ZodBuilder, right: ZodBuilder, version?: 'v3' | 'v4') {
+	constructor(left: Builder, right: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._left = left;
 		this._right = right;

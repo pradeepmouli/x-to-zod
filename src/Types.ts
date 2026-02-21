@@ -5,14 +5,15 @@ import type {
 	transformer,
 } from './JsonSchema/types/index.js';
 import type { ZodBuilder as BaseBuilder } from './ZodBuilder/BaseBuilder.js';
+import type { Builder } from './Builder/index.js';
 
 export type Serializable = Jsonifiable;
 
-export type ParserSelector = (schema: JSONSchema, refs: Context) => BaseBuilder;
+export type ParserSelector = (schema: JSONSchema, refs: Context) => Builder;
 export type ParserOverride = (
 	schema: JSONSchema,
 	refs: Context,
-) => BaseBuilder | string | void;
+) => Builder | void;
 
 export type BuildFunctions =
 	| typeof import('./ZodBuilder/v3.js').buildV3
@@ -87,7 +88,7 @@ export type Context = Options & {
 	matchPath?: (pattern: string) => boolean;
 	seen: Map<
 		object | boolean,
-		{ n: number; r: import('./ZodBuilder/index.js').BaseBuilder | undefined }
+		{ n: number; r: import('./Builder/index.js').Builder | undefined }
 	>;
 	preProcessors?: PreProcessor[];
 	postProcessors?: PostProcessorConfig[];

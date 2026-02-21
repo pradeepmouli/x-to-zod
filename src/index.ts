@@ -2,6 +2,9 @@ export * from './JsonSchema/parsers/parseDefault.js';
 export * from './JsonSchema/parsers/parseSchema.js';
 export * from './Types.js';
 
+// New interfaces (refactor-010)
+export type { Builder } from './Builder/index.js';
+
 export { toZod as jsonSchemaToZod } from './JsonSchema/toZod.js';
 export { toZod as default } from './JsonSchema/toZod.js';
 

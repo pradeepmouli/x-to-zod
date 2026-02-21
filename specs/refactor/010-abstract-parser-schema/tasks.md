@@ -31,9 +31,9 @@ the spec's refactoring phases and success criteria.
 
 **Purpose**: Confirm the baseline environment is clean before any changes.
 
-- [ ] T001 Run `pnpm test` and confirm 100% pass rate; record output in `specs/refactor/010-abstract-parser-schema/metrics-before.md`
-- [ ] T002 Run `pnpm test --coverage` and record line/branch coverage in `specs/refactor/010-abstract-parser-schema/metrics-before.md`
-- [ ] T003 Confirm `pnpm build` succeeds with no TypeScript errors
+- [x] T001 Run `pnpm test` and confirm 100% pass rate; record output in `specs/refactor/010-abstract-parser-schema/metrics-before.md`
+- [x] T002 Run `pnpm test --coverage` and record line/branch coverage in `specs/refactor/010-abstract-parser-schema/metrics-before.md`
+- [x] T003 Confirm `pnpm build` succeeds with no TypeScript errors
 
 **Checkpoint**: Environment verified — proceed to foundational gap remediation.
 
@@ -48,23 +48,23 @@ Tests in this phase are behavior-preservation anchors for the entire refactoring
 
 ### Critical Gap Tests (Gap 1–3 from testing-gaps.md)
 
-- [ ] T004 [P] Add boolean schema tests to `test/JsonSchema/parsers/parseSchema.test.ts` — `jsonSchemaToZod(true)` → `"z.any()"` and `jsonSchemaToZod(false)` → `"z.never()"`
-- [ ] T005 [P] Add `parserOverride` void-return (fallthrough) test to `test/JsonSchema/parsers/parseSchema.test.ts` — `parserOverride: () => undefined` causes `parseSchema` to fall through to the default parser and produce correct output; confirms the fallthrough branch is distinct from the override branch (Gap 2 — string path deleted; Builder-return path tested in T013)
-- [ ] T006 [P] Add circular reference depth-limit test to `test/JsonSchema/parsers/parseSchema.test.ts` — mutually recursive schema with `depth: 2` terminates with `z.any()` (Gap 3)
+- [x] T004 [P] Add boolean schema tests to `test/JsonSchema/parsers/parseSchema.test.ts` — `jsonSchemaToZod(true)` → `"z.any()"` and `jsonSchemaToZod(false)` → `"z.never()"`
+- [x] T005 [P] Add `parserOverride` void-return (fallthrough) test to `test/JsonSchema/parsers/parseSchema.test.ts` — `parserOverride: () => undefined` causes `parseSchema` to fall through to the default parser and produce correct output; confirms the fallthrough branch is distinct from the override branch (Gap 2 — string path deleted; Builder-return path tested in T013)
+- [x] T006 [P] Add circular reference depth-limit test to `test/JsonSchema/parsers/parseSchema.test.ts` — mutually recursive schema with `depth: 2` terminates with `z.any()` (Gap 3)
 
 ### Important Gap Tests (Gap 7–8 from testing-gaps.md)
 
-- [ ] T007 [P] Create `test/parsers/parseConditional.test.ts` — `if/then/else` schema produces valid Zod output (Gap 7)
-- [ ] T008 [P] Create `test/parsers/parseMultipleType.test.ts` — `type: ['string', 'null']` produces `z.union([z.string(), z.null()])` or equivalent (Gap 8)
+- [x] T007 [P] Create `test/parsers/parseConditional.test.ts` — `if/then/else` schema produces valid Zod output (Gap 7)
+- [x] T008 [P] Create `test/parsers/parseMultipleType.test.ts` — `type: ['string', 'null']` produces `z.union([z.string(), z.null()])` or equivalent (Gap 8)
 
 ### Smoke Test for All Parser Types (Gap 6 from testing-gaps.md)
 
-- [ ] T009 Create `test/JsonSchema/parsers/smoke-all-types.test.ts` — one round-trip assertion per parser type: ObjectParser, ArrayParser, StringParser, NumberParser, IntegerParser, BooleanParser, NullParser, AnyOfParser, AllOfParser, OneOfParser, EnumParser, ConstParser, NullableParser, TupleParser, MultipleTypeParser, ConditionalParser, NotParser, RecordParser (18 types — covers all parsers listed in plan.md) (Gap 6)
+- [x] T009 Create `test/JsonSchema/parsers/smoke-all-types.test.ts` — one round-trip assertion per parser type: ObjectParser, ArrayParser, StringParser, NumberParser, IntegerParser, BooleanParser, NullParser, AnyOfParser, AllOfParser, OneOfParser, EnumParser, ConstParser, NullableParser, TupleParser, MultipleTypeParser, ConditionalParser, NotParser, RecordParser (18 types — covers all parsers listed in plan.md) (Gap 6)
 
 ### Baseline Capture
 
-- [ ] T010 Verify all gap tests from T004–T009 pass; run `pnpm test` and confirm 100% pass rate
-- [ ] T011 Create git tag `pre-refactor-010`: `git tag pre-refactor-010 -m "Baseline before refactor-010"` and push tag
+- [x] T010 Verify all gap tests from T004–T009 pass; run `pnpm test` and confirm 100% pass rate
+- [x] T011 Create git tag `pre-refactor-010`: `git tag pre-refactor-010 -m "Baseline before refactor-010"` and push tag
 
 **Checkpoint**: All gap tests pass; baseline tagged — refactoring can begin.
 

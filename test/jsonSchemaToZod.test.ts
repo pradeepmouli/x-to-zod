@@ -308,13 +308,13 @@ export default z.null()
 							schema.type === 'boolean' &&
 							schema.description === 'foo'
 						) {
-							return 'myCustomZodSchema';
+							return refs.build.any();
 						}
 					},
 				},
 			),
 		).toBe(
-			`z.intersection(z.string(), z.intersection(z.number(), myCustomZodSchema))`,
+			`z.intersection(z.string(), z.intersection(z.number(), z.any()))`,
 		);
 	});
 

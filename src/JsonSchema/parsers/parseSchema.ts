@@ -5,11 +5,9 @@ import {
 	type JSONSchemaAny as JSONSchema,
 	type SchemaVersion,
 } from '../types/index.js';
-import { BaseBuilder } from '../../ZodBuilder/index.js';
-import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../../Builder/index.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { selectParserClass } from './registry.js';
-import { is } from '../../utils/is.js';
 import { BaseParser } from './BaseParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
 import { parseRef } from '../../SchemaProject/parseRef.js';
@@ -23,7 +21,7 @@ export const parseSchema = <Version extends SchemaVersion>(
 		build: buildV4,
 	},
 	blockMeta?: boolean,
-): ZodBuilder => {
+): Builder => {
 	if (isJSONSchema(schema)) {
 		const path = refs.path || [];
 		// Always compute pathString from path, don't use cached value when path changes
@@ -54,13 +52,8 @@ export const parseSchema = <Version extends SchemaVersion>(
 		}
 		if (refs.parserOverride) {
 			const custom = refs.parserOverride(schema, refs);
-
-			if (typeof custom === 'string') {
-				return refs.build.code(custom);
-			}
-
-			if (is.zodBuilder(custom)) {
-				return custom;
+			if (custom != null) {
+				return custom as ReturnType<typeof refs.build.any>;
 			}
 		}
 
@@ -110,8 +103,8 @@ export const parseSchema = <Version extends SchemaVersion>(
 
 const addDescribes = (
 	schema: JSONSchema,
-	builder: BaseBuilder,
-): BaseBuilder => {
+	builder: Builder,
+): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.description) {
 		return builder.describe(schemaObject.description);
@@ -120,7 +113,7 @@ const addDescribes = (
 	return builder;
 };
 
-const addDefaults = (schema: JSONSchema, builder: BaseBuilder): BaseBuilder => {
+const addDefaults = (schema: JSONSchema, builder: Builder): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.default !== undefined) {
 		return builder.default(schemaObject.default);
@@ -131,8 +124,8 @@ const addDefaults = (schema: JSONSchema, builder: BaseBuilder): BaseBuilder => {
 
 const addAnnotations = (
 	schema: JSONSchema,
-	builder: BaseBuilder,
-): BaseBuilder => {
+	builder: Builder,
+): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.readOnly) {
 		return builder.readonly();
