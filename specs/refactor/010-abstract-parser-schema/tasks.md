@@ -84,18 +84,18 @@ After this phase, all parser outputs are typed against the interface, not the im
 
 > **Write these FIRST — they must compile-error or fail before implementation begins**
 
-- [ ] T012 [P] [US1] Create `test/Builder/builder-interface.test.ts` — type-level test: declare `const b: Builder = zodBuilderInstance`, call chain `b.optional().describe('x').nullable()`, assert `b.text()` returns expected string; verify `ZodBuilder satisfies Builder` (Gap 4)
-- [ ] T013 [P] [US1] Add `parserOverride` Builder return test to `test/JsonSchema/parsers/parseSchema.test.ts` — `parserOverride: (_, refs) => refs.build.number()` produces output containing `z.number()`
+- [x] T012 [P] [US1] Create `test/Builder/builder-interface.test.ts` — type-level test: declare `const b: Builder = zodBuilderInstance`, call chain `b.optional().describe('x').nullable()`, assert `b.text()` returns expected string; verify `ZodBuilder satisfies Builder` (Gap 4)
+- [x] T013 [P] [US1] Add `parserOverride` Builder return test to `test/JsonSchema/parsers/parseSchema.test.ts` — `parserOverride: (_, refs) => refs.build.number()` produces output containing `z.number()`
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Create `src/Builder/index.ts` — `Builder` interface with 13 methods: `typeKind`, `text()`, `optional()`, `nullable()`, `default()`, `describe()`, `brand()`, `readonly()`, `catch()`, `refine()`, `superRefine()`, `meta()`, `transform()` (see contracts/builder.interface.ts)
-- [ ] T015 [US1] Add `implements Builder` to `ZodBuilder` class in `src/ZodBuilder/BaseBuilder.ts` — additive only; no logic changes; confirm `this` return types satisfy `Builder` return types structurally
-- [ ] T016 [US1] Update `ParserOverride` in `src/Types.ts` — change return type from `BaseBuilder | string | void` to `Builder | void`; remove the `string` branch entirely (breaking change; callers must switch to `refs.build.code(str)`)
-- [ ] T017 [US1] Update `ParserSelector` in `src/Types.ts` — change return type from `BaseBuilder` to `Builder`
-- [ ] T018 [US1] Remove the `typeof custom === 'string'` branch in `src/JsonSchema/parsers/parseSchema.ts` — delete the branch entirely; no shim or console.warn
-- [ ] T019 [US1] Export `Builder` from `src/index.ts`
-- [ ] T020 [US1] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors
+- [x] T014 [US1] Create `src/Builder/index.ts` — `Builder` interface with 13 methods: `typeKind`, `text()`, `optional()`, `nullable()`, `default()`, `describe()`, `brand()`, `readonly()`, `catch()`, `refine()`, `superRefine()`, `meta()`, `transform()` (see contracts/builder.interface.ts)
+- [x] T015 [US1] Add `implements Builder` to `ZodBuilder` class in `src/ZodBuilder/BaseBuilder.ts` — additive only; no logic changes; confirm `this` return types satisfy `Builder` return types structurally
+- [x] T016 [US1] Update `ParserOverride` in `src/Types.ts` — change return type from `BaseBuilder | string | void` to `Builder | void`; remove the `string` branch entirely (breaking change; callers must switch to `refs.build.code(str)`)
+- [x] T017 [US1] Update `ParserSelector` in `src/Types.ts` — change return type from `BaseBuilder` to `Builder`
+- [x] T018 [US1] Remove the `typeof custom === 'string'` branch in `src/JsonSchema/parsers/parseSchema.ts` — delete the branch entirely; no shim or console.warn
+- [x] T019 [US1] Export `Builder` from `src/index.ts`
+- [x] T020 [US1] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors
 
 **Checkpoint**: `Builder` interface is live. `ZodBuilder` implements it. `ParserOverride` returns
 `Builder|void` — `string` return is a compile error. All tests pass. Commit before Phase 4.

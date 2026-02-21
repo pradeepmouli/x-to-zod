@@ -89,10 +89,8 @@ export const buildV4 = {
 	// Zod v4 only builders
 	promise: (innerSchema: Builder) => new PromiseBuilder(innerSchema, 'v4'),
 	lazy: (input: Builder) => new LazyBuilder(input, 'v4'),
-	function: (functionSignature: {
-		input?: Builder[];
-		output?: Builder;
-	}) => new FunctionBuilder(functionSignature, 'v4'),
+	function: (functionSignature: { input?: Builder[]; output?: Builder }) =>
+		new FunctionBuilder(functionSignature, 'v4'),
 	codec: (inSchema: Builder, outSchema: Builder) =>
 		new CodecBuilder(inSchema, outSchema, 'v4'),
 	preprocess: (transformFn: string, schema: Builder) =>

@@ -23,11 +23,12 @@ export class OneOfParser extends BaseParser<'oneOf'> {
 			return this.parseChild(oneOf[0], 'oneOf', 0);
 		}
 
-		const schemaBuilders: Builder[] = oneOf.map((subSchema: JSONSchema, i: number) =>
-			parseSchema(subSchema, {
-				...this.refs,
-				path: [...(this.refs.path || []), 'oneOf', i],
-			}),
+		const schemaBuilders: Builder[] = oneOf.map(
+			(subSchema: JSONSchema, i: number) =>
+				parseSchema(subSchema, {
+					...this.refs,
+					path: [...(this.refs.path || []), 'oneOf', i],
+				}),
 		);
 
 		// Use xor for v4, union for v3

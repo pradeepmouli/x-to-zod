@@ -10,11 +10,7 @@ export class CodecBuilder extends ZodBuilder<'codec'> {
 	private readonly _inSchema: Builder;
 	private readonly _outSchema: Builder;
 
-	constructor(
-		inSchema: Builder,
-		outSchema: Builder,
-		version?: 'v3' | 'v4',
-	) {
+	constructor(inSchema: Builder, outSchema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._inSchema = inSchema;
 		this._outSchema = outSchema;

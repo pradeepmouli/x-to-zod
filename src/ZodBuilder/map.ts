@@ -12,11 +12,7 @@ export class MapBuilder extends ZodBuilder<'map'> {
 	_max?: { value: number; errorMessage?: string } = undefined;
 	_size?: { value: number; errorMessage?: string } = undefined;
 
-	constructor(
-		keySchema: Builder,
-		valueSchema: Builder,
-		version?: 'v3' | 'v4',
-	) {
+	constructor(keySchema: Builder, valueSchema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._keySchema = keySchema;
 		this._valueSchema = valueSchema;

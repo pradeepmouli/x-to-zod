@@ -54,10 +54,7 @@ export const parse = {
 	 * @param refs - Parsing context including references and configuration
 	 * @returns A Builder representing the parsed object
 	 */
-	object(
-		schema: JSONSchemaObject & { type?: string },
-		refs: Context,
-	): Builder {
+	object(schema: JSONSchemaObject & { type?: string }, refs: Context): Builder {
 		const parser = new (ObjectParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -69,10 +66,7 @@ export const parse = {
 	 * @param refs - Parsing context including references and configuration
 	 * @returns A Builder representing the parsed array
 	 */
-	array(
-		schema: JSONSchemaObject & { type?: string },
-		refs: Context,
-	): Builder {
+	array(schema: JSONSchemaObject & { type?: string }, refs: Context): Builder {
 		const parser = new (ArrayParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -84,10 +78,7 @@ export const parse = {
 	 * @param refs - Parsing context including references and configuration
 	 * @returns A Builder representing the parsed string
 	 */
-	string(
-		schema: JSONSchemaObject & { type?: string },
-		refs: Context,
-	): Builder {
+	string(schema: JSONSchemaObject & { type?: string }, refs: Context): Builder {
 		const parser = new (StringParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -99,10 +90,7 @@ export const parse = {
 	 * @param refs - Parsing context including references and configuration
 	 * @returns A Builder representing the parsed number
 	 */
-	number(
-		schema: JSONSchemaObject & { type?: string },
-		refs: Context,
-	): Builder {
+	number(schema: JSONSchemaObject & { type?: string }, refs: Context): Builder {
 		const parser = new (NumberParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -129,10 +117,7 @@ export const parse = {
 	 * @param refs - Parsing context including references and configuration
 	 * @returns A Builder representing the parsed null
 	 */
-	null(
-		schema: JSONSchemaObject & { type?: string },
-		refs: Context,
-	): Builder {
+	null(schema: JSONSchemaObject & { type?: string }, refs: Context): Builder {
 		const parser = new (NullParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -190,10 +175,7 @@ export const parse = {
 	 * @param refs - Parsing context including references and configuration
 	 * @returns A Builder representing the parsed enum
 	 */
-	enum(
-		schema: JSONSchemaObject & { enum: unknown[] },
-		refs: Context,
-	): Builder {
+	enum(schema: JSONSchemaObject & { enum: unknown[] }, refs: Context): Builder {
 		const parser = new (EnumParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -206,10 +188,7 @@ export const parse = {
 	 * @param refs - Parsing context including references and configuration
 	 * @returns A Builder representing the parsed const/literal
 	 */
-	const(
-		schema: JSONSchemaObject & { const: unknown },
-		refs: Context,
-	): Builder {
+	const(schema: JSONSchemaObject & { const: unknown }, refs: Context): Builder {
 		const parser = new (ConstParser as any)(schema, refs);
 		return parser.parse();
 	},
