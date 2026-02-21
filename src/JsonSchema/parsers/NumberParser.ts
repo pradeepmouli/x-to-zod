@@ -1,9 +1,9 @@
 import type { Context } from '../../Types.js';
 import { type JSONSchemaObject } from '../types/index.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class NumberParser extends BaseParser<'number' | 'integer'> {
+export class NumberParser extends AbstractParser<'number' | 'integer'> {
 	readonly typeKind = 'number' as const;
 
 	constructor(schema: JSONSchemaObject, refs: Context) {

@@ -1,4 +1,5 @@
 import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
+import type { ParserConstructor } from '../../Parser/index.js';
 import { ObjectParser } from './ObjectParser.js';
 import { ArrayParser } from './ArrayParser.js';
 import { StringParser } from './StringParser.js';
@@ -18,43 +19,44 @@ import { TupleParser } from './TupleParser.js';
 import { is } from '../is.js';
 
 /**
- * Type for parser class constructors.
- * Uses typeof to capture the actual class type including protected constructor.
- */
-type ParserClass =
-	| typeof ObjectParser
-	| typeof ArrayParser
-	| typeof StringParser
-	| typeof NumberParser
-	| typeof BooleanParser
-	| typeof NullParser
-	| typeof AnyOfParser
-	| typeof AllOfParser
-	| typeof OneOfParser
-	| typeof EnumParser
-	| typeof ConstParser
-	| typeof NotParser
-	| typeof NullableParser
-	| typeof MultipleTypeParser
-	| typeof ConditionalParser
-	| typeof TupleParser;
-
-/**
- * Registry mapping JSON Schema types to parser classes.
+ * Registry mapping JSON Schema types to parser constructors.
  * This enables dynamic parser selection based on schema characteristics.
  */
-export const parserRegistry = new Map<string, ParserClass>([
-	['object', ObjectParser],
-	['array', ArrayParser],
-	['string', StringParser],
-	['number', NumberParser],
-	['integer', NumberParser],
-	['boolean', BooleanParser],
-	['null', NullParser],
-	['anyOf', AnyOfParser],
-	['allOf', AllOfParser],
-	['oneOf', OneOfParser],
+export const parserRegistry = new Map<string, ParserConstructor>([
+	['object', ObjectParser as ParserConstructor],
+	['array', ArrayParser as ParserConstructor],
+	['string', StringParser as ParserConstructor],
+	['number', NumberParser as ParserConstructor],
+	['integer', NumberParser as ParserConstructor],
+	['boolean', BooleanParser as ParserConstructor],
+	['null', NullParser as ParserConstructor],
+	['anyOf', AnyOfParser as ParserConstructor],
+	['allOf', AllOfParser as ParserConstructor],
+	['oneOf', OneOfParser as ParserConstructor],
 ]);
+
+/**
+ * Register a custom parser for a given typeKind.
+ * The parser class must implement the Parser interface (typeKind + parse()).
+ * Runtime validation ensures structural correctness (Risk 7).
+ *
+ * @param typeKind - The schema type identifier this parser handles
+ * @param cls - The parser constructor to register
+ */
+export function registerParser(
+	typeKind: string,
+	cls: ParserConstructor,
+): void {
+	// Runtime validation: check the constructor produces a structurally valid Parser
+	// We validate the prototype rather than constructing an instance to avoid side-effects
+	const proto = cls.prototype as { typeKind?: unknown; parse?: unknown };
+	if (typeof proto.parse !== 'function') {
+		throw new Error(
+			`registerParser: class registered for '${typeKind}' must have a parse() method`,
+		);
+	}
+	parserRegistry.set(typeKind, cls);
+}
 
 /**
  * Select the appropriate parser class for a given JSON Schema.
@@ -66,9 +68,11 @@ export const parserRegistry = new Map<string, ParserClass>([
  * 4. Default fallback (returns undefined, caller uses functional fallback)
  *
  * @param schema - JSON Schema to analyze
- * @returns Parser class constructor or undefined if no match
+ * @returns Parser constructor or undefined if no match
  */
-export function selectParserClass(schema: JSONSchema): ParserClass | undefined {
+export function selectParserClass(
+	schema: JSONSchema,
+): ParserConstructor | undefined {
 	// Schema must be an object to have a parser
 	if (typeof schema !== 'object' || schema === null) {
 		return undefined;
@@ -76,30 +80,30 @@ export function selectParserClass(schema: JSONSchema): ParserClass | undefined {
 
 	// Check special cases first (highest priority)
 	if (is.nullable(schema)) {
-		return NullableParser;
+		return NullableParser as ParserConstructor;
 	}
 	if (is.not(schema)) {
-		return NotParser;
+		return NotParser as ParserConstructor;
 	}
 	// Check for enum keyword directly (including empty arrays)
 	if ('enum' in schema && Array.isArray((schema as any).enum)) {
-		return EnumParser;
+		return EnumParser as ParserConstructor;
 	}
 	if (is.const(schema)) {
-		return ConstParser;
+		return ConstParser as ParserConstructor;
 	}
 	// Check for tuple: prefixItems (2020-12) or items as array (draft-07)
 	if ('prefixItems' in schema && Array.isArray((schema as any).prefixItems)) {
-		return TupleParser;
+		return TupleParser as ParserConstructor;
 	}
 	if ('items' in schema && Array.isArray((schema as any).items)) {
-		return TupleParser;
+		return TupleParser as ParserConstructor;
 	}
 	if (is.multipleType(schema)) {
-		return MultipleTypeParser;
+		return MultipleTypeParser as ParserConstructor;
 	}
 	if (is.conditional(schema)) {
-		return ConditionalParser;
+		return ConditionalParser as ParserConstructor;
 	}
 
 	// Check combinators

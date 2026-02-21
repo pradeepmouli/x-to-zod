@@ -8,7 +8,7 @@ import {
 import type { Builder } from '../../Builder/index.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { selectParserClass } from './registry.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
 import { parseRef } from '../../SchemaProject/parseRef.js';
 
@@ -143,5 +143,5 @@ const selectParser: ParserSelector = (schema, refs) => {
 	return parseDefault(schema, refs);
 };
 
-// Initialize BaseParser with parseSchema reference to break circular dependency
-BaseParser.setParseSchema(parseSchema);
+// Initialize AbstractParser with parseSchema reference to break circular dependency
+AbstractParser.setParseSchema(parseSchema as any);

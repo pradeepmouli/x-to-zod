@@ -1,4 +1,4 @@
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
 import type { buildV4 } from '../../ZodBuilder/v4.js';
@@ -8,7 +8,7 @@ import { parseSchema } from './parseSchema.js';
  * Parser for JSON Schema oneOf keyword.
  * Converts oneOf constraints to Zod xor (v4) or union (v3).
  */
-export class OneOfParser extends BaseParser<'oneOf'> {
+export class OneOfParser extends AbstractParser<'oneOf'> {
 	readonly typeKind = 'oneOf' as const;
 
 	protected parseImpl(schema: JSONSchema): Builder {

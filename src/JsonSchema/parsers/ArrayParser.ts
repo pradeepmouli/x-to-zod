@@ -1,25 +1,19 @@
 import type { Context } from '../../Types.js';
-import type {
-	JSONSchema,
-	JSONSchemaObject,
-	SchemaVersion,
-} from '../types/index.js';
+import type { JSONSchemaObject } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 
-export class ArrayParser<
-	Version extends SchemaVersion = SchemaVersion,
-> extends BaseParser<'array', Version> {
+export class ArrayParser extends AbstractParser<'array'> {
 	readonly typeKind = 'array' as const;
 
 	constructor(
-		schema: JSONSchemaObject<Version> & { type?: string },
+		schema: JSONSchemaObject & { type?: string },
 		refs: Context,
 	) {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JSONSchema<Version, any, 'array'>): ZodBuilder {
+	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
 		const s = schema as any; // Array schemas cannot be boolean
 
 		// Handle tuple (array of schemas) vs array (single schema)

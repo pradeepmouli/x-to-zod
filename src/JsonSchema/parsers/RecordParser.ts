@@ -4,7 +4,7 @@ import type {
 	JSONSchemaObject,
 } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { parseSchema } from './parseSchema.js';
 
 /**
@@ -18,7 +18,7 @@ import { parseSchema } from './parseSchema.js';
  * - `additionalProperties: true` → `z.record(z.string(), z.any())`
  * - No `additionalProperties` or `false` → `z.record(z.string(), z.any())`
  */
-export class RecordParser extends BaseParser<'record'> {
+export class RecordParser extends AbstractParser<'record'> {
 	readonly typeKind = 'record' as const;
 
 	constructor(schema: JSONSchemaObject, refs: Context) {

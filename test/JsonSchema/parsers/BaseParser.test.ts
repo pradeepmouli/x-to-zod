@@ -8,7 +8,7 @@ import type {
 	PreProcessor,
 } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import { BaseParser } from '../../../src/JsonSchema/parsers/BaseParser.js';
+import { AbstractParser } from '../../../src/Parser/AbstractParser.js';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
 	build: buildV4,
@@ -18,7 +18,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 	...overrides,
 });
 
-class StringTestParser extends BaseParser<'string'> {
+class StringTestParser extends AbstractParser<'string'> {
 	readonly typeKind = 'string' as const;
 
 	constructor(
@@ -37,13 +37,13 @@ class StringTestParser extends BaseParser<'string'> {
 	}
 }
 
-describe('BaseParser', () => {
+describe('AbstractParser', () => {
 	it('instantiates with schema and refs', () => {
 		const parser = new StringTestParser(
 			{ type: 'string' } as JSONSchema,
 			ctx(),
 		);
-		expect(parser).toBeInstanceOf(BaseParser);
+		expect(parser).toBeInstanceOf(AbstractParser);
 	});
 
 	it('executes template order: pre -> parseImpl -> post -> metadata', () => {

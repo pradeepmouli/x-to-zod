@@ -1,4 +1,4 @@
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
 import { parseSchema } from './parseSchema.js';
@@ -32,7 +32,7 @@ const ensureOriginalIndex = (arr: JSONSchema[]) => {
  * Parser for JSON Schema allOf keyword.
  * Converts allOf constraints to Zod intersection.
  */
-export class AllOfParser extends BaseParser<'allOf'> {
+export class AllOfParser extends AbstractParser<'allOf'> {
 	readonly typeKind = 'allOf' as const;
 
 	protected parseImpl(schema: JSONSchema): Builder {

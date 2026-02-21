@@ -1,11 +1,11 @@
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import type { JSONSchemaObject } from '../types/index.js';
 
 /**
  * Handles if/then/else conditional schemas
  */
-export class ConditionalParser extends BaseParser<'conditional'> {
+export class ConditionalParser extends AbstractParser<'conditional'> {
 	readonly typeKind = 'conditional' as const;
 
 	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {

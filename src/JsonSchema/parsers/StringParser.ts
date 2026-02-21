@@ -1,10 +1,10 @@
 import type { Context } from '../../Types.js';
 import type { JSONSchemaObject } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { parseSchema } from './parseSchema.js';
 
-export class StringParser extends BaseParser<'string'> {
+export class StringParser extends AbstractParser<'string'> {
 	readonly typeKind = 'string' as const;
 
 	constructor(schema: JSONSchemaObject, refs: Context) {
