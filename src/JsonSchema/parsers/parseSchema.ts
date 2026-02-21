@@ -101,10 +101,7 @@ export const parseSchema = <Version extends SchemaVersion>(
 	}
 };
 
-const addDescribes = (
-	schema: JSONSchema,
-	builder: Builder,
-): Builder => {
+const addDescribes = (schema: JSONSchema, builder: Builder): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.description) {
 		return builder.describe(schemaObject.description);
@@ -122,10 +119,7 @@ const addDefaults = (schema: JSONSchema, builder: Builder): Builder => {
 	return builder;
 };
 
-const addAnnotations = (
-	schema: JSONSchema,
-	builder: Builder,
-): Builder => {
+const addAnnotations = (schema: JSONSchema, builder: Builder): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.readOnly) {
 		return builder.readonly();

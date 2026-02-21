@@ -1,5 +1,5 @@
 import type { SchemaEntry } from './types.js';
-import type { ZodBuilder } from '../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../Builder/index.js';
 import type { ImportManager } from './ImportManager.js';
 import { Project, SourceFile } from 'ts-morph';
 import path from 'path';
@@ -32,14 +32,14 @@ export class SourceFileGenerator {
 	/**
 	 * Generate a TypeScript file for a schema.
 	 * @param schemaId - Schema identifier
-	 * @param builder - Zod builder for the schema
+	 * @param builder - Builder for the schema
 	 * @param importManager - Manager for import statements
 	 * @param _exportName - Name to export the schema as
 	 * @returns SourceFile or null on error
 	 */
 	generateFile(
 		schemaId: string,
-		builder: ZodBuilder,
+		builder: Builder,
 		importManager: ImportManager,
 		_exportName: string,
 	): SourceFile | null {

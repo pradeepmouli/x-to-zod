@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -7,9 +8,9 @@ import { ZodBuilder } from './BaseBuilder.js';
 export class PreprocessBuilder extends ZodBuilder<'preprocess'> {
 	readonly typeKind = 'preprocess' as const;
 	private readonly _preprocessFn: string;
-	private readonly _schema: ZodBuilder;
+	private readonly _schema: Builder;
 
-	constructor(transformFn: string, schema: ZodBuilder, version?: 'v3' | 'v4') {
+	constructor(transformFn: string, schema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._preprocessFn = transformFn;
 		this._schema = schema;

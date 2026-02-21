@@ -1,6 +1,6 @@
 import { BaseParser } from './BaseParser.js';
 import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../../Builder/index.js';
 import { parseSchema } from './parseSchema.js';
 import { half } from '../../utils/half.js';
 
@@ -35,7 +35,7 @@ const ensureOriginalIndex = (arr: JSONSchema[]) => {
 export class AllOfParser extends BaseParser<'allOf'> {
 	readonly typeKind = 'allOf' as const;
 
-	protected parseImpl(schema: JSONSchema): ZodBuilder {
+	protected parseImpl(schema: JSONSchema): Builder {
 		const allOfSchema = schema as { allOf?: JSONSchema[] };
 		const allOf = allOfSchema.allOf || [];
 

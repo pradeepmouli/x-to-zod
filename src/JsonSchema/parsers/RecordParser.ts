@@ -3,7 +3,7 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	JSONSchemaObject,
 } from '../types/index.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../../Builder/index.js';
 import { BaseParser } from './BaseParser.js';
 import { parseSchema } from './parseSchema.js';
 
@@ -25,13 +25,13 @@ export class RecordParser extends BaseParser<'record'> {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JSONSchema): ZodBuilder {
+	protected parseImpl(schema: JSONSchema): Builder {
 		const s = schema as JSONSchemaObject;
 		const ap = (s as any).additionalProperties;
 
 		const keySchema = this.refs.build.string();
 
-		let valueSchema: ZodBuilder;
+		let valueSchema: Builder;
 		if (ap !== undefined && ap !== true && ap !== false) {
 			// additionalProperties is a schema object
 			valueSchema = parseSchema(ap as JSONSchema, {

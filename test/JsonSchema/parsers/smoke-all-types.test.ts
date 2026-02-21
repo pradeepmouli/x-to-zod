@@ -19,7 +19,10 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 	...overrides,
 });
 
-const smoke = (schema: Parameters<typeof parseSchema>[0], overrides?: Partial<Context>) => {
+const smoke = (
+	schema: Parameters<typeof parseSchema>[0],
+	overrides?: Partial<Context>,
+) => {
 	const result = parseSchema(schema, ctx(overrides));
 	expect(result.text()).toBeTypeOf('string');
 	expect(result.text().length).toBeGreaterThan(0);
@@ -65,7 +68,9 @@ describe('smoke — all 18 parser types (Gap 6)', () => {
 	});
 
 	it('OneOfParser: { oneOf: [...] }', () => {
-		expect(() => smoke({ oneOf: [{ type: 'string' }, { type: 'number' }] })).not.toThrow();
+		expect(() =>
+			smoke({ oneOf: [{ type: 'string' }, { type: 'number' }] }),
+		).not.toThrow();
 	});
 
 	it('EnumParser: { enum: [...] }', () => {
@@ -85,7 +90,9 @@ describe('smoke — all 18 parser types (Gap 6)', () => {
 	});
 
 	it('TupleParser: { prefixItems: [...] }', () => {
-		const text = smoke({ prefixItems: [{ type: 'string' }, { type: 'number' }] } as any);
+		const text = smoke({
+			prefixItems: [{ type: 'string' }, { type: 'number' }],
+		} as any);
 		expect(text).toContain('z.tuple');
 	});
 

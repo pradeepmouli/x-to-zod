@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,9 +7,9 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class LazyBuilder extends ZodBuilder<'lazy'> {
 	readonly typeKind = 'lazy' as const;
-	private readonly _input: ZodBuilder;
+	private readonly _input: Builder;
 
-	constructor(input: ZodBuilder, version?: 'v3' | 'v4') {
+	constructor(input: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._input = input;
 	}

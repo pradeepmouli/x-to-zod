@@ -13,7 +13,7 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	JSONSchemaObject,
 } from '../types/index.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../../Builder/index.js';
 import { parseSchema } from './parseSchema.js';
 import { ObjectParser } from './ObjectParser.js';
 import { ArrayParser } from './ArrayParser.js';
@@ -41,9 +41,9 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed schema
+	 * @returns A Builder representing the parsed schema
 	 */
-	schema(schema: JSONSchema, refs: Context): ZodBuilder {
+	schema(schema: JSONSchema, refs: Context): Builder {
 		return parseSchema(schema, refs);
 	},
 
@@ -52,12 +52,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema object to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed object
+	 * @returns A Builder representing the parsed object
 	 */
 	object(
 		schema: JSONSchemaObject & { type?: string },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (ObjectParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -67,12 +67,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema array to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed array
+	 * @returns A Builder representing the parsed array
 	 */
 	array(
 		schema: JSONSchemaObject & { type?: string },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (ArrayParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -82,12 +82,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema string to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed string
+	 * @returns A Builder representing the parsed string
 	 */
 	string(
 		schema: JSONSchemaObject & { type?: string },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (StringParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -97,12 +97,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema number to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed number
+	 * @returns A Builder representing the parsed number
 	 */
 	number(
 		schema: JSONSchemaObject & { type?: string },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (NumberParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -112,12 +112,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema boolean to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed boolean
+	 * @returns A Builder representing the parsed boolean
 	 */
 	boolean(
 		schema: JSONSchemaObject & { type?: string },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (BooleanParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -127,12 +127,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema null to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed null
+	 * @returns A Builder representing the parsed null
 	 */
 	null(
 		schema: JSONSchemaObject & { type?: string },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (NullParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -142,12 +142,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with anyOf to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed anyOf union
+	 * @returns A Builder representing the parsed anyOf union
 	 */
 	anyOf(
 		schema: JSONSchemaObject & { anyOf: JSONSchema[] },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (AnyOfParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -157,12 +157,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with allOf to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed allOf intersection
+	 * @returns A Builder representing the parsed allOf intersection
 	 */
 	allOf(
 		schema: JSONSchemaObject & { allOf: JSONSchema[] },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (AllOfParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -172,12 +172,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with oneOf to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed oneOf discriminated union
+	 * @returns A Builder representing the parsed oneOf discriminated union
 	 */
 	oneOf(
 		schema: JSONSchemaObject & { oneOf: JSONSchema[] },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (OneOfParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -188,12 +188,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with enum to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed enum
+	 * @returns A Builder representing the parsed enum
 	 */
 	enum(
 		schema: JSONSchemaObject & { enum: unknown[] },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (EnumParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -204,12 +204,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with const to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed const/literal
+	 * @returns A Builder representing the parsed const/literal
 	 */
 	const(
 		schema: JSONSchemaObject & { const: unknown },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (ConstParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -221,9 +221,9 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with tuple items to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed tuple
+	 * @returns A Builder representing the parsed tuple
 	 */
-	tuple(schema: JSONSchemaObject, refs: Context): ZodBuilder {
+	tuple(schema: JSONSchemaObject, refs: Context): Builder {
 		const parser = new (TupleParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -234,12 +234,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with anyOf to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the union
+	 * @returns A Builder representing the union
 	 */
 	union(
 		schema: JSONSchemaObject & { anyOf: JSONSchema[] },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (AnyOfParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -250,12 +250,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with allOf to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the intersection
+	 * @returns A Builder representing the intersection
 	 */
 	intersection(
 		schema: JSONSchemaObject & { allOf: JSONSchema[] },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (AllOfParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -266,12 +266,12 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with oneOf to parse
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the discriminated union
+	 * @returns A Builder representing the discriminated union
 	 */
 	discriminatedUnion(
 		schema: JSONSchemaObject & { oneOf: JSONSchema[] },
 		refs: Context,
-	): ZodBuilder {
+	): Builder {
 		const parser = new (OneOfParser as any)(schema, refs);
 		return parser.parse();
 	},
@@ -281,9 +281,9 @@ export const parse = {
 	 *
 	 * @param _schema - Ignored; accepted for API consistency
 	 * @param refs - Parsing context (used for builder reference)
-	 * @returns A ZodBuilder representing `z.any()`
+	 * @returns A Builder representing `z.any()`
 	 */
-	any(_schema: JSONSchemaObject | undefined, refs: Context): ZodBuilder {
+	any(_schema: JSONSchemaObject | undefined, refs: Context): Builder {
 		return refs.build.any();
 	},
 
@@ -292,9 +292,9 @@ export const parse = {
 	 *
 	 * @param _schema - Ignored; accepted for API consistency
 	 * @param refs - Parsing context (used for builder reference)
-	 * @returns A ZodBuilder representing `z.unknown()`
+	 * @returns A Builder representing `z.unknown()`
 	 */
-	unknown(_schema: JSONSchemaObject | undefined, refs: Context): ZodBuilder {
+	unknown(_schema: JSONSchemaObject | undefined, refs: Context): Builder {
 		return refs.build.unknown();
 	},
 
@@ -303,9 +303,9 @@ export const parse = {
 	 *
 	 * @param _schema - Ignored; accepted for API consistency
 	 * @param refs - Parsing context (used for builder reference)
-	 * @returns A ZodBuilder representing `z.never()`
+	 * @returns A Builder representing `z.never()`
 	 */
-	never(_schema: JSONSchemaObject | undefined, refs: Context): ZodBuilder {
+	never(_schema: JSONSchemaObject | undefined, refs: Context): Builder {
 		return refs.build.never();
 	},
 
@@ -315,9 +315,9 @@ export const parse = {
 	 *
 	 * @param schema - The JSON Schema with additionalProperties to parse as a record
 	 * @param refs - Parsing context including references and configuration
-	 * @returns A ZodBuilder representing the parsed record
+	 * @returns A Builder representing the parsed record
 	 */
-	record(schema: JSONSchemaObject, refs: Context): ZodBuilder {
+	record(schema: JSONSchemaObject, refs: Context): Builder {
 		const parser = new (RecordParser as any)(schema, refs);
 		return parser.parse();
 	},

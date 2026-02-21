@@ -33,7 +33,11 @@ describe('parseSchema — gap tests', () => {
 	it('falls through to default parser when parserOverride returns void', () => {
 		const result = parseSchema(
 			{ type: 'number' },
-			ctx({ parserOverride: (_schema, _refs) => { /* returns undefined implicitly */ } }),
+			ctx({
+				parserOverride: (_schema, _refs) => {
+					/* returns undefined implicitly */
+				},
+			}),
 		);
 		expect(result.text()).toBe('z.number()');
 	});

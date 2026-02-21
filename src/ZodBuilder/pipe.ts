@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -7,12 +8,12 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class PipeBuilder extends ZodBuilder<'pipe'> {
 	readonly typeKind = 'pipe' as const;
-	private readonly _sourceSchema: ZodBuilder;
-	private readonly _targetSchema: ZodBuilder;
+	private readonly _sourceSchema: Builder;
+	private readonly _targetSchema: Builder;
 
 	constructor(
-		sourceSchema: ZodBuilder,
-		targetSchema: ZodBuilder,
+		sourceSchema: Builder,
+		targetSchema: Builder,
 		version?: 'v3' | 'v4',
 	) {
 		super(version);

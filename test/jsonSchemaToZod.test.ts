@@ -313,9 +313,7 @@ export default z.null()
 					},
 				},
 			),
-		).toBe(
-			`z.intersection(z.string(), z.intersection(z.number(), z.any()))`,
-		);
+		).toBe(`z.intersection(z.string(), z.intersection(z.number(), z.any()))`);
 	});
 
 	it('can output with cjs and a name', () => {

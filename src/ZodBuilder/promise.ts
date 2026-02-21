@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,9 +7,9 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class PromiseBuilder extends ZodBuilder<'promise'> {
 	readonly typeKind = 'promise' as const;
-	private readonly _innerSchema: ZodBuilder;
+	private readonly _innerSchema: Builder;
 
-	constructor(innerSchema: ZodBuilder, version?: 'v3' | 'v4') {
+	constructor(innerSchema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._innerSchema = innerSchema;
 	}

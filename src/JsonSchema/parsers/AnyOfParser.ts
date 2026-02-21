@@ -1,6 +1,6 @@
 import { BaseParser, type ApplicableType } from './BaseParser.js';
 import type { JSONSchemaAny as JSONSchema } from '../types/index.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../../Builder/index.js';
 import { parseSchema } from './parseSchema.js';
 
 /**
@@ -10,7 +10,7 @@ import { parseSchema } from './parseSchema.js';
 export class AnyOfParser extends BaseParser<'anyOf'> {
 	readonly typeKind = 'anyOf' as const;
 
-	protected parseImpl(schema: ApplicableType<'anyOf'>): ZodBuilder {
+	protected parseImpl(schema: ApplicableType<'anyOf'>): Builder {
 		const anyOfSchema = schema as { anyOf?: JSONSchema[] };
 		const anyOf = anyOfSchema.anyOf || [];
 
@@ -22,7 +22,7 @@ export class AnyOfParser extends BaseParser<'anyOf'> {
 			return this.parseChild(anyOf[0], 'anyOf', 0);
 		}
 
-		const schemas = anyOf.map((subSchema: JSONSchema, i: number) =>
+		const schemas: Builder[] = anyOf.map((subSchema: JSONSchema, i: number) =>
 			parseSchema(subSchema, {
 				...this.refs,
 				path: [...(this.refs.path || []), 'anyOf', i],

@@ -14,14 +14,14 @@ import type {
 	TypeValueToTypeMap,
 } from '../types/index.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../../Builder/index.js';
 
 // Forward declaration to avoid circular dependency
 let _parseSchema: (
 	schema: JSONSchemaAny | boolean,
 	refs: Context,
 	blockMeta?: boolean,
-) => ZodBuilder;
+) => Builder;
 
 export type ApplicableType<TypeKind extends string> = TypeKind extends TypeValue
 	? JSONSchema<SchemaVersion, TypeValueToTypeMap[TypeKind], TypeKind>
@@ -62,7 +62,7 @@ export abstract class BaseParser<
 			schema: JSONSchemaAny | boolean,
 			refs: Context,
 			blockMeta?: boolean,
-		) => ZodBuilder,
+		) => Builder,
 	): void {
 		_parseSchema = parseSchema;
 	}
@@ -75,7 +75,7 @@ export abstract class BaseParser<
 		schema: JSONSchemaAny | boolean,
 		refs: Context,
 		blockMeta?: boolean,
-	): ZodBuilder {
+	): Builder {
 		if (!_parseSchema) {
 			throw new Error(
 				'BaseParser.setParseSchema() must be called before using BaseParser.parseSchema()',
@@ -84,7 +84,7 @@ export abstract class BaseParser<
 		return _parseSchema(schema, refs, blockMeta);
 	}
 
-	parse(): ZodBuilder {
+	parse(): Builder {
 		// Filter processors now that typeKind is initialized
 		if (!this.preProcessors.length && this.refs.preProcessors) {
 			(this as any).preProcessors = this.filterPreProcessors(
@@ -103,7 +103,7 @@ export abstract class BaseParser<
 		return this.applyMetadata(builder, processedSchema);
 	}
 
-	protected abstract parseImpl(schema: JS): ZodBuilder;
+	protected abstract parseImpl(schema: JS): Builder;
 
 	protected applyPreProcessors(
 		schema: JSONSchemaAny<Version>,
@@ -119,9 +119,9 @@ export abstract class BaseParser<
 	}
 
 	protected applyPostProcessors(
-		builder: ZodBuilder,
+		builder: Builder,
 		schema: JSONSchemaAny<Version>,
-	): ZodBuilder {
+	): Builder {
 		let current = builder;
 		for (const processor of this.postProcessors) {
 			const path = this.refs.path || [];
@@ -145,9 +145,9 @@ export abstract class BaseParser<
 	}
 
 	protected applyMetadata(
-		builder: ZodBuilder,
+		builder: Builder,
 		schema: JSONSchemaAny<Version>,
-	): ZodBuilder {
+	): Builder {
 		if (schema && typeof schema === 'object') {
 			let current = builder;
 			const description = (schema as Record<string, unknown>).description;
@@ -266,7 +266,7 @@ export abstract class BaseParser<
 	protected parseChild(
 		schema: JSONSchemaAny<Version>,
 		...pathSegments: (string | number)[]
-	): ZodBuilder {
+	): Builder {
 		if (!_parseSchema) {
 			throw new Error(
 				'BaseParser.setParseSchema() must be called before using parseChild()',

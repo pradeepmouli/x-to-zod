@@ -21,11 +21,7 @@ describe('Builder interface — Gap 4', () => {
 	it('Builder supports the full method chain', () => {
 		const b: Builder = buildV4.string();
 		// Chain all interface methods — TypeScript ensures they exist on Builder
-		const result = b
-			.optional()
-			.nullable()
-			.describe('a test field')
-			.readonly();
+		const result = b.optional().nullable().describe('a test field').readonly();
 		expect(result.text()).toContain('z.string()');
 	});
 

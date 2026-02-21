@@ -1,4 +1,4 @@
-import type { TypeKind } from './index.js';
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -8,11 +8,11 @@ import { ZodBuilder } from './BaseBuilder.js';
 export class DiscriminatedUnionBuilder extends ZodBuilder<'discriminatedUnion'> {
 	readonly typeKind = 'discriminatedUnion' as const;
 	private readonly _discriminator: string;
-	private readonly _options: ZodBuilder<keyof TypeKind>[];
+	private readonly _options: Builder[];
 
 	constructor(
 		discriminator: string,
-		options: ZodBuilder<keyof TypeKind>[],
+		options: Builder[],
 		version?: 'v3' | 'v4',
 	) {
 		super(version);

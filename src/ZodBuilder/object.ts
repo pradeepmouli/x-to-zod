@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder, applySuperRefine } from './BaseBuilder.js';
 
 /**
@@ -9,20 +10,20 @@ export class ObjectBuilder extends ZodBuilder<
 	Parameters<typeof z.object>[1]
 > {
 	readonly typeKind = 'object' as const;
-	readonly _properties: Record<string, ZodBuilder>;
+	readonly _properties: Record<string, Builder>;
 	private _precomputedSchema?: string; // Store pre-built schema string from fromCode()
 	private _strict: boolean = false;
 	private _loose: boolean = false;
 	private _catchallSchema?: string;
 	private _superRefineFn?: string;
-	private _andSchema?: ZodBuilder;
+	private _andSchema?: Builder;
 	private _extendSchema?: ObjectBuilder | string;
 	private _mergeSchema?: ObjectBuilder | string;
 	private _pickKeys?: string[];
 	private _omitKeys?: string[];
 
 	constructor(
-		properties: Record<string, ZodBuilder> = {},
+		properties: Record<string, Builder> = {},
 		params?: Parameters<typeof z.object>[1],
 		version?: 'v3' | 'v4',
 	) {
@@ -84,7 +85,7 @@ export class ObjectBuilder extends ZodBuilder<
 	/**
 	 * Apply and combinator (merge with another schema).
 	 */
-	and(otherSchemaZod: ZodBuilder): this {
+	and(otherSchemaZod: Builder): this {
 		this._andSchema = otherSchemaZod;
 		return this;
 	}
@@ -227,7 +228,7 @@ export class ObjectBuilder extends ZodBuilder<
 }
 
 function objectTextFromProperties(
-	properties: Record<string, ZodBuilder>,
+	properties: Record<string, Builder>,
 	mode?: 'strict' | 'loose',
 	paramsStr?: string,
 ): string {
@@ -297,7 +298,7 @@ export function applyPassthrough(zodStr: string): string {
 /**
  * Apply and combinator (merge with another schema).
  */
-export function applyAnd(zodStr: string, otherSchemaZod: ZodBuilder): string {
+export function applyAnd(zodStr: string, otherSchemaZod: Builder): string {
 	return `${zodStr}.and(${otherSchemaZod.text()})`;
 }
 

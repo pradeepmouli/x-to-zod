@@ -2,8 +2,8 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	JSONSchemaObject,
 } from '../types/index.js';
+import type { Builder } from '../../Builder/index.js';
 import { BaseParser } from './BaseParser.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { omit } from '../../utils/omit.js';
 
 /**
@@ -12,7 +12,7 @@ import { omit } from '../../utils/omit.js';
 export class NullableParser extends BaseParser<'nullable'> {
 	readonly typeKind = 'nullable' as const;
 
-	protected parseImpl(schema: JSONSchema): ZodBuilder {
+	protected parseImpl(schema: JSONSchema): Builder {
 		const s = schema as JSONSchemaObject & { nullable: true };
 		return BaseParser.parseSchema(
 			omit(s as any, 'nullable'),

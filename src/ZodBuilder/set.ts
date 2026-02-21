@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -5,12 +6,12 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class SetBuilder extends ZodBuilder<'set'> {
 	readonly typeKind = 'set' as const;
-	_itemSchema: ZodBuilder;
+	_itemSchema: Builder;
 	_min?: { value: number; errorMessage?: string } = undefined;
 	_max?: { value: number; errorMessage?: string } = undefined;
 	_size?: { value: number; errorMessage?: string } = undefined;
 
-	constructor(itemSchema: ZodBuilder, version?: 'v3' | 'v4') {
+	constructor(itemSchema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._itemSchema = itemSchema;
 	}

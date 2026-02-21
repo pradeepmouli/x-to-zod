@@ -4,7 +4,6 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	transformer,
 } from './JsonSchema/types/index.js';
-import type { ZodBuilder as BaseBuilder } from './ZodBuilder/BaseBuilder.js';
 import type { Builder } from './Builder/index.js';
 
 export type Serializable = Jsonifiable;
@@ -49,9 +48,9 @@ export interface PostProcessorContext {
  * Post-processor: transforms a builder after parsing.
  */
 export type PostProcessor = (
-	builder: BaseBuilder,
+	builder: Builder,
 	context: PostProcessorContext,
-) => BaseBuilder | undefined;
+) => Builder | undefined;
 
 export interface PostProcessorConfig extends ProcessorConfig {
 	processor: PostProcessor;

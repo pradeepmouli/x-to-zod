@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -5,15 +6,15 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class MapBuilder extends ZodBuilder<'map'> {
 	readonly typeKind = 'map' as const;
-	_keySchema: ZodBuilder;
-	_valueSchema: ZodBuilder;
+	_keySchema: Builder;
+	_valueSchema: Builder;
 	_min?: { value: number; errorMessage?: string } = undefined;
 	_max?: { value: number; errorMessage?: string } = undefined;
 	_size?: { value: number; errorMessage?: string } = undefined;
 
 	constructor(
-		keySchema: ZodBuilder,
-		valueSchema: ZodBuilder,
+		keySchema: Builder,
+		valueSchema: Builder,
 		version?: 'v3' | 'v4',
 	) {
 		super(version);

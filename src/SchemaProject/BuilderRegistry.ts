@@ -1,12 +1,12 @@
 import type { IBuilderRegistry } from './types.js';
-import type { ZodBuilder } from '../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../Builder/index.js';
 
 /**
- * BuilderRegistry caches ZodBuilder instances by schema ID and export name.
+ * BuilderRegistry caches Builder instances by schema ID and export name.
  * Used to avoid duplication of builder code across multiple references to the same schema.
  */
 export class BuilderRegistry implements IBuilderRegistry {
-	private cache = new Map<string, ZodBuilder>();
+	private cache = new Map<string, Builder>();
 
 	/**
 	 * Generate a cache key from schema ID and export name.
@@ -18,7 +18,7 @@ export class BuilderRegistry implements IBuilderRegistry {
 	/**
 	 * Register a builder in the cache.
 	 */
-	register(schemaId: string, exportName: string, builder: ZodBuilder): void {
+	register(schemaId: string, exportName: string, builder: Builder): void {
 		const key = this.getCacheKey(schemaId, exportName);
 		this.cache.set(key, builder);
 	}
@@ -27,7 +27,7 @@ export class BuilderRegistry implements IBuilderRegistry {
 	 * Get a builder from the cache.
 	 * Returns undefined if not found.
 	 */
-	get(schemaId: string, exportName: string): ZodBuilder | undefined {
+	get(schemaId: string, exportName: string): Builder | undefined {
 		const key = this.getCacheKey(schemaId, exportName);
 		return this.cache.get(key);
 	}
@@ -43,9 +43,9 @@ export class BuilderRegistry implements IBuilderRegistry {
 	/**
 	 * Get all builder entries for a specific schema.
 	 */
-	getKeysForSchema(schemaId: string): Array<[string, ZodBuilder]> {
+	getKeysForSchema(schemaId: string): Array<[string, Builder]> {
 		const prefix = `${schemaId}::`;
-		const results: Array<[string, ZodBuilder]> = [];
+		const results: Array<[string, Builder]> = [];
 
 		for (const [key, builder] of this.cache) {
 			if (key.startsWith(prefix)) {

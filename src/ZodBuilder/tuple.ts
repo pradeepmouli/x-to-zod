@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,9 +7,9 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class TupleBuilder extends ZodBuilder<'tuple'> {
 	readonly typeKind = 'tuple' as const;
-	private readonly _items: ZodBuilder[];
+	private readonly _items: Builder[];
 
-	constructor(items: ZodBuilder[], version?: 'v3' | 'v4') {
+	constructor(items: Builder[], version?: 'v3' | 'v4') {
 		super(version);
 		this._items = items;
 	}
