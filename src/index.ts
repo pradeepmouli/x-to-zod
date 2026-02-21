@@ -7,6 +7,13 @@ export type { Builder } from './Builder/index.js';
 export type { Parser, ParserConstructor } from './Parser/index.js';
 export { AbstractParser } from './Parser/AbstractParser.js';
 export { registerParser } from './JsonSchema/parsers/registry.js';
+export type {
+	SchemaInput,
+	SchemaMetadata,
+	SchemaInputAdapter,
+} from './SchemaInput/index.js';
+export { registerAdapter, getGlobalAdapter } from './SchemaInput/index.js';
+export { JsonSchemaAdapter, jsonSchemaAdapter } from './SchemaInput/JsonSchemaAdapter.js';
 
 export { toZod as jsonSchemaToZod } from './JsonSchema/toZod.js';
 export { toZod as default } from './JsonSchema/toZod.js';
