@@ -13,8 +13,8 @@ the spec's refactoring phases and success criteria.
 
 | Story | Priority | Description | Success Criteria |
 |-------|----------|-------------|-----------------|
-| **US1** | P1 🎯 MVP | Builder Interface | `ZodBuilder implements Builder`; `ParserOverride` returns `Builder\|void` |
-| **US2** | P1 🎯 MVP | Parser Interface + AbstractParser Rename | `Parser` interface exists; `AbstractParser` replaces `BaseParser`; registry widened |
+| **US1** | P1 🎯 MVP | Builder Interface | `ZodBuilder implements Builder`; `ParserOverride` returns `Builder\|void`; `string` return removed |
+| **US2** | P1 🎯 MVP | Parser Interface + AbstractParser Rename | `Parser` interface exists; `AbstractParser` replaces `BaseParser` (deleted, not shimmed); registry widened |
 | **US3** | P2 | SchemaInputAdapter Protocol + JsonSchemaAdapter | Custom adapter can be registered; JSON Schema path unchanged |
 | **US4** | P2 | Adapter Pipeline Integration | `parseSchema` delegates to adapter; `AbstractParser` generalized |
 | **US5** | P3 | Public API Surface + Final Validation | All new types exported; behavior snapshot verified |
@@ -49,7 +49,7 @@ Tests in this phase are behavior-preservation anchors for the entire refactoring
 ### Critical Gap Tests (Gap 1–3 from testing-gaps.md)
 
 - [ ] T004 [P] Add boolean schema tests to `test/JsonSchema/parsers/parseSchema.test.ts` — `jsonSchemaToZod(true)` → `"z.any()"` and `jsonSchemaToZod(false)` → `"z.never()"`
-- [ ] T005 [P] Add `parserOverride` tests to `test/JsonSchema/parsers/parseSchema.test.ts` — string return, Builder return, and `refs.build.code()` equivalence (Gaps 2 & 9 from testing-gaps.md)
+- [ ] T005 [P] Add `parserOverride` Builder return test to `test/JsonSchema/parsers/parseSchema.test.ts` — `parserOverride: (_, refs) => refs.build.number()` overrides correctly and produces output containing `z.number()` (Gap 2 — string-return path is being deleted, not shimmed)
 - [ ] T006 [P] Add circular reference depth-limit test to `test/JsonSchema/parsers/parseSchema.test.ts` — mutually recursive schema with `depth: 2` terminates with `z.any()` (Gap 3)
 
 ### Important Gap Tests (Gap 7–8 from testing-gaps.md)
@@ -74,6 +74,7 @@ Tests in this phase are behavior-preservation anchors for the entire refactoring
 
 **Goal**: Extract a `Builder` interface from `ZodBuilder`, make `ZodBuilder` implement it, and
 update `ParserOverride` / `ParserSelector` types to use `Builder` instead of the concrete class.
+Remove the `string` return from `ParserOverride` entirely — callers must use `refs.build.code(str)`.
 After this phase, all parser outputs are typed against the interface, not the implementation.
 
 **Independent Test**: `pnpm test` passes 100%; new builder-interface tests compile and pass;
@@ -90,25 +91,25 @@ After this phase, all parser outputs are typed against the interface, not the im
 
 - [ ] T014 [US1] Create `src/Builder/index.ts` — `Builder` interface with 13 methods: `typeKind`, `text()`, `optional()`, `nullable()`, `default()`, `describe()`, `brand()`, `readonly()`, `catch()`, `refine()`, `superRefine()`, `meta()`, `transform()` (see contracts/builder.interface.ts)
 - [ ] T015 [US1] Add `implements Builder` to `ZodBuilder` class in `src/ZodBuilder/BaseBuilder.ts` — additive only; no logic changes; confirm `this` return types satisfy `Builder` return types structurally
-- [ ] T016 [US1] Update `ParserOverride` in `src/Types.ts` — change return type from `BaseBuilder | string | void` to `Builder | void`; add `@deprecated` JSDoc to the `string` leg if keeping it as a transitional shim (per spec Risk 5)
+- [ ] T016 [US1] Update `ParserOverride` in `src/Types.ts` — change return type from `BaseBuilder | string | void` to `Builder | void`; remove the `string` branch entirely (breaking change; callers must switch to `refs.build.code(str)`)
 - [ ] T017 [US1] Update `ParserSelector` in `src/Types.ts` — change return type from `BaseBuilder` to `Builder`
-- [ ] T018 [US1] Add `parserOverride` `string` compatibility shim in `src/JsonSchema/parsers/parseSchema.ts` — if override returns `string`, wrap via `refs.build.code(custom)` and emit `console.warn('parserOverride string return is deprecated...')`; this preserves backwards compat while deprecating the escape hatch
+- [ ] T018 [US1] Remove the `typeof custom === 'string'` branch in `src/JsonSchema/parsers/parseSchema.ts` — delete the branch entirely; no shim or console.warn
 - [ ] T019 [US1] Export `Builder` from `src/index.ts`
 - [ ] T020 [US1] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors
 
 **Checkpoint**: `Builder` interface is live. `ZodBuilder` implements it. `ParserOverride` returns
-`Builder|void`. All tests pass. Commit on its own before moving to Phase 4.
+`Builder|void` — `string` return is a compile error. All tests pass. Commit before Phase 4.
 
 ---
 
 ## Phase 4: User Story 2 — Parser Interface + AbstractParser Rename (Priority: P1) 🎯 MVP
 
 **Goal**: Extract a minimal `Parser` interface (typeKind + parse) from `BaseParser`, rename the
-class to `AbstractParser`, keep a deprecated `BaseParser` alias, widen the registry type from the
+class to `AbstractParser`, delete `BaseParser.ts` entirely, widen the registry type from the
 explicit class union to `ParserConstructor`, and update all 18 concrete parser classes.
 
 **Independent Test**: `pnpm test` passes 100%; a hand-written class implementing only `Parser`
-can be registered and dispatched; `BaseParser` alias compiles with deprecation warning.
+can be registered and dispatched; any import of `BaseParser` is a compile error.
 
 ### Tests for User Story 2
 
@@ -116,20 +117,19 @@ can be registered and dispatched; `BaseParser` alias compiles with deprecation w
 
 - [ ] T021 [P] [US2] Create `test/Parser/parser-interface.test.ts` — type-level test: minimal class `class MyParser { typeKind = 'x' as const; parse() { return refs.build.any(); } }` satisfies `Parser`; assign instance to `Parser` typed variable; verify no TypeScript error (Gap 5a)
 - [ ] T022 [P] [US2] Create `test/SchemaInput/third-party-parser.test.ts` — runtime test: register `MinimalParser` via `registerParser('x-custom', MinimalParser)`; call `parseSchema({ type: 'x-custom' }, refs)`; assert output is `z.any()` (Gap 5b)
-- [ ] T023 [P] [US2] Create `test/JsonSchema/parsers/BaseParser-alias.test.ts` — import `BaseParser` from `src/JsonSchema/parsers/BaseParser.ts`; extend it in a test class; assert TypeScript compiles without error (deprecated, not removed) (Gap 6)
 
 ### Implementation for User Story 2
 
 - [ ] T024 [US2] Create `src/Parser/index.ts` — `Parser` interface (`typeKind: string`, `parse(): Builder`) and `ParserConstructor = new(schema: any, refs: Context) => Parser` (see contracts/parser.interface.ts and research.md §2 for the `any` rationale)
-- [ ] T025 [US2] Create `src/JsonSchema/parsers/AbstractParser.ts` — copy `BaseParser.ts` content; rename class `BaseParser` → `AbstractParser`; add `implements Parser`; change `parse()` and `parseImpl()` return types from `ZodBuilder` to `Builder`; update generic params from `<TypeKind, Version, JS>` to `<TypeKind extends string = string, S extends object = JSONSchemaObject<SchemaVersion>>` (drop `Version`; `JS` becomes `S` in second position)
-- [ ] T026 [US2] Create deprecated shim `src/JsonSchema/parsers/BaseParser.ts` — replace file contents with `/** @deprecated Use AbstractParser from './AbstractParser.js' */ export { AbstractParser as BaseParser } from './AbstractParser.js';`
+- [ ] T025 [US2] Create `src/JsonSchema/parsers/AbstractParser.ts` — move content from `BaseParser.ts`; rename class `BaseParser` → `AbstractParser`; add `implements Parser`; change `parse()` and `parseImpl()` return types from `ZodBuilder` to `Builder`; update generic params from `<TypeKind, Version, JS>` to `<TypeKind extends string = string, S extends object = JSONSchemaObject<SchemaVersion>>` (drop `Version`; `JS` becomes `S` in second position)
+- [ ] T026 [US2] Delete `src/JsonSchema/parsers/BaseParser.ts` — no shim, no re-export; any consumer importing `BaseParser` will get a compile error (breaking change)
 - [ ] T027 [US2] Update `src/JsonSchema/parsers/registry.ts` — replace `type ParserClass = typeof ObjectParser | typeof ArrayParser | ...` union with `type ParserClass = ParserConstructor` imported from `src/Parser/index.ts`; add runtime assertion in `registerParser` (if it exists) or add `registerParser` function that validates `typeof instance.parse === 'function' && typeof instance.typeKind === 'string'` (per spec Risk 7)
-- [ ] T028 [US2] Update all 18 concrete parser classes in `src/JsonSchema/parsers/` to `extend AbstractParser` instead of `BaseParser` — mechanical rename only; no logic change; also update type params from `<TypeKind, Version, JS>` to `<TypeKind, JS>` (object, array, string, number, boolean, null, anyOf, allOf, oneOf, enum, const, not, nullable, multipleType, conditional, tuple, record, and parseDefault)
-- [ ] T029 [US2] Export `Parser`, `ParserConstructor`, `AbstractParser` (and re-export `BaseParser` as deprecated) from `src/index.ts`
-- [ ] T030 [US2] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors; confirm T023 smoke test (`smoke-all-types.test.ts`) still passes for all 18 parser types
+- [ ] T028 [US2] Update all 18 concrete parser classes in `src/JsonSchema/parsers/` to `extend AbstractParser` instead of `BaseParser` — update the import path and class name; also update type params from `<TypeKind, Version, JS>` to `<TypeKind, JS>` (object, array, string, number, boolean, null, anyOf, allOf, oneOf, enum, const, not, nullable, multipleType, conditional, tuple, record, and parseDefault)
+- [ ] T029 [US2] Export `Parser`, `ParserConstructor`, `AbstractParser` from `src/index.ts` — do NOT re-export `BaseParser`
+- [ ] T030 [US2] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors; confirm smoke test (`smoke-all-types.test.ts`) still passes for all 18 parser types
 
 **Checkpoint**: `Parser` interface + `AbstractParser` base class live. Registry widened.
-18 parser classes updated. `BaseParser` alias in place. All tests pass. Commit before Phase 5.
+18 parser classes updated. `BaseParser.ts` deleted. All tests pass. Commit before Phase 5.
 
 ---
 
@@ -198,9 +198,8 @@ quickstart.md example compiles and produces the expected Zod output; `pnpm test`
 
 ### Implementation for User Story 5
 
-- [ ] T042 [P] [US5] Verify `src/index.ts` exports all planned symbols: `Builder`, `Parser`, `ParserConstructor`, `AbstractParser`, `BaseParser` (deprecated re-export), `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `jsonSchemaAdapter` — add any missing exports
-- [ ] T043 [P] [US5] Add `@deprecated` JSDoc to `ParserOverride` `string` return note in `src/Types.ts`: "Return `refs.build.code(str)` instead of a raw string. Raw string support will be removed in the next major release."
-- [ ] T044 [P] [US5] Add JSDoc to `registerAdapter` in `src/SchemaInput/index.ts` documenting the global vs per-call pattern (from quickstart.md §Extension Point 1 Step 4)
+- [ ] T042 [P] [US5] Verify `src/index.ts` exports all planned symbols: `Builder`, `Parser`, `ParserConstructor`, `AbstractParser`, `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `jsonSchemaAdapter` — add any missing exports; confirm `BaseParser` is NOT exported
+- [ ] T043 [P] [US5] Add JSDoc to `registerAdapter` in `src/SchemaInput/index.ts` documenting the global vs per-call pattern (from quickstart.md §Extension Point 1 Step 4)
 - [ ] T045 [US5] Validate quickstart.md §Extension Point 2 minimal parser example end-to-end: write the `CustomDateTimeParser` class from quickstart.md as a test in `test/SchemaInput/third-party-parser.test.ts`; register it; assert `parseSchema({ type: 'custom-datetime' }, refs).text()` returns `'z.string().datetime()'`
 - [ ] T046 [US5] Run full test suite `pnpm test` — must pass 100%; compare coverage to baseline in `specs/refactor/010-abstract-parser-schema/metrics-before.md`; document final metrics in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
 - [ ] T047 [US5] Update status checkboxes in `specs/refactor/010-abstract-parser-schema/spec.md` Post-Refactoring Verification Checklist — mark all completed items
@@ -214,7 +213,7 @@ Final metrics captured.
 
 **Purpose**: Clean up, mark spec artifacts complete, prepare for review and merge.
 
-- [ ] T048 [P] Update `specs/refactor/010-abstract-parser-schema/behavioral-snapshot.md` — fill in all "Actual Output (after)" fields for behaviors 26, 27, 28 (new behaviors added for Parser interface, AbstractParser rename, deprecated BaseParser alias)
+- [ ] T048 [P] Update `specs/refactor/010-abstract-parser-schema/behavioral-snapshot.md` — fill in all "Actual Output (after)" fields for new behaviors (Parser interface, AbstractParser rename, `string` parserOverride compile error)
 - [ ] T049 [P] Update `specs/refactor/010-abstract-parser-schema/testing-gaps.md` status fields — mark all 14 test cases as Complete
 - [ ] T050 [P] Update `specs/refactor/010-abstract-parser-schema/spec.md` status header — change `[x] Planning` to `[x] Validation`
 - [ ] T051 Run `pnpm build` one final time — confirm ESM and CJS outputs both build cleanly; confirm `dist/` contains all new module exports
@@ -252,7 +251,7 @@ Phase 1 Setup
 
 - T004, T005, T006, T007, T008 can all run in parallel (different test files)
 - T012, T013 (US1 tests) can run in parallel with each other
-- T021, T022, T023 (US2 tests) can run in parallel with each other
+- T021, T022 (US2 tests) can run in parallel with each other
 - T031, T032 (US3 tests) can run in parallel with each other
 - T042, T043, T044 (US5 polish) can run in parallel with each other
 - T048, T049, T050 (Final polish) can run in parallel with each other
@@ -275,10 +274,9 @@ Task: "Create test/parsers/parseMultipleType.test.ts"                           
 ## Parallel Example: Phase 4 (US2 Tests)
 
 ```bash
-# Launch all US2 test files simultaneously:
-Task: "Create test/Parser/parser-interface.test.ts"                              # T021
-Task: "Create test/SchemaInput/third-party-parser.test.ts"                       # T022
-Task: "Create test/JsonSchema/parsers/BaseParser-alias.test.ts"                  # T023
+# Launch both US2 test files simultaneously:
+Task: "Create test/Parser/parser-interface.test.ts"         # T021
+Task: "Create test/SchemaInput/third-party-parser.test.ts"  # T022
 ```
 
 ---
@@ -297,7 +295,7 @@ Task: "Create test/JsonSchema/parsers/BaseParser-alias.test.ts"                 
 ### Incremental Delivery
 
 1. Setup + Foundational → Tests anchored, baseline tagged
-2. US1 (Builder Interface) → Output contract enforced, `string` escape hatch deprecated
+2. US1 (Builder Interface) → Output contract enforced, `string` escape hatch removed (breaking)
 3. US2 (Parser + AbstractParser) → Parser contract enforced, registry extensible
 4. US3 (SchemaInputAdapter) → Protocol defined, default adapter implemented
 5. US4 (Adapter Wiring) → Pipeline fully decoupled
@@ -313,4 +311,4 @@ Task: "Create test/JsonSchema/parsers/BaseParser-alias.test.ts"                 
 - Constitution Principle IV red-green-refactor: after a test fails, implement only enough code to make it pass, then run again
 - The smoke test `smoke-all-types.test.ts` (T009) is especially critical — run it after T028 (the mechanical rename) to confirm no parser type regressed
 - Commit after each User Story checkpoint so each step is independently revertable
-- `BaseParser` shim (T026) must not be deleted until the next major release
+- `BaseParser` is deleted (T026) — no shim; this is a breaking change by design
