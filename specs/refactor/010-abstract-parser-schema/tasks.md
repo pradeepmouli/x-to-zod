@@ -49,7 +49,7 @@ Tests in this phase are behavior-preservation anchors for the entire refactoring
 ### Critical Gap Tests (Gap 1–3 from testing-gaps.md)
 
 - [ ] T004 [P] Add boolean schema tests to `test/JsonSchema/parsers/parseSchema.test.ts` — `jsonSchemaToZod(true)` → `"z.any()"` and `jsonSchemaToZod(false)` → `"z.never()"`
-- [ ] T005 [P] Add `parserOverride` Builder return test to `test/JsonSchema/parsers/parseSchema.test.ts` — `parserOverride: (_, refs) => refs.build.number()` overrides correctly and produces output containing `z.number()` (Gap 2 — string-return path is being deleted, not shimmed)
+- [ ] T005 [P] Add `parserOverride` void-return (fallthrough) test to `test/JsonSchema/parsers/parseSchema.test.ts` — `parserOverride: () => undefined` causes `parseSchema` to fall through to the default parser and produce correct output; confirms the fallthrough branch is distinct from the override branch (Gap 2 — string path deleted; Builder-return path tested in T013)
 - [ ] T006 [P] Add circular reference depth-limit test to `test/JsonSchema/parsers/parseSchema.test.ts` — mutually recursive schema with `depth: 2` terminates with `z.any()` (Gap 3)
 
 ### Important Gap Tests (Gap 7–8 from testing-gaps.md)
@@ -59,7 +59,7 @@ Tests in this phase are behavior-preservation anchors for the entire refactoring
 
 ### Smoke Test for All Parser Types (Gap 6 from testing-gaps.md)
 
-- [ ] T009 Create `test/JsonSchema/parsers/smoke-all-types.test.ts` — one round-trip assertion per parser type: ObjectParser, ArrayParser, StringParser, NumberParser, BooleanParser, NullParser, AnyOfParser, AllOfParser, OneOfParser, EnumParser, ConstParser, NullableParser, TupleParser, MultipleTypeParser, ConditionalParser, NotParser (Gap 6)
+- [ ] T009 Create `test/JsonSchema/parsers/smoke-all-types.test.ts` — one round-trip assertion per parser type: ObjectParser, ArrayParser, StringParser, NumberParser, IntegerParser, BooleanParser, NullParser, AnyOfParser, AllOfParser, OneOfParser, EnumParser, ConstParser, NullableParser, TupleParser, MultipleTypeParser, ConditionalParser, NotParser, RecordParser (18 types — covers all parsers listed in plan.md) (Gap 6)
 
 ### Baseline Capture
 
@@ -123,7 +123,7 @@ can be registered and dispatched; any import of `BaseParser` is a compile error.
 - [ ] T024 [US2] Create `src/Parser/index.ts` — `Parser` interface (`typeKind: string`, `parse(): Builder`) and `ParserConstructor = new(schema: any, refs: Context) => Parser` (see contracts/parser.interface.ts and research.md §2 for the `any` rationale)
 - [ ] T025 [US2] Create `src/JsonSchema/parsers/AbstractParser.ts` — move content from `BaseParser.ts`; rename class `BaseParser` → `AbstractParser`; add `implements Parser`; change `parse()` and `parseImpl()` return types from `ZodBuilder` to `Builder`; update generic params from `<TypeKind, Version, JS>` to `<TypeKind extends string = string, S extends object = JSONSchemaObject<SchemaVersion>>` (drop `Version`; `JS` becomes `S` in second position)
 - [ ] T026 [US2] Delete `src/JsonSchema/parsers/BaseParser.ts` — no shim, no re-export; any consumer importing `BaseParser` will get a compile error (breaking change)
-- [ ] T027 [US2] Update `src/JsonSchema/parsers/registry.ts` — replace `type ParserClass = typeof ObjectParser | typeof ArrayParser | ...` union with `type ParserClass = ParserConstructor` imported from `src/Parser/index.ts`; add runtime assertion in `registerParser` (if it exists) or add `registerParser` function that validates `typeof instance.parse === 'function' && typeof instance.typeKind === 'string'` (per spec Risk 7)
+- [ ] T027 [US2] Update `src/JsonSchema/parsers/registry.ts` — replace `type ParserClass = typeof ObjectParser | typeof ArrayParser | ...` union with `type ParserClass = ParserConstructor` imported from `src/Parser/index.ts`; add or update `registerParser(typeKind: string, cls: ParserConstructor): void` function with runtime assertion `typeof instance.parse === 'function' && typeof instance.typeKind === 'string'` (per spec Risk 7); export `registerParser` from `registry.ts`
 - [ ] T028 [US2] Update all 18 concrete parser classes in `src/JsonSchema/parsers/` to `extend AbstractParser` instead of `BaseParser` — update the import path and class name; also update type params from `<TypeKind, Version, JS>` to `<TypeKind, JS>` (object, array, string, number, boolean, null, anyOf, allOf, oneOf, enum, const, not, nullable, multipleType, conditional, tuple, record, and parseDefault)
 - [ ] T029 [US2] Export `Parser`, `ParserConstructor`, `AbstractParser` from `src/index.ts` — do NOT re-export `BaseParser`
 - [ ] T030 [US2] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors; confirm smoke test (`smoke-all-types.test.ts`) still passes for all 18 parser types
@@ -198,7 +198,7 @@ quickstart.md example compiles and produces the expected Zod output; `pnpm test`
 
 ### Implementation for User Story 5
 
-- [ ] T042 [P] [US5] Verify `src/index.ts` exports all planned symbols: `Builder`, `Parser`, `ParserConstructor`, `AbstractParser`, `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `jsonSchemaAdapter` — add any missing exports; confirm `BaseParser` is NOT exported
+- [ ] T042 [P] [US5] Verify `src/index.ts` exports all planned symbols: `Builder`, `Parser`, `ParserConstructor`, `AbstractParser`, `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `registerParser`, `jsonSchemaAdapter` — add any missing exports; confirm `BaseParser` is NOT exported
 - [ ] T043 [P] [US5] Add JSDoc to `registerAdapter` in `src/SchemaInput/index.ts` documenting the global vs per-call pattern (from quickstart.md §Extension Point 1 Step 4)
 - [ ] T045 [US5] Validate quickstart.md §Extension Point 2 minimal parser example end-to-end: write the `CustomDateTimeParser` class from quickstart.md as a test in `test/SchemaInput/third-party-parser.test.ts`; register it; assert `parseSchema({ type: 'custom-datetime' }, refs).text()` returns `'z.string().datetime()'`
 - [ ] T046 [US5] Run full test suite `pnpm test` — must pass 100%; compare coverage to baseline in `specs/refactor/010-abstract-parser-schema/metrics-before.md`; document final metrics in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
@@ -214,10 +214,11 @@ Final metrics captured.
 **Purpose**: Clean up, mark spec artifacts complete, prepare for review and merge.
 
 - [ ] T048 [P] Update `specs/refactor/010-abstract-parser-schema/behavioral-snapshot.md` — fill in all "Actual Output (after)" fields for new behaviors (Parser interface, AbstractParser rename, `string` parserOverride compile error)
-- [ ] T049 [P] Update `specs/refactor/010-abstract-parser-schema/testing-gaps.md` status fields — mark all 14 test cases as Complete
-- [ ] T050 [P] Update `specs/refactor/010-abstract-parser-schema/spec.md` status header — change `[x] Planning` to `[x] Validation`
-- [ ] T051 Run `pnpm build` one final time — confirm ESM and CJS outputs both build cleanly; confirm `dist/` contains all new module exports
-- [ ] T052 Create final commit on `refactor/010-abstract-parser-schema` with summary of all changes; push to `claude/refactor-parser-schema-tZoHq`
+- [ ] T049 [P] Update `specs/refactor/010-abstract-parser-schema/testing-gaps.md` status fields — mark all 13 test cases as Complete (14 originally planned; BaseParser alias test removed after backward compat decision)
+- [ ] T050 [P] Update `specs/refactor/010-abstract-parser-schema/spec.md` status header — check `[x] Baseline Captured`, `[x] In Progress`, `[x] Validation`; leave `[ ] Complete` unchecked until deployment is confirmed
+- [ ] T051 [P] Verify performance targets: (a) run `time pnpm build` and confirm build time does not regress vs baseline (~2 s from metrics-before.md); (b) run a parse-throughput spot check — `jsonSchemaToZod` on 100 representative schemas — and confirm no regression > 5%; record results in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
+- [ ] T052 [P] Run `pnpm build` one final time — confirm ESM and CJS outputs both build cleanly; confirm `dist/` contains all new module exports
+- [ ] T053 Create final commit on `refactor/010-abstract-parser-schema` with summary of all changes; push to `claude/refactor-parser-schema-tZoHq` (depends on T048–T052 all complete)
 
 ---
 
@@ -253,8 +254,8 @@ Phase 1 Setup
 - T012, T013 (US1 tests) can run in parallel with each other
 - T021, T022 (US2 tests) can run in parallel with each other
 - T031, T032 (US3 tests) can run in parallel with each other
-- T042, T043, T044 (US5 polish) can run in parallel with each other
-- T048, T049, T050 (Final polish) can run in parallel with each other
+- T042, T043 (US5 polish) can run in parallel with each other
+- T048, T049, T050, T051, T052 (Final polish) can all run in parallel with each other; T053 (commit) depends on all of them
 
 ---
 
