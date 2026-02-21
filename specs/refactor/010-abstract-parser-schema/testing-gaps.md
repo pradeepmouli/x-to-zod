@@ -51,7 +51,11 @@ BEFORE the baseline is captured.
   - Functions: `parseRef` (ref-resolution used in `parseSchema.ts`)
 
 - [x] File: `src/Types.ts`
-  - Types: `Context`, `PreProcessor`, `PostProcessor`, `PostProcessorConfig`
+  - Types: `Context`, `PreProcessor`, `PostProcessor`, `PostProcessorConfig`, `ParserOverride`, `ParserSelector`
+
+- [x] File: `src/ZodBuilder/BaseBuilder.ts`
+  - Classes: `ZodBuilder` — the class that will be made to implement the new `Builder` interface
+  - Methods: `text()`, `optional()`, `nullable()`, `default()`, `describe()`, `brand()`, `readonly()`, `catch()`, `refine()`, `superRefine()`, `meta()`, `transform()`
 
 **Downstream dependencies** (code that calls the above and must not regress):
 - [x] `src/JsonSchema/toZod.ts` → calls `parseSchema()`
@@ -165,15 +169,23 @@ These gaps prevent us from validating behavior preservation:
    - **Priority**: 🔴 Critical
    - **Action**: Add explicit unit test in the relevant test file
 
-2. **Gap 2**: `parserOverride` callback receiving a `string` return value
-   - **Impact**: `refs.build.code(custom)` branch in `parseSchema.ts` may be untested; refactoring this block could silently break the escape hatch
+2. **Gap 2**: `parserOverride` with a raw `string` return value — this branch is being **removed**
+   - **Impact**: The `typeof custom === 'string'` branch in `parseSchema.ts` is the legacy escape hatch being replaced by the `Builder` interface. We must verify:
+     a. The old behaviour (`parserOverride: () => 'z.custom()'`) produces `z.custom()` output (snapshot the current behaviour before removing)
+     b. The new behaviour (`parserOverride: (_, refs) => refs.build.code('z.custom()')`) produces identical output
+     c. A `parserOverride` returning a `Builder` (e.g., `refs.build.number()`) routes correctly
    - **Priority**: 🔴 Critical
-   - **Action**: Add unit test exercising `parserOverride` with both string and `ZodBuilder` return values
+   - **Action**: Add tests for all three sub-cases before the migration step
 
 3. **Gap 3**: Circular reference depth-limit path (`seen.n >= refs.depth` → `z.any()`)
    - **Impact**: This is a correctness path that prevents infinite recursion; if broken, deeply recursive schemas throw stack overflows
    - **Priority**: 🔴 Critical
    - **Action**: Add a test with a mutually recursive schema and `depth: 2` option
+
+4. **Gap 4**: `Builder` interface contract — `ZodBuilder` chaining methods return `this`
+   - **Impact**: When `parseImpl()` return type changes from `ZodBuilder` to `Builder`, callers that chain modifier methods (e.g., `builder.optional().describe('...')`) must verify the chain still type-checks and produces correct output. If the `Builder` interface doesn't declare chainable returns correctly, TypeScript will error or callers lose type information.
+   - **Priority**: 🔴 Critical
+   - **Action**: Add a type-level test (using `satisfies` or `expectType`) verifying `ZodBuilder implements Builder` and that all chained calls on a `Builder` reference compile and produce identical `text()` output
 
 ### Important Gaps (SHOULD fix before baseline)
 These gaps reduce confidence but don't block refactoring:
@@ -249,6 +261,21 @@ These can be addressed later:
    - Input: `{ type: ['string', 'null'] }`
    - Expected: `z.union([z.string(), z.null()])` or equivalent
    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+
+8. ✅ Test: `parserOverride` returning a `Builder` (`refs.build.number()`)
+   - Input: `parseSchema({ type: 'string' }, { parserOverride: (_, refs) => refs.build.number() })`
+   - Expected: output contains `z.number()` (not `z.string()`)
+   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+
+9. ✅ Test: `parserOverride` returning `refs.build.code('z.custom()')` produces same output as old `string` escape hatch
+   - Input (old): `parserOverride: () => 'z.custom()'`
+   - Input (new): `parserOverride: (_, refs) => refs.build.code('z.custom()')`
+   - Expected: both produce output containing `z.custom()`; snapshot both before and after migration
+   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+
+10. ✅ Test (type-level): `ZodBuilder satisfies Builder` — `ZodBuilder` implements full `Builder` interface
+    - Verify: chaining `builder.optional().describe('x').nullable()` on a `Builder`-typed reference compiles and `text()` returns the expected string
+    - Status: [ ] Not Started [ ] In Progress [ ] Complete
 
 ---
 

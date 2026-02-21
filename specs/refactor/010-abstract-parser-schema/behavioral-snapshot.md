@@ -255,19 +255,69 @@ false
 
 ---
 
-### Behavior 19: `parserOverride` hook returning a string
+### Behavior 19: `parserOverride` hook — raw string (pre-migration baseline)
+
+> ⚠️ This behavior documents the **old** escape hatch that is being replaced. Capture it before Step 0 so we can verify the new `refs.build.code()` path produces identical output.
 
 **Input**:
 ```js
 parseSchema({ type: 'string' }, {
   ...defaultRefs,
-  parserOverride: () => 'z.custom()'
+  parserOverride: () => 'z.custom()'   // raw string — old API
 })
 ```
-**Expected Output**: `ZodBuilder` that emits `z.custom()`
+**Expected Output**: result emits `z.custom()`
+
+**Actual Output (before)**: [ ] Verified — snapshot `text()` value
+**Actual Output (after Step 0)**: [ ] Must match when called via `refs.build.code('z.custom()')`
+
+---
+
+### Behavior 19b: `parserOverride` hook — `Builder` return (post-migration)
+
+**Input**:
+```js
+parseSchema({ type: 'string' }, {
+  ...defaultRefs,
+  parserOverride: (_, refs) => refs.build.code('z.custom()')  // new Builder API
+})
+```
+**Expected Output**: result emits `z.custom()` — identical to Behavior 19
+
+**Actual Output (before)**: [ ] Verified (should match Behavior 19)
+**Actual Output (after)**: [ ] Must match
+
+---
+
+### Behavior 19c: `parserOverride` hook — returning a `Builder` instance
+
+**Input**:
+```js
+parseSchema({ type: 'string' }, {
+  ...defaultRefs,
+  parserOverride: (_, refs) => refs.build.number()
+})
+```
+**Expected Output**: result emits `z.number()` (override takes precedence over schema type)
 
 **Actual Output (before)**: [ ] Verified
 **Actual Output (after)**: [ ] Must match
+
+---
+
+### Behavior 25: `Builder` interface — chained modifier methods produce correct output
+
+**Input**:
+```js
+// Treat result as Builder interface (not ZodBuilder class)
+const builder: Builder = parseSchema({ type: 'string' }, defaultRefs);
+const result = builder.optional().describe('A name').nullable();
+result.text()
+```
+**Expected Output**: string containing `z.string().describe("A name").nullable().optional()` (or equivalent modifier order)
+
+**Actual Output (before)**: [ ] Verified — `ZodBuilder` already supports chaining
+**Actual Output (after)**: [ ] Must match — `Builder` interface chains identically
 
 ---
 
