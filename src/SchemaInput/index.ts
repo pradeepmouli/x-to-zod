@@ -36,8 +36,24 @@ export interface SchemaInputAdapter {
 let _globalAdapter: SchemaInputAdapter | undefined;
 
 /**
- * Register a `SchemaInputAdapter` as the active pipeline adapter.
- * Replaces the default `JsonSchemaAdapter` for the current process.
+ * Register a `SchemaInputAdapter` as the process-wide default.
+ *
+ * **Global registration** — affects all subsequent `parseSchema` / `jsonSchemaToZod` calls
+ * that do not supply a per-call adapter:
+ * ```ts
+ * import { registerAdapter } from 'x-to-zod';
+ * import { MyAdapter } from './MyAdapter.js';
+ *
+ * registerAdapter(new MyAdapter());
+ * ```
+ *
+ * **Per-call override** — pass `adapter` in the `Context` / options object to override
+ * for a single invocation without touching the global state:
+ * ```ts
+ * const result = jsonSchemaToZod(mySchema, { adapter: new MyAdapter() });
+ * ```
+ *
+ * @param adapter - The adapter to install as the global default.
  */
 export function registerAdapter(adapter: SchemaInputAdapter): void {
 	_globalAdapter = adapter;

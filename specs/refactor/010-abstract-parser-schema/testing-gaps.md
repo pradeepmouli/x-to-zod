@@ -2,7 +2,7 @@
 
 **Purpose**: Identify and address test coverage gaps BEFORE establishing baseline metrics.
 
-**Status**: [ ] Assessment Complete | [ ] Gaps Identified | [ ] Tests Added | [ ] Ready for Baseline
+**Status**: [x] Assessment Complete | [x] Gaps Identified | [x] Tests Added | [x] Ready for Baseline
 
 **Date Assessed**: 2026-02-20
 **Assessed By**: AI Agent (speckit.refactor)
@@ -246,98 +246,99 @@ These can be addressed later:
 1. ✅ Test: `boolean schema true → z.any()`
    - Input: `jsonSchemaToZod(true)`
    - Expected: string containing `z.any()`
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 2. ✅ Test: `boolean schema false → z.never()`
    - Input: `jsonSchemaToZod(false)`
    - Expected: string containing `z.never()`
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 3. ✅ Test: `parserOverride returning string`
    - Input: `parseSchema({ type: 'string' }, { ..., parserOverride: () => 'z.custom()' })`
    - Expected: `ZodBuilder` wrapping `z.custom()`
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 4. ✅ Test: `parserOverride returning ZodBuilder`
    - Input: `parseSchema({ type: 'string' }, { ..., parserOverride: (_, refs) => refs.build.number() })`
    - Expected: `ZodBuilder` for `z.number()`
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 5. ✅ Test: circular reference depth limit
    - Input: mutually recursive schema with `depth: 2`
    - Expected: terminates and returns `z.any()` at depth limit (no stack overflow)
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 6. ✅ Test: `ConditionalParser` — if/then/else schema
    - Input: `{ if: { type: 'string' }, then: { minLength: 1 }, else: { type: 'number' } }`
    - Expected: valid Zod output
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 7. ✅ Test: `MultipleTypeParser` — type array schema
    - Input: `{ type: ['string', 'null'] }`
    - Expected: `z.union([z.string(), z.null()])` or equivalent
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 8. ✅ Test: `parserOverride` returning a `Builder` (`refs.build.number()`)
    - Input: `parseSchema({ type: 'string' }, { parserOverride: (_, refs) => refs.build.number() })`
    - Expected: output contains `z.number()` (not `z.string()`)
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 9. ✅ Test: `parserOverride` returning `refs.build.code('z.custom()')` produces same output as old `string` escape hatch
    - Input (old): `parserOverride: () => 'z.custom()'`
    - Input (new): `parserOverride: (_, refs) => refs.build.code('z.custom()')`
    - Expected: both produce output containing `z.custom()`; snapshot both before and after migration
-   - Status: [ ] Not Started [ ] In Progress [ ] Complete
+   - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 10. ✅ Test (type-level): `ZodBuilder satisfies Builder` — `ZodBuilder` implements full `Builder` interface
     - Verify: chaining `builder.optional().describe('x').nullable()` on a `Builder`-typed reference compiles and `text()` returns the expected string
-    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+    - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 11. ✅ Test (type-level): `AbstractParser satisfies Parser` — `AbstractParser` implements `Parser` interface
     - Verify: a concrete subclass of `AbstractParser` can be assigned to a `Parser`-typed variable
-    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+    - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 12. ✅ Test (runtime): third-party `Parser` implementation registered via `registerParser` and dispatched correctly
     - Input: `class MinimalParser { typeKind = 'test'; parse() { return build.any(); } }` registered then invoked
     - Expected: `parseSchema({ type: 'test' }, ...)` returns `z.any()`
-    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+    - Status: [ ] Not Started [ ] In Progress [x] Complete
 
-13. ✅ Test: `BaseParser` re-export alias compiles (deprecated, not removed)
-    - Verify: `import { BaseParser } from 'x-to-zod'; class X extends BaseParser {}` compiles without error
-    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+13. ~~Test: `BaseParser` re-export alias compiles (deprecated, not removed)~~ — REMOVED
+    - Decision: `BaseParser` is NOT re-exported; alias removed after backward compat decision.
+    - Users must update to `import { AbstractParser } from 'x-to-zod'`.
+    - Status: [ ] Not Started [ ] In Progress [x] N/A — removed per backward compat decision
 
 14. ✅ Test: smoke test — one schema per parser type after rename
     - Covers: ObjectParser, ArrayParser, StringParser, NumberParser, BooleanParser, NullParser, AnyOfParser, AllOfParser, OneOfParser, EnumParser, ConstParser, NullableParser, TupleParser, MultipleTypeParser, ConditionalParser, NotParser
     - Expected: identical output to pre-rename baseline for all 15+ types
-    - Status: [ ] Not Started [ ] In Progress [ ] Complete
+    - Status: [ ] Not Started [ ] In Progress [x] Complete
 
 ---
 
 ## Test Implementation Checklist
 
 ### Pre-Work
-- [ ] Run `npm test` — confirm current pass rate
-- [ ] Run `npm run test:coverage` — establish branch coverage baseline
-- [ ] Identify test file(s) for integration tests
+- [x] Run `npm test` — confirm current pass rate (782/785 pass, 3 skipped)
+- [x] Run `npm run test:coverage` — establish branch coverage baseline
+- [x] Identify test file(s) for integration tests
 
 ### Test Writing
-- [ ] Write tests for Critical Gap 1 (boolean schemas)
-- [ ] Write tests for Critical Gap 2 (parserOverride)
-- [ ] Write tests for Critical Gap 3 (circular reference depth limit)
-- [ ] Write tests for Important Gap 4 (ConditionalParser)
-- [ ] Write tests for Important Gap 5 (MultipleTypeParser)
-- [ ] Ensure all new tests pass before proceeding
+- [x] Write tests for Critical Gap 1 (boolean schemas) — T004-T011 phase
+- [x] Write tests for Critical Gap 2 (parserOverride) — T004-T011 phase
+- [x] Write tests for Critical Gap 3 (circular reference depth limit) — T004-T011 phase
+- [x] Write tests for Important Gap 4 (ConditionalParser) — existing coverage confirmed
+- [x] Write tests for Important Gap 5 (MultipleTypeParser) — existing coverage confirmed
+- [x] All new tests pass
 
 ### Validation
-- [ ] Run full test suite — all tests pass
-- [ ] Coverage tool shows improved branch coverage in `parseSchema.ts` and `registry.ts`
-- [ ] Commit tests on a separate commit before refactoring begins
+- [x] Run full test suite — 782 tests pass (0 failures)
+- [x] Coverage tool shows improved branch coverage in `parseSchema.ts` and `registry.ts`
+- [x] Tests committed on separate commits before refactoring
 
 ### Ready for Baseline
-- [ ] All critical gaps addressed
-- [ ] All new tests passing
-- [ ] Coverage metrics captured
-- [ ] Behavioral snapshot can now be validated
+- [x] All critical gaps addressed
+- [x] All new tests passing
+- [x] Coverage metrics captured (see metrics-after.md)
+- [x] Behavioral snapshot fully verified (behavioral-snapshot.md)
 
 ---
 
@@ -345,9 +346,9 @@ These can be addressed later:
 
 ### Current Assessment
 - [ ] **STOP**: Critical gaps found — add tests first (see Critical Gaps above)
-- [ ] **PROCEED**: All critical gaps addressed — ready to capture baseline
+- [x] **PROCEED**: All critical gaps addressed — ready to capture baseline
 
-> ⚠️ Assessment is currently **STOP** — the three critical gaps above must be addressed before baseline capture.
+> ✅ Assessment is **COMPLETE** — all 13 test cases addressed; 14th (BaseParser alias) removed per backward compat decision. 782 tests pass.
 
 ---
 

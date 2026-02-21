@@ -173,14 +173,14 @@ changes which parser is selected; `JsonSchemaAdapter` as default preserves exist
 
 > **Write these FIRST — they must fail before implementation begins**
 
-- [ ] T037 [P] [US4] Add adapter integration test to `test/SchemaInput/schema-input-adapter.test.ts` — call `parseSchema(myCustomSchema, { ...defaultRefs, adapter: myCustomAdapter })`; assert the custom adapter's `selectParser` is invoked and its returned parser class is used
+- [x] T037 [P] [US4] Add adapter integration test to `test/SchemaInput/schema-input-adapter.test.ts` — call `parseSchema(myCustomSchema, { ...defaultRefs, adapter: myCustomAdapter })`; assert the custom adapter's `selectParser` is invoked and its returned parser class is used
 
 ### Implementation for User Story 4
 
-- [ ] T038 [US4] Add `adapter?: SchemaInputAdapter` to `Context` type in `src/Types.ts` — optional field; defaults to `jsonSchemaAdapter` when not provided
-- [ ] T039 [US4] Update `src/JsonSchema/parsers/parseSchema.ts` — resolve adapter at top: `const adapter = refs.adapter ?? getGlobalAdapter()`; replace `if (isJSONSchema(schema))` with `if (adapter.isValid(schema))`; replace `schema.$ref` access block with `const ref = adapter.getRef(schema); if (ref) { ... use ref ... }`; replace `selectParserClass(schema)` call with `adapter.selectParser(schema, refs)`
-- [ ] T040 [US4] Update `AbstractParser.applyMetadata()` in `src/JsonSchema/parsers/AbstractParser.ts` — delegate to `this.refs.adapter?.getMetadata(this.schema) ?? legacyExtract(this.schema)` where `legacyExtract` contains the current field-access logic; this allows adapters to override metadata without subclassing `AbstractParser`
-- [ ] T041 [US4] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors; the full behavioral snapshot in `behavioral-snapshot.md` must be verified (all 28 behaviors pass)
+- [x] T038 [US4] Add `adapter?: SchemaInputAdapter` to `Context` type in `src/Types.ts` — optional field; defaults to `jsonSchemaAdapter` when not provided
+- [x] T039 [US4] Update `src/JsonSchema/parsers/parseSchema.ts` — resolve adapter at top: `const adapter = refs.adapter ?? getGlobalAdapter()`; replace `if (isJSONSchema(schema))` with `if (adapter.isValid(schema))`; replace `schema.$ref` access block with `const ref = adapter.getRef(schema); if (ref) { ... use ref ... }`; replace `selectParserClass(schema)` call with `adapter.selectParser(schema, refs)`
+- [x] T040 [US4] Update `AbstractParser.applyMetadata()` in `src/JsonSchema/parsers/AbstractParser.ts` — delegate to `this.refs.adapter?.getMetadata(this.schema) ?? legacyExtract(this.schema)` where `legacyExtract` contains the current field-access logic; this allows adapters to override metadata without subclassing `AbstractParser`
+- [x] T041 [US4] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors; the full behavioral snapshot in `behavioral-snapshot.md` must be verified (all 28 behaviors pass)
 
 **Checkpoint**: Pipeline fully decoupled from JSON Schema specifics. Adapter is pluggable.
 All 28 behavioral snapshots verified. Commit before Phase 7.
@@ -198,11 +198,11 @@ quickstart.md example compiles and produces the expected Zod output; `pnpm test`
 
 ### Implementation for User Story 5
 
-- [ ] T042 [P] [US5] Verify `src/index.ts` exports all planned symbols: `Builder`, `Parser`, `ParserConstructor`, `AbstractParser`, `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `registerParser`, `jsonSchemaAdapter` — add any missing exports; confirm `BaseParser` is NOT exported
-- [ ] T043 [P] [US5] Add JSDoc to `registerAdapter` in `src/SchemaInput/index.ts` documenting the global vs per-call pattern (from quickstart.md §Extension Point 1 Step 4)
-- [ ] T045 [US5] Validate quickstart.md §Extension Point 2 minimal parser example end-to-end: write the `CustomDateTimeParser` class from quickstart.md as a test in `test/SchemaInput/third-party-parser.test.ts`; register it; assert `parseSchema({ type: 'custom-datetime' }, refs).text()` returns `'z.string().datetime()'`
-- [ ] T046 [US5] Run full test suite `pnpm test` — must pass 100%; compare coverage to baseline in `specs/refactor/010-abstract-parser-schema/metrics-before.md`; document final metrics in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
-- [ ] T047 [US5] Update status checkboxes in `specs/refactor/010-abstract-parser-schema/spec.md` Post-Refactoring Verification Checklist — mark all completed items
+- [x] T042 [P] [US5] Verify `src/index.ts` exports all planned symbols: `Builder`, `Parser`, `ParserConstructor`, `AbstractParser`, `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `registerParser`, `jsonSchemaAdapter` — add any missing exports; confirm `BaseParser` is NOT exported
+- [x] T043 [P] [US5] Add JSDoc to `registerAdapter` in `src/SchemaInput/index.ts` documenting the global vs per-call pattern (from quickstart.md §Extension Point 1 Step 4)
+- [x] T045 [US5] Validate quickstart.md §Extension Point 2 minimal parser example end-to-end: write the `CustomDateTimeParser` class from quickstart.md as a test in `test/SchemaInput/third-party-parser.test.ts`; register it; assert `parseSchema({ type: 'custom-datetime' }, refs).text()` returns `'z.string().datetime()'`
+- [x] T046 [US5] Run full test suite `pnpm test` — must pass 100%; compare coverage to baseline in `specs/refactor/010-abstract-parser-schema/metrics-before.md`; document final metrics in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
+- [x] T047 [US5] Update status checkboxes in `specs/refactor/010-abstract-parser-schema/spec.md` Post-Refactoring Verification Checklist — mark all completed items
 
 **Checkpoint**: All User Stories delivered. All exports confirmed. Quickstart validated.
 Final metrics captured.
@@ -213,11 +213,11 @@ Final metrics captured.
 
 **Purpose**: Clean up, mark spec artifacts complete, prepare for review and merge.
 
-- [ ] T048 [P] Update `specs/refactor/010-abstract-parser-schema/behavioral-snapshot.md` — fill in all "Actual Output (after)" fields for new behaviors (Parser interface, AbstractParser rename, `string` parserOverride compile error)
-- [ ] T049 [P] Update `specs/refactor/010-abstract-parser-schema/testing-gaps.md` status fields — mark all 13 test cases as Complete (14 originally planned; BaseParser alias test removed after backward compat decision)
-- [ ] T050 [P] Update `specs/refactor/010-abstract-parser-schema/spec.md` status header — check `[x] Baseline Captured`, `[x] In Progress`, `[x] Validation`; leave `[ ] Complete` unchecked until deployment is confirmed
-- [ ] T051 [P] Verify performance targets: (a) run `time pnpm build` and confirm build time does not regress vs baseline (~2 s from metrics-before.md); (b) run a parse-throughput spot check — `jsonSchemaToZod` on 100 representative schemas — and confirm no regression > 5%; record results in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
-- [ ] T052 [P] Run `pnpm build` one final time — confirm ESM and CJS outputs both build cleanly; confirm `dist/` contains all new module exports
+- [x] T048 [P] Update `specs/refactor/010-abstract-parser-schema/behavioral-snapshot.md` — fill in all "Actual Output (after)" fields for new behaviors (Parser interface, AbstractParser rename, `string` parserOverride compile error)
+- [x] T049 [P] Update `specs/refactor/010-abstract-parser-schema/testing-gaps.md` status fields — mark all 13 test cases as Complete (14 originally planned; BaseParser alias test removed after backward compat decision)
+- [x] T050 [P] Update `specs/refactor/010-abstract-parser-schema/spec.md` status header — check `[x] Baseline Captured`, `[x] In Progress`, `[x] Validation`; leave `[ ] Complete` unchecked until deployment is confirmed
+- [x] T051 [P] Verify performance targets: (a) run `time pnpm build` and confirm build time does not regress vs baseline (~2 s from metrics-before.md); (b) run a parse-throughput spot check — `jsonSchemaToZod` on 100 representative schemas — and confirm no regression > 5%; record results in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
+- [x] T052 [P] Run `pnpm build` one final time — confirm ESM and CJS outputs both build cleanly; confirm `dist/` contains all new module exports
 - [ ] T053 Create final commit on `refactor/010-abstract-parser-schema` with summary of all changes; push to `claude/refactor-parser-schema-tZoHq` (depends on T048–T052 all complete)
 
 ---

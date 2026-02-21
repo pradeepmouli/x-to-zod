@@ -1,13 +1,15 @@
 /**
  * T022: Third-party parser registration + dispatch test (Gap 5b).
+ * T045: Quickstart §Extension Point 2 — CustomDateTimeParser end-to-end validation.
  *
  * Verifies that:
  * 1. A minimal custom parser can be registered via registerParser().
  * 2. parseSchema dispatches to the registered parser when type matches.
  * 3. The registered parser's output is returned correctly.
+ * 4. (T045) The CustomDateTimeParser from quickstart.md works end-to-end.
  */
 import { describe, it, expect, beforeEach } from 'vitest';
-import type { Parser } from '../../src/Parser/index.js';
+import type { Parser, Builder } from '../../src/Parser/index.js';
 import {
 	registerParser,
 	parserRegistry,
@@ -76,5 +78,33 @@ describe('registerParser — Gap 5b', () => {
 		expect(() => registerParser('x-custom', BadParser as any)).toThrow(
 			/parse\(\) method/,
 		);
+	});
+});
+
+// T045 — quickstart.md §Extension Point 2 end-to-end validation
+describe('CustomDateTimeParser — T045', () => {
+	beforeEach(() => {
+		parserRegistry.delete('custom-datetime');
+	});
+
+	it('CustomDateTimeParser from quickstart registers and returns z.string().datetime()', () => {
+		// Exactly as shown in quickstart.md §Extension Point 2
+		class CustomDateTimeParser implements Parser {
+			readonly typeKind = 'custom-datetime' as const;
+			constructor(
+				private readonly schema: { format: string },
+				private readonly refs: Context,
+			) {}
+			parse(): Builder {
+				return this.refs.build.code('z.string().datetime()');
+			}
+		}
+
+		registerParser('custom-datetime', CustomDateTimeParser);
+		const result = parseSchema(
+			{ type: 'custom-datetime', format: 'date-time' } as any,
+			ctx(),
+		);
+		expect(result.text()).toBe('z.string().datetime()');
 	});
 });
