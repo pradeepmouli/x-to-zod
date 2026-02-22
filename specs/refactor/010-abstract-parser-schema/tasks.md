@@ -145,15 +145,15 @@ and its methods called directly; `JsonSchemaAdapter.isValid()` returns true for 
 
 > **Write these FIRST — they must fail before implementation begins**
 
-- [ ] T031 [P] [US3] Create `test/SchemaInput/schema-input-adapter.test.ts` — import `JsonSchemaAdapter`; assert `adapter.isValid({ type: 'string' })` is true; assert `adapter.isValid('not-a-schema')` is false; assert `adapter.getRef({ $ref: '#/foo' })` returns `'#/foo'`; assert `adapter.getMetadata({ description: 'x', default: 1 })` returns `{ description: 'x', default: 1 }` (Gap 5)
-- [ ] T032 [P] [US3] Add `registerAdapter` test to `test/SchemaInput/schema-input-adapter.test.ts` — register a no-op adapter; call `registerAdapter(noopAdapter)`; assert it replaces the global default without throwing
+- [x] T031 [P] [US3] Create `test/SchemaInput/schema-input-adapter.test.ts` — import `JsonSchemaAdapter`; assert `adapter.isValid({ type: 'string' })` is true; assert `adapter.isValid('not-a-schema')` is false; assert `adapter.getRef({ $ref: '#/foo' })` returns `'#/foo'`; assert `adapter.getMetadata({ description: 'x', default: 1 })` returns `{ description: 'x', default: 1 }` (Gap 5)
+- [x] T032 [P] [US3] Add `registerAdapter` test to `test/SchemaInput/schema-input-adapter.test.ts` — register a no-op adapter; call `registerAdapter(noopAdapter)`; assert it replaces the global default without throwing
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Create `src/SchemaInput/index.ts` — `type SchemaInput = unknown`; `interface SchemaMetadata { description?, default?, readOnly? }`; `interface SchemaInputAdapter { isValid, selectParser, getRef, getMetadata }`; `let _globalAdapter: SchemaInputAdapter`; `export function registerAdapter(adapter: SchemaInputAdapter): void` (sets `_globalAdapter`); `export function getGlobalAdapter(): SchemaInputAdapter` (returns `_globalAdapter ?? jsonSchemaAdapter`) (see contracts/schema-input.interface.ts)
-- [ ] T034 [US3] Create `src/SchemaInput/JsonSchemaAdapter.ts` — `class JsonSchemaAdapter implements SchemaInputAdapter` with: `isValid` delegates to `isJSONSchema()`; `selectParser` delegates to `selectParserClass()`; `getRef` returns `(input as any).$ref ?? undefined` if string; `getMetadata` extracts `description`, `default`, `readOnly` from schema cast to `JSONSchemaObject`; export singleton `export const jsonSchemaAdapter = new JsonSchemaAdapter()`
-- [ ] T035 [US3] Export `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `jsonSchemaAdapter` from `src/index.ts`
-- [ ] T036 [US3] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors
+- [x] T033 [US3] Create `src/SchemaInput/index.ts` — `type SchemaInput = unknown`; `interface SchemaMetadata { description?, default?, readOnly? }`; `interface SchemaInputAdapter { isValid, selectParser, getRef, getMetadata }`; `let _globalAdapter: SchemaInputAdapter`; `export function registerAdapter(adapter: SchemaInputAdapter): void` (sets `_globalAdapter`); `export function getGlobalAdapter(): SchemaInputAdapter` (returns `_globalAdapter ?? jsonSchemaAdapter`) (see contracts/schema-input.interface.ts)
+- [x] T034 [US3] Create `src/SchemaInput/JsonSchemaAdapter.ts` — `class JsonSchemaAdapter implements SchemaInputAdapter` with: `isValid` delegates to `isJSONSchema()`; `selectParser` delegates to `selectParserClass()`; `getRef` returns `(input as any).$ref ?? undefined` if string; `getMetadata` extracts `description`, `default`, `readOnly` from schema cast to `JSONSchemaObject`; export singleton `export const jsonSchemaAdapter = new JsonSchemaAdapter()`
+- [x] T035 [US3] Export `SchemaInput`, `SchemaMetadata`, `SchemaInputAdapter`, `registerAdapter`, `jsonSchemaAdapter` from `src/index.ts`
+- [x] T036 [US3] Run `pnpm test` — must pass 100%; run `pnpm build` — must compile with no errors
 
 **Checkpoint**: `SchemaInputAdapter` interface defined. `JsonSchemaAdapter` implements it.
 `registerAdapter` works. All tests pass. Commit before Phase 6.
@@ -218,7 +218,7 @@ Final metrics captured.
 - [x] T050 [P] Update `specs/refactor/010-abstract-parser-schema/spec.md` status header — check `[x] Baseline Captured`, `[x] In Progress`, `[x] Validation`; leave `[ ] Complete` unchecked until deployment is confirmed
 - [x] T051 [P] Verify performance targets: (a) run `time pnpm build` and confirm build time does not regress vs baseline (~2 s from metrics-before.md); (b) run a parse-throughput spot check — `jsonSchemaToZod` on 100 representative schemas — and confirm no regression > 5%; record results in `specs/refactor/010-abstract-parser-schema/metrics-after.md`
 - [x] T052 [P] Run `pnpm build` one final time — confirm ESM and CJS outputs both build cleanly; confirm `dist/` contains all new module exports
-- [ ] T053 Create final commit on `refactor/010-abstract-parser-schema` with summary of all changes; push to `claude/refactor-parser-schema-tZoHq` (depends on T048–T052 all complete)
+- [x] T053 Create final commit on `refactor/010-abstract-parser-schema` with summary of all changes; push to `claude/refactor-parser-schema-tZoHq` (depends on T048–T052 all complete)
 
 ---
 

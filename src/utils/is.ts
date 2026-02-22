@@ -85,7 +85,7 @@ export function isLazyBuilder(value: unknown): value is LazyBuilder {
 }
 
 /**
- * Type guard for BaseParser instances by typeKind discriminator.
+ * Type guard for AbstractParser instances by typeKind discriminator.
  */
 export function isParserOfKind<K extends string>(
 	value: unknown,
