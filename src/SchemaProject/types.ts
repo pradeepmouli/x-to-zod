@@ -1,4 +1,4 @@
-import type { ZodBuilder } from '../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../Builder/index.js';
 import type { SourceFile, CompilerOptions } from 'ts-morph';
 
 /**
@@ -51,7 +51,7 @@ export interface SchemaFileOptions extends SchemaOptions {
 export interface SchemaEntry {
 	id: string;
 	schema: Record<string, any>; // JSONSchema
-	builder: ZodBuilder | null;
+	builder: Builder | null;
 	sourceFile: SourceFile | null;
 	exportName: string;
 	metadata: SchemaMetadata;
@@ -75,7 +75,7 @@ export interface RefResolution {
 	targetSchemaId: string;
 	definitionPath: string[];
 	isExternal: boolean;
-	resolvedBuilder?: ZodBuilder;
+	resolvedBuilder?: Builder;
 	importInfo?: ImportInfo;
 }
 
@@ -231,9 +231,9 @@ export interface ISchemaRegistry {
  * Builder cache for deduplication
  */
 export interface IBuilderRegistry {
-	register(schemaId: string, exportName: string, builder: ZodBuilder): void;
-	get(schemaId: string, exportName: string): ZodBuilder | undefined;
-	getKeysForSchema(schemaId: string): Array<[string, ZodBuilder]>;
+	register(schemaId: string, exportName: string, builder: Builder): void;
+	get(schemaId: string, exportName: string): Builder | undefined;
+	getKeysForSchema(schemaId: string): Array<[string, Builder]>;
 	has(schemaId: string, exportName: string): boolean;
 	clear(): void;
 }
@@ -259,7 +259,7 @@ export interface ImportManager {
 export interface ISourceFileGenerator {
 	generateFile(
 		schemaId: string,
-		builder: ZodBuilder,
+		builder: Builder,
 		importManager: ImportManager,
 		exportName: string,
 	): SourceFile | null;

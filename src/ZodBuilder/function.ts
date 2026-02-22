@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,11 +7,11 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class FunctionBuilder extends ZodBuilder<'function'> {
 	readonly typeKind = 'function' as const;
-	private _input?: ZodBuilder[] = undefined;
-	private _output?: ZodBuilder = undefined;
+	private _input?: Builder[] = undefined;
+	private _output?: Builder = undefined;
 
 	constructor(
-		params: { input?: ZodBuilder[]; output?: ZodBuilder } = {},
+		params: { input?: Builder[]; output?: Builder } = {},
 		version?: 'v3' | 'v4',
 	) {
 		super(version);
@@ -21,14 +22,14 @@ export class FunctionBuilder extends ZodBuilder<'function'> {
 	/**
 	 * Specify function arguments as an array of schemas
 	 */
-	args(...input: ZodBuilder[]): FunctionBuilder {
+	args(...input: Builder[]): FunctionBuilder {
 		return new FunctionBuilder({ input, output: this._output });
 	}
 
 	/**
 	 * Specify function return type schema
 	 */
-	returns(output: ZodBuilder): FunctionBuilder {
+	returns(output: Builder): FunctionBuilder {
 		return new FunctionBuilder({ input: this._input, output });
 	}
 

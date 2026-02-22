@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { ZodBuilder } from './BaseBuilder.js';
+import type { Builder } from '../Builder/index.js';
 import type { Serializable } from '../Types.js';
 import { NumberBuilder } from './number.js';
 import { StringBuilder } from './string.js';
@@ -39,11 +39,11 @@ export const buildV3 = {
 		new BooleanBuilder(params, 'v3'),
 	null: () => new NullBuilder('v3'),
 	array: (
-		itemSchemaZod: ZodBuilder | ZodBuilder[],
+		itemSchemaZod: Builder | Builder[],
 		params?: Parameters<typeof z.array>[1],
 	) => new ArrayBuilder(itemSchemaZod, params, 'v3'),
 	object: (
-		properties: Record<string, ZodBuilder> = {},
+		properties: Record<string, Builder> = {},
 		params?: Parameters<typeof z.object>[1],
 	) => new ObjectBuilder(properties, params, 'v3'),
 	enum: (values: Serializable[]) => new EnumBuilder(values, 'v3'),
@@ -54,11 +54,11 @@ export const buildV3 = {
 	literalValue: (value: Serializable) => new LiteralBuilder(value, 'v3'),
 	code: (code: string) => new GenericBuilder(code, 'v3'),
 	raw: (code: string) => new GenericBuilder(code, 'v3'),
-	union: (schemas: ZodBuilder[]) => new UnionBuilder(schemas, 'v3'),
-	intersection: (left: ZodBuilder, right: ZodBuilder) =>
+	union: (schemas: Builder[]) => new UnionBuilder(schemas, 'v3'),
+	intersection: (left: Builder, right: Builder) =>
 		new IntersectionBuilder(left, right, 'v3'),
-	tuple: (items: ZodBuilder[]) => new TupleBuilder(items, 'v3'),
-	record: (keySchema: ZodBuilder, valueSchema: ZodBuilder) =>
+	tuple: (items: Builder[]) => new TupleBuilder(items, 'v3'),
+	record: (keySchema: Builder, valueSchema: Builder) =>
 		new RecordBuilder(keySchema, valueSchema, 'v3'),
 	void: () => new VoidBuilder('v3'),
 	undefined: () => new UndefinedBuilder('v3'),
@@ -68,13 +68,13 @@ export const buildV3 = {
 		new BigIntBuilder(params, 'v3'),
 	symbol: () => new SymbolBuilder('v3'),
 	nan: () => new NaNBuilder('v3'),
-	set: (itemSchema: ZodBuilder) => new SetBuilder(itemSchema, 'v3'),
-	map: (keySchema: ZodBuilder, valueSchema: ZodBuilder) =>
+	set: (itemSchema: Builder) => new SetBuilder(itemSchema, 'v3'),
+	map: (keySchema: Builder, valueSchema: Builder) =>
 		new MapBuilder(keySchema, valueSchema, 'v3'),
 	custom: (validateFn?: string, params?: any) =>
 		new CustomBuilder(validateFn, params, 'v3'),
-	discriminatedUnion: (discriminator: string, schemas: ZodBuilder<string>[]) =>
-		new DiscriminatedUnionBuilder(discriminator, schemas as any, 'v3'),
+	discriminatedUnion: (discriminator: string, schemas: Builder[]) =>
+		new DiscriminatedUnionBuilder(discriminator, schemas, 'v3'),
 	nativeEnum: (enumReference: string) =>
 		new NativeEnumBuilder(enumReference, 'v3'),
 } as const;

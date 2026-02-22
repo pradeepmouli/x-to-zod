@@ -308,14 +308,12 @@ export default z.null()
 							schema.type === 'boolean' &&
 							schema.description === 'foo'
 						) {
-							return 'myCustomZodSchema';
+							return refs.build.any();
 						}
 					},
 				},
 			),
-		).toBe(
-			`z.intersection(z.string(), z.intersection(z.number(), myCustomZodSchema))`,
-		);
+		).toBe(`z.intersection(z.string(), z.intersection(z.number(), z.any()))`);
 	});
 
 	it('can output with cjs and a name', () => {

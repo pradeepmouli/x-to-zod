@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,9 +7,9 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class TemplateLiteralBuilder extends ZodBuilder<'templateLiteral'> {
 	readonly typeKind = 'templateLiteral' as const;
-	private readonly _parts: (string | ZodBuilder)[];
+	private readonly _parts: (string | Builder)[];
 
-	constructor(parts: (string | ZodBuilder)[], version?: 'v3' | 'v4') {
+	constructor(parts: (string | Builder)[], version?: 'v3' | 'v4') {
 		super(version);
 		this._parts = parts;
 	}

@@ -3,10 +3,10 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	JSONSchemaObject,
 } from '../types/index.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class BooleanParser extends BaseParser<'boolean'> {
+export class BooleanParser extends AbstractParser<'boolean'> {
 	readonly typeKind = 'boolean' as const;
 
 	constructor(schema: JSONSchemaObject & { type?: string }, refs: Context) {

@@ -3,8 +3,8 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	JSONSchemaObject,
 } from '../types/index.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { BaseParser } from './BaseParser.js';
+import type { Builder } from '../../Builder/index.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { parseSchema } from './parseSchema.js';
 
 /**
@@ -18,20 +18,20 @@ import { parseSchema } from './parseSchema.js';
  * - `additionalProperties: true` → `z.record(z.string(), z.any())`
  * - No `additionalProperties` or `false` → `z.record(z.string(), z.any())`
  */
-export class RecordParser extends BaseParser<'record'> {
+export class RecordParser extends AbstractParser<'record'> {
 	readonly typeKind = 'record' as const;
 
 	constructor(schema: JSONSchemaObject, refs: Context) {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JSONSchema): ZodBuilder {
+	protected parseImpl(schema: JSONSchema): Builder {
 		const s = schema as JSONSchemaObject;
 		const ap = (s as any).additionalProperties;
 
 		const keySchema = this.refs.build.string();
 
-		let valueSchema: ZodBuilder;
+		let valueSchema: Builder;
 		if (ap !== undefined && ap !== true && ap !== false) {
 			// additionalProperties is a schema object
 			valueSchema = parseSchema(ap as JSONSchema, {

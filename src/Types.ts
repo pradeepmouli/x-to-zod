@@ -4,15 +4,15 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	transformer,
 } from './JsonSchema/types/index.js';
-import type { ZodBuilder as BaseBuilder } from './ZodBuilder/BaseBuilder.js';
+import type { Builder } from './Builder/index.js';
 
 export type Serializable = Jsonifiable;
 
-export type ParserSelector = (schema: JSONSchema, refs: Context) => BaseBuilder;
+export type ParserSelector = (schema: JSONSchema, refs: Context) => Builder;
 export type ParserOverride = (
 	schema: JSONSchema,
 	refs: Context,
-) => BaseBuilder | string | void;
+) => Builder | void;
 
 export type BuildFunctions =
 	| typeof import('./ZodBuilder/v3.js').buildV3
@@ -48,9 +48,9 @@ export interface PostProcessorContext {
  * Post-processor: transforms a builder after parsing.
  */
 export type PostProcessor = (
-	builder: BaseBuilder,
+	builder: Builder,
 	context: PostProcessorContext,
-) => BaseBuilder | undefined;
+) => Builder | undefined;
 
 export interface PostProcessorConfig extends ProcessorConfig {
 	processor: PostProcessor;
@@ -87,7 +87,7 @@ export type Context = Options & {
 	matchPath?: (pattern: string) => boolean;
 	seen: Map<
 		object | boolean,
-		{ n: number; r: import('./ZodBuilder/index.js').BaseBuilder | undefined }
+		{ n: number; r: import('./Builder/index.js').Builder | undefined }
 	>;
 	preProcessors?: PreProcessor[];
 	postProcessors?: PostProcessorConfig[];
@@ -101,4 +101,6 @@ export type Context = Options & {
 	builderRegistry?: import('./SchemaProject/BuilderRegistry.js').BuilderRegistry;
 	/** Optional dependency graph for cycle detection in SchemaProject */
 	dependencyGraph?: import('./SchemaProject/types.js').DependencyGraph;
+	/** Optional per-call adapter override; defaults to the global adapter */
+	adapter?: import('./SchemaInput/index.js').SchemaInputAdapter;
 };

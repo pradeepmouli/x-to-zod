@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,14 +7,10 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class CodecBuilder extends ZodBuilder<'codec'> {
 	readonly typeKind = 'codec' as const;
-	private readonly _inSchema: ZodBuilder;
-	private readonly _outSchema: ZodBuilder;
+	private readonly _inSchema: Builder;
+	private readonly _outSchema: Builder;
 
-	constructor(
-		inSchema: ZodBuilder,
-		outSchema: ZodBuilder,
-		version?: 'v3' | 'v4',
-	) {
+	constructor(inSchema: Builder, outSchema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._inSchema = inSchema;
 		this._outSchema = outSchema;

@@ -1,18 +1,15 @@
 import { parseDefault } from './parseDefault.js';
 import { ParserSelector, Context } from '../../Types.js';
 import {
-	isJSONSchema,
 	type JSONSchemaAny as JSONSchema,
 	type SchemaVersion,
 } from '../types/index.js';
-import { BaseBuilder } from '../../ZodBuilder/index.js';
-import { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
+import type { Builder } from '../../Builder/index.js';
 import { buildV4 } from '../../ZodBuilder/v4.js';
-import { selectParserClass } from './registry.js';
-import { is } from '../../utils/is.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
 import { parseRef } from '../../SchemaProject/parseRef.js';
+import { jsonSchemaAdapter } from '../../SchemaInput/JsonSchemaAdapter.js';
 
 export const parseSchema = <Version extends SchemaVersion>(
 	schema: JSONSchema<Version>,
@@ -23,8 +20,10 @@ export const parseSchema = <Version extends SchemaVersion>(
 		build: buildV4,
 	},
 	blockMeta?: boolean,
-): ZodBuilder => {
-	if (isJSONSchema(schema)) {
+): Builder => {
+	const adapter = refs.adapter ?? jsonSchemaAdapter;
+
+	if (adapter.isValid(schema)) {
 		const path = refs.path || [];
 		// Always compute pathString from path, don't use cached value when path changes
 		const pathString = path.length ? `$.${path.join('.')}` : '$';
@@ -33,9 +32,10 @@ export const parseSchema = <Version extends SchemaVersion>(
 
 		// Phase 3: Handle top-level $ref via SchemaProject parseRef when available
 		// This delegates external reference handling to ReferenceBuilder.
-		if (refs.refResolver && schema.$ref && typeof schema.$ref === 'string') {
+		const ref = adapter.getRef(schema as any);
+		if (refs.refResolver && ref) {
 			const refBuilder = parseRef(
-				schema,
+				schema as any,
 				refs.refResolver,
 				refs.currentSchemaId || '',
 				refs.dependencyGraph,
@@ -54,13 +54,8 @@ export const parseSchema = <Version extends SchemaVersion>(
 		}
 		if (refs.parserOverride) {
 			const custom = refs.parserOverride(schema, refs);
-
-			if (typeof custom === 'string') {
-				return refs.build.code(custom);
-			}
-
-			if (is.zodBuilder(custom)) {
-				return custom;
+			if (custom != null) {
+				return custom as ReturnType<typeof refs.build.any>;
 			}
 		}
 
@@ -81,12 +76,14 @@ export const parseSchema = <Version extends SchemaVersion>(
 			refs.seen.set(schema, seen);
 		}
 
-		let parsed = selectParser(schema, {
+		const refsWithPath: Context = {
 			...refs,
 			path,
 			pathString,
 			matchPath,
-		});
+		};
+
+		let parsed = selectParser(schema, refsWithPath);
 		if (!blockMeta) {
 			if (!refs.withoutDescribes) {
 				parsed = addDescribes(schema, parsed);
@@ -103,15 +100,13 @@ export const parseSchema = <Version extends SchemaVersion>(
 
 		return parsed;
 	} else {
-		// Boolean schemas (true/false) are valid JSON Schemas but not schema objects; handle non-object values specially.
-		return schema ? refs.build.any() : refs.build.never();
+		// Boolean schemas (true/false) are valid JSON Schemas but not schema objects;
+		// handle non-object values specially.
+		return (schema as any) ? refs.build.any() : refs.build.never();
 	}
 };
 
-const addDescribes = (
-	schema: JSONSchema,
-	builder: BaseBuilder,
-): BaseBuilder => {
+const addDescribes = (schema: JSONSchema, builder: Builder): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.description) {
 		return builder.describe(schemaObject.description);
@@ -120,7 +115,7 @@ const addDescribes = (
 	return builder;
 };
 
-const addDefaults = (schema: JSONSchema, builder: BaseBuilder): BaseBuilder => {
+const addDefaults = (schema: JSONSchema, builder: Builder): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.default !== undefined) {
 		return builder.default(schemaObject.default);
@@ -129,10 +124,7 @@ const addDefaults = (schema: JSONSchema, builder: BaseBuilder): BaseBuilder => {
 	return builder;
 };
 
-const addAnnotations = (
-	schema: JSONSchema,
-	builder: BaseBuilder,
-): BaseBuilder => {
+const addAnnotations = (schema: JSONSchema, builder: Builder): Builder => {
 	const schemaObject = schema as any;
 	if (schemaObject.readOnly) {
 		return builder.readonly();
@@ -142,19 +134,20 @@ const addAnnotations = (
 };
 
 const selectParser: ParserSelector = (schema, refs) => {
-	if (!isJSONSchema(schema)) {
-		return schema ? refs.build.any() : refs.build.never();
+	const adapter = refs.adapter ?? jsonSchemaAdapter;
+	if (!adapter.isValid(schema)) {
+		return (schema as any) ? refs.build.any() : refs.build.never();
 	}
-	// Try registry-based parser classes (handles all types including special cases)
-	const ParserClass = selectParserClass(schema);
+	// Try adapter-based parser selection (handles all types including custom)
+	const ParserClass = adapter.selectParser(schema as any, refs);
 	if (ParserClass) {
 		const parser = new (ParserClass as any)(schema, refs);
 		return parser.parse();
 	}
 
 	// Default fallback
-	return parseDefault(schema, refs);
+	return parseDefault(schema as any, refs);
 };
 
-// Initialize BaseParser with parseSchema reference to break circular dependency
-BaseParser.setParseSchema(parseSchema);
+// Initialize AbstractParser with parseSchema reference to break circular dependency
+AbstractParser.setParseSchema(parseSchema as any);

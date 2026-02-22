@@ -1,4 +1,5 @@
 import type { TypeKind, TypeKindOf } from './index.js';
+import type { Builder } from '../Builder/index.js';
 
 /**
  * Generic modifiers that can be applied to any Zod schema.
@@ -106,7 +107,10 @@ export function applyTransform(zodStr: string, transformFn: string): string {
  * @template P - The Zod params type for this builder (default: any)
  */
 
-export abstract class ZodBuilder<T extends string = string, P = any> {
+export abstract class ZodBuilder<
+	T extends string = string,
+	P = any,
+> implements Builder {
 	abstract readonly typeKind: T;
 	protected _params?: P;
 	_optional: boolean = false;

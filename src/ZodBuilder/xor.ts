@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,9 +7,9 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class XorBuilder extends ZodBuilder<'xor'> {
 	readonly typeKind = 'xor' as const;
-	private readonly _schemas: ZodBuilder[];
+	private readonly _schemas: Builder[];
 
-	constructor(schemas: ZodBuilder[], version?: 'v3' | 'v4') {
+	constructor(schemas: Builder[], version?: 'v3' | 'v4') {
 		super(version);
 		this._schemas = schemas;
 	}

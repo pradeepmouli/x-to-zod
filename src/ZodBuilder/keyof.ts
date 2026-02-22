@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -6,9 +7,9 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class KeyofBuilder extends ZodBuilder<'keyof'> {
 	readonly typeKind = 'keyof' as const;
-	private readonly _objectSchema: ZodBuilder;
+	private readonly _objectSchema: Builder;
 
-	constructor(objectSchema: ZodBuilder, version?: 'v3' | 'v4') {
+	constructor(objectSchema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._objectSchema = objectSchema;
 	}

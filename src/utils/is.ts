@@ -10,7 +10,7 @@ import {
 	LazyBuilder,
 } from '../ZodBuilder/index.js';
 import { ZodBuilder } from '../ZodBuilder/BaseBuilder.js';
-import { BaseParser } from '../JsonSchema/parsers/BaseParser.js';
+import { AbstractParser } from '../Parser/AbstractParser.js';
 
 /**
  * Type guard for ZodBuilder base class
@@ -85,12 +85,12 @@ export function isLazyBuilder(value: unknown): value is LazyBuilder {
 }
 
 /**
- * Type guard for BaseParser instances by typeKind discriminator.
+ * Type guard for AbstractParser instances by typeKind discriminator.
  */
 export function isParserOfKind<K extends string>(
 	value: unknown,
 	kind: K,
-): value is BaseParser<K> {
+): value is AbstractParser<K> {
 	if (!value || typeof value !== 'object') return false;
 	const candidate = value as { typeKind?: unknown; parse?: unknown };
 	return candidate.typeKind === kind && typeof candidate.parse === 'function';

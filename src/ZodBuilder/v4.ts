@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { ZodBuilder } from './BaseBuilder.js';
+import type { Builder } from '../Builder/index.js';
 import type { Serializable } from '../Types.js';
 import { NumberBuilder } from './number.js';
 import { StringBuilder } from './string.js';
@@ -50,11 +50,11 @@ export const buildV4 = {
 		new BooleanBuilder(params, 'v4'),
 	null: () => new NullBuilder('v4'),
 	array: (
-		itemSchemaZod: ZodBuilder | ZodBuilder[],
+		itemSchemaZod: Builder | Builder[],
 		params?: Parameters<typeof z.array>[1],
 	) => new ArrayBuilder(itemSchemaZod, params, 'v4'),
 	object: (
-		properties: Record<string, ZodBuilder> = {},
+		properties: Record<string, Builder> = {},
 		params?: Parameters<typeof z.object>[1],
 	) => new ObjectBuilder(properties, params, 'v4'),
 	enum: (values: Serializable[]) => new EnumBuilder(values, 'v4'),
@@ -65,11 +65,11 @@ export const buildV4 = {
 	literalValue: (value: Serializable) => new LiteralBuilder(value, 'v4'),
 	code: (code: string) => new GenericBuilder(code, 'v4'),
 	raw: (code: string) => new GenericBuilder(code, 'v4'),
-	union: (schemas: ZodBuilder[]) => new UnionBuilder(schemas, 'v4'),
-	intersection: (left: ZodBuilder, right: ZodBuilder) =>
+	union: (schemas: Builder[]) => new UnionBuilder(schemas, 'v4'),
+	intersection: (left: Builder, right: Builder) =>
 		new IntersectionBuilder(left, right, 'v4'),
-	tuple: (items: ZodBuilder[]) => new TupleBuilder(items, 'v4'),
-	record: (keySchema: ZodBuilder, valueSchema: ZodBuilder) =>
+	tuple: (items: Builder[]) => new TupleBuilder(items, 'v4'),
+	record: (keySchema: Builder, valueSchema: Builder) =>
 		new RecordBuilder(keySchema, valueSchema, 'v4'),
 	void: () => new VoidBuilder('v4'),
 	undefined: () => new UndefinedBuilder('v4'),
@@ -79,32 +79,30 @@ export const buildV4 = {
 		new BigIntBuilder(params, 'v4'),
 	symbol: () => new SymbolBuilder('v4'),
 	nan: () => new NaNBuilder('v4'),
-	set: (itemSchema: ZodBuilder) => new SetBuilder(itemSchema, 'v4'),
-	map: (keySchema: ZodBuilder, valueSchema: ZodBuilder) =>
+	set: (itemSchema: Builder) => new SetBuilder(itemSchema, 'v4'),
+	map: (keySchema: Builder, valueSchema: Builder) =>
 		new MapBuilder(keySchema, valueSchema, 'v4'),
 	custom: (validateFn?: string, params?: any) =>
 		new CustomBuilder(validateFn, params, 'v4'),
-	discriminatedUnion: (discriminator: string, schemas: ZodBuilder<string>[]) =>
-		new DiscriminatedUnionBuilder(discriminator, schemas as any, 'v4'),
+	discriminatedUnion: (discriminator: string, schemas: Builder[]) =>
+		new DiscriminatedUnionBuilder(discriminator, schemas, 'v4'),
 	// Zod v4 only builders
-	promise: (innerSchema: ZodBuilder) => new PromiseBuilder(innerSchema, 'v4'),
-	lazy: (input: ZodBuilder) => new LazyBuilder(input, 'v4'),
-	function: (functionSignature: {
-		input?: ZodBuilder[];
-		output?: ZodBuilder;
-	}) => new FunctionBuilder(functionSignature, 'v4'),
-	codec: (inSchema: ZodBuilder, outSchema: ZodBuilder) =>
+	promise: (innerSchema: Builder) => new PromiseBuilder(innerSchema, 'v4'),
+	lazy: (input: Builder) => new LazyBuilder(input, 'v4'),
+	function: (functionSignature: { input?: Builder[]; output?: Builder }) =>
+		new FunctionBuilder(functionSignature, 'v4'),
+	codec: (inSchema: Builder, outSchema: Builder) =>
 		new CodecBuilder(inSchema, outSchema, 'v4'),
-	preprocess: (transformFn: string, schema: ZodBuilder) =>
+	preprocess: (transformFn: string, schema: Builder) =>
 		new PreprocessBuilder(transformFn, schema, 'v4'),
-	pipe: (sourceSchema: ZodBuilder, targetSchema: ZodBuilder) =>
+	pipe: (sourceSchema: Builder, targetSchema: Builder) =>
 		new PipeBuilder(sourceSchema, targetSchema, 'v4'),
 	json: () => new JsonBuilder('v4'),
 	file: () => new FileBuilder('v4'),
 	nativeEnum: (enumReference: string) =>
 		new NativeEnumBuilder(enumReference, 'v4'),
-	templateLiteral: (parts: (string | ZodBuilder)[]) =>
+	templateLiteral: (parts: (string | Builder)[]) =>
 		new TemplateLiteralBuilder(parts, 'v4'),
-	xor: (schemas: ZodBuilder[]) => new XorBuilder(schemas, 'v4'),
-	keyof: (objectSchema: ZodBuilder) => new KeyofBuilder(objectSchema, 'v4'),
+	xor: (schemas: Builder[]) => new XorBuilder(schemas, 'v4'),
+	keyof: (objectSchema: Builder) => new KeyofBuilder(objectSchema, 'v4'),
 } as const;

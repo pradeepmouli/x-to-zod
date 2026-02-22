@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 import { EmailBuilder } from './email.js';
 import { UrlBuilder } from './url.js';
@@ -24,7 +25,7 @@ export class StringBuilder extends ZodBuilder<
 	_maxLength?: { value: number; errorMessage?: string } = undefined;
 	_base64?: { errorMessage?: string } = undefined;
 	_json?: { errorMessage?: string } = undefined;
-	_pipe?: { contentSchema: ZodBuilder; errorMessage?: string } = undefined;
+	_pipe?: { contentSchema: Builder; errorMessage?: string } = undefined;
 
 	constructor(params?: Parameters<typeof z.string>[0], version?: 'v3' | 'v4') {
 		super(version);
@@ -428,7 +429,7 @@ export class StringBuilder extends ZodBuilder<
 	/**
 	 * Apply pipe with parsed content schema.
 	 */
-	pipe(contentSchema: ZodBuilder, errorMessage?: string): this {
+	pipe(contentSchema: Builder, errorMessage?: string): this {
 		this._pipe = { contentSchema, errorMessage };
 		return this;
 	}
@@ -699,12 +700,14 @@ export function applyJsonTransform(
 		return `${zodStr}.transform(${transformPart}, ${JSON.stringify(errorMessage)})`;
 	}
 	return `${zodStr}.transform(${transformPart})`;
-} /**
+}
+
+/**
  * Apply pipe with parsed content schema.
  */
 export function applyPipe(
 	zodStr: string,
-	contentSchemaZod: ZodBuilder,
+	contentSchemaZod: Builder,
 	errorMessage?: string,
 ): string {
 	return errorMessage

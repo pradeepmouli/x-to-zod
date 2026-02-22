@@ -1,3 +1,4 @@
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -16,14 +17,10 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class RecordBuilder extends ZodBuilder<'record'> {
 	readonly typeKind = 'record' as const;
-	private readonly _keySchema: ZodBuilder;
-	private readonly _valueSchema: ZodBuilder;
+	private readonly _keySchema: Builder;
+	private readonly _valueSchema: Builder;
 
-	constructor(
-		keySchema: ZodBuilder,
-		valueSchema: ZodBuilder,
-		version?: 'v3' | 'v4',
-	) {
+	constructor(keySchema: Builder, valueSchema: Builder, version?: 'v3' | 'v4') {
 		super(version);
 		this._keySchema = keySchema;
 		this._valueSchema = valueSchema;

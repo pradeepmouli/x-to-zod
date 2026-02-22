@@ -3,10 +3,10 @@ import type {
 	JSONSchemaAny as JSONSchema,
 	JSONSchemaObject,
 } from '../types/index.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class ConstParser extends BaseParser<'const'> {
+export class ConstParser extends AbstractParser<'const'> {
 	readonly typeKind = 'const' as const;
 
 	protected parseImpl(schema: JSONSchema): ZodBuilder {

@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -23,12 +24,12 @@ export class ArrayBuilder extends ZodBuilder<
 	Parameters<typeof z.array>[1]
 > {
 	readonly typeKind = 'array' as const;
-	private readonly _itemSchema: ZodBuilder | ZodBuilder[];
+	private readonly _itemSchema: Builder | Builder[];
 	_minItems?: { value: number; errorMessage?: string } = undefined;
 	_maxItems?: { value: number; errorMessage?: string } = undefined;
 
 	constructor(
-		itemSchema: ZodBuilder | ZodBuilder[],
+		itemSchema: Builder | Builder[],
 		params?: Parameters<typeof z.array>[1],
 		version?: 'v3' | 'v4',
 	) {

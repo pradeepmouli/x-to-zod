@@ -4,7 +4,7 @@ import type {
 	JSONSchemaObject,
 } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 
 /**
  * Parser for JSON Schema tuple types.
@@ -15,7 +15,7 @@ import { BaseParser } from './BaseParser.js';
  *
  * Produces `z.tuple([...])` via the TupleBuilder.
  */
-export class TupleParser extends BaseParser<'tuple'> {
+export class TupleParser extends AbstractParser<'tuple'> {
 	readonly typeKind = 'tuple' as const;
 
 	constructor(schema: JSONSchemaObject, refs: Context) {

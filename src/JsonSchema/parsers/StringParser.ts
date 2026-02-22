@@ -1,17 +1,17 @@
 import type { Context } from '../../Types.js';
 import type { JSONSchemaObject } from '../types/index.js';
-import { BaseParser } from './BaseParser.js';
+import type { Builder } from '../../Builder/index.js';
+import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { parseSchema } from './parseSchema.js';
-import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class StringParser extends BaseParser<'string'> {
+export class StringParser extends AbstractParser<'string'> {
 	readonly typeKind = 'string' as const;
 
 	constructor(schema: JSONSchemaObject, refs: Context) {
 		super(schema, refs);
 	}
 
-	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
+	protected parseImpl(schema: JSONSchemaObject): Builder {
 		const s = schema as JSONSchemaObject & {
 			type?: string;
 			format?: string;
