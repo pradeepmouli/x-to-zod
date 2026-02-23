@@ -1,6 +1,11 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.2/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": [
+    "@changesets/changelog-github",
+    {
+      "repo": "pradeepmouli/json-schema-to-zod"
+    }
+  ],
   "commit": false,
   "fixed": [],
   "linked": [],
