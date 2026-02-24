@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "pradeepmouli/json-schema-to-zod"
+      "repo": "pradeepmouli/x-to-zod"
     }
   ],
   "commit": false,
