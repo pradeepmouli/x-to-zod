@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1
+
+### Patch Changes
+
+- [#56](https://github.com/pradeepmouli/x-to-zod/pull/56) [`cd66af0`](https://github.com/pradeepmouli/x-to-zod/commit/cd66af03f135424090cc7abdb3f51ea34d76e477) Thanks [@github-actions](https://github.com/apps/github-actions)! - -
+
 ## 0.7.0
 
 ### Minor Changes
