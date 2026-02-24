@@ -1,4 +1,4 @@
-src
+/src
 tsconfig*
-test
+/test
 specs/
