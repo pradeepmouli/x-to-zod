@@ -1,3 +1,7 @@
+import type { ConditionalPick, Simplify } from 'type-fest';
+import type { ZodBase64URL, ZodObject, ZodType } from 'zod';
+import v4 from '../v4';
+
 /**
  * Builder — output contract for all schema parsers.
  *
@@ -83,3 +87,17 @@ export interface Builder {
 	 */
 	transform(transformFn: string): Builder;
 }
+
+/**
+ * Helper type to extract the fluent interface of a Builder implementation, for use in parserOverride callbacks.
+ * For a given Zod type `z`, `BuilderFor<z>` includes all methods of `Builder` plus any additional fluent methods from `z`.
+ * This allows parserOverride implementations to return builders with extended fluent APIs (e.g. Zod v4's `.meta()`) while still being type-checked as returning a `Builder`.
+ */
+export type BuilderFor<z extends ZodType> = ConditionalPick<
+	Builder & {
+		[x in Exclude<keyof z, keyof Builder>]: z[x] extends (...args: infer B) => z
+			? (...args: B) => BuilderFor<z>
+			: never;
+	},
+	Function
+>;
