@@ -1,5 +1,6 @@
 import type { TypeKind, TypeKindOf } from './index.js';
 import type { Builder } from '../Builder/index.js';
+import type { ZodType } from 'zod';
 
 /**
  * Generic modifiers that can be applied to any Zod schema.
@@ -108,7 +109,7 @@ export function applyTransform(zodStr: string, transformFn: string): string {
  */
 
 export abstract class ZodBuilder<
-	T extends string = string,
+	T extends ZodType['def']['type'],
 	P = any,
 > implements Builder {
 	abstract readonly typeKind: T;
@@ -322,10 +323,10 @@ export abstract class ZodBuilder<
 		let result = baseText;
 
 		// Apply modifiers in stable order to match previous string-based output
-		if (this._describeText) {
-			result = applyDescribe(result, this._describeText);
-		}
-		if (this._metaData !== undefined) {
+		if (
+			this._metaData !== undefined &&
+			Object.keys(this._metaData).length > 0
+		) {
 			result = applyMeta(result, this._metaData);
 		}
 		if (this._nullable) {

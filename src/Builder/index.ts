@@ -16,12 +16,12 @@ import v4 from '../v4';
  * implementable by third parties. The concrete `ZodBuilder` class retains `this` return
  * types for its own fluent chaining — TypeScript accepts this structural assignment.
  */
-export interface Builder {
+export interface Builder<T extends string = string> {
 	/**
 	 * Parser type discriminator (e.g. `'string'`, `'object'`, `'anyOf'`).
 	 * Set by the parser that creates this builder.
 	 */
-	readonly typeKind: string;
+	readonly typeKind: T;
 
 	/**
 	 * Emit the final Zod expression as a TypeScript code string.
@@ -94,7 +94,7 @@ export interface Builder {
  * This allows parserOverride implementations to return builders with extended fluent APIs (e.g. Zod v4's `.meta()`) while still being type-checked as returning a `Builder`.
  */
 export type BuilderFor<z extends ZodType> = ConditionalPick<
-	Builder & {
+	Builder<z['def']['type']> & {
 		[x in Exclude<keyof z, keyof Builder>]: z[x] extends (...args: infer B) => z
 			? (...args: B) => BuilderFor<z>
 			: never;

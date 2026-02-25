@@ -1,13 +1,14 @@
 import type { z } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
+import type { BuilderFor } from '../Builder/index.js';
 
 /**
  * Fluent BooleanBuilder: wraps a Zod boolean schema string and provides chainable methods.
  */
-export class BooleanBuilder extends ZodBuilder<
-	'boolean',
-	Parameters<typeof z.boolean>[0]
-> {
+export class BooleanBuilder
+	extends ZodBuilder<'boolean', Parameters<typeof z.boolean>[0]>
+	implements BuilderFor<z.ZodBoolean>
+{
 	readonly typeKind = 'boolean' as const;
 	constructor(params?: Parameters<typeof z.boolean>[0], version?: 'v3' | 'v4') {
 		super(version);

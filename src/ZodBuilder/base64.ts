@@ -13,7 +13,7 @@ import { ZodBuilder } from './BaseBuilder.js';
  * b64.text(); // => 'z.base64()'
  * ```
  */
-export class Base64Builder extends ZodBuilder<'base64'> {
+export class Base64Builder extends ZodBuilder<'undefined'> {
 	readonly typeKind = 'base64' as const;
 	private _errorMessage?: string;
 
