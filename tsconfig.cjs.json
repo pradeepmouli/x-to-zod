@@ -3,6 +3,7 @@
     "target": "es2020",
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "rootDir": "src",
     "outDir": "dist/cjs",
     "strict": true,
     "skipLibCheck": true,

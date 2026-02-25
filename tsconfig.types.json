@@ -3,6 +3,7 @@
     "target": "es2020",
     "declaration": true,
     "emitDeclarationOnly": true,
+    "rootDir": "src",
     "outDir": "dist/types",
     "module": "esnext",
     "moduleResolution": "bundler",
