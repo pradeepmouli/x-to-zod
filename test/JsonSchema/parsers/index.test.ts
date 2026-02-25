@@ -241,7 +241,7 @@ describe('parse API', () => {
 						properties: { b: { type: 'number' as const } },
 					},
 				],
-			};
+			} as any;
 
 			const result = parse.allOf(schema, defaultContext);
 			const code = result.text();
@@ -427,7 +427,7 @@ describe('parse API', () => {
 						properties: { b: { type: 'number' as const } },
 					},
 				],
-			};
+			} as any;
 
 			const parseResult = parse.allOf(schema, defaultContext);
 			const parseSchemaResult = parseSchema(schema, defaultContext);

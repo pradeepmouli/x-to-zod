@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0
+
+### Minor Changes
+
+- [#61](https://github.com/pradeepmouli/x-to-zod/pull/61) [`98a26c5`](https://github.com/pradeepmouli/x-to-zod/commit/98a26c5b533d6ed5f95cec41bf149377e5cc5efc) Thanks [@github-actions](https://github.com/apps/github-actions)! - - fix: include build output in npm package
+  - Initial plan
+  - chore(deps)(deps-dev): bump the code-quality group with 2 updates
+
 ## 0.7.1
 
 ### Patch Changes

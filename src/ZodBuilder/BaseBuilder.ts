@@ -109,7 +109,7 @@ export function applyTransform(zodStr: string, transformFn: string): string {
  */
 
 export abstract class ZodBuilder<
-	T extends ZodType['def']['type'],
+	T extends ZodType['def']['type'] = ZodType['def']['type'],
 	P = any,
 > implements Builder {
 	abstract readonly typeKind: T;
@@ -311,8 +311,8 @@ export abstract class ZodBuilder<
 	 */
 	protected abstract base(): string;
 
-	is<T extends keyof TypeKind>(type: T | keyof T): this is TypeKindOf<T> {
-		return this.typeKind === type;
+	is<K extends keyof TypeKind>(type: K): this is TypeKindOf<K> {
+		return String(this.typeKind) === String(type);
 	}
 
 	/**
