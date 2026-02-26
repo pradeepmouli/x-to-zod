@@ -1,4 +1,12 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodIPv4 } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
+
+type IpParams =
+	| Parameters<typeof z.ipv4>[0]
+	| Parameters<typeof z.ipv6>[0]
+	| Parameters<typeof z.cidrv4>[0]
+	| Parameters<typeof z.cidrv6>[0];
 
 /**
  * IpBuilder: represents z.ip(), z.ipv4(), z.ipv6() in Zod v4.
@@ -23,61 +31,68 @@ import { ZodBuilder } from './BaseBuilder.js';
  * ipv6.text(); // => 'z.ipv6()'
  * ```
  */
-export class IpBuilder extends ZodBuilder<'ip'> {
-	readonly typeKind = 'ip' as const;
+export class IpBuilder
+	extends StringFormatBuilder<ZodIPv4, [params?: IpParams]>
+	implements BuilderFor<ZodIPv4>
+{
+	readonly typeKind = 'ipv4' as const;
 	private _variant: 'ip' | 'ipv4' | 'ipv6' | 'cidrv4' | 'cidrv6';
-	private _errorMessage?: string;
 
 	constructor(
+		version: 'v3' | 'v4' = 'v4',
 		variant: 'ip' | 'ipv4' | 'ipv6' | 'cidrv4' | 'cidrv6' = 'ip',
-		version?: 'v3' | 'v4',
+		params?: IpParams,
 	) {
-		super(version);
+		super(version, params);
 		this._variant = variant;
-	}
-
-	/**
-	 * Set custom error message for IP validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
 	}
 
 	protected override base(): string {
 		const method = this._variant;
+		const paramsStr = this.serializeParams();
 
 		// In v4, use z.ip() / z.ipv4() / z.ipv6() top-level functions
 		if (this.isV4()) {
-			return `z.${method}(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.${method}(${paramsStr})` : `z.${method}()`;
 		}
 
 		// In v3, fall back to string().ip() / string().ipv4() / string().ipv6()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
+		const firstParam = this._params?.[0];
+		const buildVersionedParams = (version: 'v4' | 'v6'): string => {
+			if (
+				firstParam &&
+				typeof firstParam === 'object' &&
+				!Array.isArray(firstParam)
+			) {
+				return JSON.stringify({
+					...(firstParam as Record<string, unknown>),
+					version,
+				});
+			}
+			return JSON.stringify({ version });
+		};
 
 		// For 'ip' variant in v3, need to pass version option
 		if (method === 'ip') {
-			return `z.string().ip(${errorParam ? errorParam.slice(2) : ''})`;
+			return paramsStr ? `z.string().ip(${paramsStr})` : 'z.string().ip()';
 		}
 
 		// For specific variants (ipv4, ipv6), call the specific method
 		if (method === 'ipv4') {
-			return `z.string().ip(${errorParam ? `{ version: "v4"${errorParam.slice(1)}` : '{ version: "v4" }'})`;
+			return `z.string().ip(${buildVersionedParams('v4')})`;
 		}
 		if (method === 'ipv6') {
-			return `z.string().ip(${errorParam ? `{ version: "v6"${errorParam.slice(1)}` : '{ version: "v6" }'})`;
+			return `z.string().ip(${buildVersionedParams('v6')})`;
 		}
 
 		// CIDR variants
 		if (method === 'cidrv4') {
-			return `z.string().cidr(${errorParam ? `{ version: "v4"${errorParam.slice(1)}` : '{ version: "v4" }'})`;
+			return `z.string().cidr(${buildVersionedParams('v4')})`;
 		}
 		if (method === 'cidrv6') {
-			return `z.string().cidr(${errorParam ? `{ version: "v6"${errorParam.slice(1)}` : '{ version: "v6" }'})`;
+			return `z.string().cidr(${buildVersionedParams('v6')})`;
 		}
 
-		return `z.string().ip(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr ? `z.string().ip(${paramsStr})` : 'z.string().ip()';
 	}
 }

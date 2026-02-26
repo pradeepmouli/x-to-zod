@@ -1,4 +1,8 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { ZodStringFormat } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
+
+type DurationParams = Record<string, unknown>;
 
 /**
  * DurationBuilder: represents z.duration() in Zod v4.
@@ -13,31 +17,28 @@ import { ZodBuilder } from './BaseBuilder.js';
  * duration.text(); // => 'z.duration()'
  * ```
  */
-export class DurationBuilder extends ZodBuilder<'duration'> {
+export class DurationBuilder
+	extends StringFormatBuilder<
+		ZodStringFormat<'duration'>,
+		[params?: DurationParams]
+	>
+	implements BuilderFor<ZodStringFormat<'duration'>>
+{
 	readonly typeKind = 'duration' as const;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
-	}
-
-	/**
-	 * Set custom error message for duration validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
+	constructor(version: 'v3' | 'v4' = 'v4', params?: DurationParams) {
+		super(version, params);
 	}
 
 	protected override base(): string {
+		const paramsStr = this.serializeParams();
 		// In v4, use z.duration() top-level function
 		if (this.isV4()) {
-			return `z.duration(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.duration(${paramsStr})` : 'z.duration()';
 		}
 		// In v3, fall back to string().duration()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().duration(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr
+			? `z.string().duration(${paramsStr})`
+			: 'z.string().duration()';
 	}
 }

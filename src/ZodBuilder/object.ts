@@ -1,4 +1,4 @@
-import type { z } from 'zod';
+import type { z, ZodObject } from 'zod';
 import type { Builder } from '../Builder/index.js';
 import { ZodBuilder, applySuperRefine } from './BaseBuilder.js';
 
@@ -6,8 +6,9 @@ import { ZodBuilder, applySuperRefine } from './BaseBuilder.js';
  * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
  */
 export class ObjectBuilder extends ZodBuilder<
+	ZodObject,
 	'object',
-	Parameters<typeof z.object>[1]
+	[params?: Parameters<typeof z.object>[1]]
 > {
 	readonly typeKind = 'object' as const;
 	readonly _properties: Record<string, Builder>;
@@ -23,13 +24,12 @@ export class ObjectBuilder extends ZodBuilder<
 	private _omitKeys?: string[];
 
 	constructor(
+		version: 'v3' | 'v4' = 'v4',
 		properties: Record<string, Builder> = {},
 		params?: Parameters<typeof z.object>[1],
-		version?: 'v3' | 'v4',
 	) {
-		super(version);
+		super(version, params);
 		this._properties = properties;
-		this._params = params;
 	}
 
 	/**
@@ -41,7 +41,7 @@ export class ObjectBuilder extends ZodBuilder<
 		refs?: import('../Types.js').Context,
 	): ObjectBuilder {
 		const zodVersion = refs?.zodVersion || 'v4';
-		const builder = new ObjectBuilder({}, undefined, zodVersion);
+		const builder = new ObjectBuilder(zodVersion, {}, undefined);
 		builder._precomputedSchema = code;
 		return builder;
 	}
@@ -169,7 +169,6 @@ export class ObjectBuilder extends ZodBuilder<
 		let result = baseText;
 
 		// Apply strict/loose as methods in v3 mode OR when modifying precomputed schema in v4
-		// (precomputed schemas from fromCode can't use strictObject/looseObject at base level)
 		const useMethodForm = !this.isV4() || this._precomputedSchema;
 
 		if (this._strict && useMethodForm) {

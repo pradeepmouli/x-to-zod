@@ -1,4 +1,6 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodBase64 } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
 
 /**
  * Base64Builder: represents z.base64() in Zod v4.
@@ -13,31 +15,31 @@ import { ZodBuilder } from './BaseBuilder.js';
  * b64.text(); // => 'z.base64()'
  * ```
  */
-export class Base64Builder extends ZodBuilder<'undefined'> {
+export class Base64Builder
+	extends StringFormatBuilder<
+		ZodBase64,
+		[params?: Parameters<typeof z.base64>[0]]
+	>
+	implements BuilderFor<ZodBase64>
+{
 	readonly typeKind = 'base64' as const;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
-	}
-
-	/**
-	 * Set custom error message for base64 validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		params?: Parameters<typeof z.base64>[0],
+	) {
+		super(version, params);
 	}
 
 	protected override base(): string {
+		const paramsStr = this.serializeParams();
 		// In v4, use z.base64() top-level function
 		if (this.isV4()) {
-			return `z.base64(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.base64(${paramsStr})` : 'z.base64()';
 		}
 		// In v3, fall back to string().base64()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().base64(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr
+			? `z.string().base64(${paramsStr})`
+			: 'z.string().base64()';
 	}
 }

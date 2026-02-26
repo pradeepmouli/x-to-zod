@@ -1,4 +1,6 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodNanoID } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
 
 /**
  * NanoidBuilder: represents z.nanoid() in Zod v4.
@@ -13,31 +15,31 @@ import { ZodBuilder } from './BaseBuilder.js';
  * nanoid.text(); // => 'z.nanoid()'
  * ```
  */
-export class NanoidBuilder extends ZodBuilder<'nanoid'> {
+export class NanoidBuilder
+	extends StringFormatBuilder<
+		ZodNanoID,
+		[params?: Parameters<typeof z.nanoid>[0]]
+	>
+	implements BuilderFor<ZodNanoID>
+{
 	readonly typeKind = 'nanoid' as const;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
-	}
-
-	/**
-	 * Set custom error message for Nano ID validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		params?: Parameters<typeof z.nanoid>[0],
+	) {
+		super(version, params);
 	}
 
 	protected override base(): string {
+		const paramsStr = this.serializeParams();
 		// In v4, use z.nanoid() top-level function
 		if (this.isV4()) {
-			return `z.nanoid(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.nanoid(${paramsStr})` : 'z.nanoid()';
 		}
 		// In v3, fall back to string().nanoid()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().nanoid(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr
+			? `z.string().nanoid(${paramsStr})`
+			: 'z.string().nanoid()';
 	}
 }

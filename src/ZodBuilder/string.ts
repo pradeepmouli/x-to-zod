@@ -1,89 +1,20 @@
-import type { z } from 'zod';
-import type { Builder } from '../Builder/index.js';
-import { ZodBuilder } from './BaseBuilder.js';
-import { EmailBuilder } from './email.js';
-import { UrlBuilder } from './url.js';
-import { UuidBuilder } from './uuid.js';
-import { EmojiBuilder } from './emoji.js';
-import { NanoidBuilder } from './nanoid.js';
-import { CuidBuilder } from './cuid.js';
-import { UlidBuilder } from './ulid.js';
-import { IpBuilder } from './ip.js';
-import { Base64Builder } from './base64.js';
+import type { ZodString } from 'zod';
+import type { Builder, BuilderFor, ParamsFor } from '../Builder/index.js';
+import { StringBuilderBase } from './StringFormatBuilder.js';
 
 /**
  * Fluent StringBuilder: wraps a Zod string schema string and provides chainable methods.
+ * Extends StringBuilderBase for shared string methods; adds format-dispatch methods
+ * that return format-specific builders in v4 mode (e.g. email() → EmailBuilder).
  */
-export class StringBuilder extends ZodBuilder<
-	'string',
-	Parameters<typeof z.string>[0]
-> {
-	readonly typeKind = 'string' as const;
-	_format?: { format: string; errorMessage?: string } = undefined;
-	_pattern?: { pattern: string; errorMessage?: string } = undefined;
-	_minLength?: { value: number; errorMessage?: string } = undefined;
-	_maxLength?: { value: number; errorMessage?: string } = undefined;
-	_base64?: { errorMessage?: string } = undefined;
-	_json?: { errorMessage?: string } = undefined;
-	_pipe?: { contentSchema: Builder; errorMessage?: string } = undefined;
+export class StringBuilder
+	extends StringBuilderBase<ZodString, 'string', ParamsFor<'string'>>
+	implements BuilderFor<ZodString>
+{
+	readonly typeKind = 'string';
 
-	constructor(params?: Parameters<typeof z.string>[0], version?: 'v3' | 'v4') {
-		super(version);
-		this._params = params;
-	}
-
-	/**
-	 * Check if this StringBuilder has any constraints applied.
-	 * Used for hybrid v4 logic: if constraints exist, stay in StringBuilder.
-	 * If no constraints, can switch to format-specific builder.
-	 */
-	hasConstraints(): boolean {
-		return !!(
-			this._minLength ||
-			this._maxLength ||
-			this._pattern ||
-			this._json ||
-			this._pipe
-		);
-	}
-
-	/**
-	 * Apply format constraint.
-	 */
-	format(format: string, errorMessage?: string): this {
-		this._format = { format, errorMessage };
-		return this;
-	}
-
-	/**
-	 * Apply regex pattern constraint.
-	 */
-	regex(pattern: string | RegExp, errorMessage?: string): this {
-		this._pattern = {
-			pattern: typeof pattern === 'string' ? pattern : pattern.source,
-			errorMessage,
-		};
-		return this;
-	}
-
-	/**
-	 * Apply minLength constraint.
-	 */
-	min(value: number, errorMessage?: string): this {
-		if (this._minLength === undefined || this._minLength.value > value) {
-			this._minLength = { value, errorMessage };
-		}
-		return this;
-	}
-
-	/**
-	 * Apply maxLength constraint.
-	 */
-	max(value: number, errorMessage?: string): this {
-		if (this._maxLength === undefined || this._maxLength.value < value) {
-			this._maxLength = { value, errorMessage };
-		}
-		return this;
+	constructor(version: 'v3' | 'v4' = 'v4', ...params: ParamsFor<'string'>) {
+		super(version, ...params);
 	}
 
 	/**
@@ -91,15 +22,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns EmailBuilder for top-level z.email().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	email(errorMessage?: string): this | import('./email.js').EmailBuilder {
-		// In v4 mode without constraints, switch to EmailBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new EmailBuilder(this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'email', errorMessage };
+	email(params?: Parameters<ZodString['email']>[0]): this {
+		this._format = { format: 'email', params };
 		return this;
 	}
 
@@ -108,15 +32,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns UuidBuilder for top-level z.uuid().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	uuid(errorMessage?: string): this | import('./uuid.js').UuidBuilder {
-		// In v4 mode without constraints, switch to UuidBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new UuidBuilder('uuid', this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'uuid', errorMessage };
+	uuid(params?: Parameters<ZodString['uuid']>[0]): this {
+		this._format = { format: 'uuid', params };
 		return this;
 	}
 
@@ -125,31 +42,24 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns UrlBuilder for top-level z.url().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	url(errorMessage?: string): this | import('./url.js').UrlBuilder {
-		// In v4 mode without constraints, switch to UrlBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new UrlBuilder(this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'url', errorMessage };
+	url(params?: Parameters<ZodString['url']>[0]): this {
+		this._format = { format: 'url', params };
 		return this;
 	}
 
 	/**
 	 * Apply http/https URL format.
 	 */
-	httpUrl(errorMessage?: string): this {
-		this._format = { format: 'httpUrl', errorMessage };
+	httpUrl(params?: unknown): this {
+		this._format = { format: 'httpUrl', params };
 		return this;
 	}
 
 	/**
 	 * Apply hostname format.
 	 */
-	hostname(errorMessage?: string): this {
-		this._format = { format: 'hostname', errorMessage };
+	hostname(params?: unknown): this {
+		this._format = { format: 'hostname', params };
 		return this;
 	}
 
@@ -158,39 +68,32 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns EmojiBuilder for top-level z.emoji().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	emoji(errorMessage?: string): this | import('./emoji.js').EmojiBuilder {
-		// In v4 mode without constraints, switch to EmojiBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new EmojiBuilder(this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'emoji', errorMessage };
+	emoji(params?: Parameters<ZodString['emoji']>[0]): this {
+		this._format = { format: 'emoji', params };
 		return this;
 	}
 
 	/**
 	 * Apply base64url format.
 	 */
-	base64url(errorMessage?: string): this {
-		this._format = { format: 'base64url', errorMessage };
+	base64url(params?: Parameters<ZodString['base64url']>[0]): this {
+		this._format = { format: 'base64url', params };
 		return this;
 	}
 
 	/**
 	 * Apply hex format.
 	 */
-	hex(errorMessage?: string): this {
-		this._format = { format: 'hex', errorMessage };
+	hex(params?: unknown): this {
+		this._format = { format: 'hex', params };
 		return this;
 	}
 
 	/**
 	 * Apply JWT format.
 	 */
-	jwt(errorMessage?: string): this {
-		this._format = { format: 'jwt', errorMessage };
+	jwt(params?: Parameters<ZodString['jwt']>[0]): this {
+		this._format = { format: 'jwt', params };
 		return this;
 	}
 
@@ -199,15 +102,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns NanoidBuilder for top-level z.nanoid().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	nanoid(errorMessage?: string): this | import('./nanoid.js').NanoidBuilder {
-		// In v4 mode without constraints, switch to NanoidBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new NanoidBuilder(this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'nanoid', errorMessage };
+	nanoid(params?: Parameters<ZodString['nanoid']>[0]): this {
+		this._format = { format: 'nanoid', params };
 		return this;
 	}
 
@@ -216,15 +112,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns CuidBuilder for top-level z.cuid().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	cuid(errorMessage?: string): this | import('./cuid.js').CuidBuilder {
-		// In v4 mode without constraints, switch to CuidBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new CuidBuilder('cuid', this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'cuid', errorMessage };
+	cuid(params?: Parameters<ZodString['cuid']>[0]): this {
+		this._format = { format: 'cuid', params };
 		return this;
 	}
 
@@ -233,15 +122,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns CuidBuilder for top-level z.cuid2().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	cuid2(errorMessage?: string): this | import('./cuid.js').CuidBuilder {
-		// In v4 mode without constraints, switch to CuidBuilder with cuid2 variant
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new CuidBuilder('cuid2', this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'cuid2', errorMessage };
+	cuid2(params?: Parameters<ZodString['cuid2']>[0]): this {
+		this._format = { format: 'cuid2', params };
 		return this;
 	}
 
@@ -250,15 +132,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns UlidBuilder for top-level z.ulid().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	ulid(errorMessage?: string): this | import('./ulid.js').UlidBuilder {
-		// In v4 mode without constraints, switch to UlidBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new UlidBuilder(this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'ulid', errorMessage };
+	ulid(params?: Parameters<ZodString['ulid']>[0]): this {
+		this._format = { format: 'ulid', params };
 		return this;
 	}
 
@@ -267,15 +142,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns IpBuilder for top-level z.ipv4().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	ipv4(errorMessage?: string): this | import('./ip.js').IpBuilder {
-		// In v4 mode without constraints, switch to IpBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new IpBuilder('ipv4', this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'ipv4', errorMessage };
+	ipv4(params?: unknown): this {
+		this._format = { format: 'ipv4', params };
 		return this;
 	}
 
@@ -284,39 +152,32 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without constraints, returns IpBuilder for top-level z.ipv6().
 	 * In v3 mode or with constraints, stays in StringBuilder chain.
 	 */
-	ipv6(errorMessage?: string): this | import('./ip.js').IpBuilder {
-		// In v4 mode without constraints, switch to IpBuilder
-		if (this.isV4() && !this.hasConstraints()) {
-			const builder = new IpBuilder('ipv6', this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._format = { format: 'ipv6', errorMessage };
+	ipv6(params?: unknown): this {
+		this._format = { format: 'ipv6', params };
 		return this;
 	}
 
 	/**
 	 * Apply MAC address format.
 	 */
-	mac(errorMessage?: string): this {
-		this._format = { format: 'mac', errorMessage };
+	mac(params?: unknown): this {
+		this._format = { format: 'mac', params };
 		return this;
 	}
 
 	/**
 	 * Apply IPv4 CIDR block format.
 	 */
-	cidrv4(errorMessage?: string): this {
-		this._format = { format: 'cidrv4', errorMessage };
+	cidrv4(params?: Parameters<ZodString['cidrv4']>[0]): this {
+		this._format = { format: 'cidrv4', params };
 		return this;
 	}
 
 	/**
 	 * Apply IPv6 CIDR block format.
 	 */
-	cidrv6(errorMessage?: string): this {
-		this._format = { format: 'cidrv6', errorMessage };
+	cidrv6(params?: Parameters<ZodString['cidrv6']>[0]): this {
+		this._format = { format: 'cidrv6', params };
 		return this;
 	}
 
@@ -325,9 +186,9 @@ export class StringBuilder extends ZodBuilder<
 	 */
 	hash(
 		algorithm: 'sha256' | 'sha1' | 'sha384' | 'sha512' | 'md5',
-		errorMessage?: string,
+		params?: unknown,
 	): this {
-		this._format = { format: `hash:${algorithm}`, errorMessage };
+		this._format = { format: `hash:${algorithm}`, params };
 		return this;
 	}
 
@@ -335,8 +196,8 @@ export class StringBuilder extends ZodBuilder<
 	 * Apply ISO date format.
 	 * Note: In Zod v4, maps to z.date() for ISO 8601 date strings.
 	 */
-	isoDate(errorMessage?: string): this {
-		this._format = { format: 'iso.date', errorMessage };
+	isoDate(params?: Parameters<ZodString['date']>[0]): this {
+		this._format = { format: 'iso.date', params };
 		return this;
 	}
 
@@ -344,8 +205,8 @@ export class StringBuilder extends ZodBuilder<
 	 * Apply ISO time format.
 	 * Note: In Zod v4, maps to z.time() for ISO 8601 time strings.
 	 */
-	isoTime(errorMessage?: string): this {
-		this._format = { format: 'iso.time', errorMessage };
+	isoTime(params?: Parameters<ZodString['time']>[0]): this {
+		this._format = { format: 'iso.time', params };
 		return this;
 	}
 
@@ -353,8 +214,8 @@ export class StringBuilder extends ZodBuilder<
 	 * Apply ISO datetime format.
 	 * Note: In Zod v4, maps to z.datetime() for ISO 8601 datetime strings.
 	 */
-	isoDatetime(errorMessage?: string): this {
-		this._format = { format: 'iso.datetime', errorMessage };
+	isoDatetime(params?: Parameters<ZodString['datetime']>[0]): this {
+		this._format = { format: 'iso.datetime', params };
 		return this;
 	}
 
@@ -362,32 +223,32 @@ export class StringBuilder extends ZodBuilder<
 	 * Apply ISO duration format.
 	 * Note: In Zod v4, maps to z.duration() for ISO 8601 duration strings.
 	 */
-	isoDuration(errorMessage?: string): this {
-		this._format = { format: 'iso.duration', errorMessage };
+	isoDuration(params?: Parameters<ZodString['duration']>[0]): this {
+		this._format = { format: 'iso.duration', params };
 		return this;
 	}
 
 	/**
 	 * Apply UUIDv4 format.
 	 */
-	uuidv4(errorMessage?: string): this {
-		this._format = { format: 'uuidv4', errorMessage };
+	uuidv4(params?: Parameters<ZodString['uuid']>[0]): this {
+		this._format = { format: 'uuidv4', params };
 		return this;
 	}
 
 	/**
 	 * Apply UUIDv6 format.
 	 */
-	uuidv6(errorMessage?: string): this {
-		this._format = { format: 'uuidv6', errorMessage };
+	uuidv6(params?: Parameters<ZodString['uuid']>[0]): this {
+		this._format = { format: 'uuidv6', params };
 		return this;
 	}
 
 	/**
 	 * Apply UUIDv7 format.
 	 */
-	uuidv7(errorMessage?: string): this {
-		this._format = { format: 'uuidv7', errorMessage };
+	uuidv7(params?: Parameters<ZodString['uuid']>[0]): this {
+		this._format = { format: 'uuidv7', params };
 		return this;
 	}
 
@@ -396,41 +257,8 @@ export class StringBuilder extends ZodBuilder<
 	 * In v4 mode without other constraints, returns Base64Builder for top-level z.base64().
 	 * In v3 mode or with other constraints, stays in StringBuilder chain.
 	 */
-	base64(errorMessage?: string): this | import('./base64.js').Base64Builder {
-		// Check if we have OTHER constraints (not including base64 itself)
-		const hasOtherConstraints = !!(
-			this._minLength ||
-			this._maxLength ||
-			this._pattern ||
-			this._json ||
-			this._pipe ||
-			this._format
-		);
-
-		// In v4 mode without other constraints, switch to Base64Builder
-		if (this.isV4() && !hasOtherConstraints) {
-			const builder = new Base64Builder(this._version);
-			if (errorMessage) builder.withError(errorMessage);
-			return builder;
-		}
-		// Otherwise stay in StringBuilder chain
-		this._base64 = { errorMessage };
-		return this;
-	}
-
-	/**
-	 * Apply JSON transform.
-	 */
-	json(errorMessage?: string): this {
-		this._json = { errorMessage };
-		return this;
-	}
-
-	/**
-	 * Apply pipe with parsed content schema.
-	 */
-	pipe(contentSchema: Builder, errorMessage?: string): this {
-		this._pipe = { contentSchema, errorMessage };
+	base64(params?: Parameters<ZodString['base64']>[0]): this {
+		this._base64 = { params };
 		return this;
 	}
 
@@ -445,49 +273,124 @@ export class StringBuilder extends ZodBuilder<
 	protected override modify(baseText: string): string {
 		let result = baseText;
 
+		if (this.isV4()) {
+			const hasStringParams =
+				this._params !== undefined && this._params.length > 0;
+			const hasOtherConstraints =
+				this._pattern !== undefined ||
+				this._minLength !== undefined ||
+				this._maxLength !== undefined ||
+				this._json !== undefined ||
+				this._pipe !== undefined;
+
+			if (
+				!hasStringParams &&
+				!hasOtherConstraints &&
+				this._format !== undefined &&
+				this._base64 === undefined
+			) {
+				const topLevelFormat = buildTopLevelFormat(
+					this._format.format,
+					this._format.params,
+				);
+				if (topLevelFormat !== undefined) {
+					return super.modify(topLevelFormat);
+				}
+			}
+
+			if (
+				!hasStringParams &&
+				!hasOtherConstraints &&
+				this._base64 !== undefined &&
+				this._format === undefined
+			) {
+				const base64Params = this._base64.params;
+				const base64ParamsStr =
+					base64Params === undefined ? '' : JSON.stringify(base64Params);
+				const base64TopLevel = base64ParamsStr
+					? `z.base64(${base64ParamsStr})`
+					: 'z.base64()';
+				return super.modify(base64TopLevel);
+			}
+		}
+
 		if (this._format !== undefined) {
-			result = applyFormat(
-				result,
-				this._format.format,
-				this._format.errorMessage,
-			);
+			result = applyFormat(result, this._format.format, this._format.params);
 		}
 		if (this._pattern !== undefined) {
 			result = applyPattern(
 				result,
 				this._pattern.pattern,
-				this._pattern.errorMessage,
+				this._pattern.params,
 			);
 		}
 		if (this._minLength !== undefined) {
 			result = applyMinLength(
 				result,
 				this._minLength.value,
-				this._minLength.errorMessage,
+				this._minLength.params,
 			);
 		}
 		if (this._maxLength !== undefined) {
 			result = applyMaxLength(
 				result,
 				this._maxLength.value,
-				this._maxLength.errorMessage,
+				this._maxLength.params,
 			);
 		}
 		if (this._base64 !== undefined) {
-			result = applyBase64(result, this._base64.errorMessage);
+			result = applyBase64(result, this._base64.params);
 		}
 		if (this._json !== undefined) {
-			result = applyJsonTransform(result, this._json.errorMessage);
+			result = applyJsonTransform(result, this._json.params);
 		}
 		if (this._pipe !== undefined) {
-			result = applyPipe(
-				result,
-				this._pipe.contentSchema,
-				this._pipe.errorMessage,
-			);
+			result = applyPipe(result, this._pipe.contentSchema, this._pipe.params);
 		}
 
 		return super.modify(result);
+	}
+}
+
+function buildTopLevelFormat(
+	format: string,
+	params?: unknown,
+): string | undefined {
+	const paramsStr =
+		typeof params === 'string'
+			? `{ error: ${JSON.stringify(params)} }`
+			: params === undefined
+				? ''
+				: JSON.stringify(params);
+	switch (format) {
+		case 'email':
+			return paramsStr ? `z.email(${paramsStr})` : 'z.email()';
+		case 'url':
+			return paramsStr ? `z.url(${paramsStr})` : 'z.url()';
+		case 'httpUrl':
+			return paramsStr ? `z.httpUrl(${paramsStr})` : 'z.httpUrl()';
+		case 'uuid':
+			return paramsStr ? `z.uuid(${paramsStr})` : 'z.uuid()';
+		case 'emoji':
+			return paramsStr ? `z.emoji(${paramsStr})` : 'z.emoji()';
+		case 'nanoid':
+			return paramsStr ? `z.nanoid(${paramsStr})` : 'z.nanoid()';
+		case 'cuid':
+			return paramsStr ? `z.cuid(${paramsStr})` : 'z.cuid()';
+		case 'cuid2':
+			return paramsStr ? `z.cuid2(${paramsStr})` : 'z.cuid2()';
+		case 'ulid':
+			return paramsStr ? `z.ulid(${paramsStr})` : 'z.ulid()';
+		case 'ipv4':
+			return paramsStr ? `z.ipv4(${paramsStr})` : 'z.ipv4()';
+		case 'ipv6':
+			return paramsStr ? `z.ipv6(${paramsStr})` : 'z.ipv6()';
+		case 'cidrv4':
+			return paramsStr ? `z.cidrv4(${paramsStr})` : 'z.cidrv4()';
+		case 'cidrv6':
+			return paramsStr ? `z.cidrv6(${paramsStr})` : 'z.cidrv6()';
+		default:
+			return undefined;
 	}
 }
 
@@ -497,140 +400,140 @@ export class StringBuilder extends ZodBuilder<
 export function applyFormat(
 	zodStr: string,
 	format: string,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
+	const hasParams = params !== undefined;
+	const serializedParams = hasParams ? JSON.stringify(params) : '';
 	switch (format) {
 		case 'email':
-			return errorMessage
-				? `${zodStr}.email(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.email(${serializedParams})`
 				: `${zodStr}.email()`;
 		case 'ip':
-			return errorMessage
-				? `${zodStr}.ip(${JSON.stringify(errorMessage)})`
-				: `${zodStr}.ip()`;
+			return hasParams ? `${zodStr}.ip(${serializedParams})` : `${zodStr}.ip()`;
 		case 'ipv4':
-			return errorMessage
-				? `${zodStr}.ip({ version: "v4", message: ${JSON.stringify(errorMessage)} })`
+			return hasParams
+				? `${zodStr}.ip(${serializedParams})`
 				: `${zodStr}.ip({ version: "v4" })`;
 		case 'ipv6':
-			return errorMessage
-				? `${zodStr}.ip({ version: "v6", message: ${JSON.stringify(errorMessage)} })`
+			return hasParams
+				? `${zodStr}.ip(${serializedParams})`
 				: `${zodStr}.ip({ version: "v6" })`;
 		case 'uri':
 		case 'url':
-			return errorMessage
-				? `${zodStr}.url(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.url(${serializedParams})`
 				: `${zodStr}.url()`;
 		case 'httpUrl':
-			return errorMessage
-				? `${zodStr}.httpUrl(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.httpUrl(${serializedParams})`
 				: `${zodStr}.httpUrl()`;
 		case 'hostname':
-			return errorMessage
-				? `${zodStr}.hostname(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.hostname(${serializedParams})`
 				: `${zodStr}.hostname()`;
 		case 'emoji':
-			return errorMessage
-				? `${zodStr}.emoji(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.emoji(${serializedParams})`
 				: `${zodStr}.emoji()`;
 		case 'uuid':
-			return errorMessage
-				? `${zodStr}.uuid(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.uuid(${serializedParams})`
 				: `${zodStr}.uuid()`;
 		case 'uuidv4':
-			return errorMessage
-				? `${zodStr}.uuid({ version: "v4", message: ${JSON.stringify(errorMessage)} })`
+			return hasParams
+				? `${zodStr}.uuid(${serializedParams})`
 				: `${zodStr}.uuid({ version: "v4" })`;
 		case 'uuidv6':
-			return errorMessage
-				? `${zodStr}.uuid({ version: "v6", message: ${JSON.stringify(errorMessage)} })`
+			return hasParams
+				? `${zodStr}.uuid(${serializedParams})`
 				: `${zodStr}.uuid({ version: "v6" })`;
 		case 'uuidv7':
-			return errorMessage
-				? `${zodStr}.uuid({ version: "v7", message: ${JSON.stringify(errorMessage)} })`
+			return hasParams
+				? `${zodStr}.uuid(${serializedParams})`
 				: `${zodStr}.uuid({ version: "v7" })`;
 		case 'base64url':
-			return errorMessage
-				? `${zodStr}.base64url(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.base64url(${serializedParams})`
 				: `${zodStr}.base64url()`;
 		case 'hex':
-			return errorMessage
-				? `${zodStr}.hex(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.hex(${serializedParams})`
 				: `${zodStr}.hex()`;
 		case 'jwt':
-			return errorMessage
-				? `${zodStr}.jwt(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.jwt(${serializedParams})`
 				: `${zodStr}.jwt()`;
 		case 'nanoid':
-			return errorMessage
-				? `${zodStr}.nanoid(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.nanoid(${serializedParams})`
 				: `${zodStr}.nanoid()`;
 		case 'cuid':
-			return errorMessage
-				? `${zodStr}.cuid(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.cuid(${serializedParams})`
 				: `${zodStr}.cuid()`;
 		case 'cuid2':
-			return errorMessage
-				? `${zodStr}.cuid2(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.cuid2(${serializedParams})`
 				: `${zodStr}.cuid2()`;
 		case 'ulid':
-			return errorMessage
-				? `${zodStr}.ulid(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.ulid(${serializedParams})`
 				: `${zodStr}.ulid()`;
 		case 'mac':
-			return errorMessage
-				? `${zodStr}.mac(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.mac(${serializedParams})`
 				: `${zodStr}.mac()`;
 		case 'cidrv4':
-			return errorMessage
-				? `${zodStr}.cidrv4(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.cidrv4(${serializedParams})`
 				: `${zodStr}.cidrv4()`;
 		case 'cidrv6':
-			return errorMessage
-				? `${zodStr}.cidrv6(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.cidrv6(${serializedParams})`
 				: `${zodStr}.cidrv6()`;
 		case 'iso.date':
-			return errorMessage
-				? `${zodStr}.iso.date(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.iso.date(${serializedParams})`
 				: `${zodStr}.iso.date()`;
 		case 'iso.time':
-			return errorMessage
-				? `${zodStr}.iso.time(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.iso.time(${serializedParams})`
 				: `${zodStr}.iso.time()`;
 		case 'iso.datetime':
-			return errorMessage
-				? `${zodStr}.iso.datetime(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.iso.datetime(${serializedParams})`
 				: `${zodStr}.iso.datetime()`;
 		case 'iso.duration':
-			return errorMessage
-				? `${zodStr}.iso.duration(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.iso.duration(${serializedParams})`
 				: `${zodStr}.iso.duration()`;
 		case 'date-time':
-			return errorMessage
-				? `${zodStr}.datetime({ offset: true, message: ${JSON.stringify(errorMessage)} })`
+			return hasParams
+				? `${zodStr}.datetime(${serializedParams})`
 				: `${zodStr}.datetime({ offset: true })`;
 		case 'time':
-			return errorMessage
-				? `${zodStr}.time(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.time(${serializedParams})`
 				: `${zodStr}.time()`;
 		case 'date':
-			return errorMessage
-				? `${zodStr}.date(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.date(${serializedParams})`
 				: `${zodStr}.date()`;
 		case 'binary':
-			return errorMessage
-				? `${zodStr}.base64(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.base64(${serializedParams})`
 				: `${zodStr}.base64()`;
 		case 'duration':
-			return errorMessage
-				? `${zodStr}.duration(${JSON.stringify(errorMessage)})`
+			return hasParams
+				? `${zodStr}.duration(${serializedParams})`
 				: `${zodStr}.duration()`;
 		default:
 			// Handle hash formats
 			if (format.startsWith('hash:')) {
 				const algorithm = format.substring(5);
-				return errorMessage
-					? `${zodStr}.hash(${JSON.stringify(algorithm)}, ${JSON.stringify(errorMessage)})`
+				return hasParams
+					? `${zodStr}.hash(${JSON.stringify(algorithm)}, ${serializedParams})`
 					: `${zodStr}.hash(${JSON.stringify(algorithm)})`;
 			}
 			return zodStr;
@@ -643,10 +546,10 @@ export function applyFormat(
 export function applyPattern(
 	zodStr: string,
 	pattern: string,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.regex(new RegExp(${JSON.stringify(pattern)}), ${JSON.stringify(errorMessage)})`
+	return params !== undefined
+		? `${zodStr}.regex(new RegExp(${JSON.stringify(pattern)}), ${JSON.stringify(params)})`
 		: `${zodStr}.regex(new RegExp(${JSON.stringify(pattern)}))`;
 }
 
@@ -656,10 +559,10 @@ export function applyPattern(
 export function applyMinLength(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.min(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`
+	return params !== undefined
+		? `${zodStr}.min(${JSON.stringify(value)}, ${JSON.stringify(params)})`
 		: `${zodStr}.min(${JSON.stringify(value)})`;
 }
 
@@ -669,19 +572,19 @@ export function applyMinLength(
 export function applyMaxLength(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.max(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`
+	return params !== undefined
+		? `${zodStr}.max(${JSON.stringify(value)}, ${JSON.stringify(params)})`
 		: `${zodStr}.max(${JSON.stringify(value)})`;
 }
 
 /**
  * Apply base64 encoding constraint to a string schema.
  */
-export function applyBase64(zodStr: string, errorMessage?: string): string {
-	return errorMessage
-		? `${zodStr}.base64(${JSON.stringify(errorMessage)})`
+export function applyBase64(zodStr: string, params?: unknown): string {
+	return params !== undefined
+		? `${zodStr}.base64(${JSON.stringify(params)})`
 		: `${zodStr}.base64()`;
 }
 
@@ -690,14 +593,11 @@ export function applyBase64(zodStr: string, errorMessage?: string): string {
  * Note: The transform function always uses "Invalid JSON" as the internal error message.
  * The errorMessage parameter becomes the second argument to .transform() for Zod's error handling.
  */
-export function applyJsonTransform(
-	zodStr: string,
-	errorMessage?: string,
-): string {
+export function applyJsonTransform(zodStr: string, params?: unknown): string {
 	const transformPart = `(str, ctx) => { try { return JSON.parse(str); } catch (err) { ctx.addIssue({ code: "custom", message: "Invalid JSON" }); }}`;
 
-	if (errorMessage) {
-		return `${zodStr}.transform(${transformPart}, ${JSON.stringify(errorMessage)})`;
+	if (params !== undefined) {
+		return `${zodStr}.transform(${transformPart}, ${JSON.stringify(params)})`;
 	}
 	return `${zodStr}.transform(${transformPart})`;
 }
@@ -708,9 +608,9 @@ export function applyJsonTransform(
 export function applyPipe(
 	zodStr: string,
 	contentSchemaZod: Builder,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.pipe(${contentSchemaZod.text()}, ${JSON.stringify(errorMessage)})`
+	return params !== undefined
+		? `${zodStr}.pipe(${contentSchemaZod.text()}, ${JSON.stringify(params)})`
 		: `${zodStr}.pipe(${contentSchemaZod.text()})`;
 }

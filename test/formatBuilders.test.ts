@@ -159,7 +159,7 @@ describe('String Format Builders - Hybrid Approach', () => {
 
 		it('should support .describe() on UrlBuilder', () => {
 			const url = buildV4.string().url().describe('A valid URL');
-			expect(url.text()).toBe('z.url().describe("A valid URL")');
+			expect(url.text()).toBe('z.url().meta({"description":"A valid URL"})');
 		});
 	});
 });

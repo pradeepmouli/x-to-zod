@@ -1,4 +1,8 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { ZodStringFormat } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
+
+type TimeParams = Record<string, unknown>;
 
 /**
  * TimeBuilder: represents z.time() in Zod v4.
@@ -16,13 +20,15 @@ import { ZodBuilder } from './BaseBuilder.js';
  * time.withPrecision(3).text(); // => 'z.time({ precision: 3 })'
  * ```
  */
-export class TimeBuilder extends ZodBuilder<'time'> {
+export class TimeBuilder
+	extends StringFormatBuilder<ZodStringFormat<'time'>, [params?: TimeParams]>
+	implements BuilderFor<ZodStringFormat<'time'>>
+{
 	readonly typeKind = 'time' as const;
 	private _precision?: number;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
+	constructor(version: 'v3' | 'v4' = 'v4', params?: TimeParams) {
+		super(version, params);
 	}
 
 	/**
@@ -33,32 +39,24 @@ export class TimeBuilder extends ZodBuilder<'time'> {
 		return this;
 	}
 
-	/**
-	 * Set custom error message for time validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
-	}
-
 	protected override base(): string {
-		// Build options object
-		const options: string[] = [];
-		if (this._precision !== undefined) {
-			options.push(`precision: ${this._precision}`);
-		}
-		if (this._errorMessage) {
-			const param = this.isV4() ? 'error' : 'message';
-			options.push(`${param}: ${JSON.stringify(this._errorMessage)}`);
-		}
-
-		const optionsStr = options.length > 0 ? `{ ${options.join(', ')} }` : '';
+		const currentParams = this._params?.[0];
+		const mergedParams = {
+			...(currentParams &&
+			typeof currentParams === 'object' &&
+			!Array.isArray(currentParams)
+				? currentParams
+				: {}),
+			...(this._precision !== undefined ? { precision: this._precision } : {}),
+		};
+		const hasParams = Object.keys(mergedParams).length > 0;
+		const paramsStr = hasParams ? JSON.stringify(mergedParams) : '';
 
 		// In v4, use z.time() top-level function
 		if (this.isV4()) {
-			return `z.time(${optionsStr})`;
+			return hasParams ? `z.time(${paramsStr})` : 'z.time()';
 		}
 		// In v3, fall back to string().time()
-		return `z.string().time(${optionsStr})`;
+		return hasParams ? `z.string().time(${paramsStr})` : 'z.string().time()';
 	}
 }

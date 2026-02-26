@@ -1,3 +1,4 @@
+import type { ZodPipe } from 'zod';
 import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
@@ -6,17 +7,21 @@ import { ZodBuilder } from './BaseBuilder.js';
  * This is implemented as a modifier on the base schema rather than a standalone builder
  * since pipe is called on an existing schema
  */
-export class PipeBuilder extends ZodBuilder<'pipe'> {
+export class PipeBuilder extends ZodBuilder<
+	ZodPipe,
+	'pipe',
+	[sourceSchema: Builder, targetSchema: Builder]
+> {
 	readonly typeKind = 'pipe' as const;
 	private readonly _sourceSchema: Builder;
 	private readonly _targetSchema: Builder;
 
 	constructor(
+		version: 'v3' | 'v4' = 'v4',
 		sourceSchema: Builder,
 		targetSchema: Builder,
-		version?: 'v3' | 'v4',
 	) {
-		super(version);
+		super(version, sourceSchema, targetSchema);
 		this._sourceSchema = sourceSchema;
 		this._targetSchema = targetSchema;
 	}

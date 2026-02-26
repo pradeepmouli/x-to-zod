@@ -1,5 +1,5 @@
-import type { z } from 'zod';
-import type { Builder } from '../Builder/index.js';
+import type { z, ZodArray, ZodType } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -19,31 +19,37 @@ import { ZodBuilder } from './BaseBuilder.js';
  * The validation is functionally identical in both v3 and v4.
  * See ARRAY-NONEMPTY-NOTES.md for details.
  */
-export class ArrayBuilder extends ZodBuilder<
-	'array',
-	Parameters<typeof z.array>[1]
-> {
+export class ArrayBuilder<Z extends ZodType>
+	extends ZodBuilder<
+		ZodArray<Z>,
+		'array',
+		[
+			itemSchema: BuilderFor<Z> | BuilderFor<Z>[],
+			params?: Parameters<typeof z.array>[1],
+		]
+	>
+	implements BuilderFor<ZodArray>
+{
 	readonly typeKind = 'array' as const;
-	private readonly _itemSchema: Builder | Builder[];
-	_minItems?: { value: number; errorMessage?: string } = undefined;
-	_maxItems?: { value: number; errorMessage?: string } = undefined;
+	private readonly _itemSchema: BuilderFor<Z> | BuilderFor<Z>[];
+	_minItems?: { value: number; params?: unknown } = undefined;
+	_maxItems?: { value: number; params?: unknown } = undefined;
 
 	constructor(
-		itemSchema: Builder | Builder[],
+		version: 'v3' | 'v4' = 'v4',
+		itemSchema: BuilderFor<Z> | BuilderFor<Z>[],
 		params?: Parameters<typeof z.array>[1],
-		version?: 'v3' | 'v4',
 	) {
-		super(version);
+		super(version, itemSchema, params);
 		this._itemSchema = itemSchema;
-		this._params = params;
 	}
 
 	/**
 	 * Apply minItems constraint.
 	 */
-	min(value: number, errorMessage?: string): this {
+	min(value: number, params?: unknown): this {
 		if (this._minItems === undefined || this._minItems.value > value) {
-			this._minItems = { value, errorMessage };
+			this._minItems = { value, params };
 		}
 		return this;
 	}
@@ -51,11 +57,22 @@ export class ArrayBuilder extends ZodBuilder<
 	/**
 	 * Apply maxItems constraint.
 	 */
-	max(value: number, errorMessage?: string): this {
+	max(value: number, params?: unknown): this {
 		if (this._maxItems === undefined || this._maxItems.value < value) {
-			this._maxItems = { value, errorMessage };
+			this._maxItems = { value, params };
 		}
 		return this;
+	}
+
+	/** Array check stubs — satisfies BuilderFor<ZodArray>. */
+	nonempty(_params?: unknown): this {
+		return this;
+	}
+	length(_len: number, _params?: unknown): this {
+		return this;
+	}
+	unwrap(): Z {
+		throw new Error('Method not implemented.');
 	}
 
 	/**
@@ -69,7 +86,9 @@ export class ArrayBuilder extends ZodBuilder<
 		}
 
 		const itemStr = this._itemSchema.text();
-		const paramsStr = this.serializeParams();
+		const arrayParams = this._params?.[1];
+		const paramsStr =
+			arrayParams === undefined ? '' : JSON.stringify(arrayParams);
 		return paramsStr
 			? `z.array(${itemStr}, ${paramsStr})`
 			: `z.array(${itemStr})`;
@@ -82,14 +101,14 @@ export class ArrayBuilder extends ZodBuilder<
 			result = applyMinItems(
 				result,
 				this._minItems.value,
-				this._minItems.errorMessage,
+				this._minItems.params,
 			);
 		}
 		if (this._maxItems !== undefined) {
 			result = applyMaxItems(
 				result,
 				this._maxItems.value,
-				this._maxItems.errorMessage,
+				this._maxItems.params,
 			);
 		}
 
@@ -103,10 +122,10 @@ export class ArrayBuilder extends ZodBuilder<
 export function applyMinItems(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.min(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`
+	return params !== undefined
+		? `${zodStr}.min(${JSON.stringify(value)}, ${JSON.stringify(params)})`
 		: `${zodStr}.min(${JSON.stringify(value)})`;
 }
 
@@ -116,9 +135,9 @@ export function applyMinItems(
 export function applyMaxItems(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.max(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`
+	return params !== undefined
+		? `${zodStr}.max(${JSON.stringify(value)}, ${JSON.stringify(params)})`
 		: `${zodStr}.max(${JSON.stringify(value)})`;
 }

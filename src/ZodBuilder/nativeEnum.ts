@@ -1,3 +1,5 @@
+import type { ZodEnum } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -7,12 +9,28 @@ import { ZodBuilder } from './BaseBuilder.js';
  * In Zod v4, the enum API is unified - both native TypeScript enums and
  * string literal enums use z.enum(). In v3, native enums use z.nativeEnum().
  */
-export class NativeEnumBuilder extends ZodBuilder<'nativeEnum'> {
-	readonly typeKind = 'nativeEnum' as const;
+export class NativeEnumBuilder
+	extends ZodBuilder<ZodEnum, 'enum', [enumReference: string]>
+	implements BuilderFor<ZodEnum>
+{
+	readonly typeKind = 'enum' as const;
+
+	extract(
+		_values: readonly string[],
+		_params?: string | Record<string, unknown>,
+	): this {
+		throw new Error('Method not implemented.');
+	}
+	exclude(
+		_values: readonly string[],
+		_params?: string | Record<string, unknown>,
+	): this {
+		throw new Error('Method not implemented.');
+	}
 	private readonly _enumReference: string;
 
-	constructor(enumReference: string, version?: 'v3' | 'v4') {
-		super(version);
+	constructor(version: 'v3' | 'v4' = 'v4', enumReference: string) {
+		super(version, enumReference);
 		this._enumReference = enumReference;
 	}
 

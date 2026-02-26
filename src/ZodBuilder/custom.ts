@@ -1,23 +1,31 @@
+import type { ZodCustom } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
+import type { BuilderFor } from '../Builder/index.js';
 
 /**
  * CustomBuilder: represents z.custom() for custom validation
  */
-export class CustomBuilder extends ZodBuilder<'custom'> {
+export class CustomBuilder
+	extends ZodBuilder<ZodCustom, 'custom', [params?: unknown]>
+	implements BuilderFor<ZodCustom>
+{
 	readonly typeKind = 'custom' as const;
 	_validateFn?: string;
-	_params?: any;
 
-	constructor(validateFn?: string, params?: any, version?: 'v3' | 'v4') {
-		super(version);
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		validateFn?: string,
+		params?: unknown,
+	) {
+		super(version, params);
 		this._validateFn = validateFn;
-		this._params = params;
 	}
 
 	protected override base(): string {
 		if (this._validateFn) {
-			if (this._params !== undefined) {
-				return `z.custom(${this._validateFn}, ${JSON.stringify(this._params)})`;
+			const params = this._params?.[0];
+			if (params !== undefined) {
+				return `z.custom(${this._validateFn}, ${JSON.stringify(params)})`;
 			}
 			return `z.custom(${this._validateFn})`;
 		}

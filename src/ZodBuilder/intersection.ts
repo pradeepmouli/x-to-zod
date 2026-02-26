@@ -1,3 +1,4 @@
+import type { ZodIntersection } from 'zod';
 import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
@@ -5,13 +6,17 @@ import { ZodBuilder } from './BaseBuilder.js';
  * Fluent IntersectionBuilder: represents z.intersection() schema.
  * Accepts two schemas and creates an intersection type.
  */
-export class IntersectionBuilder extends ZodBuilder<'intersection'> {
+export class IntersectionBuilder extends ZodBuilder<
+	ZodIntersection,
+	'intersection',
+	[left: Builder, right: Builder]
+> {
 	readonly typeKind = 'intersection' as const;
 	private readonly _left: Builder;
 	private readonly _right: Builder;
 
-	constructor(left: Builder, right: Builder, version?: 'v3' | 'v4') {
-		super(version);
+	constructor(version: 'v3' | 'v4' = 'v4', left: Builder, right: Builder) {
+		super(version, left, right);
 		this._left = left;
 		this._right = right;
 	}

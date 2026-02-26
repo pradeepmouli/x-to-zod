@@ -1,14 +1,15 @@
+import type { ZodEnum } from 'zod';
 import { Serializable } from '../Types.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
  * Fluent EnumBuilder: wraps a Zod enum schema string and provides chainable methods.
  */
-export class EnumBuilder extends ZodBuilder<'enum'> {
+export class EnumBuilder extends ZodBuilder<ZodEnum, 'enum', []> {
 	readonly typeKind = 'enum' as const;
 	private readonly _values: Serializable[];
 
-	constructor(values: Serializable[], version?: 'v3' | 'v4') {
+	constructor(version: 'v3' | 'v4' = 'v4', values: Serializable[] = []) {
 		super(version);
 		this._values = values;
 	}

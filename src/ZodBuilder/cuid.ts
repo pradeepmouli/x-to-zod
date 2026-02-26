@@ -1,4 +1,8 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodCUID } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
+
+type CuidParams = Parameters<typeof z.cuid>[0] | Parameters<typeof z.cuid2>[0];
 
 /**
  * CuidBuilder: represents z.cuid() or z.cuid2() in Zod v4.
@@ -19,35 +23,33 @@ import { ZodBuilder } from './BaseBuilder.js';
  * cuid2.text(); // => 'z.cuid2()'
  * ```
  */
-export class CuidBuilder extends ZodBuilder<'cuid'> {
+export class CuidBuilder
+	extends StringFormatBuilder<ZodCUID, [params?: CuidParams]>
+	implements BuilderFor<ZodCUID>
+{
 	readonly typeKind = 'cuid' as const;
 	private _variant: 'cuid' | 'cuid2';
-	private _errorMessage?: string;
 
-	constructor(variant: 'cuid' | 'cuid2' = 'cuid', version?: 'v3' | 'v4') {
-		super(version);
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		variant: 'cuid' | 'cuid2' = 'cuid',
+		params?: CuidParams,
+	) {
+		super(version, params);
 		this._variant = variant;
-	}
-
-	/**
-	 * Set custom error message for CUID validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
 	}
 
 	protected override base(): string {
 		const method = this._variant; // 'cuid' or 'cuid2'
+		const paramsStr = this.serializeParams();
 
 		// In v4, use z.cuid() or z.cuid2() top-level function
 		if (this.isV4()) {
-			return `z.${method}(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.${method}(${paramsStr})` : `z.${method}()`;
 		}
 		// In v3, fall back to string().cuid() or string().cuid2()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().${method}(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr
+			? `z.string().${method}(${paramsStr})`
+			: `z.string().${method}()`;
 	}
 }

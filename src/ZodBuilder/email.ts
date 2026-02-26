@@ -1,4 +1,6 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodEmail } from 'zod';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
+import type { BuilderFor } from '../Builder/index.js';
 
 /**
  * EmailBuilder: represents z.email() in Zod v4.
@@ -16,31 +18,29 @@ import { ZodBuilder } from './BaseBuilder.js';
  * email.text('Invalid email'); // => 'z.email({ error: "Invalid email" })'
  * ```
  */
-export class EmailBuilder extends ZodBuilder<'email'> {
+export class EmailBuilder
+	extends StringFormatBuilder<
+		ZodEmail,
+		[params?: Parameters<typeof z.email>[0]]
+	>
+	implements BuilderFor<ZodEmail>
+{
 	readonly typeKind = 'email' as const;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
-	}
-
-	/**
-	 * Set custom error message for email validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		params?: Parameters<typeof z.email>[0],
+	) {
+		super(version, params);
 	}
 
 	protected override base(): string {
+		const paramsStr = this.serializeParams();
 		// In v4, use z.email() top-level function
 		if (this.isV4()) {
-			return `z.email(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.email(${paramsStr})` : 'z.email()';
 		}
 		// In v3, fall back to string().email()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().email(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr ? `z.string().email(${paramsStr})` : 'z.string().email()';
 	}
 }

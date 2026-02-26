@@ -1,4 +1,5 @@
-import type { z } from 'zod';
+import type { ZodNumber } from 'zod';
+import type { BuilderFor, ParamsFor } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
@@ -13,33 +14,30 @@ import { ZodBuilder } from './BaseBuilder.js';
  * This difference is INHERENT to Zod and not controlled by json-schema-to-zod.
  * See NUMBER-INFINITY-NOTES.md for migration guidance.
  */
-export class NumberBuilder extends ZodBuilder<
-	'number',
-	Parameters<typeof z.number>[0]
-> {
+export class NumberBuilder
+	extends ZodBuilder<ZodNumber>
+	implements BuilderFor<ZodNumber>
+{
 	readonly typeKind = 'number' as const;
-	_int: boolean | { errorMessage: string } = false;
-	_multipleOf: { value: number; errorMessage?: string } | undefined = undefined;
+	_int: boolean | { params?: unknown } = false;
+	_multipleOf: { value: number; params?: unknown } | undefined = undefined;
 
-	_min:
-		| { value: number; exclusive: boolean; errorMessage?: string }
-		| undefined = undefined;
+	_min: { value: number; exclusive: boolean; params?: unknown } | undefined =
+		undefined;
 
-	_max:
-		| { value: number; exclusive: boolean; errorMessage?: string }
-		| undefined = undefined;
+	_max: { value: number; exclusive: boolean; params?: unknown } | undefined =
+		undefined;
 
-	constructor(params?: Parameters<typeof z.number>[0], version?: 'v3' | 'v4') {
-		super(version);
-		this._params = params;
+	constructor(version: 'v3' | 'v4' = 'v4', ...params: ParamsFor<'number'>) {
+		super(version, ...params);
 	}
 
 	/**
 	 * Apply integer constraint.
 	 */
-	int(errorMessage?: string): this {
+	int(params?: unknown): this {
 		if (this._int === false) {
-			this._int = errorMessage ? { errorMessage } : true;
+			this._int = params !== undefined ? { params } : true;
 		}
 		return this;
 	}
@@ -47,8 +45,8 @@ export class NumberBuilder extends ZodBuilder<
 	/**
 	 * Apply multipleOf constraint.
 	 */
-	multipleOf(value: number, errorMessage?: string): this {
-		this._multipleOf = { value, errorMessage };
+	multipleOf(value: number, params?: unknown): this {
+		this._multipleOf = { value, params };
 		if (this._int === false) {
 			this._int = true;
 		}
@@ -58,13 +56,23 @@ export class NumberBuilder extends ZodBuilder<
 	/**
 	 * Apply minimum constraint (gte by default).
 	 */
-	min(value: number, exclusive: boolean = false, errorMessage?: string): this {
+	min(value: number, params?: unknown): this;
+	min(value: number, exclusive: boolean, params?: unknown): this;
+	min(
+		value: number,
+		exclusiveOrParams: boolean | unknown = false,
+		maybeParams?: unknown,
+	): this {
+		const exclusive =
+			typeof exclusiveOrParams === 'boolean' ? exclusiveOrParams : false;
+		const params =
+			typeof exclusiveOrParams === 'boolean' ? maybeParams : exclusiveOrParams;
 		if (
 			this._min === undefined ||
 			this._min.value > value ||
 			(this._min.value === value && this._min.exclusive && !exclusive)
 		) {
-			this._min = { value, exclusive, errorMessage };
+			this._min = { value, exclusive, params };
 		}
 		return this;
 	}
@@ -72,32 +80,61 @@ export class NumberBuilder extends ZodBuilder<
 	/**
 	 * Apply maximum constraint (lte by default).
 	 */
-	max(value: number, exclusive: boolean = false, errorMessage?: string): this {
+	max(value: number, params?: unknown): this;
+	max(value: number, exclusive: boolean, params?: unknown): this;
+	max(
+		value: number,
+		exclusiveOrParams: boolean | unknown = false,
+		maybeParams?: unknown,
+	): this {
+		const exclusive =
+			typeof exclusiveOrParams === 'boolean' ? exclusiveOrParams : false;
+		const params =
+			typeof exclusiveOrParams === 'boolean' ? maybeParams : exclusiveOrParams;
 		if (
 			this._max === undefined ||
 			this._max.value < value ||
 			(this._max.value === value && this._max.exclusive && !exclusive)
 		)
-			this._max = { value, exclusive, errorMessage };
+			this._max = { value, exclusive, params };
 
 		return this;
 	}
 
-	/**
-	 * Apply optional constraint.
-	 */
-
-	/**
-	 * Apply nullable constraint.
-	 */
-
-	/**
-	 * Apply default value.
-	 */
-
-	/**
-	 * Apply describe modifier.
-	 */
+	/** Number check stubs — satisfies BuilderFor<ZodNumber> for methods not directly used in code generation. */
+	gt(_value: number, _params?: unknown): this {
+		return this;
+	}
+	gte(_value: number, _params?: unknown): this {
+		return this;
+	}
+	lt(_value: number, _params?: unknown): this {
+		return this;
+	}
+	lte(_value: number, _params?: unknown): this {
+		return this;
+	}
+	safe(_params?: unknown): this {
+		return this;
+	}
+	positive(_params?: unknown): this {
+		return this;
+	}
+	negative(_params?: unknown): this {
+		return this;
+	}
+	nonnegative(_params?: unknown): this {
+		return this;
+	}
+	nonpositive(_params?: unknown): this {
+		return this;
+	}
+	step(_value: number, _params?: unknown): this {
+		return this;
+	}
+	finite(_params?: unknown): this {
+		return this;
+	}
 
 	/**
 	 * Compute the base number schema.
@@ -113,7 +150,7 @@ export class NumberBuilder extends ZodBuilder<
 		if (this._int !== false) {
 			result =
 				typeof this._int === 'object'
-					? applyInt(result, this._int.errorMessage)
+					? applyInt(result, this._int.params)
 					: applyInt(result);
 		}
 
@@ -121,7 +158,7 @@ export class NumberBuilder extends ZodBuilder<
 			result = applyMultipleOf(
 				result,
 				this._multipleOf.value,
-				this._multipleOf.errorMessage,
+				this._multipleOf.params,
 			);
 		}
 
@@ -130,7 +167,7 @@ export class NumberBuilder extends ZodBuilder<
 				result,
 				this._min.value,
 				this._min.exclusive,
-				this._min.errorMessage,
+				this._min.params,
 			);
 		}
 		if (this._max !== undefined) {
@@ -138,7 +175,7 @@ export class NumberBuilder extends ZodBuilder<
 				result,
 				this._max.value,
 				this._max.exclusive,
-				this._max.errorMessage,
+				this._max.params,
 			);
 		}
 
@@ -149,9 +186,9 @@ export class NumberBuilder extends ZodBuilder<
 /**
  * Apply integer constraint to a number schema.
  */
-export function applyInt(zodStr: string, errorMessage?: string): string {
-	if (errorMessage) {
-		return `${zodStr}.int(${JSON.stringify(errorMessage)})`;
+export function applyInt(zodStr: string, params?: unknown): string {
+	if (params !== undefined) {
+		return `${zodStr}.int(${JSON.stringify(params)})`;
 	}
 	return `${zodStr}.int()`;
 }
@@ -162,7 +199,7 @@ export function applyInt(zodStr: string, errorMessage?: string): string {
 export function applyMultipleOf(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	// Special case: multipleOf 1 is equivalent to int
 	if (value === 1) {
@@ -170,11 +207,11 @@ export function applyMultipleOf(
 		if (zodStr.includes('.int(')) {
 			return zodStr;
 		}
-		return applyInt(zodStr, errorMessage);
+		return applyInt(zodStr, params);
 	}
 
-	if (errorMessage) {
-		return `${zodStr}.multipleOf(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`;
+	if (params !== undefined) {
+		return `${zodStr}.multipleOf(${JSON.stringify(value)}, ${JSON.stringify(params)})`;
 	}
 	return `${zodStr}.multipleOf(${JSON.stringify(value)})`;
 }
@@ -186,11 +223,11 @@ export function applyMin(
 	zodStr: string,
 	value: number,
 	exclusive: boolean,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	const method = exclusive ? 'gt' : 'gte';
-	if (errorMessage) {
-		return `${zodStr}.${method}(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`;
+	if (params !== undefined) {
+		return `${zodStr}.${method}(${JSON.stringify(value)}, ${JSON.stringify(params)})`;
 	}
 	return `${zodStr}.${method}(${JSON.stringify(value)})`;
 }
@@ -202,11 +239,11 @@ export function applyMax(
 	zodStr: string,
 	value: number,
 	exclusive: boolean,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	const method = exclusive ? 'lt' : 'lte';
-	if (errorMessage) {
-		return `${zodStr}.${method}(${JSON.stringify(value)}, ${JSON.stringify(errorMessage)})`;
+	if (params !== undefined) {
+		return `${zodStr}.${method}(${JSON.stringify(value)}, ${JSON.stringify(params)})`;
 	}
 	return `${zodStr}.${method}(${JSON.stringify(value)})`;
 }

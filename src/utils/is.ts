@@ -29,7 +29,7 @@ export function isObjectBuilder(value: unknown): value is ObjectBuilder {
 /**
  * Type guard for ArrayBuilder
  */
-export function isArrayBuilder(value: unknown): value is ArrayBuilder {
+export function isArrayBuilder(value: unknown): value is ArrayBuilder<any> {
 	return value instanceof ArrayBuilder;
 }
 

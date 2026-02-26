@@ -1,5 +1,6 @@
 import type { TypeKind, TypeKindOf } from './index.js';
-import type { Builder } from '../Builder/index.js';
+import type { Builder, Functions, ParamsFor } from '../Builder/index.js';
+
 import type { ZodType } from 'zod';
 
 /**
@@ -26,7 +27,7 @@ export function applyNullable(zodStr: string): string {
 /**
  * Apply default value to a schema.
  */
-export function applyDefault(zodStr: string, defaultValue: any): string {
+export function applyDefault(zodStr: string, defaultValue: unknown): string {
 	return `${asText(zodStr)}.default(${JSON.stringify(defaultValue)})`;
 }
 
@@ -74,7 +75,7 @@ export function applySuperRefine(zodStr: string, refineFn: string): string {
 /**
  * Apply catch modifier with fallback value.
  */
-export function applyCatch(zodStr: string, fallbackValue: any): string {
+export function applyCatch(zodStr: string, fallbackValue: unknown): string {
 	return `${asText(zodStr)}.catch(${JSON.stringify(fallbackValue)})`;
 }
 
@@ -83,7 +84,7 @@ export function applyCatch(zodStr: string, fallbackValue: any): string {
  */
 export function applyMeta(
 	zodStr: string,
-	metadata: Record<string, any>,
+	metadata: Record<string, unknown>,
 ): string {
 	return `${asText(zodStr)}.meta(${JSON.stringify(metadata)})`;
 }
@@ -109,29 +110,31 @@ export function applyTransform(zodStr: string, transformFn: string): string {
  */
 
 export abstract class ZodBuilder<
-	T extends ZodType['def']['type'] = ZodType['def']['type'],
-	P = any,
-> implements Builder {
+	Z extends ZodType = ZodType,
+	T extends string = Z['def']['type'],
+	P extends unknown[] = T extends keyof Functions ? ParamsFor<T> : unknown[],
+> implements Builder<Z, T> {
 	abstract readonly typeKind: T;
 	protected _params?: P;
 	_optional: boolean = false;
 	_nullable: boolean = false;
 	_readonly: boolean = false;
-	_defaultValue?: any = undefined;
+	_defaultValue?: unknown = undefined;
 
 	_describeText?: string = undefined;
 	_brandText?: string = undefined;
-	_fallbackText?: any = undefined;
+	_fallbackText?: unknown = undefined;
 	_refineFn?: string = undefined;
 	_refineMessage?: string = undefined;
 	_superRefineFns: string[] = [];
-	_metaData?: any = undefined;
+	_metaData?: Record<string, unknown> = undefined;
 	_transformFn?: string = undefined;
 
 	protected _version?: 'v3' | 'v4';
 
-	constructor(version?: 'v3' | 'v4') {
+	constructor(version: 'v3' | 'v4' = 'v4', ...params: P) {
 		this._version = version;
+		this._params = params.length ? params : undefined;
 	}
 
 	/**
@@ -162,39 +165,24 @@ export abstract class ZodBuilder<
 	 * @returns String representation of params or empty string if no params
 	 */
 	protected serializeParams(): string {
-		if (this._params === undefined) return '';
+		if (this._params === undefined || this._params.length === 0) return '';
 
-		// If params is a string, treat it as an error message
-		if (typeof this._params === 'string') {
-			return JSON.stringify(this._params);
-		}
+		const serialized = this._params
+			.map((param) => {
+				if (param === undefined) return '';
+				if (
+					typeof param === 'object' &&
+					param !== null &&
+					'text' in param &&
+					typeof (param as { text: () => string }).text === 'function'
+				) {
+					return (param as { text: () => string }).text();
+				}
+				return JSON.stringify(param);
+			})
+			.filter((param) => param !== '');
 
-		// For objects, stringify them
-		if (typeof this._params === 'object' && this._params !== null) {
-			return JSON.stringify(this._params);
-		}
-
-		// For primitives (number, boolean), stringify
-		return JSON.stringify(this._params);
-	}
-
-	/**
-	 * Generate version-appropriate error message parameter for Zod methods.
-	 * @param message - Error message string
-	 * @returns Parameter string with leading comma (e.g., ', { error: "msg" }') or empty string
-	 * @example
-	 * // v4 mode
-	 * `z.email()${this.withErrorMessage('Invalid email')}`
-	 * // => 'z.email({ error: "Invalid email" })'
-	 *
-	 * // v3 mode
-	 * `z.string().email()${this.withErrorMessage('Invalid email')}`
-	 * // => 'z.string().email({ message: "Invalid email" })'
-	 */
-	protected withErrorMessage(message?: string): string {
-		if (!message) return '';
-		const param = this.isV4() ? 'error' : 'message';
-		return `, { ${param}: ${JSON.stringify(message)} }`;
+		return serialized.join(', ');
 	}
 
 	/**
@@ -221,7 +209,7 @@ export abstract class ZodBuilder<
 	/**
 	 * Apply default value.
 	 */
-	default(value: any): this {
+	default(value: unknown): this {
 		this._defaultValue = value;
 		return this;
 	}
@@ -230,7 +218,11 @@ export abstract class ZodBuilder<
 	 * Apply describe modifier.
 	 */
 	describe(description: string): this {
-		this._describeText = description;
+		if (description === undefined || description === null) return this;
+		if (this._metaData === undefined) {
+			this._metaData = {};
+		}
+		this._metaData.description = description;
 		return this;
 	}
 
@@ -253,7 +245,7 @@ export abstract class ZodBuilder<
 	/**
 	 * Apply catch modifier.
 	 */
-	catch(fallback: any): this {
+	catch(fallback: unknown): this {
 		this._fallbackText = fallback;
 		return this;
 	}
@@ -282,7 +274,7 @@ export abstract class ZodBuilder<
 	/**
 	 * Apply meta modifier.
 	 */
-	meta(metadata: Record<string, any>): this {
+	meta(metadata: Record<string, unknown>): this {
 		this._metaData = metadata;
 		return this;
 	}
@@ -309,7 +301,9 @@ export abstract class ZodBuilder<
 	 *
 	 * @returns The base Zod schema string without any modifiers applied
 	 */
-	protected abstract base(): string;
+	protected base() {
+		return `z.${this.typeKind}(${this.serializeParams()})`;
+	}
 
 	is<K extends keyof TypeKind>(type: K): this is TypeKindOf<K> {
 		return String(this.typeKind) === String(type);

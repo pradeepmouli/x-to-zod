@@ -1,4 +1,6 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodULID } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
 
 /**
  * UlidBuilder: represents z.ulid() in Zod v4.
@@ -13,31 +15,26 @@ import { ZodBuilder } from './BaseBuilder.js';
  * ulid.text(); // => 'z.ulid()'
  * ```
  */
-export class UlidBuilder extends ZodBuilder<'ulid'> {
+export class UlidBuilder
+	extends StringFormatBuilder<ZodULID, [params?: Parameters<typeof z.ulid>[0]]>
+	implements BuilderFor<ZodULID>
+{
 	readonly typeKind = 'ulid' as const;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
-	}
-
-	/**
-	 * Set custom error message for ULID validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		params?: Parameters<typeof z.ulid>[0],
+	) {
+		super(version, params);
 	}
 
 	protected override base(): string {
+		const paramsStr = this.serializeParams();
 		// In v4, use z.ulid() top-level function
 		if (this.isV4()) {
-			return `z.ulid(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.ulid(${paramsStr})` : 'z.ulid()';
 		}
 		// In v3, fall back to string().ulid()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().ulid(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr ? `z.string().ulid(${paramsStr})` : 'z.string().ulid()';
 	}
 }

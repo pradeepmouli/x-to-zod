@@ -1,4 +1,6 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodEmoji } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
 
 /**
  * EmojiBuilder: represents z.emoji() in Zod v4.
@@ -13,31 +15,29 @@ import { ZodBuilder } from './BaseBuilder.js';
  * emoji.text(); // => 'z.emoji()'
  * ```
  */
-export class EmojiBuilder extends ZodBuilder<'emoji'> {
+export class EmojiBuilder
+	extends StringFormatBuilder<
+		ZodEmoji,
+		[params?: Parameters<typeof z.emoji>[0]]
+	>
+	implements BuilderFor<ZodEmoji>
+{
 	readonly typeKind = 'emoji' as const;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
-	}
-
-	/**
-	 * Set custom error message for emoji validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		params?: Parameters<typeof z.emoji>[0],
+	) {
+		super(version, params);
 	}
 
 	protected override base(): string {
+		const paramsStr = this.serializeParams();
 		// In v4, use z.emoji() top-level function
 		if (this.isV4()) {
-			return `z.emoji(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.emoji(${paramsStr})` : 'z.emoji()';
 		}
 		// In v3, fall back to string().emoji()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().emoji(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr ? `z.string().emoji(${paramsStr})` : 'z.string().emoji()';
 	}
 }

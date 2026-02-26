@@ -1,3 +1,4 @@
+import type { ZodRecord } from 'zod';
 import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
@@ -15,13 +16,21 @@ import { ZodBuilder } from './BaseBuilder.js';
  * Typically keySchema is z.string() since JSON object keys are strings.
  * See RECORD-KEY-SCHEMA-NOTES.md for detailed discussion.
  */
-export class RecordBuilder extends ZodBuilder<'record'> {
+export class RecordBuilder extends ZodBuilder<
+	ZodRecord,
+	'record',
+	[keySchema: Builder, valueSchema: Builder]
+> {
 	readonly typeKind = 'record' as const;
 	private readonly _keySchema: Builder;
 	private readonly _valueSchema: Builder;
 
-	constructor(keySchema: Builder, valueSchema: Builder, version?: 'v3' | 'v4') {
-		super(version);
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		keySchema: Builder,
+		valueSchema: Builder,
+	) {
+		super(version, keySchema, valueSchema);
 		this._keySchema = keySchema;
 		this._valueSchema = valueSchema;
 	}

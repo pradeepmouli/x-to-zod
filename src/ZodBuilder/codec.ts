@@ -1,17 +1,29 @@
-import type { Builder } from '../Builder/index.js';
+import type { ZodCodec, ZodType } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
  * CodecBuilder: represents z.codec(inSchema, outSchema)
  * Enables bidirectional data transformations
  */
-export class CodecBuilder extends ZodBuilder<'codec'> {
-	readonly typeKind = 'codec' as const;
-	private readonly _inSchema: Builder;
-	private readonly _outSchema: Builder;
+export class CodecBuilder<In extends ZodType, Out extends ZodType>
+	extends ZodBuilder<
+		ZodCodec<In, Out>,
+		'pipe',
+		[inSchema: BuilderFor<In>, outSchema: BuilderFor<Out>]
+	>
+	implements BuilderFor<ZodCodec>
+{
+	readonly typeKind = 'pipe' as const;
+	private readonly _inSchema: BuilderFor<In>;
+	private readonly _outSchema: BuilderFor<Out>;
 
-	constructor(inSchema: Builder, outSchema: Builder, version?: 'v3' | 'v4') {
-		super(version);
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		inSchema: BuilderFor<In>,
+		outSchema: BuilderFor<Out>,
+	) {
+		super(version, inSchema, outSchema);
 		this._inSchema = inSchema;
 		this._outSchema = outSchema;
 	}

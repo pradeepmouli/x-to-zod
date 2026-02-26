@@ -1,15 +1,19 @@
-import type { Builder } from '../Builder/index.js';
+import type { ZodTemplateLiteral } from 'zod';
+import type { Builder, BuilderFor } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
  * TemplateLiteralBuilder: represents z.templateLiteral(parts)
  * Validates template literal string types
  */
-export class TemplateLiteralBuilder extends ZodBuilder<'templateLiteral'> {
-	readonly typeKind = 'templateLiteral' as const;
+export class TemplateLiteralBuilder
+	extends ZodBuilder<ZodTemplateLiteral>
+	implements BuilderFor<ZodTemplateLiteral>
+{
+	readonly typeKind = 'template_literal' as const;
 	private readonly _parts: (string | Builder)[];
 
-	constructor(parts: (string | Builder)[], version?: 'v3' | 'v4') {
+	constructor(version: 'v3' | 'v4' = 'v4', parts: (string | Builder)[]) {
 		super(version);
 		this._parts = parts;
 	}

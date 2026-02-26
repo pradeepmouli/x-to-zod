@@ -1,4 +1,8 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { ZodStringFormat } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
+
+type DatetimeParams = Record<string, unknown>;
 
 /**
  * DatetimeBuilder: represents z.datetime() in Zod v4.
@@ -16,14 +20,19 @@ import { ZodBuilder } from './BaseBuilder.js';
  * dt.withPrecision(3).text(); // => 'z.datetime({ precision: 3 })'
  * ```
  */
-export class DatetimeBuilder extends ZodBuilder<'datetime'> {
+export class DatetimeBuilder
+	extends StringFormatBuilder<
+		ZodStringFormat<'datetime'>,
+		[params?: DatetimeParams]
+	>
+	implements BuilderFor<ZodStringFormat<'datetime'>>
+{
 	readonly typeKind = 'datetime' as const;
 	private _precision?: number;
 	private _offset?: boolean;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
+	constructor(version: 'v3' | 'v4' = 'v4', params?: DatetimeParams) {
+		super(version, params);
 	}
 
 	/**
@@ -42,35 +51,27 @@ export class DatetimeBuilder extends ZodBuilder<'datetime'> {
 		return this;
 	}
 
-	/**
-	 * Set custom error message for datetime validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
-	}
-
 	protected override base(): string {
-		// Build options object for v4
-		const options: string[] = [];
-		if (this._precision !== undefined) {
-			options.push(`precision: ${this._precision}`);
-		}
-		if (this._offset !== undefined) {
-			options.push(`offset: ${this._offset}`);
-		}
-		if (this._errorMessage) {
-			const param = this.isV4() ? 'error' : 'message';
-			options.push(`${param}: ${JSON.stringify(this._errorMessage)}`);
-		}
-
-		const optionsStr = options.length > 0 ? `{ ${options.join(', ')} }` : '';
+		const currentParams = this._params?.[0];
+		const mergedParams = {
+			...(currentParams &&
+			typeof currentParams === 'object' &&
+			!Array.isArray(currentParams)
+				? currentParams
+				: {}),
+			...(this._precision !== undefined ? { precision: this._precision } : {}),
+			...(this._offset !== undefined ? { offset: this._offset } : {}),
+		};
+		const hasParams = Object.keys(mergedParams).length > 0;
+		const paramsStr = hasParams ? JSON.stringify(mergedParams) : '';
 
 		// In v4, use z.datetime() top-level function
 		if (this.isV4()) {
-			return `z.datetime(${optionsStr})`;
+			return hasParams ? `z.datetime(${paramsStr})` : 'z.datetime()';
 		}
 		// In v3, fall back to string().datetime()
-		return `z.string().datetime(${optionsStr})`;
+		return hasParams
+			? `z.string().datetime(${paramsStr})`
+			: 'z.string().datetime()';
 	}
 }

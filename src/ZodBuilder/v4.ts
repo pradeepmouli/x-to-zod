@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Builder } from '../Builder/index.js';
+import type { Builder, ParamsFor } from '../Builder/index.js';
 import type { Serializable } from '../Types.js';
 import { NumberBuilder } from './number.js';
 import { StringBuilder } from './string.js';
@@ -40,69 +40,184 @@ import { NativeEnumBuilder } from './nativeEnum.js';
 import { TemplateLiteralBuilder } from './templateLiteral.js';
 import { XorBuilder } from './xor.js';
 import { KeyofBuilder } from './keyof.js';
+import { CuidBuilder } from './cuid.js';
+import { EmailBuilder } from './email.js';
+import { UuidBuilder } from './uuid.js';
+import { UrlBuilder } from './url.js';
+import { EmojiBuilder } from './emoji.js';
+import { NanoidBuilder } from './nanoid.js';
+import { UlidBuilder } from './ulid.js';
+import { Base64Builder } from './base64.js';
+import { Base64UrlBuilder } from './base64url.js';
+import { IpBuilder } from './ip.js';
+import { E164Builder } from './e164.js';
+import { JwtBuilder } from './jwt.js';
+import { KsuidBuilder } from './ksuid.js';
+import { XidBuilder } from './xid.js';
+import { MacBuilder } from './mac.js';
+import { HostnameBuilder } from './hostname.js';
+import { HexBuilder } from './hex.js';
+import { HttpUrlBuilder } from './httpUrl.js';
+import { NumberFormatBuilder } from './numberFormat.js';
+import { BigIntFormatBuilder } from './bigintFormat.js';
+import { InstanceofBuilder } from './instanceof.js';
+import { StringBoolBuilder } from './stringbool.js';
+import { CustomStringFormatBuilder } from './stringFormat.js';
+import { HashBuilder } from './hash.js';
 
-export const buildV4 = {
-	number: (params?: Parameters<typeof z.number>[0]) =>
-		new NumberBuilder(params, 'v4'),
-	string: (params?: Parameters<typeof z.string>[0]) =>
-		new StringBuilder(params, 'v4'),
-	boolean: (params?: Parameters<typeof z.boolean>[0]) =>
-		new BooleanBuilder(params, 'v4'),
+/**
+ * Complete set of Zod v4 schema constructors.
+ */
+const zodConstructors = {
+	// ── Primitives ──
+	string: (...params: ParamsFor<'string'>) =>
+		new StringBuilder('v4', ...params),
+	number: (...params: ParamsFor<'number'>) =>
+		new NumberBuilder('v4', ...params),
+	boolean: (...params: ParamsFor<'boolean'>) =>
+		new BooleanBuilder('v4', ...params),
+	bigint: (...params: ParamsFor<'bigint'>) =>
+		new BigIntBuilder('v4', ...params),
+	symbol: () => new SymbolBuilder('v4'),
+	date: (...params: ParamsFor<'date'>) => new DateBuilder('v4', ...params),
 	null: () => new NullBuilder('v4'),
+	undefined: () => new UndefinedBuilder('v4'),
+	void: () => new VoidBuilder('v4'),
+	any: () => new AnyBuilder('v4'),
+	unknown: () => new UnknownBuilder('v4'),
+	never: () => new NeverBuilder('v4'),
+	nan: () => new NaNBuilder('v4'),
+
+	// ── String formats (top-level constructors) ──
+	email: (params?: Parameters<typeof z.email>[0]) =>
+		new EmailBuilder('v4', params),
+	url: (params?: Parameters<typeof z.url>[0]) => new UrlBuilder('v4', params),
+	httpUrl: () => new HttpUrlBuilder('v4'),
+	uuid: (params?: Parameters<typeof z.uuid>[0]) =>
+		new UuidBuilder('v4', 'uuid', params),
+	uuidv4: (params?: Parameters<typeof z.uuid>[0]) =>
+		new UuidBuilder('v4', 'uuid', params),
+	uuidv6: (params?: Parameters<typeof z.uuidv6>[0]) =>
+		new UuidBuilder('v4', 'uuid', params),
+	uuidv7: (params?: Parameters<typeof z.uuidv7>[0]) =>
+		new UuidBuilder('v4', 'uuid', params),
+	guid: (params?: Parameters<typeof z.guid>[0]) =>
+		new UuidBuilder('v4', 'guid', params),
+	emoji: (params?: Parameters<typeof z.emoji>[0]) =>
+		new EmojiBuilder('v4', params),
+	nanoid: (params?: Parameters<typeof z.nanoid>[0]) =>
+		new NanoidBuilder('v4', params),
+	cuid: (params?: Parameters<typeof z.cuid>[0]) =>
+		new CuidBuilder('v4', 'cuid', params),
+	cuid2: (params?: Parameters<typeof z.cuid2>[0]) =>
+		new CuidBuilder('v4', 'cuid2', params),
+	ulid: (params?: Parameters<typeof z.ulid>[0]) =>
+		new UlidBuilder('v4', params),
+	xid: () => new XidBuilder('v4'),
+	ksuid: () => new KsuidBuilder('v4'),
+	e164: () => new E164Builder('v4'),
+	base64: (params?: Parameters<typeof z.base64>[0]) =>
+		new Base64Builder('v4', params),
+	base64url: (_params?: Parameters<typeof z.base64url>[0]) =>
+		new Base64UrlBuilder('v4'),
+	ipv4: (params?: Parameters<typeof z.ipv4>[0]) =>
+		new IpBuilder('v4', 'ipv4', params),
+	ipv6: (params?: Parameters<typeof z.ipv6>[0]) =>
+		new IpBuilder('v4', 'ipv6', params),
+	cidrv4: (params?: Parameters<typeof z.cidrv4>[0]) =>
+		new IpBuilder('v4', 'cidrv4', params),
+	cidrv6: (params?: Parameters<typeof z.cidrv6>[0]) =>
+		new IpBuilder('v4', 'cidrv6', params),
+	jwt: () => new JwtBuilder('v4'),
+	mac: () => new MacBuilder('v4'),
+	hostname: () => new HostnameBuilder('v4'),
+	hex: () => new HexBuilder('v4'),
+	hash: (algorithm: string) => new HashBuilder('v4', algorithm),
+	stringFormat: (name: string, validator: string) =>
+		new CustomStringFormatBuilder('v4', name, validator),
+
+	// ── Number formats ──
+	int: () => new NumberFormatBuilder('v4', 'int'),
+	float32: () => new NumberFormatBuilder('v4', 'float32'),
+	float64: () => new NumberFormatBuilder('v4', 'float64'),
+	int32: () => new NumberFormatBuilder('v4', 'int32'),
+	uint32: () => new NumberFormatBuilder('v4', 'uint32'),
+
+	// ── BigInt formats ──
+	int64: () => new BigIntFormatBuilder('v4', 'int64'),
+	uint64: () => new BigIntFormatBuilder('v4', 'uint64'),
+
+	// ── Collections ──
 	array: (
 		itemSchemaZod: Builder | Builder[],
 		params?: Parameters<typeof z.array>[1],
-	) => new ArrayBuilder(itemSchemaZod, params, 'v4'),
+	) => new ArrayBuilder('v4', itemSchemaZod, params),
 	object: (
 		properties: Record<string, Builder> = {},
 		params?: Parameters<typeof z.object>[1],
-	) => new ObjectBuilder(properties, params, 'v4'),
-	enum: (values: Serializable[]) => new EnumBuilder(values, 'v4'),
-	literal: (value: Serializable) => new ConstBuilder(value, 'v4'),
-	any: () => new AnyBuilder('v4'),
-	never: () => new NeverBuilder('v4'),
-	unknown: () => new UnknownBuilder('v4'),
-	literalValue: (value: Serializable) => new LiteralBuilder(value, 'v4'),
-	code: (code: string) => new GenericBuilder(code, 'v4'),
-	raw: (code: string) => new GenericBuilder(code, 'v4'),
-	union: (schemas: Builder[]) => new UnionBuilder(schemas, 'v4'),
-	intersection: (left: Builder, right: Builder) =>
-		new IntersectionBuilder(left, right, 'v4'),
-	tuple: (items: Builder[]) => new TupleBuilder(items, 'v4'),
+	) => new ObjectBuilder('v4', properties, params),
+	strictObject: (
+		properties: Record<string, Builder> = {},
+		params?: Parameters<typeof z.object>[1],
+	) => new ObjectBuilder('v4', properties, params).strict(),
+	looseObject: (
+		properties: Record<string, Builder> = {},
+		params?: Parameters<typeof z.object>[1],
+	) => new ObjectBuilder('v4', properties, params).loose(),
 	record: (keySchema: Builder, valueSchema: Builder) =>
-		new RecordBuilder(keySchema, valueSchema, 'v4'),
-	void: () => new VoidBuilder('v4'),
-	undefined: () => new UndefinedBuilder('v4'),
-	date: (params?: Parameters<typeof z.date>[0]) =>
-		new DateBuilder(params, 'v4'),
-	bigint: (params?: Parameters<typeof z.bigint>[0]) =>
-		new BigIntBuilder(params, 'v4'),
-	symbol: () => new SymbolBuilder('v4'),
-	nan: () => new NaNBuilder('v4'),
-	set: (itemSchema: Builder) => new SetBuilder(itemSchema, 'v4'),
+		new RecordBuilder('v4', keySchema, valueSchema),
+	looseRecord: (keySchema: Builder, valueSchema: Builder) =>
+		new RecordBuilder('v4', keySchema, valueSchema),
+	partialRecord: (keySchema: Builder, valueSchema: Builder) =>
+		new RecordBuilder('v4', keySchema, valueSchema),
+	tuple: (items: Builder[]) => new TupleBuilder('v4', items),
+	set: (itemSchema: Builder) => new SetBuilder('v4', itemSchema),
 	map: (keySchema: Builder, valueSchema: Builder) =>
-		new MapBuilder(keySchema, valueSchema, 'v4'),
-	custom: (validateFn?: string, params?: any) =>
-		new CustomBuilder(validateFn, params, 'v4'),
+		new MapBuilder('v4', keySchema, valueSchema),
+
+	// ── Schema combinators ──
+	enum: (values: Serializable[]) => new EnumBuilder('v4', values),
+	nativeEnum: (enumReference: string) =>
+		new NativeEnumBuilder('v4', enumReference),
+	literal: (value: Serializable) => new ConstBuilder('v4', value),
+	union: (schemas: Builder[]) => new UnionBuilder('v4', schemas),
+	xor: (schemas: Builder[]) => new XorBuilder('v4', schemas),
+	intersection: (left: Builder, right: Builder) =>
+		new IntersectionBuilder('v4', left, right),
 	discriminatedUnion: (discriminator: string, schemas: Builder[]) =>
-		new DiscriminatedUnionBuilder(discriminator, schemas, 'v4'),
-	// Zod v4 only builders
-	promise: (innerSchema: Builder) => new PromiseBuilder(innerSchema, 'v4'),
-	lazy: (input: Builder) => new LazyBuilder(input, 'v4'),
+		new DiscriminatedUnionBuilder('v4', discriminator, schemas),
+	templateLiteral: (parts: (string | Builder)[]) =>
+		new TemplateLiteralBuilder('v4', parts),
+	keyof: (objectSchema: Builder) => new KeyofBuilder('v4', objectSchema),
+
+	// ── Wrappers & transforms ──
+	promise: (innerSchema: Builder) => new PromiseBuilder('v4', innerSchema),
+	lazy: (input: Builder) => new LazyBuilder('v4', input),
 	function: (functionSignature: { input?: Builder[]; output?: Builder }) =>
-		new FunctionBuilder(functionSignature, 'v4'),
+		new FunctionBuilder('v4', functionSignature),
 	codec: (inSchema: Builder, outSchema: Builder) =>
-		new CodecBuilder(inSchema, outSchema, 'v4'),
+		new CodecBuilder('v4', inSchema, outSchema),
 	preprocess: (transformFn: string, schema: Builder) =>
-		new PreprocessBuilder(transformFn, schema, 'v4'),
+		new PreprocessBuilder('v4', transformFn, schema),
 	pipe: (sourceSchema: Builder, targetSchema: Builder) =>
-		new PipeBuilder(sourceSchema, targetSchema, 'v4'),
+		new PipeBuilder('v4', sourceSchema, targetSchema),
 	json: () => new JsonBuilder('v4'),
 	file: () => new FileBuilder('v4'),
-	nativeEnum: (enumReference: string) =>
-		new NativeEnumBuilder(enumReference, 'v4'),
-	templateLiteral: (parts: (string | Builder)[]) =>
-		new TemplateLiteralBuilder(parts, 'v4'),
-	xor: (schemas: Builder[]) => new XorBuilder(schemas, 'v4'),
-	keyof: (objectSchema: Builder) => new KeyofBuilder(objectSchema, 'v4'),
+	custom: (validateFn?: string, params?: unknown) =>
+		new CustomBuilder('v4', validateFn, params),
+	instanceof: (className: string) => new InstanceofBuilder('v4', className),
+	stringbool: (params?: Parameters<typeof z.stringbool>[0]) =>
+		new StringBoolBuilder('v4', params),
 } as const;
+
+/**
+ * App-level builder helpers that are not part of the Zod namespace.
+ * These are convenience aliases used by the parser layer.
+ */
+const appHelpers = {
+	literalValue: (value: Serializable) => new LiteralBuilder('v4', value),
+	code: (code: string) => new GenericBuilder('v4', code),
+	raw: (code: string) => new GenericBuilder('v4', code),
+} as const;
+
+export const buildV4 = { ...zodConstructors, ...appHelpers } as const;

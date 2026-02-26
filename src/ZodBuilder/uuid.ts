@@ -1,4 +1,12 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodUUID } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
+
+type UuidParams =
+	| Parameters<typeof z.uuid>[0]
+	| Parameters<typeof z.guid>[0]
+	| Parameters<typeof z.uuidv6>[0]
+	| Parameters<typeof z.uuidv7>[0];
 
 /**
  * UuidBuilder: represents z.uuid() or z.guid() in Zod v4.
@@ -17,35 +25,33 @@ import { ZodBuilder } from './BaseBuilder.js';
  * guid.text(); // => 'z.guid()'
  * ```
  */
-export class UuidBuilder extends ZodBuilder<'uuid'> {
+export class UuidBuilder
+	extends StringFormatBuilder<ZodUUID, [params?: UuidParams]>
+	implements BuilderFor<ZodUUID>
+{
 	readonly typeKind = 'uuid' as const;
 	private _variant: 'uuid' | 'guid';
-	private _errorMessage?: string;
 
-	constructor(variant: 'uuid' | 'guid' = 'uuid', version?: 'v3' | 'v4') {
-		super(version);
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		variant: 'uuid' | 'guid' = 'uuid',
+		params?: UuidParams,
+	) {
+		super(version, params);
 		this._variant = variant;
-	}
-
-	/**
-	 * Set custom error message for UUID validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
 	}
 
 	protected override base(): string {
 		const method = this._variant; // 'uuid' or 'guid'
+		const paramsStr = this.serializeParams();
 
 		// In v4, use z.uuid() or z.guid() top-level function
 		if (this.isV4()) {
-			return `z.${method}(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.${method}(${paramsStr})` : `z.${method}()`;
 		}
 		// In v3, fall back to string().uuid() or string().guid()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().${method}(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr
+			? `z.string().${method}(${paramsStr})`
+			: `z.string().${method}()`;
 	}
 }

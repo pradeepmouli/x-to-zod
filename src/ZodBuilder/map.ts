@@ -1,19 +1,28 @@
+import type { ZodMap } from 'zod';
 import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**
  * MapBuilder: represents z.map() with optional constraints
  */
-export class MapBuilder extends ZodBuilder<'map'> {
+export class MapBuilder extends ZodBuilder<
+	ZodMap,
+	'map',
+	[keySchema: Builder, valueSchema: Builder]
+> {
 	readonly typeKind = 'map' as const;
 	_keySchema: Builder;
 	_valueSchema: Builder;
-	_min?: { value: number; errorMessage?: string } = undefined;
-	_max?: { value: number; errorMessage?: string } = undefined;
-	_size?: { value: number; errorMessage?: string } = undefined;
+	_min?: { value: number; params?: unknown } = undefined;
+	_max?: { value: number; params?: unknown } = undefined;
+	_size?: { value: number; params?: unknown } = undefined;
 
-	constructor(keySchema: Builder, valueSchema: Builder, version?: 'v3' | 'v4') {
-		super(version);
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		keySchema: Builder,
+		valueSchema: Builder,
+	) {
+		super(version, keySchema, valueSchema);
 		this._keySchema = keySchema;
 		this._valueSchema = valueSchema;
 	}
@@ -21,24 +30,24 @@ export class MapBuilder extends ZodBuilder<'map'> {
 	/**
 	 * Apply minimum size constraint.
 	 */
-	min(value: number, errorMessage?: string): this {
-		this._min = { value, errorMessage };
+	min(value: number, params?: unknown): this {
+		this._min = { value, params };
 		return this;
 	}
 
 	/**
 	 * Apply maximum size constraint.
 	 */
-	max(value: number, errorMessage?: string): this {
-		this._max = { value, errorMessage };
+	max(value: number, params?: unknown): this {
+		this._max = { value, params };
 		return this;
 	}
 
 	/**
 	 * Apply exact size constraint.
 	 */
-	size(value: number, errorMessage?: string): this {
-		this._size = { value, errorMessage };
+	size(value: number, params?: unknown): this {
+		this._size = { value, params };
 		return this;
 	}
 
@@ -50,13 +59,13 @@ export class MapBuilder extends ZodBuilder<'map'> {
 		let result = baseText;
 
 		if (this._min !== undefined) {
-			result = applyMapMin(result, this._min.value, this._min.errorMessage);
+			result = applyMapMin(result, this._min.value, this._min.params);
 		}
 		if (this._max !== undefined) {
-			result = applyMapMax(result, this._max.value, this._max.errorMessage);
+			result = applyMapMax(result, this._max.value, this._max.params);
 		}
 		if (this._size !== undefined) {
-			result = applyMapSize(result, this._size.value, this._size.errorMessage);
+			result = applyMapSize(result, this._size.value, this._size.params);
 		}
 
 		return super.modify(result);
@@ -69,11 +78,11 @@ export class MapBuilder extends ZodBuilder<'map'> {
 export function applyMapMin(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.min(${value}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.min(${value})`;
+	return params === undefined
+		? `${zodStr}.min(${value})`
+		: `${zodStr}.min(${value}, ${JSON.stringify(params)})`;
 }
 
 /**
@@ -82,11 +91,11 @@ export function applyMapMin(
 export function applyMapMax(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.max(${value}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.max(${value})`;
+	return params === undefined
+		? `${zodStr}.max(${value})`
+		: `${zodStr}.max(${value}, ${JSON.stringify(params)})`;
 }
 
 /**
@@ -95,9 +104,9 @@ export function applyMapMax(
 export function applyMapSize(
 	zodStr: string,
 	value: number,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
-	return errorMessage
-		? `${zodStr}.size(${value}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.size(${value})`;
+	return params === undefined
+		? `${zodStr}.size(${value})`
+		: `${zodStr}.size(${value}, ${JSON.stringify(params)})`;
 }

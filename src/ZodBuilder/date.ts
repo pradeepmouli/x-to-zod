@@ -1,35 +1,32 @@
 import type { z } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
+import type { ParamsFor } from '../Builder/index.js';
 
 /**
  * DateBuilder: represents z.date() with optional constraints
  */
-export class DateBuilder extends ZodBuilder<
-	'date',
-	Parameters<typeof z.date>[0]
-> {
+export class DateBuilder extends ZodBuilder<z.ZodDate> {
 	readonly typeKind = 'date' as const;
-	_min?: { value: Date; errorMessage?: string } = undefined;
-	_max?: { value: Date; errorMessage?: string } = undefined;
+	_min?: { value: Date; params?: unknown } = undefined;
+	_max?: { value: Date; params?: unknown } = undefined;
 
-	constructor(params?: Parameters<typeof z.date>[0], version?: 'v3' | 'v4') {
-		super(version);
-		this._params = params;
+	constructor(version: 'v3' | 'v4' = 'v4', ...params: ParamsFor<'date'>) {
+		super(version, ...params);
 	}
 
 	/**
 	 * Apply minimum date constraint.
 	 */
-	min(value: Date, errorMessage?: string): this {
-		this._min = { value, errorMessage };
+	min(value: Date, params?: unknown): this {
+		this._min = { value, params };
 		return this;
 	}
 
 	/**
 	 * Apply maximum date constraint.
 	 */
-	max(value: Date, errorMessage?: string): this {
-		this._max = { value, errorMessage };
+	max(value: Date, params?: unknown): this {
+		this._max = { value, params };
 		return this;
 	}
 
@@ -42,10 +39,10 @@ export class DateBuilder extends ZodBuilder<
 		let result = baseText;
 
 		if (this._min !== undefined) {
-			result = applyDateMin(result, this._min.value, this._min.errorMessage);
+			result = applyDateMin(result, this._min.value, this._min.params);
 		}
 		if (this._max !== undefined) {
-			result = applyDateMax(result, this._max.value, this._max.errorMessage);
+			result = applyDateMax(result, this._max.value, this._max.params);
 		}
 
 		return super.modify(result);
@@ -58,12 +55,12 @@ export class DateBuilder extends ZodBuilder<
 export function applyDateMin(
 	zodStr: string,
 	value: Date,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	const dateStr = `new Date(${JSON.stringify(value.toISOString())})`;
-	return errorMessage
-		? `${zodStr}.min(${dateStr}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.min(${dateStr})`;
+	return params === undefined
+		? `${zodStr}.min(${dateStr})`
+		: `${zodStr}.min(${dateStr}, ${JSON.stringify(params)})`;
 }
 
 /**
@@ -72,10 +69,10 @@ export function applyDateMin(
 export function applyDateMax(
 	zodStr: string,
 	value: Date,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	const dateStr = `new Date(${JSON.stringify(value.toISOString())})`;
-	return errorMessage
-		? `${zodStr}.max(${dateStr}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.max(${dateStr})`;
+	return params === undefined
+		? `${zodStr}.max(${dateStr})`
+		: `${zodStr}.max(${dateStr}, ${JSON.stringify(params)})`;
 }

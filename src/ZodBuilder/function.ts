@@ -1,3 +1,4 @@
+import type { ZodFunction } from 'zod';
 import type { Builder } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
@@ -5,14 +6,14 @@ import { ZodBuilder } from './BaseBuilder.js';
  * FunctionBuilder: represents z.function()
  * Supports function signature validation with args and returns
  */
-export class FunctionBuilder extends ZodBuilder<'function'> {
+export class FunctionBuilder extends ZodBuilder<ZodFunction> {
 	readonly typeKind = 'function' as const;
 	private _input?: Builder[] = undefined;
 	private _output?: Builder = undefined;
 
 	constructor(
+		version: 'v3' | 'v4' = 'v4',
 		params: { input?: Builder[]; output?: Builder } = {},
-		version?: 'v3' | 'v4',
 	) {
 		super(version);
 		this._input = params.input;
@@ -23,14 +24,14 @@ export class FunctionBuilder extends ZodBuilder<'function'> {
 	 * Specify function arguments as an array of schemas
 	 */
 	args(...input: Builder[]): FunctionBuilder {
-		return new FunctionBuilder({ input, output: this._output });
+		return new FunctionBuilder(this._version, { input, output: this._output });
 	}
 
 	/**
 	 * Specify function return type schema
 	 */
 	returns(output: Builder): FunctionBuilder {
-		return new FunctionBuilder({ input: this._input, output });
+		return new FunctionBuilder(this._version, { input: this._input, output });
 	}
 
 	protected override base(): string {

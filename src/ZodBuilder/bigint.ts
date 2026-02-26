@@ -1,50 +1,60 @@
-import type { z } from 'zod';
+import type { ZodBigInt } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
+import type { ParamsFor } from '../Builder/index.js';
 
 /**
  * BigIntBuilder: represents z.bigint() with optional constraints
  */
-export class BigIntBuilder extends ZodBuilder<
-	'bigint',
-	Parameters<typeof z.bigint>[0]
-> {
-	_min?:
-		| { value: bigint; exclusive: boolean; errorMessage?: string }
-		| undefined = undefined;
-
-	_max?:
-		| { value: bigint; exclusive: boolean; errorMessage?: string }
-		| undefined = undefined;
-
-	_multipleOf?: { value: bigint; errorMessage?: string } | undefined =
+export class BigIntBuilder extends ZodBuilder<ZodBigInt> {
+	_min?: { value: bigint; exclusive: boolean; params?: unknown } | undefined =
 		undefined;
 
+	_max?: { value: bigint; exclusive: boolean; params?: unknown } | undefined =
+		undefined;
+
+	_multipleOf?: { value: bigint; params?: unknown } | undefined = undefined;
+
 	readonly typeKind = 'bigint' as const;
-	constructor(params?: Parameters<typeof z.bigint>[0], version?: 'v3' | 'v4') {
-		super(version);
-		this._params = params;
+	constructor(version: 'v3' | 'v4' = 'v4', ...params: ParamsFor<'bigint'>) {
+		super(version, ...params);
 	}
 	/**
 	 * Apply minimum constraint (gte by default).
 	 */
-	min(value: bigint, exclusive: boolean = false, errorMessage?: string): this {
-		this._min = { value, exclusive, errorMessage };
+	min(
+		value: bigint,
+		exclusiveOrParams?: boolean | unknown,
+		maybeParams?: unknown,
+	): this {
+		if (typeof exclusiveOrParams === 'boolean') {
+			this._min = { value, exclusive: exclusiveOrParams, params: maybeParams };
+			return this;
+		}
+		this._min = { value, exclusive: false, params: exclusiveOrParams };
 		return this;
 	}
 
 	/**
 	 * Apply maximum constraint (lte by default).
 	 */
-	max(value: bigint, exclusive: boolean = false, errorMessage?: string): this {
-		this._max = { value, exclusive, errorMessage };
+	max(
+		value: bigint,
+		exclusiveOrParams?: boolean | unknown,
+		maybeParams?: unknown,
+	): this {
+		if (typeof exclusiveOrParams === 'boolean') {
+			this._max = { value, exclusive: exclusiveOrParams, params: maybeParams };
+			return this;
+		}
+		this._max = { value, exclusive: false, params: exclusiveOrParams };
 		return this;
 	}
 
 	/**
 	 * Apply multipleOf constraint.
 	 */
-	multipleOf(value: bigint, errorMessage?: string): this {
-		this._multipleOf = { value, errorMessage };
+	multipleOf(value: bigint, params?: unknown): this {
+		this._multipleOf = { value, params };
 		return this;
 	}
 
@@ -61,7 +71,7 @@ export class BigIntBuilder extends ZodBuilder<
 				result,
 				this._min.value,
 				this._min.exclusive,
-				this._min.errorMessage,
+				this._min.params,
 			);
 		}
 		if (this._max !== undefined) {
@@ -69,14 +79,14 @@ export class BigIntBuilder extends ZodBuilder<
 				result,
 				this._max.value,
 				this._max.exclusive,
-				this._max.errorMessage,
+				this._max.params,
 			);
 		}
 		if (this._multipleOf !== undefined) {
 			result = applyBigIntMultipleOf(
 				result,
 				this._multipleOf.value,
-				this._multipleOf.errorMessage,
+				this._multipleOf.params,
 			);
 		}
 
@@ -91,13 +101,13 @@ export function applyBigIntMin(
 	zodStr: string,
 	value: bigint,
 	exclusive: boolean,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	const method = exclusive ? 'gt' : 'gte';
 	const valueStr = `${value}n`;
-	return errorMessage
-		? `${zodStr}.${method}(${valueStr}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.${method}(${valueStr})`;
+	return params === undefined
+		? `${zodStr}.${method}(${valueStr})`
+		: `${zodStr}.${method}(${valueStr}, ${JSON.stringify(params)})`;
 }
 
 /**
@@ -107,13 +117,13 @@ export function applyBigIntMax(
 	zodStr: string,
 	value: bigint,
 	exclusive: boolean,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	const method = exclusive ? 'lt' : 'lte';
 	const valueStr = `${value}n`;
-	return errorMessage
-		? `${zodStr}.${method}(${valueStr}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.${method}(${valueStr})`;
+	return params === undefined
+		? `${zodStr}.${method}(${valueStr})`
+		: `${zodStr}.${method}(${valueStr}, ${JSON.stringify(params)})`;
 }
 
 /**
@@ -122,10 +132,10 @@ export function applyBigIntMax(
 export function applyBigIntMultipleOf(
 	zodStr: string,
 	value: bigint,
-	errorMessage?: string,
+	params?: unknown,
 ): string {
 	const valueStr = `${value}n`;
-	return errorMessage
-		? `${zodStr}.multipleOf(${valueStr}, ${JSON.stringify(errorMessage)})`
-		: `${zodStr}.multipleOf(${valueStr})`;
+	return params === undefined
+		? `${zodStr}.multipleOf(${valueStr})`
+		: `${zodStr}.multipleOf(${valueStr}, ${JSON.stringify(params)})`;
 }

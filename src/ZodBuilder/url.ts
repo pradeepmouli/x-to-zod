@@ -1,4 +1,6 @@
-import { ZodBuilder } from './BaseBuilder.js';
+import type { z, ZodURL } from 'zod';
+import type { BuilderFor } from '../Builder/index.js';
+import { StringFormatBuilder } from './StringFormatBuilder.js';
 
 /**
  * UrlBuilder: represents z.url() in Zod v4.
@@ -16,31 +18,26 @@ import { ZodBuilder } from './BaseBuilder.js';
  * url.text('Invalid URL'); // => 'z.url({ error: "Invalid URL" })'
  * ```
  */
-export class UrlBuilder extends ZodBuilder<'url'> {
+export class UrlBuilder
+	extends StringFormatBuilder<ZodURL, [params?: Parameters<typeof z.url>[0]]>
+	implements BuilderFor<ZodURL>
+{
 	readonly typeKind = 'url' as const;
-	private _errorMessage?: string;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
-	}
-
-	/**
-	 * Set custom error message for URL validation.
-	 */
-	withError(message: string): this {
-		this._errorMessage = message;
-		return this;
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		params?: Parameters<typeof z.url>[0],
+	) {
+		super(version, params);
 	}
 
 	protected override base(): string {
+		const paramsStr = this.serializeParams();
 		// In v4, use z.url() top-level function
 		if (this.isV4()) {
-			return `z.url(${this._errorMessage ? this.withErrorMessage(this._errorMessage).slice(2) : ''})`;
+			return paramsStr ? `z.url(${paramsStr})` : 'z.url()';
 		}
 		// In v3, fall back to string().url()
-		const errorParam = this._errorMessage
-			? this.withErrorMessage(this._errorMessage)
-			: '';
-		return `z.string().url(${errorParam ? errorParam.slice(2) : ''})`;
+		return paramsStr ? `z.string().url(${paramsStr})` : 'z.string().url()';
 	}
 }
