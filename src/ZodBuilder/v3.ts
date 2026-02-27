@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { ZodType } from 'zod';
 import type { Builder, ParamsFor } from '../Builder/index.js';
 import type { Serializable } from '../Types.js';
 import { NumberBuilder } from './number.js';
@@ -6,7 +6,9 @@ import { StringBuilder } from './string.js';
 import { BooleanBuilder } from './boolean.js';
 import { NullBuilder } from './null.js';
 import { ArrayBuilder } from './array.js';
+import type { ArrayCreateParams } from './array.js';
 import { ObjectBuilder } from './object.js';
+import type { ObjectParams } from './object.js';
 import { EnumBuilder } from './enum.js';
 import { ConstBuilder } from './const.js';
 import { AnyBuilder } from './any.js';
@@ -30,7 +32,49 @@ import { CustomBuilder } from './custom.js';
 import { DiscriminatedUnionBuilder } from './discriminatedUnion.js';
 import { NativeEnumBuilder } from './nativeEnum.js';
 
-export const buildV3 = {
+/** Explicit type for the complete Zod v3 builder factory. */
+export type BuildV3 = {
+	number: (...params: ParamsFor<'number'>) => NumberBuilder;
+	string: (...params: ParamsFor<'string'>) => StringBuilder;
+	boolean: (...params: ParamsFor<'boolean'>) => BooleanBuilder;
+	null: () => NullBuilder;
+	array: (
+		itemSchemaZod: Builder | Builder[],
+		params?: ArrayCreateParams,
+	) => ArrayBuilder<ZodType>;
+	object: (
+		properties?: Record<string, Builder>,
+		params?: ObjectParams,
+	) => ObjectBuilder;
+	enum: (values: Serializable[]) => EnumBuilder;
+	literal: (value: Serializable) => ConstBuilder;
+	any: () => AnyBuilder;
+	never: () => NeverBuilder;
+	unknown: () => UnknownBuilder;
+	literalValue: (value: Serializable) => LiteralBuilder;
+	code: (code: string) => GenericBuilder;
+	raw: (code: string) => GenericBuilder;
+	union: (schemas: Builder[]) => UnionBuilder;
+	intersection: (left: Builder, right: Builder) => IntersectionBuilder;
+	tuple: (items: Builder[]) => TupleBuilder;
+	record: (keySchema: Builder, valueSchema: Builder) => RecordBuilder;
+	void: () => VoidBuilder;
+	undefined: () => UndefinedBuilder;
+	date: (...params: ParamsFor<'date'>) => DateBuilder;
+	bigint: (...params: ParamsFor<'bigint'>) => BigIntBuilder;
+	symbol: () => SymbolBuilder;
+	nan: () => NaNBuilder;
+	set: (itemSchema: Builder) => SetBuilder;
+	map: (keySchema: Builder, valueSchema: Builder) => MapBuilder;
+	custom: (validateFn?: string, params?: unknown) => CustomBuilder;
+	discriminatedUnion: (
+		discriminator: string,
+		schemas: Builder[],
+	) => DiscriminatedUnionBuilder;
+	nativeEnum: (enumReference: string) => NativeEnumBuilder;
+};
+
+export const buildV3: BuildV3 = {
 	number: (...params: ParamsFor<'number'>) =>
 		new NumberBuilder('v3', ...params),
 	string: (...params: ParamsFor<'string'>) =>
@@ -38,14 +82,10 @@ export const buildV3 = {
 	boolean: (...params: ParamsFor<'boolean'>) =>
 		new BooleanBuilder('v3', ...params),
 	null: () => new NullBuilder('v3'),
-	array: (
-		itemSchemaZod: Builder | Builder[],
-		params?: Parameters<typeof z.array>[1],
-	) => new ArrayBuilder('v3', itemSchemaZod, params),
-	object: (
-		properties: Record<string, Builder> = {},
-		params?: Parameters<typeof z.object>[1],
-	) => new ObjectBuilder('v3', properties, params),
+	array: (itemSchemaZod: Builder | Builder[], params?: ArrayCreateParams) =>
+		new ArrayBuilder('v3', itemSchemaZod, params),
+	object: (properties: Record<string, Builder> = {}, params?: ObjectParams) =>
+		new ObjectBuilder('v3', properties, params),
 	enum: (values: Serializable[]) => new EnumBuilder('v3', values),
 	literal: (value: Serializable) => new ConstBuilder('v3', value),
 	any: () => new AnyBuilder('v3'),
@@ -76,4 +116,4 @@ export const buildV3 = {
 		new DiscriminatedUnionBuilder('v3', discriminator, schemas),
 	nativeEnum: (enumReference: string) =>
 		new NativeEnumBuilder('v3', enumReference),
-} as const;
+};

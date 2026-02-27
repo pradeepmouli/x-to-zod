@@ -2,6 +2,8 @@ import type { z, ZodNanoID } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type NanoidParams = Parameters<typeof z.nanoid>[0];
+
 /**
  * NanoidBuilder: represents z.nanoid() in Zod v4.
  *

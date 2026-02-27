@@ -2,6 +2,8 @@ import type { z, ZodE164 } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type E164Params = Parameters<typeof z.e164>[0];
+
 /**
  * E164Builder: represents z.e164() in Zod v4.
  */

@@ -2,6 +2,8 @@ import type { z, ZodBase64 } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type Base64Params = Parameters<typeof z.base64>[0];
+
 /**
  * Base64Builder: represents z.base64() in Zod v4.
  *

@@ -2,6 +2,8 @@ import type { z, ZodURL } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type UrlParams = Parameters<typeof z.url>[0];
+
 /**
  * UrlBuilder: represents z.url() in Zod v4.
  *

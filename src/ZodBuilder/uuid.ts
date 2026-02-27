@@ -2,7 +2,7 @@ import type { z, ZodUUID } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
-type UuidParams =
+export type UuidParams =
 	| Parameters<typeof z.uuid>[0]
 	| Parameters<typeof z.guid>[0]
 	| Parameters<typeof z.uuidv6>[0]

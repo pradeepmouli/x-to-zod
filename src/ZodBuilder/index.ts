@@ -158,8 +158,9 @@ export {
 
 // Builder factories
 import { buildV4 } from './v4.js';
+import type { BuildV4 } from './v4.js';
 
-export const build = buildV4;
+export const build: BuildV4 = buildV4;
 
 export type TypeKind = {
 	[T in keyof typeof buildV4 as (typeof buildV4)[T] extends (

@@ -2,6 +2,8 @@ import type { z, ZodEmoji } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type EmojiParams = Parameters<typeof z.emoji>[0];
+
 /**
  * EmojiBuilder: represents z.emoji() in Zod v4.
  *

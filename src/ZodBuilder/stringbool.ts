@@ -5,6 +5,8 @@ import { CodecBuilder } from './codec.js';
 import { StringBuilder } from './string.js';
 import { BooleanBuilder } from './boolean.js';
 
+export type StringBoolParams = Parameters<typeof z.stringbool>[0];
+
 /**
  * StringBoolBuilder: represents z.stringbool() in Zod v4.
  * A codec that parses "true"/"false" strings into booleans.
@@ -14,12 +16,9 @@ export class StringBoolBuilder
 	implements BuilderFor<ReturnType<(typeof z)['stringbool']>>
 {
 	readonly typeKind = 'pipe' as const;
-	private readonly _stringBoolParams?: Parameters<typeof z.stringbool>[0];
+	private readonly _stringBoolParams?: StringBoolParams;
 
-	constructor(
-		version: 'v3' | 'v4' = 'v4',
-		_params?: Parameters<typeof z.stringbool>[0],
-	) {
+	constructor(version: 'v3' | 'v4' = 'v4', _params?: StringBoolParams) {
 		super(version, new StringBuilder(version), new BooleanBuilder(version));
 		this._stringBoolParams = _params;
 	}

@@ -2,13 +2,15 @@ import type { z, ZodObject } from 'zod';
 import type { Builder } from '../Builder/index.js';
 import { ZodBuilder, applySuperRefine } from './BaseBuilder.js';
 
+export type ObjectParams = Parameters<typeof z.object>[1];
+
 /**
  * Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
  */
 export class ObjectBuilder extends ZodBuilder<
 	ZodObject,
 	'object',
-	[params?: Parameters<typeof z.object>[1]]
+	[params?: ObjectParams]
 > {
 	readonly typeKind = 'object' as const;
 	readonly _properties: Record<string, Builder>;
@@ -26,7 +28,7 @@ export class ObjectBuilder extends ZodBuilder<
 	constructor(
 		version: 'v3' | 'v4' = 'v4',
 		properties: Record<string, Builder> = {},
-		params?: Parameters<typeof z.object>[1],
+		params?: ObjectParams,
 	) {
 		super(version, params);
 		this._properties = properties;

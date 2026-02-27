@@ -2,6 +2,8 @@ import type { z, ZodJWT } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type JwtParams = Parameters<typeof z.jwt>[0];
+
 /**
  * JwtBuilder: represents z.jwt() in Zod v4.
  */

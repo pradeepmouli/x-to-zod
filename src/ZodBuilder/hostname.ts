@@ -2,6 +2,8 @@ import type { z, ZodCustomStringFormat } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type HostnameParams = Parameters<typeof z.hostname>[0];
+
 /**
  * HostnameBuilder: represents z.hostname() in Zod v4.
  */

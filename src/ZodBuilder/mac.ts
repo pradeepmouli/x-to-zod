@@ -2,6 +2,8 @@ import type { z, ZodMAC } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type MacParams = Parameters<typeof z.mac>[0];
+
 /**
  * MacBuilder: represents z.mac() in Zod v4.
  */

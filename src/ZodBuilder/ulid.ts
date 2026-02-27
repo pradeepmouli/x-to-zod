@@ -2,6 +2,8 @@ import type { z, ZodULID } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type UlidParams = Parameters<typeof z.ulid>[0];
+
 /**
  * UlidBuilder: represents z.ulid() in Zod v4.
  *

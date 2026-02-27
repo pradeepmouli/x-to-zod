@@ -2,6 +2,8 @@ import type { z, ZodKSUID } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type KsuidParams = Parameters<typeof z.ksuid>[0];
+
 /**
  * KsuidBuilder: represents z.ksuid() in Zod v4.
  */

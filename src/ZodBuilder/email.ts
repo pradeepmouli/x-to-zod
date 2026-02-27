@@ -2,6 +2,8 @@ import type { z, ZodEmail } from 'zod';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 import type { BuilderFor } from '../Builder/index.js';
 
+export type EmailParams = Parameters<typeof z.email>[0];
+
 /**
  * EmailBuilder: represents z.email() in Zod v4.
  *

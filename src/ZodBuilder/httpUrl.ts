@@ -2,6 +2,8 @@ import type { z, ZodURL } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
+export type HttpUrlParams = Parameters<typeof z.httpUrl>[0];
+
 /**
  * HttpUrlBuilder: represents z.httpUrl() in Zod v4.
  * Similar to UrlBuilder but restricts to HTTP/HTTPS protocols.

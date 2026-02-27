@@ -2,7 +2,9 @@ import type { z, ZodCUID } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
-type CuidParams = Parameters<typeof z.cuid>[0] | Parameters<typeof z.cuid2>[0];
+export type CuidParams =
+	| Parameters<typeof z.cuid>[0]
+	| Parameters<typeof z.cuid2>[0];
 
 /**
  * CuidBuilder: represents z.cuid() or z.cuid2() in Zod v4.

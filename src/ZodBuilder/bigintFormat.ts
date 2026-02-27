@@ -4,6 +4,8 @@ import { ZodBuilder } from './BaseBuilder.js';
 
 type BigIntFormatVariant = 'int64' | 'uint64';
 
+export type BigIntFormatParams = Parameters<typeof z.int64>[0];
+
 /**
  * BigIntFormatBuilder: represents z.int64(), z.uint64() in Zod v4.
  * These are top-level bigint format constructors.
@@ -14,12 +16,12 @@ export class BigIntFormatBuilder
 {
 	readonly typeKind = 'bigint' as const;
 	private readonly _variant: BigIntFormatVariant;
-	private readonly _formatParams?: Parameters<typeof z.int64>[0];
+	private readonly _formatParams?: BigIntFormatParams;
 
 	constructor(
 		version: 'v3' | 'v4' = 'v4',
 		variant: BigIntFormatVariant,
-		params?: Parameters<typeof z.int64>[0],
+		params?: BigIntFormatParams,
 	) {
 		super(version);
 		this._variant = variant;

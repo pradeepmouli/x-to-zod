@@ -2,11 +2,11 @@ import type { z, ZodIPv4 } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
-type IpParams =
-	| Parameters<typeof z.ipv4>[0]
-	| Parameters<typeof z.ipv6>[0]
-	| Parameters<typeof z.cidrv4>[0]
-	| Parameters<typeof z.cidrv6>[0];
+export type Ipv4Params = Parameters<typeof z.ipv4>[0];
+export type Ipv6Params = Parameters<typeof z.ipv6>[0];
+export type Cidrv4Params = Parameters<typeof z.cidrv4>[0];
+export type Cidrv6Params = Parameters<typeof z.cidrv6>[0];
+export type IpParams = Ipv4Params | Ipv6Params | Cidrv4Params | Cidrv6Params;
 
 /**
  * IpBuilder: represents z.ip(), z.ipv4(), z.ipv6() in Zod v4.

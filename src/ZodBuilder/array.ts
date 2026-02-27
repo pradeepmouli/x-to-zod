@@ -2,6 +2,12 @@ import type { z, ZodArray, ZodType } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
+export type ArrayCreateParams = Parameters<typeof z.array>[1];
+export type ArrayMinParams = Parameters<ZodArray['min']>[1];
+export type ArrayMaxParams = Parameters<ZodArray['max']>[1];
+export type ArrayLengthParams = Parameters<ZodArray['length']>[1];
+export type ArrayNonemptyParams = Parameters<ZodArray['nonempty']>[0];
+
 /**
  * Fluent ArrayBuilder: wraps a Zod array schema string and provides chainable methods.
  *
@@ -23,26 +29,20 @@ export class ArrayBuilder<Z extends ZodType>
 	extends ZodBuilder<
 		ZodArray<Z>,
 		'array',
-		[
-			itemSchema: BuilderFor<Z> | BuilderFor<Z>[],
-			params?: Parameters<typeof z.array>[1],
-		]
+		[itemSchema: BuilderFor<Z> | BuilderFor<Z>[], params?: ArrayCreateParams]
 	>
 	implements BuilderFor<ZodArray>
 {
 	readonly typeKind = 'array' as const;
 	private readonly _itemSchema: BuilderFor<Z> | BuilderFor<Z>[];
-	_minItems?: { value: number; params?: Parameters<ZodArray['min']>[1] } =
-		undefined;
-	_maxItems?: { value: number; params?: Parameters<ZodArray['max']>[1] } =
-		undefined;
-	_exactLength?: { value: number; params?: Parameters<ZodArray['length']>[1] } =
-		undefined;
+	_minItems?: { value: number; params?: ArrayMinParams } = undefined;
+	_maxItems?: { value: number; params?: ArrayMaxParams } = undefined;
+	_exactLength?: { value: number; params?: ArrayLengthParams } = undefined;
 
 	constructor(
 		version: 'v3' | 'v4' = 'v4',
 		itemSchema: BuilderFor<Z> | BuilderFor<Z>[],
-		params?: Parameters<typeof z.array>[1],
+		params?: ArrayCreateParams,
 	) {
 		super(version, itemSchema, params);
 		this._itemSchema = itemSchema;
@@ -51,7 +51,7 @@ export class ArrayBuilder<Z extends ZodType>
 	/**
 	 * Apply minItems constraint.
 	 */
-	min(value: number, params?: Parameters<ZodArray['min']>[1]): this {
+	min(value: number, params?: ArrayMinParams): this {
 		if (this._minItems === undefined || this._minItems.value > value) {
 			this._minItems = { value, params };
 		}
@@ -61,7 +61,7 @@ export class ArrayBuilder<Z extends ZodType>
 	/**
 	 * Apply maxItems constraint.
 	 */
-	max(value: number, params?: Parameters<ZodArray['max']>[1]): this {
+	max(value: number, params?: ArrayMaxParams): this {
 		if (this._maxItems === undefined || this._maxItems.value < value) {
 			this._maxItems = { value, params };
 		}
@@ -69,12 +69,12 @@ export class ArrayBuilder<Z extends ZodType>
 	}
 
 	/** Require at least one element (delegates to min(1)). */
-	nonempty(params?: Parameters<ZodArray['nonempty']>[0]): this {
+	nonempty(params?: ArrayNonemptyParams): this {
 		return this.min(1, params);
 	}
 
 	/** Require exactly `len` elements. */
-	length(len: number, params?: Parameters<ZodArray['length']>[1]): this {
+	length(len: number, params?: ArrayLengthParams): this {
 		this._exactLength = { value: len, params };
 		return this;
 	}

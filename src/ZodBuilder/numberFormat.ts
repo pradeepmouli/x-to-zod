@@ -11,6 +11,8 @@ type NumberFormatVariant =
 	| 'int64'
 	| 'uint64';
 
+export type NumberFormatParams = Parameters<typeof z.int>[0];
+
 /**
  * NumberFormatBuilder: represents z.int(), z.float32(), z.float64(),
  * z.int32(), z.uint32(), z.int64(), z.uint64() in Zod v4.
@@ -24,12 +26,12 @@ export class NumberFormatBuilder
 {
 	readonly typeKind = 'number' as const;
 	private readonly _variant: NumberFormatVariant;
-	private readonly _formatParams?: Parameters<typeof z.int>[0];
+	private readonly _formatParams?: NumberFormatParams;
 
 	constructor(
 		version: 'v3' | 'v4' = 'v4',
 		variant: NumberFormatVariant,
-		params?: Parameters<typeof z.int>[0],
+		params?: NumberFormatParams,
 	) {
 		super(version);
 		this._variant = variant;
