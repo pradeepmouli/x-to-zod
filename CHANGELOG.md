@@ -4,6 +4,20 @@
 
 ### Minor Changes
 
+- [`4d28559`](https://github.com/pradeepmouli/x-to-zod/commit/4d285593cca16e60c646f9da3fdc5341a9db5601) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - feat: type-safe builder params and array nonempty/length methods
+
+  All Zod v4 builder factory functions now accept properly typed parameters via `Parameters<typeof z.X>[0]` instead of `unknown`, providing full TypeScript IntelliSense and compile-time safety.
+
+  **String format builders** (`hex`, `hostname`, `jwt`, `mac`, `xid`, `ksuid`, `e164`, `base64url`, `httpUrl`), **number format builders** (`int`, `float32`, `float64`, `int32`, `uint32`), **BigInt format builders** (`int64`, `uint64`), and the **`json` builder** all accept their respective Zod param types.
+
+  `ArrayBuilder` gains working `nonempty()` and `length()` methods mirroring Zod's API. `nonempty()` delegates to `.min(1)` with the same typed params; `length(n)` sets an exact size that supersedes any `min`/`max` on serialization. `applyExactLength` is now exported from `x-to-zod/builders`.
+
+  Added a 90-test symmetry suite (`zod-build-symmetry.test.ts`) covering the full `buildV4` factory.
+
+## 0.9.0
+
+### Minor Changes
+
 #### Type-Safe Builder Params
 
 All Zod v4 builder factory functions now accept properly typed parameters instead of `unknown`, providing TypeScript IntelliSense and compile-time safety for all builder options.
@@ -11,31 +25,31 @@ All Zod v4 builder factory functions now accept properly typed parameters instea
 **String format builders** — `hex`, `hostname`, `jwt`, `mac`, `xid`, `ksuid`, `e164`, `base64url`, `httpUrl` — all accept `Parameters<typeof z.X>[0]`:
 
 ```typescript
-import { build } from 'x-to-zod/v4';
+import { build } from "x-to-zod/v4";
 
 // Full type safety — error object matches Zod's own API
-build.hex({ error: 'must be hex' });
-build.jwt({ error: 'invalid JWT' });
-build.e164({ error: 'invalid phone number' });
+build.hex({ error: "must be hex" });
+build.jwt({ error: "invalid JWT" });
+build.e164({ error: "invalid phone number" });
 ```
 
 **Number format builders** — `int`, `float32`, `float64`, `int32`, `uint32`:
 
 ```typescript
-build.int({ error: 'must be integer' });
-build.float32({ error: 'out of float32 range' });
+build.int({ error: "must be integer" });
+build.float32({ error: "out of float32 range" });
 ```
 
 **BigInt format builders** — `int64`, `uint64`:
 
 ```typescript
-build.int64({ error: 'out of int64 range' });
+build.int64({ error: "out of int64 range" });
 ```
 
 **JSON builder**:
 
 ```typescript
-build.json({ error: 'must be valid JSON' });
+build.json({ error: "must be valid JSON" });
 ```
 
 #### ArrayBuilder: `nonempty()` and `length()` Methods
@@ -43,20 +57,20 @@ build.json({ error: 'must be valid JSON' });
 `ArrayBuilder` now exposes fully typed and functional `nonempty()` and `length()` methods, mirroring Zod's own array API:
 
 ```typescript
-build.array(build.string()).nonempty()
+build.array(build.string()).nonempty();
 // => z.array(z.string()).min(1)
 
-build.array(build.string()).nonempty({ error: 'required' })
+build.array(build.string()).nonempty({ error: "required" });
 // => z.array(z.string()).min(1, {"error":"required"})
 
-build.array(build.string()).length(3)
+build.array(build.string()).length(3);
 // => z.array(z.string()).length(3)
 
-build.array(build.string()).length(3, { error: 'bad length' })
+build.array(build.string()).length(3, { error: "bad length" });
 // => z.array(z.string()).length(3, {"error":"bad length"})
 
 // length() supersedes min/max:
-build.array(build.string()).min(1).max(10).length(3)
+build.array(build.string()).min(1).max(10).length(3);
 // => z.array(z.string()).length(3)
 ```
 
