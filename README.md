@@ -42,18 +42,25 @@ This fork includes several architectural improvements and new features:
 - Fixed ESM build configuration for proper TypeScript module resolution
 - Added `moduleResolution: "bundler"` for compatibility with modern bundlers
 
-### 6. **Code Quality**
+### 6. **Type-Safe Builder Params**
+- All Zod v4 builder factory functions accept properly typed params instead of `unknown`
+- String format builders (`hex`, `hostname`, `jwt`, `mac`, `xid`, `ksuid`, `e164`, `base64url`, `httpUrl`) accept `Parameters<typeof z.X>[0]`
+- Number format builders (`int`, `float32`, `float64`, `int32`, `uint32`) and BigInt builders (`int64`, `uint64`) fully typed
+- Full IntelliSense support — error options, constraints, and all Zod params are visible in IDE
+
+### 7. **Code Quality**
 - Migrated to Vitest for faster test execution
 - Updated linting with oxlint
 - Better test coverage and organization
+- 90-test symmetry suite covering the full `buildV4` factory
 
-### 7. **Zod v3/v4 Dual-Mode Support**
+### 8. **Zod v3/v4 Dual-Mode Support**
 - Generate schemas compatible with either Zod v3 or v4 via `zodVersion` option
 - Defaults to `'v3'` for backward compatibility
 - v4 mode generates new syntax: `z.strictObject()`, `z.looseObject()`, `.extend()` instead of `.merge()`
 - Fully backward compatible - existing code continues to work without changes
 
-### 8. **Post-Processing System**
+### 9. **Post-Processing System**
 - Transform Zod builders after parsing with custom post-processors
 - Type-based filtering to target specific builder types (objects, arrays, strings, etc.)
 - Path-based filtering for granular control
@@ -297,6 +304,9 @@ The `build.*` factory creates fluent builders that mirror Zod's API. Each builde
   - `build.object(props)` → `z.object({ ... })`
     - Helpers: `.strict()`, `.loose()`, `.catchall(schema)`, `.superRefine(fn)`, `.and(schema)`, `.extend(schema|string)`, `.merge(schema|string)`, `.pick(keys)`, `.omit(keys)`
   - `build.array(item)` → `z.array(item)`
+    - Constraints: `.min(n)`, `.max(n)`, `.length(n)`, `.nonempty()`
+    - `nonempty()` delegates to `.min(1)` and accepts the same typed params
+    - `length(n)` sets an exact size and supersedes any `min`/`max` on serialization
   - `build.tuple(items)` → `z.tuple(items)`
   - `build.record(key, value)` → `z.record(key, value)`
   - `build.map(key, value)` → `z.map(key, value)`
@@ -322,7 +332,12 @@ The `build.*` factory creates fluent builders that mirror Zod's API. Each builde
   - `build.pipe(input)` → `z.pipe()`
   - `build.preprocess(fn, schema)` → `z.preprocess()`
   - `build.codec(parseFn, serializeFn)` → `z.codec()`
-  - `build.json()` → `z.json()`
+  - `build.json(params?)` → `z.json()` — typed params for error messages
+
+- **Zod v4 Format Builders** (all accept typed params for error customisation):
+  - String: `build.hex(params?)`, `build.hostname(params?)`, `build.jwt(params?)`, `build.mac(params?)`, `build.e164(params?)`, `build.xid(params?)`, `build.ksuid(params?)`, `build.base64url(params?)`, `build.httpUrl(params?)`
+  - Number: `build.int(params?)`, `build.float32(params?)`, `build.float64(params?)`, `build.int32(params?)`, `build.uint32(params?)`
+  - BigInt: `build.int64(params?)`, `build.uint64(params?)`
 
 - **Strings (validators):**
   - `build.string().url()`, `.httpUrl()`, `.hostname()`, `.emoji()`, `.base64url()`, `.hex()`, `.jwt()`, `.nanoid()`, `.cuid()`, `.cuid2()`, `.ulid()`, `.ipv4()`, `.ipv6()`, `.mac()`, `.cidrv4()`, `.cidrv6()`, `.hash(algorithm)`, `.isoDate()`, `.isoTime()`, `.isoDatetime()`, `.isoDuration()`, `.uuidv4()`, `.uuidv6()`, `.uuidv7()`

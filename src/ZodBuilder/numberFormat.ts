@@ -1,4 +1,4 @@
-import type { ZodNumberFormat } from 'zod';
+import type { z, ZodNumberFormat } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
@@ -24,14 +24,26 @@ export class NumberFormatBuilder
 {
 	readonly typeKind = 'number' as const;
 	private readonly _variant: NumberFormatVariant;
+	private readonly _formatParams?: Parameters<typeof z.int>[0];
 
-	constructor(version: 'v3' | 'v4' = 'v4', variant: NumberFormatVariant) {
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		variant: NumberFormatVariant,
+		params?: Parameters<typeof z.int>[0],
+	) {
 		super(version);
 		this._variant = variant;
+		this._formatParams = params;
 	}
 
 	protected override base(): string {
-		return `z.${this._variant}()`;
+		const paramsStr =
+			this._formatParams !== undefined
+				? JSON.stringify(this._formatParams)
+				: '';
+		return paramsStr
+			? `z.${this._variant}(${paramsStr})`
+			: `z.${this._variant}()`;
 	}
 
 	/* ── BuilderFor<ZodNumberFormat> stubs ── */

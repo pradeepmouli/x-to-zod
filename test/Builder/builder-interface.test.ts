@@ -43,6 +43,8 @@ describe('Builder interface — Gap 4', () => {
 
 	it('Builder.describe() applies a description', () => {
 		const b: Builder = buildV4.string();
-		expect(b.describe('My field').text()).toContain('describe');
+		expect(b.describe('My field').text()).toContain(
+			'meta({"description":"My field"})',
+		);
 	});
 });

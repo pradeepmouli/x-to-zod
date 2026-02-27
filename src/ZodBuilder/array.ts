@@ -32,8 +32,12 @@ export class ArrayBuilder<Z extends ZodType>
 {
 	readonly typeKind = 'array' as const;
 	private readonly _itemSchema: BuilderFor<Z> | BuilderFor<Z>[];
-	_minItems?: { value: number; params?: unknown } = undefined;
-	_maxItems?: { value: number; params?: unknown } = undefined;
+	_minItems?: { value: number; params?: Parameters<ZodArray['min']>[1] } =
+		undefined;
+	_maxItems?: { value: number; params?: Parameters<ZodArray['max']>[1] } =
+		undefined;
+	_exactLength?: { value: number; params?: Parameters<ZodArray['length']>[1] } =
+		undefined;
 
 	constructor(
 		version: 'v3' | 'v4' = 'v4',
@@ -47,7 +51,7 @@ export class ArrayBuilder<Z extends ZodType>
 	/**
 	 * Apply minItems constraint.
 	 */
-	min(value: number, params?: unknown): this {
+	min(value: number, params?: Parameters<ZodArray['min']>[1]): this {
 		if (this._minItems === undefined || this._minItems.value > value) {
 			this._minItems = { value, params };
 		}
@@ -57,20 +61,24 @@ export class ArrayBuilder<Z extends ZodType>
 	/**
 	 * Apply maxItems constraint.
 	 */
-	max(value: number, params?: unknown): this {
+	max(value: number, params?: Parameters<ZodArray['max']>[1]): this {
 		if (this._maxItems === undefined || this._maxItems.value < value) {
 			this._maxItems = { value, params };
 		}
 		return this;
 	}
 
-	/** Array check stubs — satisfies BuilderFor<ZodArray>. */
-	nonempty(_params?: unknown): this {
+	/** Require at least one element (delegates to min(1)). */
+	nonempty(params?: Parameters<ZodArray['nonempty']>[0]): this {
+		return this.min(1, params);
+	}
+
+	/** Require exactly `len` elements. */
+	length(len: number, params?: Parameters<ZodArray['length']>[1]): this {
+		this._exactLength = { value: len, params };
 		return this;
 	}
-	length(_len: number, _params?: unknown): this {
-		return this;
-	}
+
 	unwrap(): Z {
 		throw new Error('Method not implemented.');
 	}
@@ -97,19 +105,27 @@ export class ArrayBuilder<Z extends ZodType>
 	protected override modify(baseText: string): string {
 		let result = baseText;
 
-		if (this._minItems !== undefined) {
-			result = applyMinItems(
+		if (this._exactLength !== undefined) {
+			result = applyExactLength(
 				result,
-				this._minItems.value,
-				this._minItems.params,
+				this._exactLength.value,
+				this._exactLength.params,
 			);
-		}
-		if (this._maxItems !== undefined) {
-			result = applyMaxItems(
-				result,
-				this._maxItems.value,
-				this._maxItems.params,
-			);
+		} else {
+			if (this._minItems !== undefined) {
+				result = applyMinItems(
+					result,
+					this._minItems.value,
+					this._minItems.params,
+				);
+			}
+			if (this._maxItems !== undefined) {
+				result = applyMaxItems(
+					result,
+					this._maxItems.value,
+					this._maxItems.params,
+				);
+			}
 		}
 
 		return super.modify(result);
@@ -140,4 +156,17 @@ export function applyMaxItems(
 	return params !== undefined
 		? `${zodStr}.max(${JSON.stringify(value)}, ${JSON.stringify(params)})`
 		: `${zodStr}.max(${JSON.stringify(value)})`;
+}
+
+/**
+ * Apply exact length constraint to an array schema.
+ */
+export function applyExactLength(
+	zodStr: string,
+	value: number,
+	params?: unknown,
+): string {
+	return params !== undefined
+		? `${zodStr}.length(${JSON.stringify(value)}, ${JSON.stringify(params)})`
+		: `${zodStr}.length(${JSON.stringify(value)})`;
 }

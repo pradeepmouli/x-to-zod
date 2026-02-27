@@ -27,7 +27,7 @@ describe('NativeEnumBuilder - Zod v4 Unified API', () => {
 				.nativeEnum('RoleEnum')
 				.describe('User role enumeration');
 			expect(enumBuilder.text()).toBe(
-				'z.enum(RoleEnum).describe("User role enumeration")',
+				'z.enum(RoleEnum).meta({"description":"User role enumeration"})',
 			);
 		});
 	});
@@ -57,7 +57,7 @@ describe('NativeEnumBuilder - Zod v4 Unified API', () => {
 				.nativeEnum('RoleEnum')
 				.describe('User role enumeration');
 			expect(enumBuilder.text()).toBe(
-				'z.nativeEnum(RoleEnum).describe("User role enumeration")',
+				'z.nativeEnum(RoleEnum).meta({"description":"User role enumeration"})',
 			);
 		});
 	});

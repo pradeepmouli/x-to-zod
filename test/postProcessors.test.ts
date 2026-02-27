@@ -495,7 +495,7 @@ describe('Post-Processor Integration', () => {
 			});
 
 			// Pre-processor should have added description
-			expect(result).toContain('describe');
+			expect(result).toContain('meta({"description"');
 			expect(result).toContain('Modified by pre-processor');
 		});
 	});

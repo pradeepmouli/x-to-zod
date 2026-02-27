@@ -35,9 +35,7 @@ describe('parseString', () => {
 			errorMessage: { format: 'hello' },
 		}).text();
 
-		expect(code).toBe(
-			'z.string().datetime({ offset: true, message: "hello" })',
-		);
+		expect(code).toBe('z.string().datetime("hello")');
 
 		expect(run(code, datetime)).toEqual({ success: true, data: datetime });
 	});
@@ -48,7 +46,7 @@ describe('parseString', () => {
 				type: 'string',
 				format: 'email',
 			}).text(),
-		).toBe('z.string().email()');
+		).toBe('z.email()');
 	});
 
 	it('ip', () => {
@@ -63,7 +61,7 @@ describe('parseString', () => {
 				type: 'string',
 				format: 'ipv6',
 			}).text(),
-		).toBe(`z.string().ip({ version: "v6" })`);
+		).toBe('z.ipv6()');
 	});
 
 	it('uri', () => {
@@ -81,7 +79,7 @@ describe('parseString', () => {
 				type: 'string',
 				format: 'uuid',
 			}).text(),
-		).toBe(`z.string().uuid()`);
+		).toBe('z.uuid()');
 	});
 
 	it('base64 (v3 mode)', () => {
@@ -129,7 +127,7 @@ describe('parseString', () => {
 				},
 				refsV4,
 			).text(),
-		).toBe('z.base64({ error: "x" })');
+		).toBe('z.base64("x")');
 	});
 
 	it('duration', () => {
@@ -204,7 +202,7 @@ describe('parseString', () => {
 				},
 			}).text(),
 		).toBe(
-			'z.string().ip({ version: "v4", message: "ayy" }).regex(new RegExp("x"), "lmao").min(1, "deez").max(2, "nuts")',
+			'z.string().ip("ayy").regex(new RegExp("x"), "lmao").min(1, "deez").max(2, "nuts")',
 		);
 	});
 

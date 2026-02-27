@@ -74,7 +74,7 @@ describe('AbstractParser', () => {
 
 		expect(steps).toEqual(['pre', 'parseImpl', 'post']);
 		expect(text).toContain('.min(1)');
-		expect(text).toContain('.describe("from-pre")');
+		expect(text).toContain('.meta({"description":"from-pre"})');
 		expect(text).toContain('.default("abc")');
 	});
 
@@ -86,7 +86,7 @@ describe('AbstractParser', () => {
 
 		const text = parser.parse().text();
 
-		expect(text).toContain('.describe("desc")');
+		expect(text).toContain('.meta({"description":"desc"})');
 		expect(text).toContain('.default("x")');
 	});
 

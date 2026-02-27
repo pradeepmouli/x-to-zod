@@ -1,5 +1,71 @@
 # Changelog
 
+## 0.9.0
+
+### Minor Changes
+
+#### Type-Safe Builder Params
+
+All Zod v4 builder factory functions now accept properly typed parameters instead of `unknown`, providing TypeScript IntelliSense and compile-time safety for all builder options.
+
+**String format builders** — `hex`, `hostname`, `jwt`, `mac`, `xid`, `ksuid`, `e164`, `base64url`, `httpUrl` — all accept `Parameters<typeof z.X>[0]`:
+
+```typescript
+import { build } from 'x-to-zod/v4';
+
+// Full type safety — error object matches Zod's own API
+build.hex({ error: 'must be hex' });
+build.jwt({ error: 'invalid JWT' });
+build.e164({ error: 'invalid phone number' });
+```
+
+**Number format builders** — `int`, `float32`, `float64`, `int32`, `uint32`:
+
+```typescript
+build.int({ error: 'must be integer' });
+build.float32({ error: 'out of float32 range' });
+```
+
+**BigInt format builders** — `int64`, `uint64`:
+
+```typescript
+build.int64({ error: 'out of int64 range' });
+```
+
+**JSON builder**:
+
+```typescript
+build.json({ error: 'must be valid JSON' });
+```
+
+#### ArrayBuilder: `nonempty()` and `length()` Methods
+
+`ArrayBuilder` now exposes fully typed and functional `nonempty()` and `length()` methods, mirroring Zod's own array API:
+
+```typescript
+build.array(build.string()).nonempty()
+// => z.array(z.string()).min(1)
+
+build.array(build.string()).nonempty({ error: 'required' })
+// => z.array(z.string()).min(1, {"error":"required"})
+
+build.array(build.string()).length(3)
+// => z.array(z.string()).length(3)
+
+build.array(build.string()).length(3, { error: 'bad length' })
+// => z.array(z.string()).length(3, {"error":"bad length"})
+
+// length() supersedes min/max:
+build.array(build.string()).min(1).max(10).length(3)
+// => z.array(z.string()).length(3)
+```
+
+A new `applyExactLength` helper is exported from `x-to-zod/builders` for custom post-processors.
+
+#### New Test Coverage
+
+Added 90-test symmetry suite (`zod-build-symmetry.test.ts`) covering the full `buildV4` factory, validating that every builder serializes to the expected Zod expression.
+
 ## 0.8.0
 
 ### Minor Changes

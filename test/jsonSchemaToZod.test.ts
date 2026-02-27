@@ -169,7 +169,7 @@ export default z.string()
 			),
 		).toBe(`import { z } from "zod"
 
-export default z.string().describe("foo")
+export default z.string().meta({"description":"foo"})
 `);
 	});
 
@@ -223,7 +223,7 @@ export default z.string()
 /**Description for schema*/
 export default z.object({ 
 /**Description for prop*/
-"prop": z.string().describe("Description for prop").optional(), 
+"prop": z.string().meta({"description":"Description for prop"}).optional(), 
 /**
 * Description for object that is multiline
 * More content
@@ -232,9 +232,9 @@ export default z.object({
 */
 "obj": z.object({ 
 /**Description for nestedProp*/
-"nestedProp": z.string().describe("Description for nestedProp").optional(), 
+"nestedProp": z.string().meta({"description":"Description for nestedProp"}).optional(), 
 /**Description for nestedProp2*/
-"nestedProp2": z.string().describe("Description for nestedProp2").optional() }).describe("Description for object that is multiline\\nMore content\\n\\nAnd whitespace").optional() }).describe("Description for schema")
+"nestedProp2": z.string().meta({"description":"Description for nestedProp2"}).optional() }).meta({"description":"Description for object that is multiline\\nMore content\\n\\nAnd whitespace"}).optional() }).meta({"description":"Description for schema"})
 `);
 	});
 

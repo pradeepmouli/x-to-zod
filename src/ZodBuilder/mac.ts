@@ -1,4 +1,4 @@
-import type { ZodMAC } from 'zod';
+import type { z, ZodMAC } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
@@ -11,7 +11,7 @@ export class MacBuilder
 {
 	readonly typeKind = 'mac' as const;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
+	constructor(version?: 'v3' | 'v4', params?: Parameters<typeof z.mac>[0]) {
+		super(version, params);
 	}
 }

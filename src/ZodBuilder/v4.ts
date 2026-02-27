@@ -65,6 +65,16 @@ import { StringBoolBuilder } from './stringbool.js';
 import { CustomStringFormatBuilder } from './stringFormat.js';
 import { HashBuilder } from './hash.js';
 
+function buildIsoCode(
+	method: 'date' | 'time' | 'datetime' | 'duration',
+	params?: unknown,
+): string {
+	if (params === undefined) {
+		return `z.iso.${method}()`;
+	}
+	return `z.iso.${method}(${JSON.stringify(params)})`;
+}
+
 /**
  * Complete set of Zod v4 schema constructors.
  */
@@ -92,7 +102,8 @@ const zodConstructors = {
 	email: (params?: Parameters<typeof z.email>[0]) =>
 		new EmailBuilder('v4', params),
 	url: (params?: Parameters<typeof z.url>[0]) => new UrlBuilder('v4', params),
-	httpUrl: () => new HttpUrlBuilder('v4'),
+	httpUrl: (params?: Parameters<typeof z.httpUrl>[0]) =>
+		new HttpUrlBuilder('v4', params),
 	uuid: (params?: Parameters<typeof z.uuid>[0]) =>
 		new UuidBuilder('v4', 'uuid', params),
 	uuidv4: (params?: Parameters<typeof z.uuid>[0]) =>
@@ -113,13 +124,15 @@ const zodConstructors = {
 		new CuidBuilder('v4', 'cuid2', params),
 	ulid: (params?: Parameters<typeof z.ulid>[0]) =>
 		new UlidBuilder('v4', params),
-	xid: () => new XidBuilder('v4'),
-	ksuid: () => new KsuidBuilder('v4'),
-	e164: () => new E164Builder('v4'),
+	xid: (params?: Parameters<typeof z.xid>[0]) => new XidBuilder('v4', params),
+	ksuid: (params?: Parameters<typeof z.ksuid>[0]) =>
+		new KsuidBuilder('v4', params),
+	e164: (params?: Parameters<typeof z.e164>[0]) =>
+		new E164Builder('v4', params),
 	base64: (params?: Parameters<typeof z.base64>[0]) =>
 		new Base64Builder('v4', params),
-	base64url: (_params?: Parameters<typeof z.base64url>[0]) =>
-		new Base64UrlBuilder('v4'),
+	base64url: (params?: Parameters<typeof z.base64url>[0]) =>
+		new Base64UrlBuilder('v4', params),
 	ipv4: (params?: Parameters<typeof z.ipv4>[0]) =>
 		new IpBuilder('v4', 'ipv4', params),
 	ipv6: (params?: Parameters<typeof z.ipv6>[0]) =>
@@ -128,24 +141,32 @@ const zodConstructors = {
 		new IpBuilder('v4', 'cidrv4', params),
 	cidrv6: (params?: Parameters<typeof z.cidrv6>[0]) =>
 		new IpBuilder('v4', 'cidrv6', params),
-	jwt: () => new JwtBuilder('v4'),
-	mac: () => new MacBuilder('v4'),
-	hostname: () => new HostnameBuilder('v4'),
-	hex: () => new HexBuilder('v4'),
+	jwt: (params?: Parameters<typeof z.jwt>[0]) => new JwtBuilder('v4', params),
+	mac: (params?: Parameters<typeof z.mac>[0]) => new MacBuilder('v4', params),
+	hostname: (params?: Parameters<typeof z.hostname>[0]) =>
+		new HostnameBuilder('v4', params),
+	hex: (params?: Parameters<typeof z.hex>[0]) => new HexBuilder('v4', params),
 	hash: (algorithm: string) => new HashBuilder('v4', algorithm),
 	stringFormat: (name: string, validator: string) =>
 		new CustomStringFormatBuilder('v4', name, validator),
 
 	// ── Number formats ──
-	int: () => new NumberFormatBuilder('v4', 'int'),
-	float32: () => new NumberFormatBuilder('v4', 'float32'),
-	float64: () => new NumberFormatBuilder('v4', 'float64'),
-	int32: () => new NumberFormatBuilder('v4', 'int32'),
-	uint32: () => new NumberFormatBuilder('v4', 'uint32'),
+	int: (params?: Parameters<typeof z.int>[0]) =>
+		new NumberFormatBuilder('v4', 'int', params),
+	float32: (params?: Parameters<typeof z.float32>[0]) =>
+		new NumberFormatBuilder('v4', 'float32', params),
+	float64: (params?: Parameters<typeof z.float64>[0]) =>
+		new NumberFormatBuilder('v4', 'float64', params),
+	int32: (params?: Parameters<typeof z.int32>[0]) =>
+		new NumberFormatBuilder('v4', 'int32', params),
+	uint32: (params?: Parameters<typeof z.uint32>[0]) =>
+		new NumberFormatBuilder('v4', 'uint32', params),
 
 	// ── BigInt formats ──
-	int64: () => new BigIntFormatBuilder('v4', 'int64'),
-	uint64: () => new BigIntFormatBuilder('v4', 'uint64'),
+	int64: (params?: Parameters<typeof z.int64>[0]) =>
+		new BigIntFormatBuilder('v4', 'int64', params),
+	uint64: (params?: Parameters<typeof z.uint64>[0]) =>
+		new BigIntFormatBuilder('v4', 'uint64', params),
 
 	// ── Collections ──
 	array: (
@@ -201,8 +222,10 @@ const zodConstructors = {
 		new PreprocessBuilder('v4', transformFn, schema),
 	pipe: (sourceSchema: Builder, targetSchema: Builder) =>
 		new PipeBuilder('v4', sourceSchema, targetSchema),
-	json: () => new JsonBuilder('v4'),
-	file: () => new FileBuilder('v4'),
+	json: (params?: Parameters<typeof z.json>[0]) =>
+		new JsonBuilder('v4', params),
+	file: (params?: Parameters<typeof z.file>[0]) =>
+		new FileBuilder('v4', params),
 	custom: (validateFn?: string, params?: unknown) =>
 		new CustomBuilder('v4', validateFn, params),
 	instanceof: (className: string) => new InstanceofBuilder('v4', className),
@@ -218,6 +241,16 @@ const appHelpers = {
 	literalValue: (value: Serializable) => new LiteralBuilder('v4', value),
 	code: (code: string) => new GenericBuilder('v4', code),
 	raw: (code: string) => new GenericBuilder('v4', code),
+	iso: {
+		date: (params?: Parameters<(typeof z.iso)['date']>[0]) =>
+			new GenericBuilder('v4', buildIsoCode('date', params)),
+		time: (params?: Parameters<(typeof z.iso)['time']>[0]) =>
+			new GenericBuilder('v4', buildIsoCode('time', params)),
+		datetime: (params?: Parameters<(typeof z.iso)['datetime']>[0]) =>
+			new GenericBuilder('v4', buildIsoCode('datetime', params)),
+		duration: (params?: Parameters<(typeof z.iso)['duration']>[0]) =>
+			new GenericBuilder('v4', buildIsoCode('duration', params)),
+	},
 } as const;
 
 export const buildV4 = { ...zodConstructors, ...appHelpers } as const;

@@ -204,6 +204,6 @@ describe('Adapter pipeline integration — T037', () => {
 		};
 
 		const result = parseSchema({ type: 'string' } as any, refs);
-		expect(result.text()).toContain('.describe("from-adapter")');
+		expect(result.text()).toContain('.meta({"description":"from-adapter"})');
 	});
 });

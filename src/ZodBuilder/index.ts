@@ -23,7 +23,12 @@ export {
 	applyJsonTransform,
 	applyPipe,
 } from './string.js';
-export { ArrayBuilder, applyMinItems, applyMaxItems } from './array.js';
+export {
+	ArrayBuilder,
+	applyMinItems,
+	applyMaxItems,
+	applyExactLength,
+} from './array.js';
 export {
 	ObjectBuilder,
 	applyStrict,
@@ -157,7 +162,13 @@ import { buildV4 } from './v4.js';
 export const build = buildV4;
 
 export type TypeKind = {
-	[T in keyof typeof buildV4]: ReturnType<(typeof buildV4)[T]>;
+	[T in keyof typeof buildV4 as (typeof buildV4)[T] extends (
+		...args: unknown[]
+	) => unknown
+		? T
+		: never]: ReturnType<
+		Extract<(typeof buildV4)[T], (...args: unknown[]) => unknown>
+	>;
 };
 
 export type TypeKindOf<T extends keyof TypeKind> = TypeKind[T];

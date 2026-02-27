@@ -1,4 +1,4 @@
-import type { ZodE164 } from 'zod';
+import type { z, ZodE164 } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
@@ -11,7 +11,7 @@ export class E164Builder
 {
 	readonly typeKind = 'e164' as const;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
+	constructor(version?: 'v3' | 'v4', params?: Parameters<typeof z.e164>[0]) {
+		super(version, params);
 	}
 }

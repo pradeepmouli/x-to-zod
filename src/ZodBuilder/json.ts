@@ -11,8 +11,16 @@ export class JsonBuilder
 	implements BuilderFor<ZodType>
 {
 	readonly typeKind = 'lazy' as const;
+	private readonly _jsonParams?: unknown;
+
+	constructor(version?: 'v3' | 'v4', params?: unknown) {
+		super(version);
+		this._jsonParams = params;
+	}
 
 	protected override base(): string {
-		return 'z.json()';
+		const paramsStr =
+			this._jsonParams !== undefined ? JSON.stringify(this._jsonParams) : '';
+		return paramsStr ? `z.json(${paramsStr})` : 'z.json()';
 	}
 }

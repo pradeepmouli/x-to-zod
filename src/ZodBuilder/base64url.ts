@@ -1,4 +1,4 @@
-import type { ZodBase64URL } from 'zod';
+import type { z, ZodBase64URL } from 'zod';
 import type { BuilderFor } from '../Builder/index.js';
 import { StringFormatBuilder } from './StringFormatBuilder.js';
 
@@ -11,7 +11,10 @@ export class Base64UrlBuilder
 {
 	readonly typeKind = 'base64url' as const;
 
-	constructor(version?: 'v3' | 'v4') {
-		super(version);
+	constructor(
+		version?: 'v3' | 'v4',
+		params?: Parameters<typeof z.base64url>[0],
+	) {
+		super(version, params);
 	}
 }
