@@ -288,7 +288,7 @@ export default z.null()
 `);
 	});
 
-	it('should be possible to define a custom parser', () => {
+	it('should be possible to override parsing at a specific path with postProcessors', () => {
 		expect(
 			jsonSchemaToZod(
 				{
@@ -299,18 +299,20 @@ export default z.null()
 					],
 				},
 				{
-					// module: false,
-					parserOverride: (schema, refs) => {
-						if (
-							refs.path.length === 2 &&
-							refs.path[0] === 'allOf' &&
-							refs.path[1] === 2 &&
-							schema.type === 'boolean' &&
-							schema.description === 'foo'
-						) {
-							return refs.build.any();
-						}
-					},
+					withoutDescribes: true,
+					postProcessors: [
+						{
+							processor: (_builder, context) => {
+								if (
+									(context.schema as any).type === 'boolean' &&
+									(context.schema as any).description === 'foo'
+								) {
+									return context.build.any();
+								}
+							},
+							pathPattern: 'allOf.2',
+						},
+					],
 				},
 			),
 		).toBe(`z.intersection(z.string(), z.intersection(z.number(), z.any()))`);

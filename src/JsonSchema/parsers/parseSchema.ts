@@ -46,13 +46,6 @@ export const parseSchema = <Version extends SchemaVersion>(
 			// For internal refs (#...), fall through to normal parsing.
 		}
 
-		if (refs.parserOverride) {
-			const custom = refs.parserOverride(schema, refs);
-			if (custom !== undefined) {
-				return custom as ReturnType<typeof refs.build.any>;
-			}
-		}
-
 		let seen = refs.seen.get(schema);
 
 		if (seen) {

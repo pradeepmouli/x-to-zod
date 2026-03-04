@@ -6,10 +6,6 @@ import type { Builder } from './Builder/index.js';
 export type Serializable = Jsonifiable;
 
 export type ParserSelector = (schema: JSONSchema, refs: Context) => Builder;
-export type ParserOverride = (
-	schema: JSONSchema,
-	refs: Context,
-) => Builder | undefined;
 
 export type BuildFunctions =
 	| typeof import('./ZodBuilder/v3.js').buildV3
@@ -60,7 +56,6 @@ export type Options = {
 	withoutDefaults?: boolean;
 	withoutDescribes?: boolean;
 	withJsdocs?: boolean;
-	parserOverride?: ParserOverride;
 	depth?: number;
 	type?: boolean | string;
 	noImport?: boolean;
