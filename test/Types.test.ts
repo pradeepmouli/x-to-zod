@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
 import type {
-	PreProcessor,
+	SchemaTransformer,
 	PostProcessor,
 	PostProcessorConfig,
 	PostProcessorContext,
@@ -49,9 +49,9 @@ describe('Processor Types', () => {
 		});
 	});
 
-	describe('PreProcessor', () => {
+	describe('SchemaTransformer', () => {
 		it('is a function that transforms schema', () => {
-			const processor: PreProcessor = (schema: JSONSchema) => {
+			const processor: SchemaTransformer = (schema: JSONSchema) => {
 				if (typeof schema === 'object' && schema !== null) {
 					return {
 						...schema,
@@ -70,7 +70,7 @@ describe('Processor Types', () => {
 		});
 
 		it('can return undefined to skip transformation', () => {
-			const processor: PreProcessor = () => undefined;
+			const processor: SchemaTransformer = () => undefined;
 
 			const input: JSONSchema = { type: 'string' };
 			const output = processor(input, {} as Context);
@@ -79,7 +79,7 @@ describe('Processor Types', () => {
 		});
 
 		it('can have pathPattern configuration', () => {
-			const processor: PreProcessor = function (schema: JSONSchema) {
+			const processor: SchemaTransformer = function (schema: JSONSchema) {
 				return schema;
 			};
 			processor.pathPattern = 'properties.name';
@@ -88,7 +88,10 @@ describe('Processor Types', () => {
 		});
 
 		it('receives context with path information', () => {
-			const processor: PreProcessor = (schema: JSONSchema, refs: Context) => {
+			const processor: SchemaTransformer = (
+				schema: JSONSchema,
+				refs: Context,
+			) => {
 				expect(refs.path).toBeDefined();
 				return schema;
 			};
@@ -251,7 +254,7 @@ describe('Processor Types', () => {
 
 	describe('Processor Integration', () => {
 		it('can create a pre-processor with pathPattern and use in Context', () => {
-			const preProc: PreProcessor = (schema) => {
+			const preProc: SchemaTransformer = (schema) => {
 				if (typeof schema === 'object' && schema !== null) {
 					return { ...schema, minLength: 5 };
 				}
@@ -263,13 +266,11 @@ describe('Processor Types', () => {
 				build: buildV4,
 				path: ['properties', 'username'],
 				seen: new Map(),
-				preProcessors: [preProc],
+				transformers: [preProc],
 			};
 
-			expect(context.preProcessors).toHaveLength(1);
-			expect(context.preProcessors?.[0].pathPattern).toBe(
-				'properties.username',
-			);
+			expect(context.transformers).toHaveLength(1);
+			expect(context.transformers?.[0].pathPattern).toBe('properties.username');
 		});
 
 		it('can create post-processors with different typeFilters', () => {

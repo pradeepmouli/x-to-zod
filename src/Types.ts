@@ -24,9 +24,9 @@ export interface ProcessorConfig {
 }
 
 /**
- * Pre-processor: transforms schema before parsing.
+ * Schema transformer: mutates/transforms a schema node before parsing.
  */
-export interface PreProcessor extends ProcessorConfig {
+export interface SchemaTransformer extends ProcessorConfig {
 	(
 		schema: JSONSchema07.Interface,
 		refs: Context,
@@ -68,8 +68,8 @@ export type Options = {
 	disableRefs?: boolean;
 	/** Zod version to target for generated code (default: 'v4') */
 	zodVersion?: 'v3' | 'v4';
-	/** Pre-processors to transform schema before parsing */
-	preProcessors?: PreProcessor[];
+	/** Schema transformers applied before parsing */
+	transformers?: SchemaTransformer[];
 	/** Post-processors to transform builders after parsing */
 	postProcessors?: (PostProcessor | PostProcessorConfig)[];
 };
@@ -85,7 +85,7 @@ export type Context = Options & {
 		object | boolean,
 		{ n: number; r: import('./Builder/index.js').Builder | undefined }
 	>;
-	preProcessors?: PreProcessor[];
+	transformers?: SchemaTransformer[];
 	postProcessors?: PostProcessorConfig[];
 	/** Optional SchemaProject resolver for cross-schema $refs */
 	refResolver?: import('./SchemaProject/RefResolver.js').DefaultRefResolver;

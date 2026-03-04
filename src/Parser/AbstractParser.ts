@@ -1,6 +1,6 @@
 import type {
 	Context,
-	PreProcessor,
+	SchemaTransformer,
 	PostProcessor,
 	PostProcessorConfig,
 	ProcessorConfig,
@@ -27,7 +27,7 @@ export abstract class AbstractParser<
 > implements Parser {
 	abstract readonly typeKind: TypeKind;
 
-	protected readonly preProcessors: PreProcessor[];
+	protected readonly transformers: SchemaTransformer[];
 	protected readonly postProcessors: PostProcessor[];
 
 	constructor(
@@ -36,7 +36,7 @@ export abstract class AbstractParser<
 	) {
 		// Note: this.typeKind is not yet initialized when parent constructor runs
 		// We filter in the parse() method instead
-		this.preProcessors = [];
+		this.transformers = [];
 		this.postProcessors = [];
 	}
 
@@ -69,9 +69,9 @@ export abstract class AbstractParser<
 
 	parse(): Builder {
 		// Filter processors now that typeKind is initialized
-		if (!this.preProcessors.length && this.refs.preProcessors) {
-			(this as any).preProcessors = this.filterPreProcessors(
-				this.refs.preProcessors,
+		if (!this.transformers.length && this.refs.transformers) {
+			(this as any).transformers = this.filterTransformers(
+				this.refs.transformers,
 			);
 		}
 		if (!this.postProcessors.length && this.refs.postProcessors) {
@@ -80,7 +80,7 @@ export abstract class AbstractParser<
 			);
 		}
 
-		const processedSchema = this.applyPreProcessors(this.schema);
+		const processedSchema = this.applyTransformers(this.schema);
 		let builder = this.parseImpl(processedSchema as S);
 		builder = this.applyPostProcessors(builder, processedSchema);
 		return this.applyMetadata(builder, processedSchema);
@@ -88,10 +88,10 @@ export abstract class AbstractParser<
 
 	protected abstract parseImpl(schema: S): Builder;
 
-	protected applyPreProcessors(schema: unknown): unknown {
+	protected applyTransformers(schema: unknown): unknown {
 		let current = schema;
-		for (const processor of this.preProcessors) {
-			const output = processor(current as any, this.refs) as any;
+		for (const transformer of this.transformers) {
+			const output = transformer(current as any, this.refs) as any;
 			if (output !== undefined) {
 				current = output;
 			}
@@ -168,12 +168,12 @@ export abstract class AbstractParser<
 		return builder;
 	}
 
-	protected filterPreProcessors(
-		processors: (PreProcessor & Partial<ProcessorConfig>)[] = [],
+	protected filterTransformers(
+		transformers: (SchemaTransformer & Partial<ProcessorConfig>)[] = [],
 		path: (string | number)[] = this.refs.path,
-	): PreProcessor[] {
-		return processors.filter((processor) =>
-			this.isProcessorApplicable(processor as ProcessorConfig, path),
+	): SchemaTransformer[] {
+		return transformers.filter((t) =>
+			this.isProcessorApplicable(t as ProcessorConfig, path),
 		);
 	}
 
@@ -246,8 +246,8 @@ export abstract class AbstractParser<
 			path: childPath,
 			pathString: childPathString,
 			matchPath: (pattern: string) => matchPattern(childPath, pattern),
-			preProcessors: this.refs.preProcessors
-				? this.filterPreProcessors(this.refs.preProcessors, childPath)
+			transformers: this.refs.transformers
+				? this.filterTransformers(this.refs.transformers, childPath)
 				: undefined,
 			postProcessors: this.refs.postProcessors
 				? this.filterPostProcessorConfigsForPath(

@@ -491,7 +491,7 @@ describe('Post-Processor Integration', () => {
 			};
 
 			const result = jsonSchemaToZod(schema, {
-				preProcessors: [addDescription],
+				transformers: [addDescription],
 			});
 
 			// Pre-processor should have added description

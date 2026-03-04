@@ -5,7 +5,7 @@ import type {
 	JSONSchemaObject,
 	Context,
 	PostProcessorConfig,
-	PreProcessor,
+	SchemaTransformer,
 } from '../../../src/Types';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { AbstractParser } from '../../../src/Parser/AbstractParser.js';
@@ -48,7 +48,7 @@ describe('AbstractParser', () => {
 
 	it('executes template order: pre -> parseImpl -> post -> metadata', () => {
 		const steps: string[] = [];
-		const pre: PreProcessor = (schema) => {
+		const pre: SchemaTransformer = (schema) => {
 			steps.push('pre');
 			return {
 				...(schema as JSONSchemaObject),
@@ -65,7 +65,7 @@ describe('AbstractParser', () => {
 
 		const parser = new StringTestParser(
 			{ type: 'string', description: 'orig', default: 'abc' } as JSONSchema,
-			ctx({ preProcessors: [pre], postProcessors: [post] }),
+			ctx({ transformers: [pre], postProcessors: [post] }),
 			steps,
 		);
 
