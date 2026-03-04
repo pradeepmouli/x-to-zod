@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { jsonSchemaToZod } from './jsonSchemaToZod.js';
+import { toZod as jsonSchemaToZod } from './JsonSchema/toZod.js';
 import { writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
 import { dirname, isAbsolute, resolve, extname } from 'path';
 import { pathToFileURL } from 'url';
