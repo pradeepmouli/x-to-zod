@@ -8,7 +8,7 @@
 			"Bash(xargs:*)",
 			"Bash(grep:*)",
 			"Bash(git pull)",
-			"Bash(git add*)"
+			"Bash(git:*)"
 		]
 	}
 }
