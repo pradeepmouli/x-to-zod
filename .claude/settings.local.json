@@ -1,9 +1,13 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(bash .specify/scripts/bash/create-refactor.sh --json \"reorganize parser/builder/project APIs for better discoverability/performance\")",
-      "Bash(echo \"EXIT_CODE=$?\")",
-      "Bash(npm test)"
-    ]
-  }
+	"permissions": {
+		"allow": [
+			"Bash(bash .specify/scripts/bash/create-refactor.sh --json \"reorganize parser/builder/project APIs for better discoverability/performance\")",
+			"Bash(echo \"EXIT_CODE=$?\")",
+			"Bash(npm test)",
+			"Bash(ln:*)",
+			"Bash(xargs:*)",
+			"Bash(grep:*)",
+			"Bash(git pull)"
+		]
+	}
 }
