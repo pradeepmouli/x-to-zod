@@ -1,9 +1,6 @@
 import { Jsonifiable } from 'type-fest';
 import type { JSONSchema as JSONSchema07 } from 'json-schema-typed/draft-07';
-import type {
-	JSONSchemaAny as JSONSchema,
-	transformer,
-} from './JsonSchema/types/index.js';
+import type { JSONSchemaAny as JSONSchema } from './JsonSchema/types/index.js';
 import type { Builder } from './Builder/index.js';
 
 export type Serializable = Jsonifiable;
@@ -69,7 +66,6 @@ export type Options = {
 	noImport?: boolean;
 	preferUnions?: boolean;
 	disableRefs?: boolean;
-	preprocessors?: transformer[];
 	/** Zod version to target for generated code (default: 'v4') */
 	zodVersion?: 'v3' | 'v4';
 	/** Pre-processors to transform schema before parsing */
