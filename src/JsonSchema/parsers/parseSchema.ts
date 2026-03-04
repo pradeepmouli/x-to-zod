@@ -48,7 +48,7 @@ export const parseSchema = <Version extends SchemaVersion>(
 
 		if (refs.parserOverride) {
 			const custom = refs.parserOverride(schema, refs);
-			if (custom != null) {
+			if (custom !== undefined) {
 				return custom as ReturnType<typeof refs.build.any>;
 			}
 		}

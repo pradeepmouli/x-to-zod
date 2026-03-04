@@ -9,7 +9,7 @@ export type ParserSelector = (schema: JSONSchema, refs: Context) => Builder;
 export type ParserOverride = (
 	schema: JSONSchema,
 	refs: Context,
-) => Builder | void;
+) => Builder | undefined;
 
 export type BuildFunctions =
 	| typeof import('./ZodBuilder/v3.js').buildV3
