@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { jsonSchemaToZod } from '../src/jsonSchemaToZod.js';
+import { jsonSchemaToZod } from '../src/index.js';
 
 describe('eval', () => {
 	it('is usable I guess', () => {

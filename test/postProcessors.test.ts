@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { jsonSchemaToZod } from '../src/jsonSchemaToZod.js';
+import { jsonSchemaToZod } from '../src/index.js';
 import type { PostProcessor, PostProcessorConfig } from '../src/Types.js';
 import { is } from '../src/utils/is.js';
 
