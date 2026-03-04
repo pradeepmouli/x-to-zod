@@ -183,7 +183,7 @@ export type BuildV4 = {
 	tuple: (items: Builder[]) => TupleBuilder;
 	set: (itemSchema: Builder) => SetBuilder;
 	map: (keySchema: Builder, valueSchema: Builder) => MapBuilder;
-	enum: (values: Serializable[]) => EnumBuilder;
+	enum: (values: Serializable[] | readonly Serializable[]) => EnumBuilder;
 	nativeEnum: (enumReference: string) => NativeEnumBuilder;
 	literal: (value: Serializable) => ConstBuilder;
 	union: (schemas: Builder[]) => UnionBuilder;
@@ -345,7 +345,8 @@ const zodConstructors = {
 		new MapBuilder('v4', keySchema, valueSchema),
 
 	// ── Schema combinators ──
-	enum: (values: Serializable[]) => new EnumBuilder('v4', values),
+	enum: (values: Serializable[] | readonly Serializable[]) =>
+		new EnumBuilder('v4', values),
 	nativeEnum: (enumReference: string) =>
 		new NativeEnumBuilder('v4', enumReference),
 	literal: (value: Serializable) => new ConstBuilder('v4', value),

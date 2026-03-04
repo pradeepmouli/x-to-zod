@@ -7,9 +7,12 @@ import { ZodBuilder } from './BaseBuilder.js';
  */
 export class EnumBuilder extends ZodBuilder<ZodEnum, 'enum', []> {
 	readonly typeKind = 'enum' as const;
-	private readonly _values: Serializable[];
+	private readonly _values: Serializable[] | readonly Serializable[];
 
-	constructor(version: 'v3' | 'v4' = 'v4', values: Serializable[] = []) {
+	constructor(
+		version: 'v3' | 'v4' = 'v4',
+		values: Serializable[] | readonly Serializable[] = [],
+	) {
 		super(version);
 		this._values = values;
 	}

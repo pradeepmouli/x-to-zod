@@ -9,8 +9,8 @@ import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 export class ConstParser extends AbstractParser<'const'> {
 	readonly typeKind = 'const' as const;
 
-	protected parseImpl(schema: JSONSchema): ZodBuilder {
-		const s = schema as JSONSchemaObject & { const: Serializable };
+	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
+		const s = schema;
 		return this.refs.build.literal(s.const);
 	}
 }

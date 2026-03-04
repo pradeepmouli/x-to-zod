@@ -10,7 +10,7 @@ export class EnumParser extends AbstractParser<'enum'> {
 	readonly typeKind = 'enum' as const;
 
 	protected parseImpl(schema: JSONSchema): ZodBuilder {
-		const s = schema as JSONSchemaObject & { enum: Serializable[] };
-		return this.refs.build.enum(s.enum);
+		const s = schema as JSONSchemaObject;
+		return this.refs.build.enum(s.enum!);
 	}
 }

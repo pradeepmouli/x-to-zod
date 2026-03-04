@@ -9,7 +9,7 @@ export class ConditionalParser extends AbstractParser<'conditional'> {
 	readonly typeKind = 'conditional' as const;
 
 	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
-		const s = schema as any;
+		const s = schema;
 
 		// Runtime checks for required properties
 		if (!s.if || !s.then || !s.else) {
