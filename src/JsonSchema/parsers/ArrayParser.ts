@@ -11,7 +11,9 @@ export class ArrayParser extends AbstractParser<'array'> {
 	}
 
 	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
-		const s = schema; // Array schemas cannot be boolean
+		const s = schema as JSONSchemaObject & {
+			errorMessage?: Record<string, string | undefined>;
+		};
 
 		// Handle tuple (array of schemas) vs array (single schema)
 		if (Array.isArray(s.items)) {
