@@ -5,10 +5,23 @@ import { expandJsdocs } from '../utils/jsdocs.js';
 import { buildV3 } from '../ZodBuilder/v3.js';
 import { buildV4 } from '../ZodBuilder/v4.js';
 
-export const toZod = (
-	schema: JSONSchema,
-	{ module, name, type, noImport, ...rest }: Options = {},
-): string => {
+export const toZod = (schema: JSONSchema, options: Options = {}): string => {
+	// Guard against removed options that would be silently ignored at runtime
+	const opts = options as Record<string, unknown>;
+	if ('parserOverride' in opts) {
+		throw new Error(
+			'`parserOverride` has been removed. Use `registerParser()` for custom parsers ' +
+				'or `postProcessors` with `pathPattern` for path-specific overrides.',
+		);
+	}
+	if ('preprocessors' in opts || 'preProcessors' in opts) {
+		throw new Error(
+			'`preprocessors`/`preProcessors` have been renamed to `transformers`.',
+		);
+	}
+
+	const { module, name, type, noImport, ...rest } = options;
+
 	if (type && (!name || module !== 'esm')) {
 		throw new Error(
 			'Option `type` requires `name` to be set and `module` to be `esm`',
