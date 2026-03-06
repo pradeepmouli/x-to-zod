@@ -9,7 +9,12 @@
       "Bash(grep:*)",
       "Bash(git pull)",
       "Bash(git:*)",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(test:*)",
+      "Bash(npm run:*)",
+      "Bash(node:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx oxlint:*)"
     ]
   }
 }
