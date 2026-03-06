@@ -1,4 +1,3 @@
-import type { Serializable } from '../../Types.js';
 import type {
 	JSONSchemaAny as JSONSchema,
 	JSONSchemaObject,
@@ -11,6 +10,11 @@ export class EnumParser extends AbstractParser<'enum'> {
 
 	protected parseImpl(schema: JSONSchema): ZodBuilder {
 		const s = schema as JSONSchemaObject;
-		return this.refs.build.enum(s.enum!);
+		if (!Array.isArray(s.enum)) {
+			throw new Error(
+				`EnumParser: schema at path '${this.refs.path?.join('.') || '$'}' is missing a valid 'enum' array`,
+			);
+		}
+		return this.refs.build.enum(s.enum);
 	}
 }
