@@ -520,141 +520,58 @@ build.object({ name: build.string() }).strict().text()
 
 ## Advanced Features
 
-### Parser Override
+### Custom Parsers
 
-The `parserOverride` option allows you to customize the code generation for specific schema nodes. This is useful when you need to:
-- Use custom Zod schemas for specific patterns
-- Replace generated code with hand-crafted validators
-- Integrate with custom validation libraries
+Register custom parsers for schema types not handled by the built-in parsers. Custom parsers are the primary extension point for customizing code generation.
 
-#### Function Signature
+#### Using `registerParser()`
 
 ```typescript
-type ParserOverride = (
-  schema: JsonSchemaObject,
-  refs: Context
-) => BaseBuilder | string | void;
+import { registerParser, AbstractParser, jsonSchemaToZod } from "x-to-zod";
+
+// Define a custom parser class
+class CustomDateTimeParser extends AbstractParser<'custom-datetime'> {
+  readonly typeKind = 'custom-datetime' as const;
+
+  protected parseImpl(schema) {
+    return this.refs.build.code('z.string().datetime()');
+  }
+}
+
+// Register it globally
+registerParser('custom-datetime', CustomDateTimeParser);
+
+// Now schemas with type: 'custom-datetime' dispatch to your parser
+const code = jsonSchemaToZod({ type: 'custom-datetime' } as any);
+// Output: z.string().datetime()
 ```
 
-**Parameters:**
-- `schema`: The current JSON schema node being processed
-- `refs`: Context object containing:
-  - `path`: Array tracking the current position in the schema (e.g., `['allOf', 0, 'properties', 'name']`)
-  - `seen`: Map for circular reference detection
-  - All other options passed to `jsonSchemaToZod()`
+Custom parsers extend `AbstractParser` and receive full access to:
+- `this.schema` — the current schema node
+- `this.refs` — context with path tracking, build factory, and options
+- `this.parseChild(schema, ...path)` — recursive parsing of child schemas
+- Automatic `transformers` and `postProcessors` pipeline integration
 
-**Return Values:**
-- `string`: Replace the generated code with your custom Zod expression (e.g., `'myCustomSchema'`)
-- `BaseBuilder`: Return a builder instance to customize generation programmatically
-- `void` (or `undefined`): Use the default parser behavior for this node
+### Schema Transformers
 
-#### Example: Replace Specific Schema Nodes
-
-```typescript
-import { jsonSchemaToZod } from "x-to-zod";
-
-const schema = {
-  allOf: [
-    { type: 'string' },
-    { type: 'number' },
-    { type: 'boolean', description: 'custom-flag' }
-  ]
-};
-
-const code = jsonSchemaToZod(schema, {
-  parserOverride: (schema, refs) => {
-    // Target the third element in allOf with specific description
-    if (
-      refs.path.length === 2 &&
-      refs.path[0] === 'allOf' &&
-      refs.path[1] === 2 &&
-      schema.type === 'boolean' &&
-      schema.description === 'custom-flag'
-    ) {
-      // Replace with custom validation
-      return 'myCustomBooleanValidator';
-    }
-    // Use default behavior for all other nodes
-  }
-});
-
-// Output: z.intersection(z.string(), z.intersection(z.number(), myCustomBooleanValidator))
-```
-
-#### Example: Use Custom Schemas for Format Strings
-
-```typescript
-import { jsonSchemaToZod } from "x-to-zod";
-
-const schema = {
-  type: 'object',
-  properties: {
-    email: { type: 'string', format: 'email' },
-    customId: { type: 'string', format: 'x-custom-id' }
-  }
-};
-
-const code = jsonSchemaToZod(schema, {
-  parserOverride: (schema, refs) => {
-    // Replace custom format with your own schema
-    if (schema.type === 'string' && schema.format === 'x-custom-id') {
-      return 'customIdSchema.refine((v) => /^ID-\\d{6}$/.test(v))';
-    }
-  }
-});
-```
-
-#### Example: Path-Based Conditional Logic
-
-```typescript
-const code = jsonSchemaToZod(complexSchema, {
-  parserOverride: (schema, refs) => {
-    // Target all schemas under 'definitions'
-    if (refs.path[0] === 'definitions') {
-      const defName = refs.path[1];
-      return `sharedSchemas.${defName}`;
-    }
-
-    // Target deeply nested properties
-    if (refs.path.join('.') === 'properties.user.properties.metadata') {
-      return 'z.record(z.string(), z.unknown())';
-    }
-  }
-});
-```
-
-### Preprocessors
-
-The `preprocessors` option allows you to transform JSON schema nodes **before** parsing begins. This is useful for:
+The `transformers` option transforms JSON schema nodes **before** parsing. Use this for:
 - Normalizing vendor-specific schema extensions
-- Applying global transformations to schemas
+- Applying global schema transformations
 - Removing or modifying unsupported keywords
 - Injecting default values or constraints
 
 #### Function Signature
 
 ```typescript
-type transformer = (
-  schema: JsonSchemaObject,
-  refs: Context
-) => JsonSchemaObject | undefined;
+interface SchemaTransformer {
+  (schema: JsonSchemaObject, refs: Context): JsonSchemaObject | undefined;
+  pathPattern?: string | string[];  // Optional path filtering
+}
 ```
-
-**Parameters:**
-- `schema`: The current JSON schema node
-- `refs`: Context object with path tracking and options
 
 **Return Values:**
 - `JsonSchemaObject`: The transformed schema (replaces the original)
 - `undefined`: Keep the schema unchanged
-
-#### Execution Order
-
-Preprocessors run **before** `parserOverride` and before any default parsing:
-
-1. **Preprocessors** transform the schema
-2. **ParserOverride** can replace code generation
-3. **Default parsers** generate Zod code
 
 #### Example: Normalize Vendor Extensions
 
@@ -666,16 +583,15 @@ const schema = {
   properties: {
     name: {
       type: 'string',
-      'x-custom-min': 5,  // Vendor-specific extension
+      'x-custom-min': 5,
       'x-custom-max': 100
     }
   }
 };
 
 const code = jsonSchemaToZod(schema, {
-  preprocessors: [
+  transformers: [
     (schema, refs) => {
-      // Convert custom extensions to standard JSON schema
       if (schema['x-custom-min'] !== undefined) {
         return {
           ...schema,
@@ -690,93 +606,81 @@ const code = jsonSchemaToZod(schema, {
 // Output includes: z.string().min(5).max(100)
 ```
 
-#### Example: Strip Unsupported Keywords
+#### Example: Multiple Transformers with Path Filtering
+
+Transformers execute in order and support `pathPattern` for targeted application:
 
 ```typescript
 const code = jsonSchemaToZod(schema, {
-  preprocessors: [
-    (schema, refs) => {
-      const { $comment, examples, ...rest } = schema;
-      // Remove keywords not supported by Zod
-      return rest;
-    }
-  ]
-});
-```
-
-#### Example: Inject Constraints Based on Path
-
-```typescript
-const code = jsonSchemaToZod(schema, {
-  preprocessors: [
-    (schema, refs) => {
-      // Add minimum length to all string properties under 'user'
-      if (
-        refs.path[0] === 'properties' &&
-        refs.path[1] === 'user' &&
-        schema.type === 'string' &&
-        !schema.minLength
-      ) {
-        return {
-          ...schema,
-          minLength: 1  // Ensure non-empty strings
-        };
-      }
-    }
-  ]
-});
-```
-
-#### Example: Multiple Preprocessors
-
-Preprocessors are executed in order, allowing you to chain transformations:
-
-```typescript
-const code = jsonSchemaToZod(schema, {
-  preprocessors: [
-    // First: normalize vendor extensions
+  transformers: [
+    // Normalize vendor extensions everywhere
     (schema) => {
       if (schema['x-nullable']) {
         return { ...schema, nullable: true };
       }
     },
-    // Second: apply default constraints
+    // Apply default constraints to strings
+    Object.assign(
+      (schema) => {
+        if (schema.type === 'string' && !schema.maxLength) {
+          return { ...schema, maxLength: 1000 };
+        }
+      },
+      { pathPattern: 'properties.*' }  // Only under properties
+    ),
+    // Strip unsupported keywords
     (schema) => {
-      if (schema.type === 'string' && !schema.maxLength) {
-        return { ...schema, maxLength: 1000 };
-      }
-    },
-    // Third: remove internal metadata
-    (schema) => {
-      const { 'x-internal-id': _, ...rest } = schema;
+      const { $comment, examples, ...rest } = schema;
       return rest;
     }
   ]
 });
 ```
 
-### Combining ParserOverride and Preprocessors
+### Combining Transformers and Post-Processors
 
-Use both options together for maximum flexibility:
+The full pipeline runs in this order:
+
+```
+Schema → transformers → Parser → postProcessors → Builder
+         (Schema→Schema)         (Builder→Builder)
+```
+
+Use `transformers` to modify schemas before parsing and `postProcessors` to modify builders after parsing:
 
 ```typescript
 const code = jsonSchemaToZod(schema, {
-  preprocessors: [
-    // Transform schema structure first
+  // Transform schema structure first
+  transformers: [
     (schema) => {
       if (schema['x-custom-type']) {
         return { type: schema['x-custom-type'], ...schema };
       }
     }
   ],
-  parserOverride: (schema, refs) => {
-    // Then override code generation for specific cases
-    if (schema.type === 'custom-type') {
-      return 'myCustomTypeValidator';
+  // Then modify the generated builder
+  postProcessors: [
+    {
+      processor: (builder, context) => {
+        if ((context.schema as any).type === 'custom-type') {
+          return context.build.any();
+        }
+      },
+      pathPattern: 'properties.*'
     }
-  }
+  ]
 });
 ```
+
+### Migration from Previous Versions
+
+If you were using `parserOverride` or `preprocessors`, update your code:
+
+| Before | After |
+|--------|-------|
+| `parserOverride: fn` | Use `registerParser()` for type-based overrides, or `postProcessors` with `pathPattern` for path-specific overrides |
+| `preprocessors: [...]` | `transformers: [...]` (same signature, renamed) |
+| `preProcessors: [...]` | `transformers: [...]` (same signature, renamed) |
 
 ## Documentation
 
