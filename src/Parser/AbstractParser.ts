@@ -1,13 +1,14 @@
+import type { Context } from '../context.js';
 import type {
-	Context,
 	SchemaTransformer,
 	PostProcessor,
 	PostProcessorConfig,
 	ProcessorConfig,
-} from '../Types.js';
+} from '../PostProcessing/types.js';
 import { matchPath as matchPattern } from '../PostProcessing/pathMatcher.js';
 import type { Builder } from '../Builder/index.js';
 import type { Parser } from './index.js';
+import type { InferTypeKind } from './SchemaTypes.js';
 
 // Forward declaration to avoid circular dependency
 let _parseSchema:
@@ -18,12 +19,16 @@ let _parseSchema:
  * Abstract base class implementing the template method for schema parsing.
  *
  * Generic and not specific to any schema format — the concrete schema type
- * is parameterised via `S`. JSON Schema parsers use `S = JSONSchemaObject`,
+ * is parameterised via `S`. JSON Schema parsers use `S = SchemaNode`,
  * but any other object-based schema format can extend this class directly.
+ *
+ * The generic parameter order mirrors `ZodBuilder<Z, T = Z['def']['type']>`:
+ * the primary schema type comes first and the `TypeKind` discriminator is
+ * inferred from it when `S` has a string `type` property.
  */
 export abstract class AbstractParser<
-	TypeKind extends string = string,
 	S extends object = object,
+	TypeKind extends string = InferTypeKind<S>,
 > implements Parser {
 	abstract readonly typeKind: TypeKind;
 

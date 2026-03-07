@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 import type { Parser, ParserConstructor } from '../../src/Parser/index.js';
 import { AbstractParser } from '../../src/Parser/AbstractParser.js';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
-import type { Context } from '../../src/Types.js';
+import type { Context } from '../../src/context.js';
 
 const ctx = (): Context => ({
 	build: buildV4,
@@ -39,7 +39,7 @@ describe('Parser interface — Gap 5a', () => {
 	});
 
 	it('AbstractParser subclass satisfies the Parser interface', () => {
-		class ConcreteParser extends AbstractParser<'test'> {
+		class ConcreteParser extends AbstractParser<object, 'test'> {
 			readonly typeKind = 'test' as const;
 			protected parseImpl() {
 				return this.refs.build.string();

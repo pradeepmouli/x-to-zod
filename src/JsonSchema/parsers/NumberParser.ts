@@ -1,17 +1,17 @@
-import type { Context } from '../../Types.js';
-import { type JSONSchemaObject } from '../types/index.js';
+import type { Context } from '../../context.js';
+import { type SchemaNode, type NumberSchema } from '../types/index.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class NumberParser extends AbstractParser<'number' | 'integer'> {
+export class NumberParser extends AbstractParser<NumberSchema> {
 	readonly typeKind = 'number' as const;
 
-	constructor(schema: JSONSchemaObject, refs: Context) {
-		super(schema, refs);
+	constructor(schema: SchemaNode, refs: Context) {
+		super(schema as NumberSchema, refs);
 	}
 
-	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
-		const s = schema as JSONSchemaObject & {
+	protected parseImpl(schema: SchemaNode): ZodBuilder {
+		const s = schema as SchemaNode & {
 			type?: string;
 			format?: string;
 			multipleOf?: number;

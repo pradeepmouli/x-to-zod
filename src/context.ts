@@ -1,54 +1,12 @@
-import { Jsonifiable } from 'type-fest';
-import type { JSONSchema as JSONSchema07 } from 'json-schema-typed/draft-07';
-import type { JSONSchemaAny as JSONSchema } from './JsonSchema/types/index.js';
-import type { Builder } from './Builder/index.js';
-
-export type Serializable = Jsonifiable;
-
-export type ParserSelector = (schema: JSONSchema, refs: Context) => Builder;
+import type {
+	SchemaTransformer,
+	PostProcessor,
+	PostProcessorConfig,
+} from './PostProcessing/types.js';
 
 export type BuildFunctions =
 	| typeof import('./ZodBuilder/v3.js').buildV3
 	| typeof import('./ZodBuilder/v4.js').buildV4;
-
-export type ZodVersion = 'v3' | 'v4';
-
-export type ProcessorPathPattern = string | string[];
-
-export interface ProcessorConfig {
-	pathPattern?: ProcessorPathPattern;
-}
-
-/**
- * Schema transformer: mutates/transforms a schema node before parsing.
- */
-export interface SchemaTransformer extends ProcessorConfig {
-	(
-		schema: JSONSchema07.Interface,
-		refs: Context,
-	): JSONSchema07.Interface | undefined;
-}
-
-export interface PostProcessorContext {
-	path: (string | number)[];
-	pathString: string;
-	schema: JSONSchema;
-	build: BuildFunctions;
-	matchPath: (pattern: string) => boolean;
-}
-
-/**
- * Post-processor: transforms a builder after parsing.
- */
-export type PostProcessor = (
-	builder: Builder,
-	context: PostProcessorContext,
-) => Builder | undefined;
-
-export interface PostProcessorConfig extends ProcessorConfig {
-	processor: PostProcessor;
-	typeFilter?: string | string[];
-}
 
 export type Options = {
 	name?: string;

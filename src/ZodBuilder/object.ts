@@ -40,7 +40,7 @@ export class ObjectBuilder extends ZodBuilder<
 	 */
 	static fromCode(
 		code: string,
-		refs?: import('../Types.js').Context,
+		refs?: import('../context.js').Context,
 	): ObjectBuilder {
 		const zodVersion = refs?.zodVersion || 'v4';
 		const builder = new ObjectBuilder(zodVersion, {}, undefined);
@@ -283,7 +283,7 @@ export function applyCatchall(
  */
 export function applyLoose(
 	zodStr: string,
-	zodVersion: import('../Types.js').ZodVersion = 'v4',
+	zodVersion: import('./types.js').ZodVersion = 'v4',
 ): string {
 	return zodVersion === 'v4' ? `${zodStr}.loose()` : `${zodStr}.passthrough()`;
 }

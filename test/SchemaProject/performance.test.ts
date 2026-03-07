@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import { mkdtempSync, rmSync } from 'fs';
 import path from 'path';
-import type { JSONSchema } from '../../src/Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../../src/JsonSchema/types/index.js';
 
 describe('Large Schema Performance (T078)', () => {
 	it('should build 50+ schemas in under 5 seconds', async () => {

@@ -1,4 +1,4 @@
-import type { JSONSchemaObject } from '../JsonSchema/types/index.js';
+import type { SchemaNode } from '../JsonSchema/types/index.js';
 
 type Opener = string;
 type MessagePrefix = string;
@@ -7,7 +7,7 @@ type Closer = string;
 type Builder = [Opener, Closer] | [Opener, MessagePrefix, Closer];
 
 export function withMessage(
-	schema: JSONSchemaObject,
+	schema: SchemaNode,
 	key: string,
 	get: (props: { value: unknown; json: string }) => Builder | void,
 ) {

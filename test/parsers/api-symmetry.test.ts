@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parse } from '../../src/JsonSchema/parsers/index.js';
 import { buildV4 } from '../../src/ZodBuilder/v4.js';
-import type { Context } from '../../src/Types.js';
+import type { Context } from '../../src/context.js';
 
 const refs = (): Context => ({
 	seen: new Map(),

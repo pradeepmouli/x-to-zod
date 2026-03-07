@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { ZodType } from 'zod';
 import type { Builder, ParamsFor } from '../Builder/index.js';
-import type { Serializable } from '../Types.js';
+import type { Serializable } from './types.js';
 import { NumberBuilder } from './number.js';
 import { StringBuilder } from './string.js';
 import { BooleanBuilder } from './boolean.js';

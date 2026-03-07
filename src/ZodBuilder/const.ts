@@ -1,5 +1,5 @@
 import type { ZodTemplateLiteral } from 'zod';
-import { Serializable } from '../Types.js';
+import { Serializable } from './types.js';
 import { ZodBuilder } from './BaseBuilder.js';
 
 /**

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { parseRef, extractRefs } from '../../src/SchemaProject/parseRef.js';
 import { DefaultRefResolver } from '../../src/SchemaProject/RefResolver.js';
 import { SchemaRegistry } from '../../src/SchemaProject/SchemaRegistry.js';
-import type { JSONSchema } from '../../src/Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../../src/JsonSchema/types/index.js';
 
 describe('parseRef depth limits (T077)', () => {
 	it('should handle deeply nested schemas without stack overflow', () => {

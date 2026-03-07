@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parse } from '../../src/JsonSchema/parsers/index.js';
-import type { Context } from '../../src/Types';
+import type { Context } from '../../src/context';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
 const refsV4: Context = {

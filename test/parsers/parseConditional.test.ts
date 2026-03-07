@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
-import type { Context } from '../../src/Types';
+import type { Context } from '../../src/context';
 
 const ctx = (): Context => ({
 	build: buildV4,

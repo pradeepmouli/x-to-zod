@@ -1,7 +1,8 @@
-import type { Context } from '../../Types.js';
+import type { Context } from '../../context.js';
 import type {
 	JSONSchemaAny as JSONSchema,
-	JSONSchemaObject,
+	SchemaNode,
+	RecordSchema,
 } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
@@ -18,15 +19,15 @@ import { parseSchema } from './parseSchema.js';
  * - `additionalProperties: true` → `z.record(z.string(), z.any())`
  * - No `additionalProperties` or `false` → `z.record(z.string(), z.any())`
  */
-export class RecordParser extends AbstractParser<'record'> {
+export class RecordParser extends AbstractParser<RecordSchema, 'record'> {
 	readonly typeKind = 'record' as const;
 
-	constructor(schema: JSONSchemaObject, refs: Context) {
-		super(schema, refs);
+	constructor(schema: SchemaNode, refs: Context) {
+		super(schema as RecordSchema, refs);
 	}
 
 	protected parseImpl(schema: JSONSchema): Builder {
-		const s = schema as JSONSchemaObject;
+		const s = schema as SchemaNode;
 		const ap = (s as any).additionalProperties;
 
 		const keySchema = this.refs.build.string();

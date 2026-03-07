@@ -1,12 +1,15 @@
 // @ts-nocheck
 import { describe, it, expect, vi } from 'vitest';
+import type { Context } from '../../../src/context';
 import type {
-	JSONSchema,
-	JSONSchemaObject,
-	Context,
 	PostProcessorConfig,
 	SchemaTransformer,
-} from '../../../src/Types';
+} from '../../../src/PostProcessing/types';
+import type {
+	JSONSchemaAny as JSONSchema,
+	SchemaNode,
+} from '../../../src/JsonSchema/types/index';
+import type { TypedSchema } from '../../../src/JsonSchema/types/index.js';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { AbstractParser } from '../../../src/Parser/AbstractParser.js';
 
@@ -18,7 +21,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 	...overrides,
 });
 
-class StringTestParser extends AbstractParser<'string'> {
+class StringTestParser extends AbstractParser<TypedSchema<'string'>> {
 	readonly typeKind = 'string' as const;
 
 	constructor(
@@ -51,7 +54,7 @@ describe('AbstractParser', () => {
 		const pre: SchemaTransformer = (schema) => {
 			steps.push('pre');
 			return {
-				...(schema as JSONSchemaObject),
+				...(schema as SchemaNode),
 				description: 'from-pre',
 			} as JSONSchema;
 		};

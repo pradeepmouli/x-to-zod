@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { jsonSchemaToZod } from '../src/index.js';
-import type { PostProcessor, PostProcessorConfig } from '../src/Types.js';
+import type {
+	PostProcessor,
+	PostProcessorConfig,
+} from '../src/PostProcessing/types.js';
 import { is } from '../src/utils/is.js';
 
 describe('Post-Processor Integration', () => {

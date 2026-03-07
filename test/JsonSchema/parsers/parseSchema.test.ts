@@ -5,7 +5,7 @@ import {
 	registerParser,
 	parserRegistry,
 } from '../../../src/JsonSchema/parsers/registry.js';
-import type { Context } from '../../../src/Types';
+import type { Context } from '../../../src/context';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
 	build: buildV4,

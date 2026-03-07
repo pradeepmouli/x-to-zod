@@ -1,7 +1,8 @@
-import type { Context } from '../../Types.js';
+import type { Context } from '../../context.js';
 import type {
 	JSONSchemaAny as JSONSchema,
-	JSONSchemaObject,
+	SchemaNode,
+	ObjectSchema,
 } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
@@ -10,15 +11,15 @@ import { addJsdocs } from '../../utils/jsdocs.js';
 import { parseSchema } from './parseSchema.js';
 import { is } from '../is.js';
 
-export class ObjectParser extends AbstractParser<'object'> {
+export class ObjectParser extends AbstractParser<ObjectSchema> {
 	readonly typeKind = 'object' as const;
 
-	constructor(schema: JSONSchemaObject & { type?: string }, refs: Context) {
-		super(schema, refs);
+	constructor(schema: SchemaNode & { type?: string }, refs: Context) {
+		super(schema as ObjectSchema, refs);
 	}
 
 	protected parseImpl(schema: JSONSchema): Builder {
-		const objectSchema = schema as JSONSchemaObject & {
+		const objectSchema = schema as SchemaNode & {
 			type: 'object';
 			properties?: Record<string, JSONSchema>;
 			required?: string[];

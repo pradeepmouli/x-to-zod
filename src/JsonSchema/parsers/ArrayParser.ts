@@ -1,17 +1,17 @@
-import type { Context } from '../../Types.js';
-import type { JSONSchemaObject } from '../types/index.js';
+import type { Context } from '../../context.js';
+import type { SchemaNode, ArraySchema } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 
-export class ArrayParser extends AbstractParser<'array'> {
+export class ArrayParser extends AbstractParser<ArraySchema> {
 	readonly typeKind = 'array' as const;
 
-	constructor(schema: JSONSchemaObject & { type?: string }, refs: Context) {
-		super(schema, refs);
+	constructor(schema: SchemaNode & { type?: string }, refs: Context) {
+		super(schema as ArraySchema, refs);
 	}
 
-	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
-		const s = schema as JSONSchemaObject & {
+	protected parseImpl(schema: SchemaNode): ZodBuilder {
+		const s = schema as SchemaNode & {
 			errorMessage?: Record<string, string | undefined>;
 		};
 

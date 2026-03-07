@@ -530,7 +530,7 @@ Register custom parsers for schema types not handled by the built-in parsers. Cu
 import { registerParser, AbstractParser, jsonSchemaToZod } from "x-to-zod";
 
 // Define a custom parser class
-class CustomDateTimeParser extends AbstractParser<'custom-datetime'> {
+class CustomDateTimeParser extends AbstractParser<object, 'custom-datetime'> {
   readonly typeKind = 'custom-datetime' as const;
 
   protected parseImpl(schema) {

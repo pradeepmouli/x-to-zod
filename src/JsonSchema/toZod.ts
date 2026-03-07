@@ -1,4 +1,4 @@
-import type { Options } from '../Types.js';
+import type { Options } from '../context.js';
 import type { JSONSchemaAny as JSONSchema } from './types/index.js';
 import { parseSchema } from './parsers/parseSchema.js';
 import { expandJsdocs } from '../utils/jsdocs.js';

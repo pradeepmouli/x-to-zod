@@ -1,27 +1,20 @@
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type {
 	JSONSchemaAny as JSONSchema,
-	JSONSchemaObject,
-	SchemaVersion,
-	TypeValue,
+	AnyOfSchema,
 } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
 import { parseSchema } from './parseSchema.js';
-
-type ApplicableType<TypeKind extends string> = TypeKind extends TypeValue
-	? JSONSchemaObject<SchemaVersion>
-	: Exclude<JSONSchemaObject<SchemaVersion>, boolean>;
 
 /**
  * Parser for JSON Schema anyOf keyword.
  * Converts anyOf constraints to Zod union.
  */
-export class AnyOfParser extends AbstractParser<'anyOf'> {
+export class AnyOfParser extends AbstractParser<AnyOfSchema, 'anyOf'> {
 	readonly typeKind = 'anyOf' as const;
 
-	protected parseImpl(schema: ApplicableType<'anyOf'>): Builder {
-		const anyOfSchema = schema as { anyOf?: JSONSchema[] };
-		const anyOf = anyOfSchema.anyOf || [];
+	protected parseImpl(schema: AnyOfSchema): Builder {
+		const anyOf = schema.anyOf || [];
 
 		if (anyOf.length === 0) {
 			return this.refs.build.any();

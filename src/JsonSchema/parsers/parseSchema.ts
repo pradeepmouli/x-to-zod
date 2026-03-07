@@ -1,10 +1,12 @@
 import { parseDefault } from './parseDefault.js';
-import { ParserSelector, Context } from '../../Types.js';
+import type { Context } from '../../context.js';
 import {
 	type JSONSchemaAny as JSONSchema,
 	type SchemaVersion,
 } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
+
+type ParserSelector = (schema: JSONSchema, refs: Context) => Builder;
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';

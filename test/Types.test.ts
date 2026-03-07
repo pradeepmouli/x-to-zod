@@ -1,15 +1,14 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
+import type { Context, Options } from '../src/context.js';
 import type {
-	SchemaTransformer,
 	PostProcessor,
 	PostProcessorConfig,
 	PostProcessorContext,
+	SchemaTransformer,
 	ProcessorConfig,
 	ProcessorPathPattern,
-	JSONSchema,
-	Context,
-} from '../src/Types.js';
+} from '../src/PostProcessing/types.js';
 import { buildV4 } from '../src/ZodBuilder/index.js';
 
 describe('Processor Types', () => {

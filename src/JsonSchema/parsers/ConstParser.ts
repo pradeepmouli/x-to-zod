@@ -1,14 +1,12 @@
-import type { JSONSchemaObject } from '../types/index.js';
+import type { ConstSchema } from '../types/index.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class ConstParser extends AbstractParser<'const'> {
+export class ConstParser extends AbstractParser<ConstSchema, 'const'> {
 	readonly typeKind = 'const' as const;
 
-	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
-		const hasOwnConst =
-			Object.prototype.hasOwnProperty.call(schema, 'const') && schema.const !== undefined;
-		if (!hasOwnConst) {
+	protected parseImpl(schema: ConstSchema): ZodBuilder {
+		if (!('const' in schema)) {
 			throw new Error(
 				`ConstParser: schema at path '${this.refs.pathString}' is missing a 'const' property`,
 			);

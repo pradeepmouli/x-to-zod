@@ -141,7 +141,7 @@ export abstract class ZodBuilder<
 	 * Get the target Zod version for code generation.
 	 * @returns 'v3' or 'v4' (default: 'v4')
 	 */
-	protected get zodVersion(): import('../Types.js').ZodVersion {
+	protected get zodVersion(): import('./types.js').ZodVersion {
 		return this._version || 'v4';
 	}
 
