@@ -12,7 +12,9 @@ export class EnumParser extends AbstractParser<'enum'> {
 		const s = schema as JSONSchemaObject;
 		if (!Array.isArray(s.enum)) {
 			throw new Error(
-				`EnumParser: schema at path '${this.refs.path?.join('.') || '$'}' is missing a valid 'enum' array`,
+				`EnumParser: schema at path '${
+					this.refs.pathString ?? (this.refs.path?.length ? `$.${this.refs.path.join('.')}` : '$')
+				}' is missing a valid 'enum' array`,
 			);
 		}
 		return this.refs.build.enum(s.enum);
