@@ -8,7 +8,7 @@ export class ConstParser extends AbstractParser<'const'> {
 	protected parseImpl(schema: JSONSchemaObject): ZodBuilder {
 		if (!('const' in schema)) {
 			throw new Error(
-				`ConstParser: schema at path '${this.refs.path?.join('.') || '$'}' is missing a 'const' property`,
+				`ConstParser: schema at path '${this.refs.pathString}' is missing a 'const' property`,
 			);
 		}
 		return this.refs.build.literal(schema.const);
