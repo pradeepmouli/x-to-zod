@@ -1,6 +1,6 @@
 import type { ZodLiteral } from 'zod';
 import { ZodBuilder } from './BaseBuilder.js';
-import { Serializable } from './types.js';
+import type { Serializable } from './types.js';
 
 /**
  * Fluent LiteralBuilder: represents z.literal() schema.
