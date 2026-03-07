@@ -565,11 +565,13 @@ The `transformers` option transforms JSON schema nodes **before** parsing. Use t
 ```typescript
 import type { SchemaTransformer, Context } from 'x-to-zod';
 
-// SchemaTransformer is a callable with an optional pathPattern property:
-type SchemaTransformer = {
-  (schema: object, refs: Context): object | undefined;
-  pathPattern?: string | string[];
+// SchemaTransformer is a callable with an optional pathPattern property, for example:
+const transformer: SchemaTransformer = (schema: object, refs: Context): object | undefined => {
+  // perform any transformation you need here
+  return schema;
 };
+
+transformer.pathPattern = ['/paths/*'];
 ```
 
 **Return Values:**
