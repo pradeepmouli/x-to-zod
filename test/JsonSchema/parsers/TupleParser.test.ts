@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { TupleParser } from '../../../src/JsonSchema/parsers/TupleParser.js';
 import { buildV4 } from '../../../src/ZodBuilder/v4.js';
-import type { Context } from '../../../src/Types.js';
+import type { Context } from '../../../src/context.js';
 // Import parseSchema to initialize BaseParser.setParseSchema()
 import '../../../src/JsonSchema/parsers/parseSchema.js';
 

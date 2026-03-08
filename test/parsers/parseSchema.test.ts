@@ -1,6 +1,6 @@
 import { parseSchema as parseSchemaImpl } from '../../src/JsonSchema/parsers/parseSchema.js';
 import { describe, it, expect } from 'vitest';
-import type { Context } from '../../src/Types';
+import type { Context } from '../../src/context';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
 const withRefs = (refs: Partial<Context> = {}): Context => ({

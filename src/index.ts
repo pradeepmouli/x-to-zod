@@ -1,6 +1,18 @@
 export * from './JsonSchema/parsers/parseDefault.js';
 export * from './JsonSchema/parsers/parseSchema.js';
-export * from './Types.js';
+// Context & Options
+export type { Options, Context, BuildFunctions } from './context.js';
+// PostProcessing types
+export type {
+	ProcessorPathPattern,
+	ProcessorConfig,
+	SchemaTransformer,
+	PostProcessor,
+	PostProcessorConfig,
+	PostProcessorContext,
+} from './PostProcessing/types.js';
+// ZodBuilder types
+export type { Serializable, ZodVersion } from './ZodBuilder/types.js';
 
 // New interfaces (refactor-010)
 export type { Builder } from './Builder/index.js';

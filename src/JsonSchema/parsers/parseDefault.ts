@@ -1,6 +1,6 @@
-import type { Context } from '../../Types.js';
-import type { JSONSchemaObject } from '../types/index.js';
+import type { Context } from '../../context.js';
+import type { SchemaNode } from '../types/index.js';
 
-export const parseDefault = (_schema: JSONSchemaObject, refs: Context) => {
+export const parseDefault = (_schema: SchemaNode, refs: Context) => {
 	return refs.build.any();
 };

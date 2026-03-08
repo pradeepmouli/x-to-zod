@@ -1,16 +1,18 @@
-import type { Serializable } from '../../Types.js';
-import type {
-	JSONSchemaAny as JSONSchema,
-	JSONSchemaObject,
-} from '../types/index.js';
+import type { EnumSchema } from '../types/index.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class EnumParser extends AbstractParser<'enum'> {
+export class EnumParser extends AbstractParser<EnumSchema, 'enum'> {
 	readonly typeKind = 'enum' as const;
 
-	protected parseImpl(schema: JSONSchema): ZodBuilder {
-		const s = schema as JSONSchemaObject & { enum: Serializable[] };
-		return this.refs.build.enum(s.enum);
+	protected parseImpl(schema: EnumSchema): ZodBuilder {
+		if (!Array.isArray(schema.enum)) {
+			throw new Error(
+				`EnumParser: schema at path '${
+					this.refs.pathString ?? (this.refs.path?.length ? `$.${this.refs.path.join('.')}` : '$')
+				}' is missing a valid 'enum' array`,
+			);
+		}
+		return this.refs.build.enum(schema.enum);
 	}
 }

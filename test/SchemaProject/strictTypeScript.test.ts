@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import { mkdtempSync, rmSync, readFileSync } from 'fs';
 import path from 'path';
-import type { JSONSchema } from '../../src/Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../../src/JsonSchema/types/index.js';
 
 describe('Strict TypeScript Validation (T088-T089)', () => {
 	it('should generate code with proper imports and no implicit any', async () => {

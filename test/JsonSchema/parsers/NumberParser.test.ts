@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { Context, JSONSchemaObject } from '../../../src/Types';
+import type { Context } from '../../../src/context';
+import type { SchemaNode } from '../../../src/JsonSchema/types/index';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { NumberParser } from '../../../src/JsonSchema/parsers/NumberParser.js';
@@ -14,7 +15,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('NumberParser', () => {
 	it('parses integer with min/max and multipleOf', () => {
-		const schema: JSONSchemaObject & { type: 'integer' } = {
+		const schema: SchemaNode & { type: 'integer' } = {
 			type: 'integer',
 			minimum: 1,
 			maximum: 5,
@@ -35,7 +36,7 @@ describe('NumberParser', () => {
 	});
 
 	it('parses number with exclusive bounds', () => {
-		const schema: JSONSchemaObject & { type: 'number' } = {
+		const schema: SchemaNode & { type: 'number' } = {
 			type: 'number',
 			exclusiveMinimum: 0,
 			exclusiveMaximum: 10,

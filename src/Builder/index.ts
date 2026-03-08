@@ -10,8 +10,8 @@ import type { SomeType } from 'zod/v4/core';
  * - Parser return types are statically verifiable against the interface, not a class.
  * - Alternative output targets (AST, dry-run, Arktype) can be implemented without
  *   touching core parsing code.
- * - `parserOverride` callbacks are type-checked to return a `Builder`, eliminating
- *   the untyped `string` escape hatch.
+ * - Custom parsers registered via `registerParser()` are type-checked to return
+ *   a `Builder`, eliminating the untyped `string` escape hatch.
  *
  * All modifier methods return `Builder` (not `this`) to keep the interface simple and
  * implementable by third parties. The concrete `ZodBuilder` class retains `this` return
@@ -100,9 +100,9 @@ type Extensions<Z extends ZodType> = ConditionalPick<
 type BuilderReturn<R> = R extends ZodType ? BuilderFor<R> : R;
 
 /**
- * Helper type to extract the fluent interface of a Builder implementation, for use in parserOverride callbacks.
+ * Helper type to extract the fluent interface of a Builder implementation.
  * For a given Zod type `z`, `BuilderFor<z>` includes all methods of `Builder` plus any additional fluent methods from `z`.
- * This allows parserOverride implementations to return builders with extended fluent APIs (e.g. Zod v4's `.meta()`) while still being type-checked as returning a `Builder`.
+ * This allows custom parser implementations to return builders with extended fluent APIs (e.g. Zod v4's `.meta()`) while still being type-checked as returning a `Builder`.
  */
 export type BuilderFor<z extends ZodType> = Builder<z> & {
 	[K in keyof Extensions<z>]: Extensions<z>[K] extends (

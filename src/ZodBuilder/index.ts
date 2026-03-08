@@ -6,41 +6,10 @@ export { BooleanBuilder } from './boolean.js';
 export { NullBuilder } from './null.js';
 export { ConstBuilder } from './const.js';
 export { EnumBuilder } from './enum.js';
-export {
-	NumberBuilder,
-	applyInt,
-	applyMultipleOf,
-	applyMin as applyNumberMin,
-	applyMax as applyNumberMax,
-} from './number.js';
-export {
-	StringBuilder,
-	applyFormat,
-	applyPattern,
-	applyMinLength,
-	applyMaxLength,
-	applyBase64,
-	applyJsonTransform,
-	applyPipe,
-} from './string.js';
-export {
-	ArrayBuilder,
-	applyMinItems,
-	applyMaxItems,
-	applyExactLength,
-} from './array.js';
-export {
-	ObjectBuilder,
-	applyStrict,
-	applyCatchall,
-	applyLoose,
-	applyPassthrough,
-	applyAnd,
-	applyExtend,
-	applyMerge,
-	applyPick,
-	applyOmit,
-} from './object.js';
+export { NumberBuilder } from './number.js';
+export { StringBuilder } from './string.js';
+export { ArrayBuilder } from './array.js';
+export { ObjectBuilder } from './object.js';
 
 // New builders (Phase 1)
 export { AnyBuilder } from './any.js';
@@ -59,17 +28,12 @@ export { ReferenceBuilder } from './reference.js';
 // Additional type builders
 export { VoidBuilder } from './void.js';
 export { UndefinedBuilder } from './undefined.js';
-export { DateBuilder, applyDateMin, applyDateMax } from './date.js';
-export {
-	BigIntBuilder,
-	applyBigIntMin,
-	applyBigIntMax,
-	applyBigIntMultipleOf,
-} from './bigint.js';
+export { DateBuilder } from './date.js';
+export { BigIntBuilder } from './bigint.js';
 export { SymbolBuilder } from './symbol.js';
 export { NaNBuilder } from './nan.js';
-export { SetBuilder, applySetMin, applySetMax, applySetSize } from './set.js';
-export { MapBuilder, applyMapMin, applyMapMax, applyMapSize } from './map.js';
+export { SetBuilder } from './set.js';
+export { MapBuilder } from './map.js';
 export { CustomBuilder } from './custom.js';
 
 // Zod v4 builders
@@ -140,21 +104,6 @@ import { TemplateLiteralBuilder } from './templateLiteral.js';
 import { XorBuilder } from './xor.js';
 import { KeyofBuilder } from './keyof.js';
 import { DiscriminatedUnionBuilder } from './discriminatedUnion.js';
-
-// Generic modifiers
-export {
-	applyOptional,
-	applyNullable,
-	applyDefault,
-	applyDescribe,
-	applyBrand,
-	applyReadonly,
-	applyCatch,
-	applyRefine,
-	applySuperRefine,
-	applyMeta,
-	applyTransform,
-} from './BaseBuilder.js';
 
 // Builder factories
 import { buildV4 } from './v4.js';

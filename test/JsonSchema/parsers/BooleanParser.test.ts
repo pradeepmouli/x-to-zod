@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { Context, JSONSchemaObject } from '../../../src/Types';
+import type { Context } from '../../../src/context';
+import type { SchemaNode } from '../../../src/JsonSchema/types/index';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { BooleanParser } from '../../../src/JsonSchema/parsers/BooleanParser.js';
@@ -14,7 +15,7 @@ const ctx = (overrides: Partial<Context> = {}): Context => ({
 
 describe('BooleanParser', () => {
 	it('parses boolean schema', () => {
-		const schema: JSONSchemaObject & { type: 'boolean' } = { type: 'boolean' };
+		const schema: SchemaNode & { type: 'boolean' } = { type: 'boolean' };
 		const parser = new BooleanParser(schema, ctx());
 
 		const result = parser.parse().text();

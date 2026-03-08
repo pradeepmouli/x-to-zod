@@ -1,4 +1,4 @@
-import type { PostProcessor } from '../Types.js';
+import type { PostProcessor } from './types.js';
 import { is } from '../utils/is.js';
 
 function guardAndApply(

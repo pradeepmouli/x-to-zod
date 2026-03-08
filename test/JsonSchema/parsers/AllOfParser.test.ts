@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
-import type { JSONSchema, Context } from '../../../src/Types.js';
+import type { Context } from '../../../src/context.js';
+import type { JSONSchemaAny as JSONSchema } from '../../../src/JsonSchema/types/index.js';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
 import { AllOfParser } from '../../../src/JsonSchema/parsers/AllOfParser.js';
 

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { parse } from '../../../src/JsonSchema/parsers/index.js';
 import { parseSchema } from '../../../src/JsonSchema/parsers/parseSchema.js';
 import { buildV4 } from '../../../src/ZodBuilder/v4.js';
-import type { Context } from '../../../src/Types.js';
+import type { Context } from '../../../src/context.js';
 
 describe('parse API', () => {
 	const defaultContext: Context = {

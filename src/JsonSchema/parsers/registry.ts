@@ -23,7 +23,7 @@ import { is } from '../is.js';
  * This enables dynamic parser selection based on schema characteristics.
  */
 export const parserRegistry = new Map<string, ParserConstructor>([
-	['object', ObjectParser as ParserConstructor],
+	['object', ObjectParser],
 	['array', ArrayParser as ParserConstructor],
 	['string', StringParser as ParserConstructor],
 	['number', NumberParser as ParserConstructor],

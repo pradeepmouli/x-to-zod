@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { parseSchema } from '../../../src/JsonSchema/parsers/parseSchema.js';
 import { RecordParser } from '../../../src/JsonSchema/parsers/RecordParser.js';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import type { Context } from '../../../src/Types';
+import type { Context } from '../../../src/context';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
 	build: buildV4,

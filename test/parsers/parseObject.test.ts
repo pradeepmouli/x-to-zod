@@ -2,7 +2,7 @@ import { JSONSchema7 } from 'json-schema';
 import { ZodError } from 'zod';
 import { parse } from '../../src/JsonSchema/parsers/index.js';
 import { describe, it, expect, assert } from 'vitest';
-import type { Context } from '../../src/Types';
+import type { Context } from '../../src/context';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
 
 const withRefs = (refs: Partial<Context> = {}): Context => ({

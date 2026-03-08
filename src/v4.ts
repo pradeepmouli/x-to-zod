@@ -23,17 +23,9 @@
 import { buildV4 } from './ZodBuilder/index.js';
 import type { V4BuildAPI } from './ZodBuilder/versions.js';
 
-// Re-export core functionality
-export * from './JsonSchema/parsers/parseDefault.js';
-export * from './JsonSchema/parsers/parseSchema.js';
-export * from './Types.js';
-
-export { toZod as jsonSchemaToZod } from './JsonSchema/toZod.js';
+// Re-export everything from the main entry point
+export * from './index.js';
 export { toZod as default } from './JsonSchema/toZod.js';
-
-export * as JSONSchema from './JsonSchema/index.js';
-export * as SchemaProject from './SchemaProject/index.js';
-export * as ZodBuilder from './ZodBuilder/index.js';
 
 // Export build with v4 type signature (full API)
 export const build: V4BuildAPI = buildV4 as V4BuildAPI;

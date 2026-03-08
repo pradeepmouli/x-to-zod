@@ -1,11 +1,8 @@
 import type { ParserConstructor } from '../Parser/index.js';
-import type { Context } from '../Types.js';
+import type { Context } from '../context.js';
 import type { SchemaInputAdapter, SchemaMetadata } from './index.js';
 import { _setDefaultAdapter } from './index.js';
-import {
-	isJSONSchema,
-	type JSONSchemaObject,
-} from '../JsonSchema/types/index.js';
+import { isJSONSchema, type SchemaNode } from '../JsonSchema/types/index.js';
 import { selectParserClass } from '../JsonSchema/parsers/registry.js';
 
 export class JsonSchemaAdapter implements SchemaInputAdapter {
@@ -31,7 +28,7 @@ export class JsonSchemaAdapter implements SchemaInputAdapter {
 		if (typeof input !== 'object' || input === null) {
 			return {};
 		}
-		const s = input as JSONSchemaObject & Record<string, unknown>;
+		const s = input as SchemaNode & Record<string, unknown>;
 		const meta: SchemaMetadata = {};
 		if (typeof s.description === 'string') {
 			meta.description = s.description;

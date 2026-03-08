@@ -1,7 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { parseSchema } from '../../../src/JsonSchema/parsers/parseSchema.js';
 import { buildV4 } from '../../../src/ZodBuilder/index.js';
-import type { Context } from '../../../src/Types';
+import {
+	registerParser,
+	parserRegistry,
+} from '../../../src/JsonSchema/parsers/registry.js';
+import type { Context } from '../../../src/context';
 
 const ctx = (overrides: Partial<Context> = {}): Context => ({
 	build: buildV4,
@@ -21,27 +25,6 @@ describe('parseSchema — gap tests', () => {
 		expect(parseSchema(false as any, ctx()).text()).toBe('z.never()');
 	});
 
-	// T005: parserOverride void/undefined fallthrough (Gap 2)
-	it('falls through to default parser when parserOverride returns undefined', () => {
-		const result = parseSchema(
-			{ type: 'string' },
-			ctx({ parserOverride: () => undefined }),
-		);
-		expect(result.text()).toBe('z.string()');
-	});
-
-	it('falls through to default parser when parserOverride returns void', () => {
-		const result = parseSchema(
-			{ type: 'number' },
-			ctx({
-				parserOverride: (_schema, _refs) => {
-					/* returns undefined implicitly */
-				},
-			}),
-		);
-		expect(result.text()).toBe('z.number()');
-	});
-
 	// T006: circular reference depth limit (Gap 3)
 	it('terminates without throwing when circular schema hits depth limit', () => {
 		const schema: any = { type: 'object', properties: {} };
@@ -57,12 +40,26 @@ describe('parseSchema — gap tests', () => {
 		expect(result.text()).toContain('z.any()');
 	});
 
-	// T013: parserOverride returning a Builder (not a string) [US1]
-	it('uses parserOverride Builder return value as the result', () => {
-		const result = parseSchema(
-			{ type: 'string' },
-			ctx({ parserOverride: (_schema, refs) => refs.build.number() }),
+	// T013: registerParser dispatches to custom parser (replaces parserOverride test)
+	afterEach(() => {
+		parserRegistry.delete('x-test');
+	});
+
+	it('uses registered custom parser for matching type', () => {
+		registerParser(
+			'x-test',
+			class {
+				readonly typeKind = 'x-test' as const;
+				constructor(
+					_schema: any,
+					private refs: Context,
+				) {}
+				parse() {
+					return this.refs.build.number();
+				}
+			},
 		);
+		const result = parseSchema({ type: 'x-test' } as any, ctx());
 		expect(result.text()).toBe('z.number()');
 	});
 });

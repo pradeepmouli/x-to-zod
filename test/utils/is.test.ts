@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildV4 } from '../../src/ZodBuilder/v4.js';
-import type { Context } from '../../src/Types.js';
+import type { Context } from '../../src/context.js';
 import { BooleanParser } from '../../src/JsonSchema/parsers/BooleanParser.js';
 import {
 	is,

@@ -5,9 +5,9 @@ import type {
 	SchemaFileOptions,
 	RefResolution,
 	BuildResult,
-	PostProcessorConfig as ProjectPostProcessorConfig,
+	ProjectPostProcessorConfig,
 } from './types.js';
-import type { PostProcessorConfig } from '../Types.js';
+import type { PostProcessorConfig } from '../PostProcessing/types.js';
 import type { JSONSchemaAny as JSONSchema } from '../JsonSchema/types/index.js';
 import { postProcessors } from '../PostProcessing/presets.js';
 import { SchemaRegistry } from './SchemaRegistry.js';

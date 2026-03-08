@@ -16,7 +16,7 @@ import {
 } from '../../src/JsonSchema/parsers/registry.js';
 import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
-import type { Context } from '../../src/Types.js';
+import type { Context } from '../../src/context.js';
 
 const ctx = (): Context => ({
 	build: buildV4,

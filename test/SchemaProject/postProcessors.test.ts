@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { SchemaProject } from '../../src/SchemaProject/SchemaProject.js';
 import { mkdtempSync, rmSync, readFileSync } from 'fs';
 import path from 'path';
-import type { JSONSchema } from '../../src/Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../../src/JsonSchema/types/index.js';
 
 describe('Post-Processor Integration (T081-T083)', () => {
 	it('should apply global post-processors to all schemas', async () => {

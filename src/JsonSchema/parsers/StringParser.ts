@@ -1,18 +1,18 @@
-import type { Context } from '../../Types.js';
-import type { JSONSchemaObject } from '../types/index.js';
+import type { Context } from '../../context.js';
+import type { SchemaNode, StringSchema } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { parseSchema } from './parseSchema.js';
 
-export class StringParser extends AbstractParser<'string'> {
+export class StringParser extends AbstractParser<StringSchema> {
 	readonly typeKind = 'string' as const;
 
-	constructor(schema: JSONSchemaObject, refs: Context) {
-		super(schema, refs);
+	constructor(schema: SchemaNode, refs: Context) {
+		super(schema as StringSchema, refs);
 	}
 
-	protected parseImpl(schema: JSONSchemaObject): Builder {
-		const s = schema as JSONSchemaObject & {
+	protected parseImpl(schema: SchemaNode): Builder {
+		const s = schema as SchemaNode & {
 			type?: string;
 			format?: string;
 			pattern?: string;

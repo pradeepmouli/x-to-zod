@@ -1,10 +1,12 @@
 import { parseDefault } from './parseDefault.js';
-import { ParserSelector, Context } from '../../Types.js';
+import type { Context } from '../../context.js';
 import {
 	type JSONSchemaAny as JSONSchema,
 	type SchemaVersion,
 } from '../types/index.js';
 import type { Builder } from '../../Builder/index.js';
+
+type ParserSelector = (schema: JSONSchema, refs: Context) => Builder;
 import { buildV4 } from '../../ZodBuilder/v4.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
@@ -44,19 +46,6 @@ export const parseSchema = <Version extends SchemaVersion>(
 				return refBuilder;
 			}
 			// For internal refs (#...), fall through to normal parsing.
-		}
-
-		if (refs.preprocessors) {
-			for (const preprocessor of refs.preprocessors) {
-				const output: any = preprocessor(schema, refs);
-				if (output) schema = output;
-			}
-		}
-		if (refs.parserOverride) {
-			const custom = refs.parserOverride(schema, refs);
-			if (custom != null) {
-				return custom as ReturnType<typeof refs.build.any>;
-			}
 		}
 
 		let seen = refs.seen.get(schema);

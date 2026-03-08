@@ -1,6 +1,6 @@
 import type { ZodType } from 'zod';
 import type { Builder, ParamsFor } from '../Builder/index.js';
-import type { Serializable } from '../Types.js';
+import type { Serializable } from './types.js';
 import { NumberBuilder } from './number.js';
 import { StringBuilder } from './string.js';
 import { BooleanBuilder } from './boolean.js';
@@ -46,7 +46,7 @@ export type BuildV3 = {
 		properties?: Record<string, Builder>,
 		params?: ObjectParams,
 	) => ObjectBuilder;
-	enum: (values: Serializable[]) => EnumBuilder;
+	enum: (values: Serializable[] | readonly Serializable[]) => EnumBuilder;
 	literal: (value: Serializable) => ConstBuilder;
 	any: () => AnyBuilder;
 	never: () => NeverBuilder;
@@ -86,7 +86,8 @@ export const buildV3: BuildV3 = {
 		new ArrayBuilder('v3', itemSchemaZod, params),
 	object: (properties: Record<string, Builder> = {}, params?: ObjectParams) =>
 		new ObjectBuilder('v3', properties, params),
-	enum: (values: Serializable[]) => new EnumBuilder('v3', values),
+	enum: (values: Serializable[] | readonly Serializable[]) =>
+		new EnumBuilder('v3', values),
 	literal: (value: Serializable) => new ConstBuilder('v3', value),
 	any: () => new AnyBuilder('v3'),
 	never: () => new NeverBuilder('v3'),

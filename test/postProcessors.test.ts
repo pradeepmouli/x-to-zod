@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { jsonSchemaToZod } from '../src/jsonSchemaToZod.js';
-import type { PostProcessor, PostProcessorConfig } from '../src/Types.js';
+import { jsonSchemaToZod } from '../src/index.js';
+import type {
+	PostProcessor,
+	PostProcessorConfig,
+} from '../src/PostProcessing/types.js';
 import { is } from '../src/utils/is.js';
 
 describe('Post-Processor Integration', () => {
@@ -491,7 +494,7 @@ describe('Post-Processor Integration', () => {
 			};
 
 			const result = jsonSchemaToZod(schema, {
-				preProcessors: [addDescription],
+				transformers: [addDescription],
 			});
 
 			// Pre-processor should have added description

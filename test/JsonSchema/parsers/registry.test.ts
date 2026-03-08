@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { JSONSchema } from '../../../src/Types.js';
+import type { JSONSchemaAny as JSONSchema } from '../../../src/JsonSchema/types/index.js';
 import {
 	selectParserClass,
 	parserRegistry,

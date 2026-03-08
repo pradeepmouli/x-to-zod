@@ -1,17 +1,17 @@
 import type { SetReadonly, SetRequired } from 'type-fest';
-import type { Serializable } from '../Types.js';
+import type { Serializable } from '../ZodBuilder/types.js';
 import type {
-	JSONSchemaObject,
+	SchemaNode,
 	JSONSchemaAny as JSONSchema,
 	SchemaVersion,
 } from './types/index.js';
 
-const isSchemaObject = (value: unknown): value is JSONSchemaObject =>
+const isSchemaObject = (value: unknown): value is SchemaNode =>
 	typeof value === 'object' && value !== null;
 
 export function isObjectSchema(
 	value: unknown,
-): value is JSONSchemaObject & { type: 'object' } {
+): value is SchemaNode & { type: 'object' } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -21,7 +21,7 @@ export function isObjectSchema(
 
 export function isArraySchema(
 	value: unknown,
-): value is JSONSchemaObject & { type: 'array' } {
+): value is SchemaNode & { type: 'array' } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -31,7 +31,7 @@ export function isArraySchema(
 
 export function isAnyOfSchema(
 	value: unknown,
-): value is JSONSchemaObject & { anyOf: JSONSchema[] } {
+): value is SchemaNode & { anyOf: JSONSchema[] } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -41,7 +41,7 @@ export function isAnyOfSchema(
 
 export function isAllOfSchema(
 	value: unknown,
-): value is JSONSchemaObject & { allOf: JSONSchema[] } {
+): value is SchemaNode & { allOf: JSONSchema[] } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -51,7 +51,7 @@ export function isAllOfSchema(
 
 export function isEnumSchema(
 	value: unknown,
-): value is JSONSchemaObject & { enum: Serializable[] } {
+): value is SchemaNode & { enum: Serializable[] } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -60,7 +60,7 @@ export function isEnumSchema(
 
 export function isNullableSchema(
 	value: unknown,
-): value is JSONSchemaObject & { nullable: true } {
+): value is SchemaNode & { nullable: true } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -69,7 +69,7 @@ export function isNullableSchema(
 
 export function isMultipleTypeSchema(
 	value: unknown,
-): value is JSONSchemaObject & { type: string[] } {
+): value is SchemaNode & { type: string[] } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -79,7 +79,7 @@ export function isMultipleTypeSchema(
 
 export function isNotSchema(
 	value: unknown,
-): value is JSONSchemaObject & { not: JSONSchema } {
+): value is SchemaNode & { not: JSONSchema } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -89,7 +89,7 @@ export function isNotSchema(
 
 export function isConstSchema<V extends SchemaVersion>(
 	value: unknown,
-): value is SetRequired<JSONSchemaObject<V>, 'const'> {
+): value is SetRequired<SchemaNode<V>, 'const'> {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -98,7 +98,7 @@ export function isConstSchema<V extends SchemaVersion>(
 
 export function isPrimitiveSchema<
 	T extends 'string' | 'number' | 'integer' | 'boolean' | 'null',
->(value: unknown, primitive: T): value is JSONSchemaObject & { type: T } {
+>(value: unknown, primitive: T): value is SchemaNode & { type: T } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}
@@ -106,9 +106,7 @@ export function isPrimitiveSchema<
 	return schema.type === primitive;
 }
 
-export function isConditionalSchema(
-	value: unknown,
-): value is JSONSchemaObject & {
+export function isConditionalSchema(value: unknown): value is SchemaNode & {
 	if: JSONSchema;
 	then: JSONSchema;
 	else: JSONSchema;
@@ -128,7 +126,7 @@ export function isConditionalSchema(
 
 export function isOneOfSchema(
 	value: unknown,
-): value is JSONSchemaObject & { oneOf: JSONSchema[] } {
+): value is SchemaNode & { oneOf: JSONSchema[] } {
 	if (!isSchemaObject(value)) {
 		return false;
 	}

@@ -74,8 +74,82 @@ export type JSONSchema<
 export type JSONSchemaAny<Version extends SchemaVersion = SchemaVersion> =
 	JSONSchema<Version, any, TypeValue>;
 
-export type JSONSchemaObject<Version extends SchemaVersion = SchemaVersion> =
-	Exclude<JSONSchemaAny<Version>, boolean>;
+export type SchemaNode<Version extends SchemaVersion = SchemaVersion> = Exclude<
+	JSONSchemaAny<Version>,
+	boolean
+>;
+
+/**
+ * A `SchemaNode` narrowed to a specific `type` discriminator.
+ *
+ * Use this instead of the verbose `SchemaNode & { type: 'string' }` intersection.
+ *
+ * @example
+ * ```ts
+ * class StringParser extends AbstractParser<TypedSchema<'string'>> { ... }
+ * class NumberParser extends AbstractParser<TypedSchema<'number' | 'integer'>> { ... }
+ * ```
+ */
+export type TypedSchema<
+	T extends string = string,
+	Version extends SchemaVersion = SchemaVersion,
+> = SchemaNode<Version> & { type: T };
+
+// Named type-based schema aliases — consistent with Zod's naming (ZodString, ZodNumber, etc.)
+export type StringSchema<V extends SchemaVersion = SchemaVersion> = TypedSchema<
+	'string',
+	V
+>;
+export type NumberSchema<V extends SchemaVersion = SchemaVersion> = TypedSchema<
+	'number' | 'integer',
+	V
+>;
+export type BooleanSchema<V extends SchemaVersion = SchemaVersion> =
+	TypedSchema<'boolean', V>;
+export type NullSchema<V extends SchemaVersion = SchemaVersion> = TypedSchema<
+	'null',
+	V
+>;
+export type ObjectSchema<V extends SchemaVersion = SchemaVersion> = TypedSchema<
+	'object',
+	V
+>;
+export type ArraySchema<V extends SchemaVersion = SchemaVersion> = TypedSchema<
+	'array',
+	V
+>;
+
+// Named keyword-based schema aliases — narrowed to their required keyword properties
+export type EnumSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { enum: unknown[] };
+export type ConstSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { const: unknown };
+export type AnyOfSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { anyOf: JSONSchemaAny<V>[] };
+export type AllOfSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { allOf: JSONSchemaAny<V>[] };
+export type OneOfSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { oneOf: JSONSchemaAny<V>[] };
+export type NotSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { not: JSONSchemaAny<V> };
+export type ConditionalSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & {
+		if: JSONSchemaAny<V>;
+		then: JSONSchemaAny<V>;
+		else: JSONSchemaAny<V>;
+	};
+export type NullableSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { nullable: true };
+export type TupleSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & {
+		prefixItems?: JSONSchemaAny<V>[];
+		items?: JSONSchemaAny<V>[] | JSONSchemaAny<V>;
+	};
+export type RecordSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { additionalProperties?: JSONSchemaAny<V> | boolean };
+export type MultipleTypeSchema<V extends SchemaVersion = SchemaVersion> =
+	SchemaNode<V> & { type: string[] };
+
 export type transformer = <
 	Version extends SchemaVersion = '2020-12',
 	T = object,
@@ -85,16 +159,14 @@ export type transformer = <
 	refs: any,
 ) => JSONSchema<Version, T, TypeValue> | undefined;
 
-export function isJSONSchema(
-	schema: JSONSchemaAny,
-): schema is JSONSchemaObject {
+export function isJSONSchema(schema: JSONSchemaAny): schema is SchemaNode {
 	return (
 		typeof schema === 'object' && schema !== null && !Array.isArray(schema)
 	);
 }
 
 export function getSchemaVersion<T extends SchemaVersion>(
-	schema: JSONSchemaObject<any>,
+	schema: SchemaNode<any>,
 ): T {
 	if ('$schema' in schema && typeof schema.$schema === 'string') {
 		const version = schema.$schema;
@@ -113,9 +185,9 @@ export function getSchemaVersion<T extends SchemaVersion>(
 }
 
 export function isVersion<T extends SchemaVersion>(
-	schema: JSONSchemaObject<any>,
+	schema: SchemaNode<any>,
 	version: T,
-): schema is JSONSchemaObject<T> {
+): schema is SchemaNode<T> {
 	const schemaVersion = getSchemaVersion(schema);
 	return schemaVersion === version;
 }

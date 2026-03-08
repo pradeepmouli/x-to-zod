@@ -1,7 +1,8 @@
-import type { Context } from '../../Types.js';
+import type { Context } from '../../context.js';
 import type {
 	JSONSchemaAny as JSONSchema,
-	JSONSchemaObject,
+	SchemaNode,
+	TupleSchema,
 } from '../types/index.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
@@ -15,15 +16,15 @@ import { AbstractParser } from '../../Parser/AbstractParser.js';
  *
  * Produces `z.tuple([...])` via the TupleBuilder.
  */
-export class TupleParser extends AbstractParser<'tuple'> {
+export class TupleParser extends AbstractParser<TupleSchema, 'tuple'> {
 	readonly typeKind = 'tuple' as const;
 
-	constructor(schema: JSONSchemaObject, refs: Context) {
-		super(schema, refs);
+	constructor(schema: SchemaNode, refs: Context) {
+		super(schema as TupleSchema, refs);
 	}
 
 	protected parseImpl(schema: JSONSchema): ZodBuilder {
-		const s = schema as JSONSchemaObject;
+		const s = schema as SchemaNode;
 		const tupleSchema = s as any;
 
 		// Draft 2020-12: prefixItems is the standard tuple keyword

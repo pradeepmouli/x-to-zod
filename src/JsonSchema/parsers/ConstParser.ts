@@ -1,16 +1,16 @@
-import type { Serializable } from '../../Types.js';
-import type {
-	JSONSchemaAny as JSONSchema,
-	JSONSchemaObject,
-} from '../types/index.js';
+import type { ConstSchema } from '../types/index.js';
 import { AbstractParser } from '../../Parser/AbstractParser.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
 
-export class ConstParser extends AbstractParser<'const'> {
+export class ConstParser extends AbstractParser<ConstSchema, 'const'> {
 	readonly typeKind = 'const' as const;
 
-	protected parseImpl(schema: JSONSchema): ZodBuilder {
-		const s = schema as JSONSchemaObject & { const: Serializable };
-		return this.refs.build.literal(s.const);
+	protected parseImpl(schema: ConstSchema): ZodBuilder {
+		if (!('const' in schema)) {
+			throw new Error(
+				`ConstParser: schema at path '${this.refs.pathString}' is missing a 'const' property`,
+			);
+		}
+		return this.refs.build.literal(schema.const);
 	}
 }

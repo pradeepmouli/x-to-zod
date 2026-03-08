@@ -20,7 +20,7 @@ import type { Parser } from '../../src/Parser/index.js';
 import { parseSchema } from '../../src/JsonSchema/parsers/parseSchema.js';
 import { AbstractParser } from '../../src/Parser/AbstractParser.js';
 import { buildV4 } from '../../src/ZodBuilder/index.js';
-import type { Context } from '../../src/Types.js';
+import type { Context } from '../../src/context.js';
 
 const ctx = (): Context => ({
 	build: buildV4,
@@ -180,7 +180,7 @@ describe('Adapter pipeline integration — T037', () => {
 
 	it('custom adapter getMetadata is used by AbstractParser.applyMetadata', () => {
 		// Use AbstractParser subclass so applyMetadata is called
-		class AlwaysStringParser extends AbstractParser<'always-string'> {
+		class AlwaysStringParser extends AbstractParser<object, 'always-string'> {
 			readonly typeKind = 'always-string' as const;
 			protected parseImpl() {
 				return this.refs.build.string();

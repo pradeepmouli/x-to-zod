@@ -90,7 +90,7 @@ export function isLazyBuilder(value: unknown): value is LazyBuilder {
 export function isParserOfKind<K extends string>(
 	value: unknown,
 	kind: K,
-): value is AbstractParser<K> {
+): value is AbstractParser<object, K> {
 	if (!value || typeof value !== 'object') return false;
 	const candidate = value as { typeKind?: unknown; parse?: unknown };
 	return candidate.typeKind === kind && typeof candidate.parse === 'function';

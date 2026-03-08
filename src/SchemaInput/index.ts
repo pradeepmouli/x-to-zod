@@ -1,5 +1,5 @@
 import type { ParserConstructor } from '../Parser/index.js';
-import type { Context } from '../Types.js';
+import type { Context } from '../context.js';
 
 /**
  * Semantic type alias for any schema value passed into the pipeline.

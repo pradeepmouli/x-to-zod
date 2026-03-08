@@ -13,7 +13,7 @@ export interface SchemaProjectOptions {
 	tsconfig?: string | CompilerOptions;
 	nameResolver?: NameResolver;
 	refResolver?: RefResolver;
-	globalPostProcessors?: PostProcessorConfig[];
+	globalPostProcessors?: ProjectPostProcessorConfig[];
 	prettier?: boolean | PrettierOptions;
 	importPathTransformer?: (from: string, to: string) => string;
 	extractDefinitions?: boolean | ExtractDefinitionsOptions;
@@ -32,7 +32,7 @@ export interface ExtractDefinitionsOptions {
  * Options for individual schema when added to project
  */
 export interface SchemaOptions {
-	postProcessors?: PostProcessorConfig[];
+	postProcessors?: ProjectPostProcessorConfig[];
 	moduleFormatOverride?: 'esm' | 'cjs' | 'both';
 	extractDefinitions?: boolean;
 }
@@ -54,15 +54,15 @@ export interface SchemaEntry {
 	builder: Builder | null;
 	sourceFile: SourceFile | null;
 	exportName: string;
-	metadata: SchemaMetadata;
+	metadata: ProjectSchemaMetadata;
 }
 
 /**
  * Metadata associated with a schema
  */
-export interface SchemaMetadata {
+export interface ProjectSchemaMetadata {
 	originalFilePath?: string;
-	postProcessors?: PostProcessorConfig[];
+	postProcessors?: ProjectPostProcessorConfig[];
 	moduleFormatOverride?: 'esm' | 'cjs' | 'both';
 	isExternal?: boolean;
 	importedFrom?: string;
@@ -101,7 +101,7 @@ export interface DependencyGraph {
 /**
  * Configuration for post-processor application
  */
-export interface PostProcessorConfig {
+export interface ProjectPostProcessorConfig {
 	name: string;
 	options?: Record<string, any>;
 }

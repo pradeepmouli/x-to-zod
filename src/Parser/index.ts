@@ -1,5 +1,5 @@
 import type { Builder } from '../Builder/index.js';
-import type { Context } from '../Types.js';
+import type { Context } from '../context.js';
 
 export interface Parser {
 	/**
@@ -22,7 +22,7 @@ export interface Parser {
  *
  * The `schema: any` parameter is intentional — it bypasses TypeScript constructor
  * parameter contravariance, allowing concrete parsers with schema-specific constructor
- * types (e.g. `JSONSchemaObject<Version>`) to be registered without modification.
+ * types (e.g. `SchemaNode<Version>`) to be registered without modification.
  * Runtime validation is performed by `registerParser` to ensure structural correctness.
  *
  * See: research.md §2 — ParserClass registry type widening.
@@ -30,3 +30,4 @@ export interface Parser {
 export type ParserConstructor = new (schema: any, refs: Context) => Parser;
 
 export { AbstractParser } from './AbstractParser.js';
+export type { InferTypeKind } from './SchemaTypes.js';
