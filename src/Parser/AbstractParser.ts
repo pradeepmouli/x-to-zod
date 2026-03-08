@@ -32,8 +32,8 @@ export abstract class AbstractParser<
 > implements Parser {
 	abstract readonly typeKind: TypeKind;
 
-	protected readonly transformers: SchemaTransformer[];
-	protected readonly postProcessors: PostProcessor[];
+	protected transformers: SchemaTransformer[];
+	protected postProcessors: PostProcessor[];
 
 	constructor(
 		protected readonly schema: S,
@@ -75,14 +75,10 @@ export abstract class AbstractParser<
 	parse(): Builder {
 		// Filter processors now that typeKind is initialized
 		if (!this.transformers.length && this.refs.transformers) {
-			(this as any).transformers = this.filterTransformers(
-				this.refs.transformers,
-			);
+			this.transformers = this.filterTransformers(this.refs.transformers);
 		}
 		if (!this.postProcessors.length && this.refs.postProcessors) {
-			(this as any).postProcessors = this.filterPostProcessors(
-				this.refs.postProcessors,
-			);
+			this.postProcessors = this.filterPostProcessors(this.refs.postProcessors);
 		}
 
 		const processedSchema = this.applyTransformers(this.schema);

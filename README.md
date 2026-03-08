@@ -563,14 +563,19 @@ The `transformers` option transforms JSON schema nodes **before** parsing. Use t
 #### Function Signature
 
 ```typescript
-interface SchemaTransformer {
-  (schema: JsonSchemaObject, refs: Context): JsonSchemaObject | undefined;
-  pathPattern?: string | string[];  // Optional path filtering
-}
+import type { SchemaTransformer, Context } from 'x-to-zod';
+
+// SchemaTransformer is a callable with an optional pathPattern property, for example:
+const transformer: SchemaTransformer = (schema: object, refs: Context): object | undefined => {
+  // perform any transformation you need here
+  return schema;
+};
+
+transformer.pathPattern = ['/paths/*'];
 ```
 
 **Return Values:**
-- `JsonSchemaObject`: The transformed schema (replaces the original)
+- `object`: The transformed schema (replaces the original)
 - `undefined`: Keep the schema unchanged
 
 #### Example: Normalize Vendor Extensions
