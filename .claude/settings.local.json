@@ -14,7 +14,8 @@
       "Bash(npm run:*)",
       "Bash(node:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx oxlint:*)"
+      "Bash(npx oxlint:*)",
+      "Bash(gh pr:*)"
     ]
   }
 }

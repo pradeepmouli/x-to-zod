@@ -8,9 +8,7 @@ export class EnumParser extends AbstractParser<EnumSchema, 'enum'> {
 	protected parseImpl(schema: EnumSchema): ZodBuilder {
 		if (!Array.isArray(schema.enum)) {
 			throw new Error(
-				`EnumParser: schema at path '${
-					this.refs.pathString ?? (this.refs.path?.length ? `$.${this.refs.path.join('.')}` : '$')
-				}' is missing a valid 'enum' array`,
+				`EnumParser: schema at path '${this.refs.pathString}' is missing a valid 'enum' array`,
 			);
 		}
 		return this.refs.build.enum(schema.enum);
