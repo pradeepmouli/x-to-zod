@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.10.0
+
+### Minor Changes
+
+- [#69](https://github.com/pradeepmouli/x-to-zod/pull/69) [`00b88ac`](https://github.com/pradeepmouli/x-to-zod/commit/00b88ac189e77d2ec43cfc978933b6ae91bc1cbf) Thanks [@github-actions](https://github.com/apps/github-actions)! - - Update README.md
+  - fix: address review comments - remove readonly mutation, fix import types, inline Serializable, update README
+  - Initial plan
+  - refactor: eliminate Types.ts god file, add named schema aliases, rename JSONSchemaObject → SchemaNode
+  - Update EnumParser.ts
+
 ## 0.9.0
 
 ### Minor Changes
