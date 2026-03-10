@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.1
+
+### Patch Changes
+
+- [#75](https://github.com/pradeepmouli/x-to-zod/pull/75) [`1a0f010`](https://github.com/pradeepmouli/x-to-zod/commit/1a0f010d54aefde502b29ae61d0505fa99ffa2fe) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - - test: trigger CI pipeline
+
 ## 0.10.0
 
 ### Minor Changes
