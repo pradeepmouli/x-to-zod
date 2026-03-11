@@ -185,15 +185,15 @@ export class SchemaProject {
 			// Step 3: Parse schemas (in dependency order)
 			const { parseSchema } =
 				await import('../JsonSchema/parsers/parseSchema.js');
+			const globalProcessors = this.resolvePostProcessors(
+				this.options.globalPostProcessors,
+			);
 			for (const schemaId of buildOrder) {
 				const entry = this.registry.getEntry(schemaId);
 				if (!entry) continue;
 
 				try {
 					// Merge global and per-schema post-processors
-					const globalProcessors = this.resolvePostProcessors(
-						this.options.globalPostProcessors,
-					);
 					const schemaProcessors = this.resolvePostProcessors(
 						entry.metadata.postProcessors as
 							| ProjectPostProcessorConfig[]

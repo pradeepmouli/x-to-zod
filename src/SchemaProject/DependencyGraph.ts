@@ -7,11 +7,14 @@ import type { DependencyGraph } from './types.js';
 export class DependencyGraphBuilder implements DependencyGraph {
 	nodes: Set<string> = new Set();
 	edges: Map<string, Set<string>> = new Map();
+	/** Reverse edges: for each node, the set of nodes that depend on it */
+	private reverseEdges: Map<string, Set<string>> = new Map();
 	cycles: Set<Set<string>> = new Set();
 
 	clear(): void {
 		this.nodes.clear();
 		this.edges.clear();
+		this.reverseEdges.clear();
 		this.cycles.clear();
 	}
 
@@ -22,6 +25,7 @@ export class DependencyGraphBuilder implements DependencyGraph {
 		if (!this.nodes.has(nodeId)) {
 			this.nodes.add(nodeId);
 			this.edges.set(nodeId, new Set());
+			this.reverseEdges.set(nodeId, new Set());
 		}
 	}
 
@@ -32,10 +36,8 @@ export class DependencyGraphBuilder implements DependencyGraph {
 		this.addNode(fromId);
 		this.addNode(toId);
 
-		const edgeSet = this.edges.get(fromId);
-		if (edgeSet) {
-			edgeSet.add(toId);
-		}
+		this.edges.get(fromId)!.add(toId);
+		this.reverseEdges.get(toId)!.add(fromId);
 	}
 
 	/**
@@ -86,17 +88,19 @@ export class DependencyGraphBuilder implements DependencyGraph {
 			stack.push(nodeId);
 			onStack.add(nodeId);
 
-			const neighbors = this.edges.get(nodeId) || new Set();
-			for (const neighbor of neighbors) {
-				if (!ids.has(neighbor)) {
-					strongConnect(neighbor);
-					const neighborLowlink = lowlinks.get(neighbor) || 0;
-					const currentLowlink = lowlinks.get(nodeId) || 0;
-					lowlinks.set(nodeId, Math.min(currentLowlink, neighborLowlink));
-				} else if (onStack.has(neighbor)) {
-					const neighborId = ids.get(neighbor) || 0;
-					const currentLowlink = lowlinks.get(nodeId) || 0;
-					lowlinks.set(nodeId, Math.min(currentLowlink, neighborId));
+			const neighbors = this.edges.get(nodeId);
+			if (neighbors) {
+				for (const neighbor of neighbors) {
+					if (!ids.has(neighbor)) {
+						strongConnect(neighbor);
+						const neighborLowlink = lowlinks.get(neighbor) || 0;
+						const currentLowlink = lowlinks.get(nodeId) || 0;
+						lowlinks.set(nodeId, Math.min(currentLowlink, neighborLowlink));
+					} else if (onStack.has(neighbor)) {
+						const neighborId = ids.get(neighbor) || 0;
+						const currentLowlink = lowlinks.get(nodeId) || 0;
+						lowlinks.set(nodeId, Math.min(currentLowlink, neighborId));
+					}
 				}
 			}
 
@@ -146,9 +150,11 @@ export class DependencyGraphBuilder implements DependencyGraph {
 			}
 
 			visiting.add(nodeId);
-			const neighbors = this.edges.get(nodeId) || new Set();
-			for (const neighbor of neighbors) {
-				visit(neighbor, visiting);
+			const neighbors = this.edges.get(nodeId);
+			if (neighbors) {
+				for (const neighbor of neighbors) {
+					visit(neighbor, visiting);
+				}
 			}
 			visiting.delete(nodeId);
 
@@ -198,11 +204,13 @@ export class DependencyGraphBuilder implements DependencyGraph {
 			if (visited.has(current)) continue;
 			visited.add(current);
 
-			// Find all nodes that have edges to current (reverse edges)
-			for (const [source, targets] of this.edges) {
-				if (targets.has(current) && source !== nodeId) {
-					dependents.add(source);
-					stack.push(source);
+			const sources = this.reverseEdges.get(current);
+			if (sources) {
+				for (const source of sources) {
+					if (source !== nodeId) {
+						dependents.add(source);
+						stack.push(source);
+					}
 				}
 			}
 		}
@@ -223,11 +231,13 @@ export class DependencyGraphBuilder implements DependencyGraph {
 			if (visited.has(current)) continue;
 			visited.add(current);
 
-			const neighbors = this.edges.get(current) || new Set();
-			for (const neighbor of neighbors) {
-				if (neighbor !== nodeId) {
-					dependencies.add(neighbor);
-					stack.push(neighbor);
+			const neighbors = this.edges.get(current);
+			if (neighbors) {
+				for (const neighbor of neighbors) {
+					if (neighbor !== nodeId) {
+						dependencies.add(neighbor);
+						stack.push(neighbor);
+					}
 				}
 			}
 		}

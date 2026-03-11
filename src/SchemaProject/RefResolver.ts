@@ -147,15 +147,16 @@ export class DefaultRefResolver {
 	}
 
 	/**
-	 * Check if two paths refer to the same file.
+	 * Check if a pre-normalized path matches a schema ID.
+	 * @param normalizedPath - Already normalized via normalizeFilePath()
+	 * @param schemaId - Raw schema ID to compare against
 	 */
-	private pathsMatch(path1: string, path2: string): boolean {
-		const norm1 = this.normalizeFilePath(path1);
-		const norm2 = path2.toLowerCase();
+	private pathsMatch(normalizedPath: string, schemaId: string): boolean {
+		const norm2 = schemaId.toLowerCase();
 		return (
-			norm1 === norm2 ||
-			norm2.endsWith('/' + norm1) ||
-			norm1.endsWith('/' + norm2)
+			normalizedPath === norm2 ||
+			norm2.endsWith('/' + normalizedPath) ||
+			normalizedPath.endsWith('/' + norm2)
 		);
 	}
 
