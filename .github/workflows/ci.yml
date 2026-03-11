@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [master, develop, "changeset-release/**"]
   pull_request:
     branches: [master, develop]
 
 jobs:
-  build-and-test:
-    name: Build and test
+  CI:
+    name: CI
     runs-on: ubuntu-latest
 
     strategy:
