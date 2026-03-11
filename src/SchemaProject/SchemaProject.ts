@@ -235,6 +235,10 @@ export class SchemaProject {
 				this.options.outDir,
 				!!this.options.prettier,
 			);
+			const moduleFormat =
+				this.options.moduleFormat === 'both'
+					? 'esm'
+					: this.options.moduleFormat || 'esm';
 
 			for (const schemaId of buildOrder) {
 				const entry = this.registry.getEntry(schemaId);
@@ -242,11 +246,7 @@ export class SchemaProject {
 
 				try {
 					// Create import manager for this file
-					const format =
-						this.options.moduleFormat === 'both'
-							? 'esm'
-							: this.options.moduleFormat || 'esm';
-					const importMgr = new ImportManager(format);
+					const importMgr = new ImportManager(moduleFormat);
 
 					// TODO: Populate import manager from ReferenceBuilder instances in builder tree
 					// This would require traversing the builder and extracting ImportInfo from ReferenceBuilders
@@ -274,11 +274,7 @@ export class SchemaProject {
 
 			// Step 5: Generate index file if enabled
 			if (this.options.generateIndex !== false) {
-				const format =
-					this.options.moduleFormat === 'both'
-						? 'esm'
-						: this.options.moduleFormat || 'esm';
-				const indexImportMgr = new ImportManager(format);
+				const indexImportMgr = new ImportManager(moduleFormat);
 				const indexFile = fileGenerator.generateIndex(
 					this.registry.getAllEntries(),
 					indexImportMgr,

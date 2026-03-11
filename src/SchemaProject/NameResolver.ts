@@ -1,4 +1,5 @@
 import type { ConflictReport, ConflictDetail } from './types.js';
+import { toPascalCase } from '../utils/toPascalCase.js';
 
 /**
  * Default NameResolver implementation using schema ID-based naming strategy.
@@ -103,14 +104,14 @@ export class DefaultNameResolver {
 				const withoutExt = filename.replace(/\.[^.]+$/, '');
 				// Remove .schema suffix if present (common pattern)
 				const cleanedName = withoutExt.replace(/\.schema$/i, '');
-				exportName = this.toPascalCase(cleanedName);
+				exportName = toPascalCase(cleanedName);
 				break;
 
 			case 'schemaId':
 			default:
 				// Use last segment of ID path, convert to PascalCase
 				const lastSegment = schemaId.split('/').pop() ?? schemaId;
-				exportName = this.toPascalCase(lastSegment);
+				exportName = toPascalCase(lastSegment);
 				break;
 		}
 
@@ -172,18 +173,6 @@ export class DefaultNameResolver {
 			hasConflicts: conflicts.length > 0,
 			conflicts,
 		};
-	}
-
-	/**
-	 * Convert a string to PascalCase.
-	 * Handles kebab-case, snake_case, and mixed separators.
-	 */
-	private toPascalCase(str: string): string {
-		return str
-			.replace(/[-_./]/g, ' ') // Replace separators with spaces
-			.split(/\s+/)
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-			.join('');
 	}
 
 	/**
