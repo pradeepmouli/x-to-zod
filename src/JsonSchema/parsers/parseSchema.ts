@@ -12,6 +12,7 @@ import { AbstractParser } from '../../Parser/AbstractParser.js';
 import { matchPath as matchPattern } from '../../PostProcessing/pathMatcher.js';
 import { parseRef } from '../../SchemaProject/parseRef.js';
 import { jsonSchemaAdapter } from '../../SchemaInput/JsonSchemaAdapter.js';
+import { buildPathString } from '../../utils/buildPathString.js';
 
 export const parseSchema = <Version extends SchemaVersion>(
 	schema: JSONSchema<Version>,
@@ -28,7 +29,7 @@ export const parseSchema = <Version extends SchemaVersion>(
 	if (adapter.isValid(schema)) {
 		const path = refs.path || [];
 		// Always compute pathString from path, don't use cached value when path changes
-		const pathString = path.length ? `$.${path.join('.')}` : '$';
+		const pathString = buildPathString(path);
 		// Always recompute matchPath when path changes
 		const matchPath = (pattern: string) => matchPattern(path, pattern);
 

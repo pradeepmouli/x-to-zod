@@ -7,6 +7,7 @@ import type {
 } from '../PostProcessing/types.js';
 import { matchPath as matchPattern } from '../PostProcessing/pathMatcher.js';
 import type { Builder } from '../Builder/index.js';
+import { buildPathString } from '../utils/buildPathString.js';
 import type { Parser } from './index.js';
 import type { InferTypeKind } from './SchemaTypes.js';
 
@@ -104,8 +105,7 @@ export abstract class AbstractParser<
 		let current = builder;
 		for (const processor of this.postProcessors) {
 			const path = this.refs.path || [];
-			const pathString =
-				this.refs.pathString || (path.length ? `$.${path.join('.')}` : '$');
+			const pathString = this.refs.pathString || buildPathString(path);
 			const matchPath =
 				this.refs.matchPath ||
 				((pattern: string) => matchPattern(path, pattern));
@@ -241,7 +241,7 @@ export abstract class AbstractParser<
 
 	protected createChildContext(...pathSegments: (string | number)[]): Context {
 		const childPath = [...(this.refs.path || []), ...pathSegments];
-		const childPathString = childPath.length ? `$.${childPath.join('.')}` : '$';
+		const childPathString = buildPathString(childPath);
 		return {
 			...this.refs,
 			path: childPath,
