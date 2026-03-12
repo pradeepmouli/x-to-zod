@@ -125,6 +125,10 @@ const addAnnotations = (schema: JSONSchema, builder: Builder): Builder => {
 
 const selectParser: ParserSelector = (schema, refs) => {
 	const adapter = refs.adapter ?? jsonSchemaAdapter;
+	if (!adapter.isValid(schema)) {
+		// Preserve fallback semantics for boolean/non-object schemas
+		return schema ? refs.build.any() : refs.build.never();
+	}
 	// Try adapter-based parser selection (handles all types including custom)
 	const ParserClass = adapter.selectParser(schema as any, refs);
 	if (ParserClass) {
