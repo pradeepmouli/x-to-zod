@@ -7,7 +7,6 @@ import type {
 	DependencyGraph,
 } from './types.js';
 import type { SchemaRegistry } from './SchemaRegistry.js';
-import type { JSONSchemaAny as JSONSchema } from '../JsonSchema/types/index.js';
 import { extractRefs } from './parseRef.js';
 
 /**
@@ -88,7 +87,7 @@ export class Validator {
 		const visitedRefs = new Set<string>();
 
 		for (const entry of this.registry.getAllEntries()) {
-			const refs = extractRefs(entry.schema as JSONSchema);
+			const refs = extractRefs(entry.schema);
 			for (const ref of refs) {
 				// Avoid duplicate warnings
 				const refKey = `${entry.id}:${ref}`;

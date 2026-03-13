@@ -361,7 +361,7 @@ export class SchemaProject {
 
 		for (const entry of this.registry.getAllEntries()) {
 			this.dependencyGraph.addNode(entry.id);
-			const refs = extractRefs(entry.schema as JSONSchema);
+			const refs = extractRefs(entry.schema);
 			for (const ref of refs) {
 				const resolution = this.refResolver.resolve(ref, entry.id);
 				if (resolution && resolution.isExternal && resolution.targetSchemaId) {

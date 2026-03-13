@@ -139,10 +139,10 @@ export class DefaultRefResolver {
 	 */
 	private normalizeFilePath(filePath: string): string {
 		return filePath
+			.replace(/\\/g, '/') // Normalize backslashes first so subsequent patterns only need to handle /
 			.replace(/^(\.\.?\/)+/, '') // Remove all leading ./ and ../ segments
 			.replace(/\.schema\.json$/i, '') // Remove .schema.json extension (before .json)
 			.replace(/\.json$/i, '') // Remove .json extension
-			.replace(/\\/g, '/') // Normalize backslashes
 			.toLowerCase();
 	}
 
