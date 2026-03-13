@@ -7,6 +7,7 @@ import type {
 	DependencyGraph,
 } from './types.js';
 import type { SchemaRegistry } from './SchemaRegistry.js';
+import { extractRefs } from './parseRef.js';
 
 /**
  * Validator: Detects conflicts, missing refs, cycles, and unresolved schemas
@@ -86,7 +87,7 @@ export class Validator {
 		const visitedRefs = new Set<string>();
 
 		for (const entry of this.registry.getAllEntries()) {
-			const refs = this.extractRefsFromSchema(entry.schema);
+			const refs = extractRefs(entry.schema);
 			for (const ref of refs) {
 				// Avoid duplicate warnings
 				const refKey = `${entry.id}:${ref}`;
@@ -165,63 +166,5 @@ export class Validator {
 		}
 
 		return errors;
-	}
-
-	/**
-	 * Extract all $refs from a schema (recursive)
-	 */
-	private extractRefsFromSchema(
-		schema: any,
-		visited = new Set<any>(),
-	): string[] {
-		const refs: string[] = [];
-
-		// Avoid infinite loops
-		if (visited.has(schema)) {
-			return refs;
-		}
-		visited.add(schema);
-
-		if (typeof schema !== 'object' || schema === null) {
-			return refs;
-		}
-
-		// Check for $ref
-		if (typeof schema.$ref === 'string') {
-			refs.push(schema.$ref);
-		}
-
-		// Recurse into properties
-		if (schema.properties && typeof schema.properties === 'object') {
-			for (const prop of Object.values(schema.properties)) {
-				refs.push(...this.extractRefsFromSchema(prop, visited));
-			}
-		}
-
-		// Recurse into items
-		if (schema.items) {
-			refs.push(...this.extractRefsFromSchema(schema.items, visited));
-		}
-
-		// Recurse into allOf, anyOf, oneOf
-		for (const key of ['allOf', 'anyOf', 'oneOf']) {
-			if (Array.isArray(schema[key])) {
-				for (const item of schema[key]) {
-					refs.push(...this.extractRefsFromSchema(item, visited));
-				}
-			}
-		}
-
-		// Recurse into additionalProperties
-		if (
-			schema.additionalProperties &&
-			typeof schema.additionalProperties === 'object'
-		) {
-			refs.push(
-				...this.extractRefsFromSchema(schema.additionalProperties, visited),
-			);
-		}
-
-		return refs;
 	}
 }

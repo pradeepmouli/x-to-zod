@@ -56,19 +56,25 @@ export class ImportManager {
 	}
 
 	/**
-	 * Generate ESM import statements.
+	 * Group imports by module path.
 	 */
-	private getESMStatements(): string[] {
-		const statements: string[] = [];
+	private groupByModule(): Map<string, ImportInfo[]> {
 		const byModule = new Map<string, ImportInfo[]>();
-
-		// Group imports by module path
 		for (const importInfo of this.imports.values()) {
 			if (!byModule.has(importInfo.modulePath)) {
 				byModule.set(importInfo.modulePath, []);
 			}
 			byModule.get(importInfo.modulePath)!.push(importInfo);
 		}
+		return byModule;
+	}
+
+	/**
+	 * Generate ESM import statements.
+	 */
+	private getESMStatements(): string[] {
+		const statements: string[] = [];
+		const byModule = this.groupByModule();
 
 		// Generate statements
 		for (const [modulePath, imports] of byModule) {
@@ -132,15 +138,7 @@ export class ImportManager {
 	 */
 	private getCJSStatements(): string[] {
 		const statements: string[] = [];
-		const byModule = new Map<string, ImportInfo[]>();
-
-		// Group imports by module path
-		for (const importInfo of this.imports.values()) {
-			if (!byModule.has(importInfo.modulePath)) {
-				byModule.set(importInfo.modulePath, []);
-			}
-			byModule.get(importInfo.modulePath)!.push(importInfo);
-		}
+		const byModule = this.groupByModule();
 
 		// Generate statements
 		for (const [modulePath, imports] of byModule) {

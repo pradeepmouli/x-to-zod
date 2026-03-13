@@ -145,6 +145,32 @@ describe('RefResolver - Default Implementation', () => {
 			expect(resolution).not.toBeNull();
 			expect(resolution?.targetSchemaId).toBe('schemas/profile');
 		});
+
+		it('should resolve Windows backslash relative path (..\\\\schemas\\\\profile.json)', () => {
+			const resolution = resolver.resolve(
+				'..\\schemas\\profile.json#/definitions/Address',
+				'user',
+			);
+			expect(resolution).not.toBeNull();
+			expect(resolution?.targetSchemaId).toBe('schemas/profile');
+			expect(resolution?.definitionPath).toEqual(['definitions', 'Address']);
+		});
+
+		it('should resolve Windows backslash relative path (.\\\\post.json)', () => {
+			const resolution = resolver.resolve(
+				'.\\post.json#/properties/title',
+				'user',
+			);
+			expect(resolution).not.toBeNull();
+			expect(resolution?.targetSchemaId).toBe('post');
+			expect(resolution?.definitionPath).toEqual(['properties', 'title']);
+		});
+
+		it('should resolve Windows backslash path with multiple leading segments (..\\\\..\\\\post.json)', () => {
+			const resolution = resolver.resolve('..\\..\\post.json#/', 'user');
+			expect(resolution).not.toBeNull();
+			expect(resolution?.targetSchemaId).toBe('post');
+		});
 	});
 
 	describe('resolve - unresolvable references', () => {
