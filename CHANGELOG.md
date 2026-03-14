@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.2
+
+### Patch Changes
+
+- [#77](https://github.com/pradeepmouli/x-to-zod/pull/77) [`5346b90`](https://github.com/pradeepmouli/x-to-zod/commit/5346b90a129e6775a4088f05cf59f494ec96f5f8) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - - refactor: extract buildPathString utility, deduplicate ImportManager, remove dead code
+  - refactor: deduplicate toPascalCase, fix normalizeFilePath bug, consolidate module format
+  - refactor: simplify codebase with efficiency and deduplication improvements
+
 ## 0.10.1
 
 ### Patch Changes

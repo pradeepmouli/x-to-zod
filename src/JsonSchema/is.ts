@@ -1,4 +1,4 @@
-import type { SetReadonly, SetRequired } from 'type-fest';
+import type { SetRequired } from 'type-fest';
 import type { Serializable } from '../ZodBuilder/types.js';
 import type {
 	SchemaNode,

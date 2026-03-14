@@ -110,10 +110,11 @@ function isInCycle(
 
 /**
  * Extract all $refs from a schema recursively.
+ * Accepts any value and safely narrows internally.
  * Useful for dependency analysis.
  */
 export function extractRefs(
-	schema: JSONSchema,
+	schema: unknown,
 	refs: Set<string> = new Set(),
 	depth: number = 0,
 ): Set<string> {
@@ -130,40 +131,44 @@ export function extractRefs(
 
 	if (Array.isArray(schema)) {
 		for (const item of schema) {
-			extractRefs(item as JSONSchema, refs, depth + 1);
+			extractRefs(item, refs, depth + 1);
 		}
 		return refs;
 	}
 
-	const refValue = (schema as { $ref?: unknown }).$ref;
+	const schemaObj = schema as Record<string, unknown>;
+
+	const refValue = schemaObj.$ref;
 	if (refValue && typeof refValue === 'string') {
 		refs.add(refValue);
 	}
 
-	if (schema.properties && typeof schema.properties === 'object') {
-		for (const propSchema of Object.values(schema.properties)) {
-			extractRefs(propSchema as JSONSchema, refs, depth + 1);
+	if (schemaObj.properties && typeof schemaObj.properties === 'object') {
+		for (const propSchema of Object.values(
+			schemaObj.properties as Record<string, unknown>,
+		)) {
+			extractRefs(propSchema, refs, depth + 1);
 		}
 	}
 
-	if (schema.items) {
-		extractRefs(schema.items as JSONSchema, refs, depth + 1);
+	if (schemaObj.items) {
+		extractRefs(schemaObj.items, refs, depth + 1);
 	}
 
 	for (const combiner of ['allOf', 'anyOf', 'oneOf'] as const) {
-		const combined = (schema as Record<string, unknown>)[combiner];
+		const combined = schemaObj[combiner];
 		if (combined && Array.isArray(combined)) {
-			for (const subSchema of combined as JSONSchema[]) {
+			for (const subSchema of combined) {
 				extractRefs(subSchema, refs, depth + 1);
 			}
 		}
 	}
 
 	if (
-		schema.additionalProperties &&
-		typeof schema.additionalProperties === 'object'
+		schemaObj.additionalProperties &&
+		typeof schemaObj.additionalProperties === 'object'
 	) {
-		extractRefs(schema.additionalProperties as JSONSchema, refs, depth + 1);
+		extractRefs(schemaObj.additionalProperties, refs, depth + 1);
 	}
 
 	return refs;

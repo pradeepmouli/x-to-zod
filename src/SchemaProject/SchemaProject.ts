@@ -185,15 +185,15 @@ export class SchemaProject {
 			// Step 3: Parse schemas (in dependency order)
 			const { parseSchema } =
 				await import('../JsonSchema/parsers/parseSchema.js');
+			const globalProcessors = this.resolvePostProcessors(
+				this.options.globalPostProcessors,
+			);
 			for (const schemaId of buildOrder) {
 				const entry = this.registry.getEntry(schemaId);
 				if (!entry) continue;
 
 				try {
 					// Merge global and per-schema post-processors
-					const globalProcessors = this.resolvePostProcessors(
-						this.options.globalPostProcessors,
-					);
 					const schemaProcessors = this.resolvePostProcessors(
 						entry.metadata.postProcessors as
 							| ProjectPostProcessorConfig[]
@@ -235,6 +235,10 @@ export class SchemaProject {
 				this.options.outDir,
 				!!this.options.prettier,
 			);
+			const moduleFormat =
+				this.options.moduleFormat === 'both'
+					? 'esm'
+					: this.options.moduleFormat || 'esm';
 
 			for (const schemaId of buildOrder) {
 				const entry = this.registry.getEntry(schemaId);
@@ -242,11 +246,7 @@ export class SchemaProject {
 
 				try {
 					// Create import manager for this file
-					const format =
-						this.options.moduleFormat === 'both'
-							? 'esm'
-							: this.options.moduleFormat || 'esm';
-					const importMgr = new ImportManager(format);
+					const importMgr = new ImportManager(moduleFormat);
 
 					// TODO: Populate import manager from ReferenceBuilder instances in builder tree
 					// This would require traversing the builder and extracting ImportInfo from ReferenceBuilders
@@ -274,11 +274,7 @@ export class SchemaProject {
 
 			// Step 5: Generate index file if enabled
 			if (this.options.generateIndex !== false) {
-				const format =
-					this.options.moduleFormat === 'both'
-						? 'esm'
-						: this.options.moduleFormat || 'esm';
-				const indexImportMgr = new ImportManager(format);
+				const indexImportMgr = new ImportManager(moduleFormat);
 				const indexFile = fileGenerator.generateIndex(
 					this.registry.getAllEntries(),
 					indexImportMgr,
@@ -365,7 +361,7 @@ export class SchemaProject {
 
 		for (const entry of this.registry.getAllEntries()) {
 			this.dependencyGraph.addNode(entry.id);
-			const refs = extractRefs(entry.schema as JSONSchema);
+			const refs = extractRefs(entry.schema);
 			for (const ref of refs) {
 				const resolution = this.refResolver.resolve(ref, entry.id);
 				if (resolution && resolution.isExternal && resolution.targetSchemaId) {

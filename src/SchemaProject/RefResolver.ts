@@ -1,5 +1,6 @@
 import type { RefResolution, ImportInfo } from './types.js';
 import { SchemaRegistry } from './SchemaRegistry.js';
+import { toPascalCase } from '../utils/toPascalCase.js';
 
 /**
  * Default RefResolver implementation.
@@ -138,24 +139,24 @@ export class DefaultRefResolver {
 	 */
 	private normalizeFilePath(filePath: string): string {
 		return filePath
-			.replace(/^\.\//, '') // Remove leading ./
-			.replace(/^\.\.\//, '') // Remove leading ../
+			.replace(/\\/g, '/') // Normalize backslashes first so subsequent patterns only need to handle /
+			.replace(/^(\.\.?\/)+/, '') // Remove all leading ./ and ../ segments
+			.replace(/\.schema\.json$/i, '') // Remove .schema.json extension (before .json)
 			.replace(/\.json$/i, '') // Remove .json extension
-			.replace(/\.schema\.json$/i, '') // Remove .schema.json extension
-			.replace(/\\/g, '/') // Normalize backslashes
 			.toLowerCase();
 	}
 
 	/**
-	 * Check if two paths refer to the same file.
+	 * Check if a pre-normalized path matches a schema ID.
+	 * @param normalizedPath - Already normalized via normalizeFilePath()
+	 * @param schemaId - Raw schema ID to compare against
 	 */
-	private pathsMatch(path1: string, path2: string): boolean {
-		const norm1 = this.normalizeFilePath(path1);
-		const norm2 = path2.toLowerCase();
+	private pathsMatch(normalizedPath: string, schemaId: string): boolean {
+		const norm2 = schemaId.toLowerCase();
 		return (
-			norm1 === norm2 ||
-			norm2.endsWith('/' + norm1) ||
-			norm1.endsWith('/' + norm2)
+			normalizedPath === norm2 ||
+			norm2.endsWith('/' + normalizedPath) ||
+			normalizedPath.endsWith('/' + norm2)
 		);
 	}
 
@@ -168,7 +169,7 @@ export class DefaultRefResolver {
 	): ImportInfo {
 		// Derive import name from target schema ID (last segment, PascalCase)
 		const lastSegment = targetSchemaId.split('/').pop() ?? targetSchemaId;
-		const importName = this.toPascalCase(lastSegment.replace(/\.[^.]+$/, '')); // Remove extension
+		const importName = toPascalCase(lastSegment.replace(/\.[^.]+$/, '')); // Remove extension
 
 		// Compute the module path
 		let modulePath = this.computeModulePath(targetSchemaId, fromSchemaId);
@@ -213,17 +214,6 @@ export class DefaultRefResolver {
 
 		// Otherwise, use absolute-style import from root
 		return targetSchemaId;
-	}
-
-	/**
-	 * Convert a string to PascalCase.
-	 */
-	private toPascalCase(str: string): string {
-		return str
-			.replace(/[-_./]/g, ' ')
-			.split(/\s+/)
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-			.join('');
 	}
 
 	/**
