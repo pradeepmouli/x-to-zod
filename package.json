@@ -79,7 +79,10 @@
     "type-check": "tsgo --noEmit",
     "changeset:version": "changeset version",
     "changeset:publish": "pnpm run build && changeset publish",
-    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "docs": "typedoc",
+    "docs:md": "typedoc --options typedoc.md.json",
+    "docs:all": "pnpm docs && pnpm docs:md"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged",
@@ -143,6 +146,8 @@
     "ts-morph": "^27.0.2",
     "tsx": "^4.21.0",
     "type-fest": "^5.4.4",
+    "typedoc": "^0.28.17",
+    "typedoc-plugin-markdown": "^4.11.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "zod": "^4.3.6"
