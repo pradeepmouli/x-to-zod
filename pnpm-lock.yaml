@@ -70,14 +70,14 @@ importers:
         specifier: ^4.11.0
         version: 4.11.0(typedoc@0.28.17(typescript@5.9.3))
       typedoc-plugin-to-skills:
-        specifier: ^0.3.0
-        version: 0.3.0(typedoc@0.28.17(typescript@5.9.3))
+        specifier: ^0.4.2
+        version: 0.4.2(typedoc@0.28.17(typescript@5.9.3))
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
+        version: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.3)
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -744,11 +744,11 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@to-skills/core@0.4.0':
-    resolution: {integrity: sha512-Juy4ldZ4N2h8+vvfKAeCIZ/XNWiNHugKdgIdw2CQXvBK27K/0eTby+TRC71CVKpHwgW4OqxWso24747BD1YBZg==}
+  '@to-skills/core@0.5.0':
+    resolution: {integrity: sha512-NhBW9nUCxowlEbZJfmmeAlYvl9m2PAd5cJiGtjmExU6K74tEZgz6qUkODrExAwUA4BNyzACZp/+bzaOWoDJmwg==}
 
-  '@to-skills/typedoc@0.4.0':
-    resolution: {integrity: sha512-MYnPj/hX+fT4ruiE6lcyEo+j32Hv4lPgGBvpn1fhkr+CoFjtUNSSu/DFN87zLDaR4a01EcefR7SVcSroVg78YQ==}
+  '@to-skills/typedoc@0.6.0':
+    resolution: {integrity: sha512-gazmvxxfF2gQRBt/hcrzoktP0tlo9jc4h1ZqADYAlA7kuSWvxAbDLcm9Rasmx5s1UChP1nhjQGOibWQ4Vpphig==}
     peerDependencies:
       typedoc: '>=0.28.0'
 
@@ -1545,8 +1545,8 @@ packages:
     peerDependencies:
       typedoc: 0.28.x
 
-  typedoc-plugin-to-skills@0.3.0:
-    resolution: {integrity: sha512-1bnMzjgeFrRJxKVpSgILx8QRohYAII05XdNZouLzQ4FIfl+WS8mbMJrKn8plFo76h4dpCbYrsdadtJmprcgeMg==}
+  typedoc-plugin-to-skills@0.4.2:
+    resolution: {integrity: sha512-X7VTbzXArf8dpAGkMmzbKJkSmMXHFh56ZKC09M3mQBWWFA8KqemnNMi3eApCT7n7bxNR3RxVb23Zin+S1RiQYg==}
     peerDependencies:
       typedoc: '>=0.28.0'
 
@@ -1668,6 +1668,11 @@ packages:
 
   yaml@2.8.2:
     resolution: {integrity: sha512-mplynKqc1C2hTVYxd0PU2xQAc22TI1vShAYGksCCfxbn/dFwnHTNi1bvYsBTkhdUNtGIf5xNOg938rrSSYvS9A==}
+    engines: {node: '>= 14.6'}
+    hasBin: true
+
+  yaml@2.8.3:
+    resolution: {integrity: sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==}
     engines: {node: '>= 14.6'}
     hasBin: true
 
@@ -2196,11 +2201,11 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@to-skills/core@0.4.0': {}
+  '@to-skills/core@0.5.0': {}
 
-  '@to-skills/typedoc@0.4.0(typedoc@0.28.17(typescript@5.9.3))':
+  '@to-skills/typedoc@0.6.0(typedoc@0.28.17(typescript@5.9.3))':
     dependencies:
-      '@to-skills/core': 0.4.0
+      '@to-skills/core': 0.5.0
       typedoc: 0.28.17(typescript@5.9.3)
 
   '@ts-morph/common@0.28.1':
@@ -2275,7 +2280,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
+      vitest: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.3)
 
   '@vitest/expect@4.0.18':
     dependencies:
@@ -2286,13 +2291,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@4.0.18(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))':
+  '@vitest/mocker@4.0.18(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@vitest/spy': 4.0.18
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.3)
 
   '@vitest/pretty-format@4.0.18':
     dependencies:
@@ -2320,7 +2325,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vitest: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2)
+      vitest: 4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.3)
 
   '@vitest/utils@4.0.18':
     dependencies:
@@ -3003,9 +3008,9 @@ snapshots:
     dependencies:
       typedoc: 0.28.17(typescript@5.9.3)
 
-  typedoc-plugin-to-skills@0.3.0(typedoc@0.28.17(typescript@5.9.3)):
+  typedoc-plugin-to-skills@0.4.2(typedoc@0.28.17(typescript@5.9.3)):
     dependencies:
-      '@to-skills/typedoc': 0.4.0(typedoc@0.28.17(typescript@5.9.3))
+      '@to-skills/typedoc': 0.6.0(typedoc@0.28.17(typescript@5.9.3))
       typedoc: 0.28.17(typescript@5.9.3)
 
   typedoc@0.28.17(typescript@5.9.3):
@@ -3015,7 +3020,7 @@ snapshots:
       markdown-it: 14.1.1
       minimatch: 9.0.9
       typescript: 5.9.3
-      yaml: 2.8.2
+      yaml: 2.8.3
 
   typescript@5.9.3: {}
 
@@ -3025,7 +3030,7 @@ snapshots:
 
   universalify@0.1.2: {}
 
-  vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2):
+  vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       esbuild: 0.27.3
       fdir: 6.5.0(picomatch@4.0.3)
@@ -3037,12 +3042,12 @@ snapshots:
       '@types/node': 25.2.3
       fsevents: 2.3.3
       tsx: 4.21.0
-      yaml: 2.8.2
+      yaml: 2.8.3
 
-  vitest@4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.2):
+  vitest@4.0.18(@types/node@25.2.3)(@vitest/ui@4.0.18)(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       '@vitest/expect': 4.0.18
-      '@vitest/mocker': 4.0.18(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2))
+      '@vitest/mocker': 4.0.18(vite@7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.3))
       '@vitest/pretty-format': 4.0.18
       '@vitest/runner': 4.0.18
       '@vitest/snapshot': 4.0.18
@@ -3059,7 +3064,7 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 7.3.1(@types/node@25.2.3)(tsx@4.21.0)(yaml@2.8.3)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 25.2.3
@@ -3100,5 +3105,7 @@ snapshots:
       strip-ansi: 7.2.0
 
   yaml@2.8.2: {}
+
+  yaml@2.8.3: {}
 
   zod@4.3.6: {}
