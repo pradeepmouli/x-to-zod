@@ -4,6 +4,12 @@ import type { JSONSchema as JSONSchema2020 } from 'json-schema-typed/draft-2020-
 import type { OpenAPIV3, OpenAPIV3_1 } from 'openapi-types';
 import type { Merge } from 'type-fest';
 
+/**
+ * Supported JSON Schema dialect versions and OpenAPI specification versions.
+ *
+ * Pass this as the `S` type parameter to `JSONSchema<S>` to narrow the schema
+ * type to the keywords supported by that dialect.
+ */
 export type SchemaVersion =
 	| '2020-12'
 	| '2019-09'
@@ -37,6 +43,13 @@ export type RealSchema<T> = T extends
 	? Exclude<T, boolean>
 	: never;
 
+/**
+ * The set of JSON Schema primitive type names recognised by `x-to-zod`.
+ *
+ * These correspond to the values allowed in the JSON Schema `"type"` keyword.
+ * Use as the `V` type parameter on `JSONSchema<S, T, V>` to constrain which
+ * primitive the schema represents.
+ */
 export type TypeValue =
 	| 'object'
 	| 'array'
@@ -65,6 +78,20 @@ type JSONSchemaMap<T, V extends TypeValue = TypeToTypeValue<T>> = {
 	'OpenAPI3.1': OpenAPISchemaV3_1<T, V>;
 };
 
+/**
+ * Versioned JSON Schema type that resolves to the correct draft or OpenAPI schema
+ * definition based on `Version`.
+ *
+ * @typeParam Version - The JSON Schema dialect (e.g. `'2020-12'`, `'07'`, `'OpenAPI3.1'`).
+ * @typeParam T - The TypeScript type that the schema validates (defaults to `any`).
+ * @typeParam V - The JSON Schema `type` value corresponding to `T` (inferred from `T` when omitted).
+ *
+ * @example
+ * ```ts
+ * import type { JSONSchema } from 'x-to-zod';
+ * const schema: JSONSchema<'2020-12', string, 'string'> = { type: 'string', minLength: 1 };
+ * ```
+ */
 export type JSONSchema<
 	Version extends SchemaVersion,
 	T = any,
@@ -150,6 +177,20 @@ export type RecordSchema<V extends SchemaVersion = SchemaVersion> =
 export type MultipleTypeSchema<V extends SchemaVersion = SchemaVersion> =
 	SchemaNode<V> & { type: string[] };
 
+/**
+ * A function that transforms or augments a JSON Schema node before it is
+ * handed to a parser.
+ *
+ * Transformers receive the schema and a `refs` bag (containing resolved
+ * `$ref` look-ups) and may return a modified copy of the schema or
+ * `undefined` to leave it unchanged.
+ *
+ * @example
+ * ```ts
+ * import type { transformer } from 'x-to-zod';
+ * const addDescription: transformer = (schema) => ({ ...schema, description: 'auto-added' });
+ * ```
+ */
 export type transformer = <
 	Version extends SchemaVersion = '2020-12',
 	T = object,

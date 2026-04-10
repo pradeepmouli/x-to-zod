@@ -18,6 +18,25 @@ export type {
 	transformer,
 } from './types/index.js';
 
+/**
+ * Namespace of JSON Schema parser constructors, one per schema kind.
+ *
+ * Each member is a parser class or factory that accepts a JSON Schema node and
+ * returns a `Builder`. Use `parse.string`, `parse.object`, etc. directly when
+ * you know the schema's type, or call `select(schema)` to pick the right parser
+ * automatically.
+ *
+ * Special members:
+ * - `parse.schema` — handles all composite / keyword-based schemas
+ * - `parse.ref` — resolves `$ref` pointers in multi-schema projects
+ * - `parse.default` — wraps another parser with a default value
+ *
+ * @example
+ * ```ts
+ * import { JSONSchema } from 'x-to-zod';
+ * const builder = new JSONSchema.parse.string({ type: 'string' });
+ * ```
+ */
 export const parse = {
 	// class-based parse methods
 	array: classParse.array,
@@ -58,6 +77,23 @@ export const parse = {
 	Ref: parseRef,
 };
 
+/**
+ * Selects the most specific parser for a given JSON Schema node.
+ *
+ * Inspects the schema's structural properties — `type`, keyword presence —
+ * and returns the matching `parse.*` handler. Falls back to `parse.schema`
+ * for composite schemas (enum, anyOf, allOf, etc.) that do not map to a
+ * primitive type discriminator.
+ *
+ * @param schema - The JSON Schema node to inspect.
+ * @returns The appropriate parser from the `parse` namespace.
+ *
+ * @example
+ * ```ts
+ * import { JSONSchema, select } from 'x-to-zod';
+ * const parser = select({ type: 'string', minLength: 1 });
+ * ```
+ */
 export function select<S extends SchemaVersion = '2020-12'>(
 	schema: JSONSchema<S, any, TypeValue>,
 ) {
