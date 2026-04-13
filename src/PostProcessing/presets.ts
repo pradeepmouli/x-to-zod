@@ -13,6 +13,27 @@ function whenPath(pattern: string, transform: PostProcessor): PostProcessor {
 		context.matchPath(pattern) ? transform(builder, context) : undefined;
 }
 
+/**
+ * A collection of reusable post-processor factory functions.
+ *
+ * Each factory returns a `PostProcessor` — a function applied to every `Builder`
+ * produced during schema conversion. Use these to apply cross-cutting
+ * transformations such as making all objects strict, branding ID fields, or
+ * making specific paths optional/required.
+ *
+ * @example
+ * ```ts
+ * import { postProcessors } from 'x-to-zod/post-processing';
+ *
+ * const options = {
+ *   postProcessors: [
+ *     postProcessors.strictObjects(),
+ *     postProcessors.brandIds('UserId'),
+ *     postProcessors.makeOptional('addresses.**'),
+ *   ],
+ * };
+ * ```
+ */
 export const postProcessors = {
 	strictObjects: (): PostProcessor =>
 		guardAndApply(is.objectBuilder, (builder) => builder.strict()),

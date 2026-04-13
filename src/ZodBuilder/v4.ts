@@ -402,4 +402,21 @@ const appHelpers = {
 	},
 } as const;
 
+/**
+ * Full Zod v4 builder factory object.
+ *
+ * Mirrors the `z` namespace from Zod v4 but returns code-generating `Builder`
+ * instances rather than real Zod schemas. Includes all v4-specific methods
+ * (`build.promise()`, `build.lazy()`, `build.pipe()`, etc.) in addition to the
+ * core API shared with v3.
+ *
+ * Prefer importing `build` from `'x-to-zod/v4'` for type-safe v4 usage.
+ *
+ * @example
+ * ```ts
+ * import { buildV4 } from 'x-to-zod/ZodBuilder';
+ * const expr = buildV4.object({ name: buildV4.string() }).strict().text();
+ * // => 'z.object({ name: z.string() }).strict()'
+ * ```
+ */
 export const buildV4: BuildV4 = { ...zodConstructors, ...appHelpers };
