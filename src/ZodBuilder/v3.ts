@@ -74,6 +74,23 @@ export type BuildV3 = {
 	nativeEnum: (enumReference: string) => NativeEnumBuilder;
 };
 
+/**
+ * Zod v3-compatible builder factory object.
+ *
+ * Mirrors the `z` namespace from Zod v3 but returns code-generating `Builder`
+ * instances rather than real Zod schemas. Use this when you need to target Zod
+ * v3 consumers and want TypeScript to prevent accidentally calling v4-only
+ * builder methods.
+ *
+ * Prefer importing `build` from `'x-to-zod/v3'` for type-safe v3 usage.
+ *
+ * @example
+ * ```ts
+ * import { buildV3 } from 'x-to-zod/ZodBuilder';
+ * const expr = buildV3.string().optional().text();
+ * // => 'z.string().optional()'
+ * ```
+ */
 export const buildV3: BuildV3 = {
 	number: (...params: ParamsFor<'number'>) =>
 		new NumberBuilder('v3', ...params),

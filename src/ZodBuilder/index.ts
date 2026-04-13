@@ -109,8 +109,31 @@ import { DiscriminatedUnionBuilder } from './discriminatedUnion.js';
 import { buildV4 } from './v4.js';
 import type { BuildV4 } from './v4.js';
 
+/**
+ * The default Zod v4 builder API.
+ *
+ * A collection of factory methods — `build.string()`, `build.object()`, etc. —
+ * that emit `Builder` instances rather than real Zod schemas. Each method mirrors
+ * its counterpart on the `z` namespace but returns a code-generating builder
+ * instead. Import `build` from `x-to-zod/v3` or `x-to-zod/v4` to get a
+ * version-constrained variant of the API.
+ *
+ * @example
+ * ```ts
+ * import { ZodBuilder } from 'x-to-zod';
+ * const expr = ZodBuilder.build.string().optional().text();
+ * // => 'z.string().optional()'
+ * ```
+ */
 export const build: BuildV4 = buildV4;
 
+/**
+ * Mapped type from builder-factory key to the `Builder` instance it produces.
+ *
+ * `TypeKind['string']` resolves to the `Builder` returned by `build.string()`,
+ * `TypeKind['object']` to the one returned by `build.object()`, and so on.
+ * Use this as a discriminated registry for type-narrowing inside parsers.
+ */
 export type TypeKind = {
 	[T in keyof typeof buildV4 as (typeof buildV4)[T] extends (
 		...args: unknown[]
@@ -121,6 +144,18 @@ export type TypeKind = {
 	>;
 };
 
+/**
+ * Extracts the concrete `Builder` type for a given `TypeKind` key.
+ *
+ * Equivalent to `TypeKind[T]` with the key constrained to the known set of
+ * builder-factory names. Use in generic parser helpers where you need to
+ * reference the builder produced by a specific factory:
+ *
+ * @example
+ * ```ts
+ * function processString(builder: TypeKindOf<'string'>) { ... }
+ * ```
+ */
 export type TypeKindOf<T extends keyof TypeKind> = TypeKind[T];
 
 // Version-specific builder exports - import from new factory files
