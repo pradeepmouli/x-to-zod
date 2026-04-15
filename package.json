@@ -149,7 +149,7 @@
     "typedoc": "^0.28.17",
     "typedoc-plugin-markdown": "^4.11.0",
     "typedoc-plugin-to-skills": "^0.6.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vitest": "^4.1.4",
     "zod": "^4.3.6"
   },
