@@ -7,6 +7,8 @@
 
 > **⚠️ Pre-1.0 software** — APIs are subject to change between minor versions. Pin to exact versions in production. See the [CHANGELOG](./CHANGELOG.md) for breaking changes between releases.
 
+📚 **Documentation:** <https://pradeepmouli.github.io/x-to-zod/>
+
 ## Overview
 
 A runtime package and CLI tool to convert JSON Schema draft-2020-12 objects or files into Zod schemas in the form of JavaScript code.
