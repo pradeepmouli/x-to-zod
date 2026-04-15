@@ -5,6 +5,8 @@
 
 > **Note:** This is an enhanced fork of [json-schema-to-zod](https://github.com/StefanTerdell/json-schema-to-zod) by Stefan Terdell. All credit for the original implementation goes to the original author and contributors.
 
+> **⚠️ Pre-1.0 software** — APIs are subject to change between minor versions. Pin to exact versions in production. See the [CHANGELOG](./CHANGELOG.md) for breaking changes between releases.
+
 ## Overview
 
 A runtime package and CLI tool to convert JSON Schema draft-2020-12 objects or files into Zod schemas in the form of JavaScript code.
