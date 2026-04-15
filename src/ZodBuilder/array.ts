@@ -80,7 +80,7 @@ export class ArrayBuilder<Z extends ZodType>
 	}
 
 	unwrap(): Z {
-		throw new Error('Method not implemented.');
+		throw new Error('ArrayBuilder.unwrap() is not implemented yet.');
 	}
 
 	/**

@@ -352,46 +352,58 @@ export class StringBuilder
 	}
 }
 
+const TOP_LEVEL_FORMAT_METHODS = {
+	email: 'email',
+	url: 'url',
+	httpUrl: 'httpUrl',
+	uuid: 'uuid',
+	emoji: 'emoji',
+	nanoid: 'nanoid',
+	cuid: 'cuid',
+	cuid2: 'cuid2',
+	ulid: 'ulid',
+	ipv4: 'ipv4',
+	ipv6: 'ipv6',
+	cidrv4: 'cidrv4',
+	cidrv6: 'cidrv6',
+} as const;
+
+const CHAINED_FORMAT_METHODS = {
+	email: 'email',
+	ip: 'ip',
+	url: 'url',
+	httpUrl: 'httpUrl',
+	hostname: 'hostname',
+	emoji: 'emoji',
+	uuid: 'uuid',
+	base64url: 'base64url',
+	hex: 'hex',
+	jwt: 'jwt',
+	nanoid: 'nanoid',
+	cuid: 'cuid',
+	cuid2: 'cuid2',
+	ulid: 'ulid',
+	mac: 'mac',
+	cidrv4: 'cidrv4',
+	cidrv6: 'cidrv6',
+	'iso.date': 'iso.date',
+	'iso.time': 'iso.time',
+	'iso.datetime': 'iso.datetime',
+	'iso.duration': 'iso.duration',
+	time: 'time',
+	date: 'date',
+	duration: 'duration',
+} as const;
+
 function buildTopLevelFormat(
 	format: string,
 	params?: unknown,
 ): string | undefined {
-	const paramsStr =
-		typeof params === 'string'
-			? `{ error: ${JSON.stringify(params)} }`
-			: params === undefined
-				? ''
-				: JSON.stringify(params);
-	switch (format) {
-		case 'email':
-			return paramsStr ? `z.email(${paramsStr})` : 'z.email()';
-		case 'url':
-			return paramsStr ? `z.url(${paramsStr})` : 'z.url()';
-		case 'httpUrl':
-			return paramsStr ? `z.httpUrl(${paramsStr})` : 'z.httpUrl()';
-		case 'uuid':
-			return paramsStr ? `z.uuid(${paramsStr})` : 'z.uuid()';
-		case 'emoji':
-			return paramsStr ? `z.emoji(${paramsStr})` : 'z.emoji()';
-		case 'nanoid':
-			return paramsStr ? `z.nanoid(${paramsStr})` : 'z.nanoid()';
-		case 'cuid':
-			return paramsStr ? `z.cuid(${paramsStr})` : 'z.cuid()';
-		case 'cuid2':
-			return paramsStr ? `z.cuid2(${paramsStr})` : 'z.cuid2()';
-		case 'ulid':
-			return paramsStr ? `z.ulid(${paramsStr})` : 'z.ulid()';
-		case 'ipv4':
-			return paramsStr ? `z.ipv4(${paramsStr})` : 'z.ipv4()';
-		case 'ipv6':
-			return paramsStr ? `z.ipv6(${paramsStr})` : 'z.ipv6()';
-		case 'cidrv4':
-			return paramsStr ? `z.cidrv4(${paramsStr})` : 'z.cidrv4()';
-		case 'cidrv6':
-			return paramsStr ? `z.cidrv6(${paramsStr})` : 'z.cidrv6()';
-		default:
-			return undefined;
-	}
+	const method =
+		TOP_LEVEL_FORMAT_METHODS[format as keyof typeof TOP_LEVEL_FORMAT_METHODS];
+	return method === undefined
+		? undefined
+		: buildTopLevelFormatCall(method, params);
 }
 
 /**
@@ -404,13 +416,9 @@ export function applyFormat(
 ): string {
 	const hasParams = params !== undefined;
 	const serializedParams = hasParams ? JSON.stringify(params) : '';
+	const simpleMethod =
+		CHAINED_FORMAT_METHODS[format as keyof typeof CHAINED_FORMAT_METHODS];
 	switch (format) {
-		case 'email':
-			return hasParams
-				? `${zodStr}.email(${serializedParams})`
-				: `${zodStr}.email()`;
-		case 'ip':
-			return hasParams ? `${zodStr}.ip(${serializedParams})` : `${zodStr}.ip()`;
 		case 'ipv4':
 			return hasParams
 				? `${zodStr}.ip(${serializedParams})`
@@ -420,26 +428,7 @@ export function applyFormat(
 				? `${zodStr}.ip(${serializedParams})`
 				: `${zodStr}.ip({ version: "v6" })`;
 		case 'uri':
-		case 'url':
-			return hasParams
-				? `${zodStr}.url(${serializedParams})`
-				: `${zodStr}.url()`;
-		case 'httpUrl':
-			return hasParams
-				? `${zodStr}.httpUrl(${serializedParams})`
-				: `${zodStr}.httpUrl()`;
-		case 'hostname':
-			return hasParams
-				? `${zodStr}.hostname(${serializedParams})`
-				: `${zodStr}.hostname()`;
-		case 'emoji':
-			return hasParams
-				? `${zodStr}.emoji(${serializedParams})`
-				: `${zodStr}.emoji()`;
-		case 'uuid':
-			return hasParams
-				? `${zodStr}.uuid(${serializedParams})`
-				: `${zodStr}.uuid()`;
+			return buildChainedFormatCall(zodStr, 'url', params);
 		case 'uuidv4':
 			return hasParams
 				? `${zodStr}.uuid(${serializedParams})`
@@ -452,83 +441,18 @@ export function applyFormat(
 			return hasParams
 				? `${zodStr}.uuid(${serializedParams})`
 				: `${zodStr}.uuid({ version: "v7" })`;
-		case 'base64url':
-			return hasParams
-				? `${zodStr}.base64url(${serializedParams})`
-				: `${zodStr}.base64url()`;
-		case 'hex':
-			return hasParams
-				? `${zodStr}.hex(${serializedParams})`
-				: `${zodStr}.hex()`;
-		case 'jwt':
-			return hasParams
-				? `${zodStr}.jwt(${serializedParams})`
-				: `${zodStr}.jwt()`;
-		case 'nanoid':
-			return hasParams
-				? `${zodStr}.nanoid(${serializedParams})`
-				: `${zodStr}.nanoid()`;
-		case 'cuid':
-			return hasParams
-				? `${zodStr}.cuid(${serializedParams})`
-				: `${zodStr}.cuid()`;
-		case 'cuid2':
-			return hasParams
-				? `${zodStr}.cuid2(${serializedParams})`
-				: `${zodStr}.cuid2()`;
-		case 'ulid':
-			return hasParams
-				? `${zodStr}.ulid(${serializedParams})`
-				: `${zodStr}.ulid()`;
-		case 'mac':
-			return hasParams
-				? `${zodStr}.mac(${serializedParams})`
-				: `${zodStr}.mac()`;
-		case 'cidrv4':
-			return hasParams
-				? `${zodStr}.cidrv4(${serializedParams})`
-				: `${zodStr}.cidrv4()`;
-		case 'cidrv6':
-			return hasParams
-				? `${zodStr}.cidrv6(${serializedParams})`
-				: `${zodStr}.cidrv6()`;
-		case 'iso.date':
-			return hasParams
-				? `${zodStr}.iso.date(${serializedParams})`
-				: `${zodStr}.iso.date()`;
-		case 'iso.time':
-			return hasParams
-				? `${zodStr}.iso.time(${serializedParams})`
-				: `${zodStr}.iso.time()`;
-		case 'iso.datetime':
-			return hasParams
-				? `${zodStr}.iso.datetime(${serializedParams})`
-				: `${zodStr}.iso.datetime()`;
-		case 'iso.duration':
-			return hasParams
-				? `${zodStr}.iso.duration(${serializedParams})`
-				: `${zodStr}.iso.duration()`;
 		case 'date-time':
 			return hasParams
 				? `${zodStr}.datetime(${serializedParams})`
 				: `${zodStr}.datetime({ offset: true })`;
-		case 'time':
-			return hasParams
-				? `${zodStr}.time(${serializedParams})`
-				: `${zodStr}.time()`;
-		case 'date':
-			return hasParams
-				? `${zodStr}.date(${serializedParams})`
-				: `${zodStr}.date()`;
 		case 'binary':
 			return hasParams
 				? `${zodStr}.base64(${serializedParams})`
 				: `${zodStr}.base64()`;
-		case 'duration':
-			return hasParams
-				? `${zodStr}.duration(${serializedParams})`
-				: `${zodStr}.duration()`;
 		default:
+			if (simpleMethod !== undefined) {
+				return buildChainedFormatCall(zodStr, simpleMethod, params);
+			}
 			// Handle hash formats
 			if (format.startsWith('hash:')) {
 				const algorithm = format.substring(5);
@@ -538,6 +462,24 @@ export function applyFormat(
 			}
 			return zodStr;
 	}
+}
+
+function buildTopLevelFormatCall(method: string, params?: unknown): string {
+	const normalizedParams =
+		typeof params === 'string' ? { error: params } : params;
+	return normalizedParams === undefined
+		? `z.${method}()`
+		: `z.${method}(${JSON.stringify(normalizedParams)})`;
+}
+
+function buildChainedFormatCall(
+	zodStr: string,
+	method: string,
+	params?: unknown,
+): string {
+	return params === undefined
+		? `${zodStr}.${method}()`
+		: `${zodStr}.${method}(${JSON.stringify(params)})`;
 }
 
 /**

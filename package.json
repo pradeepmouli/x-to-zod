@@ -129,6 +129,7 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.29.8",
+    "@to-skills/vitepress": "^0.2.0",
     "@types/json-schema": "^7.0.15",
     "@types/node": "^25.2.3",
     "@typescript/native-preview": "7.0.0-dev.20260223.1",
@@ -152,7 +153,8 @@
     "zod": "^4.3.6"
   },
   "dependencies": {
-    "json-schema-typed": "^8.0.2"
+    "json-schema-typed": "^8.0.2",
+    "tinyglobby": "^0.2.16"
   },
   "pnpm": {
     "overrides": {

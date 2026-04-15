@@ -34,7 +34,7 @@ console.log(zodCode);
 ```typescript
 import { SchemaProject } from 'x-to-zod';
 
-const project = new SchemaProject({
+const project = new SchemaProject.SchemaProject({
   outDir: './generated',
   zodVersion: 'v4',
   generateIndex: true,
@@ -86,7 +86,7 @@ const code = jsonSchemaToZod(schema);
 fs.writeFileSync('schema.ts', code);
 
 // After
-const project = new SchemaProject({
+const project = new SchemaProject.SchemaProject({
   outDir: './generated',
   zodVersion: 'v4',
   generateIndex: true,
@@ -100,7 +100,7 @@ await project.build();
 If reading from files:
 
 ```typescript
-const project = new SchemaProject({ outDir: './generated' });
+const project = new SchemaProject.SchemaProject({ outDir: './generated' });
 
 project.addSchemaFromFile('./schemas/user.json', 'user');
 project.addSchemaFromFile('./schemas/post.json', 'post');
@@ -145,14 +145,14 @@ if (!validation.valid) {
 | **Output** | Single .ts file (string) | Multiple .ts files + index |
 | **Imports** | Manual | Automatic |
 | **Cross-refs** | Not supported | Full support with lazy builders |
-| **Validation** | Limited | Export conflicts, cycles, missing refs |
-| **CLI** | `x-to-zod --json` | `x-to-zod --project --schemas` |
+| **Validation** | Limited | Export conflicts, unresolved refs, cycles |
+| **CLI** | `x-to-zod -i myschema.json` | `x-to-zod --project --schemas` |
 
 ## CLI Migration
 
 ### Before
 ```bash
-x-to-zod --json myschema.json > myschema.ts
+x-to-zod -i myschema.json > myschema.ts
 ```
 
 ### After
@@ -179,6 +179,9 @@ import { User } from './generated';
 ### Circular reference warnings
 These are **not errors**. The project uses `z.lazy()` to handle cycles gracefully. Build succeeds; warnings help identify architectural issues.
 
+### Unresolved reference errors
+Unresolved external `$ref` values now fail validation and block the build. Fix the referenced schema ID or file path before retrying.
+
 ### Export name conflicts
 If two schemas generate the same export name:
 
@@ -193,5 +196,5 @@ project.options.nameResolver = new CustomNameResolver();
 ## Learning Resources
 
 - **Quickstart**: [specs/004-multi-schema-projects/quickstart.md](./specs/004-multi-schema-projects/quickstart.md)
-- **Full API Docs**: [docs/multi-schema-projects.md](./docs/multi-schema-projects.md)
+- **Full API Docs**: [multi-schema-projects.md](./multi-schema-projects.md)
 - **Examples**: `examples/version-specific-imports.ts`, `examples/newFeatures.ts`

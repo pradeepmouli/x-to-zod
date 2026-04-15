@@ -210,7 +210,7 @@ export type Functions = Omit<
 type ReplaceZodTypesWithBuilders<T> = T extends ZodType
 	? BuilderFor<T>
 	: T extends SomeType
-		? BuilderFor<Exclude<T['_zod']['parent'], unknown>>
+		? BuilderFor<T['_zod']['parent']>
 		: T extends (...args: infer A) => infer R
 			? (
 					...args: { [K in keyof A]: ReplaceZodTypesWithBuilders<A[K]> }

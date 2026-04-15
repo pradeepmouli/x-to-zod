@@ -16,13 +16,13 @@ export class KeyofBuilder
 		_values: readonly string[],
 		_params?: string | Record<string, unknown>,
 	): this {
-		throw new Error('Method not implemented.');
+		throw new Error('KeyofBuilder.extract() is not implemented yet.');
 	}
 	exclude(
 		_values: readonly string[],
 		_params?: string | Record<string, unknown>,
 	): this {
-		throw new Error('Method not implemented.');
+		throw new Error('KeyofBuilder.exclude() is not implemented yet.');
 	}
 	private readonly _objectSchema: Builder;
 

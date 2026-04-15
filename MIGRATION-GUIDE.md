@@ -179,7 +179,7 @@ Quick migration steps:
    ```ts
    import { SchemaProject } from 'x-to-zod';
 
-   const project = new SchemaProject({ outDir: './generated', zodVersion: 'v4', generateIndex: true });
+   const project = new SchemaProject.SchemaProject({ outDir: './generated', zodVersion: 'v4', generateIndex: true });
    project.addSchemaFromFile('./schemas/user.json', 'user');
    project.addSchemaFromFile('./schemas/post.json', 'post');
    await project.build();
@@ -189,8 +189,8 @@ Quick migration steps:
    x-to-zod --project \
      --schemas "./schemas/*.json" \
      --out ./generated \
-     --generate-index
+       --generateIndex
    ```
-3. Resolve conflicts/warnings: rename IDs on export conflicts; missing refs and cycles are warnings (handled via lazy builders).
+3. Resolve validation issues before building: rename IDs on export conflicts, fix unresolved refs, and review cycle warnings handled via lazy builders.
 
-For a full walkthrough (including troubleshooting and before/after examples), see [docs/MULTI_SCHEMA_MIGRATION.md](docs/MULTI_SCHEMA_MIGRATION.md).
+For a full walkthrough (including troubleshooting and before/after examples), see [reference/MULTI_SCHEMA_MIGRATION.md](reference/MULTI_SCHEMA_MIGRATION.md).

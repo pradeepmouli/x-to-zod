@@ -87,12 +87,10 @@ describe('parseRef', () => {
 		expect(result!.text()).toContain('z.lazy(');
 	});
 
-	it('returns null when resolver cannot resolve target', () => {
-		const result = parseRef({ $ref: 'missing#' } as any, resolver, 'user');
-		expect(result).not.toBeNull();
-		expect(result!.text()).toBe('z.unknown()');
-		expect(result!.shouldEmitImport).toBe(false);
-		expect(result!.getImportInfo()).toBeNull();
+	it('throws when resolver cannot resolve target', () => {
+		expect(() =>
+			parseRef({ $ref: 'missing#' } as any, resolver, 'user'),
+		).toThrow(/Unresolved external \$ref/);
 	});
 });
 

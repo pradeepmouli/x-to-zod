@@ -4,12 +4,12 @@ Complete API reference for the parser class architecture and post-processing fea
 
 ## Core Classes
 
-### BaseParser<TypeKind>
+### AbstractParser<S, TypeKind>
 
 Abstract base class for all parser implementations using the Template Method pattern.
 
 ```typescript
-abstract class BaseParser<TypeKind extends string = string> {
+abstract class AbstractParser<S extends object = object, TypeKind extends string = string> {
   abstract readonly typeKind: TypeKind;
 
   protected constructor(
@@ -23,7 +23,7 @@ abstract class BaseParser<TypeKind extends string = string> {
 
   // Protected API (for subclasses)
   protected abstract parseImpl(schema: JsonSchema): ZodBuilder;
-  protected applyPreProcessors(schema: JsonSchema): JsonSchema;
+  protected applyTransformers(schema: JsonSchema): JsonSchema;
   protected applyPostProcessors(builder: ZodBuilder, schema: JsonSchema): ZodBuilder;
   protected applyMetadata(builder: ZodBuilder, schema: JsonSchema): ZodBuilder;
   protected parseChild(schema: JsonSchema, ...pathSegments: (string | number)[]): ZodBuilder;
@@ -46,7 +46,7 @@ abstract class BaseParser<TypeKind extends string = string> {
 ##### `parse(): ZodBuilder`
 
 Main entry point that executes the full parsing pipeline:
-1. Apply pre-processors
+1. Apply transformers
 2. Call `parseImpl()`
 3. Apply post-processors
 4. Apply metadata
@@ -108,9 +108,9 @@ Post-processor `typeFilter` values are matched against parser `typeKind` values 
 
 Builder class names (for example `'ObjectBuilder'`) are not part of matching.
 
-##### `applyPreProcessors(schema: JsonSchema): JsonSchema`
+##### `applyTransformers(schema: JsonSchema): JsonSchema`
 
-Applies pre-processors to transform schema before parsing.
+Applies transformers to transform schema before parsing.
 
 **Parameters**:
 - `schema`: Original schema

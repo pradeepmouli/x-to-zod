@@ -165,7 +165,7 @@ describe('ImportManager', () => {
 			const statements = manager.getImportStatements();
 			expect(statements).toHaveLength(1);
 			expect(statements[0]).toBe(
-				'import { UserSchema }, type { UserType } from "./user.js"',
+				'import { UserSchema, type UserType } from "./user.js"',
 			);
 		});
 
@@ -233,7 +233,7 @@ describe('ImportManager', () => {
 			const statements = manager.getImportStatements();
 			expect(statements).toHaveLength(1);
 			expect(statements[0]).toBe(
-				'import { UserSchema }, User from "./user.js"',
+				'import User, { UserSchema } from "./user.js"',
 			);
 		});
 

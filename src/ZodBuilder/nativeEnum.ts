@@ -19,13 +19,13 @@ export class NativeEnumBuilder
 		_values: readonly string[],
 		_params?: string | Record<string, unknown>,
 	): this {
-		throw new Error('Method not implemented.');
+		throw new Error('NativeEnumBuilder.extract() is not implemented yet.');
 	}
 	exclude(
 		_values: readonly string[],
 		_params?: string | Record<string, unknown>,
 	): this {
-		throw new Error('Method not implemented.');
+		throw new Error('NativeEnumBuilder.exclude() is not implemented yet.');
 	}
 	private readonly _enumReference: string;
 

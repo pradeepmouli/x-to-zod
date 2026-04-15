@@ -67,10 +67,9 @@ export class SchemaProject {
 			.map((config) => {
 				const factory = (postProcessors as any)[config.name];
 				if (typeof factory !== 'function') {
-					console.warn(
-						`Post-processor "${config.name}" not found in presets, skipping.`,
+					throw new Error(
+						`Post-processor "${config.name}" not found in presets.`,
 					);
-					return null;
 				}
 
 				const processor = config.options
@@ -160,8 +159,8 @@ export class SchemaProject {
 	 * @returns BuildResult with success status and generated file paths
 	 */
 	async build(): Promise<BuildResult> {
-		const errors: any[] = [];
-		const warnings: any[] = [];
+		const errors: BuildResult['errors'] = [];
+		const warnings: BuildResult['warnings'] = [];
 		const generatedFiles: string[] = [];
 
 		try {
@@ -258,9 +257,7 @@ export class SchemaProject {
 						importMgr,
 						entry.exportName,
 					);
-					if (sourceFile) {
-						entry.sourceFile = sourceFile;
-					}
+					entry.sourceFile = sourceFile;
 				} catch (genError) {
 					errors.push({
 						code: 'GENERATION_FAILED',
@@ -274,14 +271,19 @@ export class SchemaProject {
 
 			// Step 5: Generate index file if enabled
 			if (this.options.generateIndex !== false) {
-				const indexImportMgr = new ImportManager(moduleFormat);
-				const indexFile = fileGenerator.generateIndex(
-					this.registry.getAllEntries(),
-					indexImportMgr,
-				);
-				if (indexFile) {
-					const indexPath = indexFile.getFilePath();
-					generatedFiles.push(indexPath);
+				try {
+					const indexImportMgr = new ImportManager(moduleFormat);
+					const indexFile = fileGenerator.generateIndex(
+						this.registry.getAllEntries(),
+						indexImportMgr,
+					);
+					generatedFiles.push(indexFile.getFilePath());
+				} catch (genError) {
+					errors.push({
+						code: 'GENERATION_FAILED',
+						message: `Failed to generate index file: ${genError instanceof Error ? genError.message : String(genError)}`,
+						details: { error: genError },
+					});
 				}
 			}
 
@@ -404,68 +406,53 @@ export class SchemaProject {
 		const namePattern =
 			typeof extractConfig === 'object' ? extractConfig.namePattern : undefined;
 
-		// Extract from definitions (JSON Schema standard)
-		if (schemaObj.definitions && typeof schemaObj.definitions === 'object') {
-			for (const [defName, defSchema] of Object.entries(
-				schemaObj.definitions,
-			)) {
-				const defId = this.buildDefinitionId(
-					parentId,
-					defName,
-					subdir,
-					namePattern,
-				);
-				this.addSchema(defId, defSchema as JSONSchema, {
-					...options,
-					extractDefinitions: false, // Prevent recursive extraction
-				});
+		this.extractSchemaMap(
+			parentId,
+			schemaObj.definitions,
+			options,
+			subdir,
+			namePattern,
+		);
+		this.extractSchemaMap(
+			parentId,
+			schemaObj.components?.schemas,
+			options,
+			subdir || 'components/schemas',
+			namePattern,
+		);
+		this.extractSchemaMap(
+			parentId,
+			schemaObj.$defs,
+			options,
+			subdir,
+			namePattern,
+		);
+	}
 
-				// Update parent schema to reference extracted definition
-				schemaObj.definitions[defName] = { $ref: `${defId}#/` };
-			}
+	private extractSchemaMap(
+		parentId: string,
+		schemaMap: unknown,
+		options: SchemaOptions | undefined,
+		subdir: string | undefined,
+		namePattern: ((schemaId: string, defName: string) => string) | undefined,
+	): void {
+		if (!schemaMap || typeof schemaMap !== 'object') {
+			return;
 		}
 
-		// Extract from components/schemas (OpenAPI)
-		if (
-			schemaObj.components?.schemas &&
-			typeof schemaObj.components.schemas === 'object'
-		) {
-			for (const [compName, compSchema] of Object.entries(
-				schemaObj.components.schemas,
-			)) {
-				const compId = this.buildDefinitionId(
-					parentId,
-					compName,
-					subdir || 'components/schemas',
-					namePattern,
-				);
-				this.addSchema(compId, compSchema as JSONSchema, {
-					...options,
-					extractDefinitions: false,
-				});
-
-				// Update parent schema to reference extracted component
-				schemaObj.components.schemas[compName] = { $ref: `${compId}#/` };
-			}
-		}
-
-		// Extract from $defs (JSON Schema 2020-12)
-		if (schemaObj.$defs && typeof schemaObj.$defs === 'object') {
-			for (const [defName, defSchema] of Object.entries(schemaObj.$defs)) {
-				const defId = this.buildDefinitionId(
-					parentId,
-					defName,
-					subdir,
-					namePattern,
-				);
-				this.addSchema(defId, defSchema as JSONSchema, {
-					...options,
-					extractDefinitions: false,
-				});
-
-				// Update parent schema to reference extracted definition
-				schemaObj.$defs[defName] = { $ref: `${defId}#/` };
-			}
+		const entries = schemaMap as Record<string, unknown>;
+		for (const [definitionName, definitionSchema] of Object.entries(entries)) {
+			const definitionId = this.buildDefinitionId(
+				parentId,
+				definitionName,
+				subdir,
+				namePattern,
+			);
+			this.addSchema(definitionId, definitionSchema as JSONSchema, {
+				...options,
+				extractDefinitions: false,
+			});
+			entries[definitionName] = { $ref: `${definitionId}#/` };
 		}
 	}
 

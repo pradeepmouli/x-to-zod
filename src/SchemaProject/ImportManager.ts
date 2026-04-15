@@ -87,47 +87,56 @@ export class ImportManager {
 			const namespaceImport = imports.find(
 				(info) => info.importKind === 'namespace',
 			);
+			const namedSpecifiers = namedImports.map((info) =>
+				info.isTypeOnly ? `type ${info.importName}` : info.importName,
+			);
+			const typeOnlyNames = namedImports
+				.filter((info) => info.isTypeOnly)
+				.map((info) => info.importName);
 
-			let statement = 'import ';
-
-			// Add named imports
-			if (namedImports.length) {
-				const typeOnlyNames = namedImports
-					.filter((info) => info.isTypeOnly)
-					.map((info) => info.importName);
-				const regularNames = namedImports
-					.filter((info) => !info.isTypeOnly)
-					.map((info) => info.importName);
-
-				if (regularNames.length && typeOnlyNames.length) {
-					statement += `{ ${regularNames.join(', ')} }, type { ${typeOnlyNames.join(', ')} }`;
-				} else if (regularNames.length) {
-					statement += `{ ${regularNames.join(', ')} }`;
-				} else if (typeOnlyNames.length) {
-					statement += `type { ${typeOnlyNames.join(', ')} }`;
+			if (namespaceImport && namedImports.length > 0) {
+				statements.push(
+					`import * as ${namespaceImport.importName} from "${modulePath}"`,
+				);
+				if (defaultImport || namedSpecifiers.length > 0) {
+					const head = defaultImport ? defaultImport.importName : '';
+					const namedBlock =
+						namedSpecifiers.length > 0
+							? `{ ${namedSpecifiers.join(', ')} }`
+							: '';
+					const clause = [head, namedBlock].filter(Boolean).join(', ');
+					statements.push(`import ${clause} from "${modulePath}"`);
 				}
+				continue;
 			}
 
-			// Add default import
-			if (defaultImport) {
-				if (namedImports.length || namespaceImport) {
-					statement += ', ' + defaultImport.importName;
-				} else {
-					statement += defaultImport.importName;
-				}
-			}
-
-			// Add namespace import
 			if (namespaceImport) {
-				if (defaultImport || namedImports.length) {
-					statement += `, * as ${namespaceImport.importName}`;
-				} else {
-					statement += `* as ${namespaceImport.importName}`;
-				}
+				const clause = defaultImport
+					? `${defaultImport.importName}, * as ${namespaceImport.importName}`
+					: `* as ${namespaceImport.importName}`;
+				statements.push(`import ${clause} from "${modulePath}"`);
+				continue;
 			}
 
-			statement += ` from "${modulePath}"`;
-			statements.push(statement);
+			const namedBlock =
+				namedSpecifiers.length > 0 ? `{ ${namedSpecifiers.join(', ')} }` : '';
+			const onlyTypeNamedImports =
+				namedImports.length > 0 &&
+				namedImports.every((info) => info.isTypeOnly);
+			const clause = [defaultImport?.importName, namedBlock]
+				.filter(Boolean)
+				.join(', ');
+
+			if (onlyTypeNamedImports && !defaultImport) {
+				statements.push(
+					`import type { ${typeOnlyNames.join(', ')} } from "${modulePath}"`,
+				);
+				continue;
+			}
+
+			if (clause) {
+				statements.push(`import ${clause} from "${modulePath}"`);
+			}
 		}
 
 		return statements;

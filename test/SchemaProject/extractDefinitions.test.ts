@@ -183,6 +183,42 @@ describe('SchemaProject - Extract Definitions', () => {
 			expect(entry).toBeDefined();
 		});
 
+		it('should update extracted containers to external refs consistently', () => {
+			const project = new SchemaProject({
+				outDir: tempDir,
+				extractDefinitions: {
+					enabled: true,
+					subdir: 'defs',
+				},
+			});
+
+			const schema: JSONSchema = {
+				type: 'object',
+				definitions: {
+					Address: {
+						type: 'object',
+						properties: { street: { type: 'string' } },
+					},
+				},
+				$defs: {
+					Contact: {
+						type: 'object',
+						properties: { email: { type: 'string' } },
+					},
+				},
+			};
+
+			project.addSchema('user', schema);
+
+			const userEntry = project.getRegistry().getEntry('user');
+			expect(userEntry?.schema.definitions?.Address).toEqual({
+				$ref: 'defs/Address#/',
+			});
+			expect(userEntry?.schema.$defs?.Contact).toEqual({
+				$ref: 'defs/Contact#/',
+			});
+		});
+
 		it('should not extract when disabled', () => {
 			const project = new SchemaProject({
 				outDir: tempDir,

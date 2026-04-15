@@ -55,7 +55,7 @@ describe('Validator', () => {
 		expect(conflict?.details?.affectedSchemaIds.length).toBe(2);
 	});
 
-	it('warns on missing refs (unresolved $ref)', () => {
+	it('fails on unresolved refs', () => {
 		// Schema references a non-existent target
 		registry.addEntry(
 			makeEntry('post', {
@@ -74,11 +74,11 @@ describe('Validator', () => {
 		);
 		const result = validator.validate();
 
-		expect(result.valid).toBe(true); // warnings should not invalidate
-		expect(result.warnings.some((w) => w.code === 'MISSING_REF')).toBe(true);
-		const warn = result.warnings.find((w) => w.code === 'MISSING_REF');
-		expect(warn?.schemaId).toBe('post');
-		expect(warn?.details?.ref).toBe('missing');
+		expect(result.valid).toBe(false);
+		expect(result.errors.some((e) => e.code === 'UNRESOLVED_REF')).toBe(true);
+		const error = result.errors.find((e) => e.code === 'UNRESOLVED_REF');
+		expect(error?.schemaId).toBe('post');
+		expect(error?.details?.ref).toBe('missing');
 	});
 
 	it('warns on cycles from dependency graph (SCCs)', () => {

@@ -35,95 +35,85 @@ export class SourceFileGenerator {
 	 * @param builder - Builder for the schema
 	 * @param importManager - Manager for import statements
 	 * @param _exportName - Name to export the schema as
-	 * @returns SourceFile or null on error
+	 * @returns Generated SourceFile
 	 */
 	generateFile(
 		schemaId: string,
 		builder: Builder,
 		importManager: ImportManager,
 		_exportName: string,
-	): SourceFile | null {
-		try {
-			// Compute output file path
-			const filePath = this.computeFilePath(schemaId);
+	): SourceFile {
+		// Compute output file path
+		const filePath = this.computeFilePath(schemaId);
 
-			// Create or get existing source file
-			let sourceFile = this.project.getSourceFile(filePath);
-			if (!sourceFile) {
-				sourceFile = this.project.createSourceFile(filePath, '');
-			}
-
-			// Clear existing content
-			sourceFile.removeText();
-
-			// Add import statements
-			const imports = importManager.getImportStatements();
-			if (imports.length > 0) {
-				sourceFile.addStatements(imports);
-				sourceFile.insertText(sourceFile.getEnd(), '\n');
-			}
-
-			// Add builder code
-			const builderCode = builder.text();
-			const exportStatement = `export default ${builderCode};`;
-			sourceFile.addStatements(exportStatement);
-
-			// Format if requested
-			if (this.prettier) {
-				sourceFile.formatText();
-			}
-
-			return sourceFile;
-		} catch (error) {
-			console.error(`Failed to generate file for schema "${schemaId}":`, error);
-			return null;
+		// Create or get existing source file
+		let sourceFile = this.project.getSourceFile(filePath);
+		if (!sourceFile) {
+			sourceFile = this.project.createSourceFile(filePath, '');
 		}
+
+		// Clear existing content
+		sourceFile.removeText();
+
+		// Add import statements
+		const imports = importManager.getImportStatements();
+		if (imports.length > 0) {
+			sourceFile.addStatements(imports);
+			sourceFile.insertText(sourceFile.getEnd(), '\n');
+		}
+
+		// Add builder code
+		const builderCode = builder.text();
+		const exportStatement = `export default ${builderCode};`;
+		sourceFile.addStatements(exportStatement);
+
+		// Format if requested
+		if (this.prettier) {
+			sourceFile.formatText();
+		}
+
+		return sourceFile;
 	}
 
 	/**
 	 * Generate an index file that exports all schemas.
 	 * @param entries - All schema entries
 	 * @param _importManager - Manager for import statements
-	 * @returns SourceFile or null on error
+	 * @returns Generated SourceFile
 	 */
 	generateIndex(
 		entries: SchemaEntry[],
 		_importManager: ImportManager,
-	): SourceFile | null {
-		try {
-			const indexPath = path.join(this.outDir, 'index.ts');
+	): SourceFile {
+		const indexPath = path.join(this.outDir, 'index.ts');
 
-			// Create or get existing source file
-			let sourceFile = this.project.getSourceFile(indexPath);
-			if (!sourceFile) {
-				sourceFile = this.project.createSourceFile(indexPath, '');
-			}
-
-			// Clear existing content
-			sourceFile.removeText();
-
-			// Add export statements for all schemas
-			for (const entry of entries) {
-				const filePath = this.computeFilePath(entry.id);
-				const relativePath = path
-					.relative(this.outDir, filePath)
-					.replace(/\.ts$/, '')
-					.replace(/\\/g, '/');
-
-				const exportStatement = `export { default as ${entry.exportName} } from "./${relativePath}";`;
-				sourceFile.addStatements(exportStatement);
-			}
-
-			// Format if requested
-			if (this.prettier) {
-				sourceFile.formatText();
-			}
-
-			return sourceFile;
-		} catch (error) {
-			console.error('Failed to generate index file:', error);
-			return null;
+		// Create or get existing source file
+		let sourceFile = this.project.getSourceFile(indexPath);
+		if (!sourceFile) {
+			sourceFile = this.project.createSourceFile(indexPath, '');
 		}
+
+		// Clear existing content
+		sourceFile.removeText();
+
+		// Add export statements for all schemas
+		for (const entry of entries) {
+			const filePath = this.computeFilePath(entry.id);
+			const relativePath = path
+				.relative(this.outDir, filePath)
+				.replace(/\.ts$/, '')
+				.replace(/\\/g, '/');
+
+			const exportStatement = `export { default as ${entry.exportName} } from "./${relativePath}";`;
+			sourceFile.addStatements(exportStatement);
+		}
+
+		// Format if requested
+		if (this.prettier) {
+			sourceFile.formatText();
+		}
+
+		return sourceFile;
 	}
 
 	/**

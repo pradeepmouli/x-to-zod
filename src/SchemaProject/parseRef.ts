@@ -49,17 +49,8 @@ export function parseRef(
 		const resolved = refResolver.resolve(ref, fromSchemaId);
 
 		if (!resolved || !resolved.importInfo || !resolved.isExternal) {
-			console.warn(`Failed to resolve external $ref: ${ref}`);
-			return new ReferenceBuilder(
-				'UnknownRef',
-				'UnknownRef',
-				{
-					importName: 'UnknownRef',
-					importKind: 'named',
-					modulePath: '',
-					isTypeOnly: true,
-				},
-				{ unknownFallback: true },
+			throw new Error(
+				`Unresolved external $ref "${ref}" from schema "${fromSchemaId}"`,
 			);
 		}
 
@@ -87,8 +78,9 @@ export function parseRef(
 			},
 		);
 	} catch (error) {
-		console.error(`Error resolving $ref "${ref}":`, error);
-		return null;
+		throw new Error(
+			`Error resolving $ref "${ref}": ${error instanceof Error ? error.message : String(error)}`,
+		);
 	}
 }
 

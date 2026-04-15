@@ -218,6 +218,20 @@ describe('SchemaProject', () => {
 			expect(postEntry?.builder).toBeDefined();
 		});
 
+		it('should fail the build on unresolved external refs', async () => {
+			project.addSchema('post', {
+				type: 'object',
+				properties: { author: { $ref: 'missing#' } },
+			} as JSONSchema);
+
+			const result = await project.build();
+
+			expect(result.success).toBe(false);
+			expect(
+				result.errors.some((error) => error.code === 'UNRESOLVED_REF'),
+			).toBe(true);
+		});
+
 		it('should report validation errors during build', async () => {
 			// Create a schema project with invalid configuration
 			const invalidProject = new SchemaProject({

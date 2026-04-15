@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { toZod as jsonSchemaToZod } from './JsonSchema/toZod.js';
-import { writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
-import { dirname, isAbsolute, resolve, extname } from 'path';
+import { writeFileSync, mkdirSync, statSync } from 'fs';
+import { dirname, isAbsolute, resolve } from 'path';
 import { pathToFileURL } from 'url';
+import { globSync, isDynamicPattern } from 'tinyglobby';
 import { parseArgs, parseOrReadJSON, readPipe } from './utils/cliTools.js';
 import type { JSONSchemaAny as JSONSchema } from './JsonSchema/types/index.js';
 import { SchemaProject } from './SchemaProject/SchemaProject.js';
@@ -128,86 +129,42 @@ async function loadPostProcessors(modulePath: string) {
 	);
 }
 
-/**
- * Simple glob pattern expansion for common cases (*.json, *.yaml, dir/*.json, etc.)
- * Falls back to treating pattern as a literal file path if no wildcards
- */
 function expandGlobPattern(pattern: string): string[] {
 	const cwd = process.cwd();
 	const fullPattern = isAbsolute(pattern) ? pattern : resolve(cwd, pattern);
 
-	// If pattern has no wildcards, treat as literal file path
-	if (!pattern.includes('*') && !pattern.includes('?')) {
+	if (!isDynamicPattern(pattern)) {
 		try {
 			const stat = statSync(fullPattern);
 			if (stat.isFile()) {
 				return [fullPattern];
 			} else if (stat.isDirectory()) {
-				// If directory, find JSON files
-				return readdirSync(fullPattern)
-					.filter(
-						(f) =>
-							f.endsWith('.json') || f.endsWith('.yaml') || f.endsWith('.yml'),
-					)
-					.map((f) => resolve(fullPattern, f));
+				return globSync(['*.json', '*.yaml', '*.yml'], {
+					cwd: fullPattern,
+					absolute: true,
+					onlyFiles: true,
+				});
 			}
 		} catch {
 			return [];
 		}
 	}
 
-	// Simple wildcard expansion
-	if (pattern === '*' || pattern === '*.json' || pattern === '**/*.json') {
-		return expandWildcards(cwd, pattern);
-	}
-
-	// For complex patterns, just try as literal path
-	try {
-		if (statSync(fullPattern).isFile()) {
-			return [fullPattern];
-		}
-	} catch {
-		return [];
-	}
-
-	return [];
-}
-
-/**
- * Expand wildcard patterns recursively
- */
-function expandWildcards(dir: string, pattern: string): string[] {
-	const results: string[] = [];
-
-	try {
-		const entries = readdirSync(dir, { withFileTypes: true });
-
-		for (const entry of entries) {
-			const fullPath = resolve(dir, entry.name);
-
-			// Handle ** (recursive)
-			if (pattern.includes('**')) {
-				if (entry.isDirectory()) {
-					results.push(...expandWildcards(fullPath, pattern));
-				}
-			}
-
-			// Match file pattern
-			if (entry.isFile()) {
-				const ext = extname(entry.name);
-				if (ext === '.json' || ext === '.yaml' || ext === '.yml') {
-					results.push(fullPath);
-				}
-			}
-		}
-	} catch {
-		// Ignore directory access errors
-	}
-
-	return results;
+	return globSync(pattern, {
+		cwd,
+		absolute: true,
+		onlyFiles: true,
+	});
 }
 
 async function projectMode(args: Record<string, unknown>): Promise<void> {
+	const rawArgs = process.argv.slice(2);
+	const generateIndexFlagProvided =
+		rawArgs.includes('--generateIndex') || rawArgs.includes('-gi');
+	const generateIndex = generateIndexFlagProvided
+		? args.generateIndex === true
+		: true;
+
 	// Validate required flags for project mode
 	if (!args.schemas) {
 		console.error('Error: --schemas flag is required in project mode.');
@@ -277,7 +234,7 @@ async function projectMode(args: Record<string, unknown>): Promise<void> {
 		outDir,
 		moduleFormat: moduleFormat as 'esm' | 'cjs' | 'both',
 		zodVersion: zodVersion as 'v3' | 'v4',
-		generateIndex: args.generateIndex !== false,
+		generateIndex,
 		extractDefinitions,
 	});
 
@@ -412,4 +369,7 @@ async function main() {
 	}
 }
 
-void main();
+void main().catch((error: unknown) => {
+	console.error(error instanceof Error ? error.message : String(error));
+	process.exit(1);
+});

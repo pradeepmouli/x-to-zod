@@ -34,7 +34,7 @@ export type {
  * @example
  * ```ts
  * import { JSONSchema } from 'x-to-zod';
- * const builder = new JSONSchema.parse.string({ type: 'string' });
+ * const builder = JSONSchema.parse.string({ type: 'string' }, refs);
  * ```
  */
 export const parse = {

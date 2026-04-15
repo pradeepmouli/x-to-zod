@@ -34,7 +34,7 @@ If you're contributing to the codebase or extending parsers, you need to underst
 
 | Aspect | Before (Functional) | After (Class-Based) |
 |--------|---------------------|---------------------|
-| **Structure** | Functions | Classes extending BaseParser |
+| **Structure** | Functions | Classes extending AbstractParser |
 | **Organization** | Single file per parser | Class file + functional file |
 | **Reusability** | Function composition | Inheritance & hooks |
 | **Testing** | Function-level tests | Class method tests |
@@ -93,11 +93,11 @@ Problems with this approach:
 
 ```typescript
 // src/JsonSchema/parsers/ObjectParser.ts
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../src/Parser/AbstractParser.js';
 import { ObjectBuilder } from '../../ZodBuilder/index.js';
 import { parseSchema } from './parseSchema.js';
 
-export class ObjectParser extends BaseParser<'object'> {
+export class ObjectParser extends AbstractParser<'object'> {
   readonly typeKind = 'object' as const;
 
   constructor(schema: JsonSchemaObject & { type?: string }, refs: Context) {
@@ -114,7 +114,7 @@ export class ObjectParser extends BaseParser<'object'> {
 ```
 
 Benefits of this approach:
-- ✅ Processor logic centralized in BaseParser
+- ✅ Processor logic centralized in AbstractParser
 - ✅ Easy to override specific methods
 - ✅ Clear testing boundaries
 - ✅ Inheritance provides extension mechanism
@@ -127,9 +127,9 @@ Benefits of this approach:
 | Feature | Functional | Class-Based |
 |---------|-----------|-------------|
 | **Entry point** | `parseObject(schema, refs)` | `new ObjectParser(schema, refs).parse()` |
-| **Preprocessors** | Manual loop in each parser | `BaseParser.applyPreProcessors()` |
-| **Postprocessors** | Manual loop in each parser | `BaseParser.applyPostProcessors()` |
-| **Metadata** | Manual application | `BaseParser.applyMetadata()` |
+| **Preprocessors** | Manual loop in each parser | `AbstractParser.applyTransformers()` |
+| **Postprocessors** | Manual loop in each parser | `AbstractParser.applyPostProcessors()` |
+| **Metadata** | Manual application | `AbstractParser.applyMetadata()` |
 | **Child parsing** | Call `parseSchema()` | Call `this.parseChild()` |
 | **Extensibility** | Wrapper functions | Class inheritance |
 | **Type info** | None | `readonly typeKind` property |
@@ -179,10 +179,10 @@ function customParseObject(schema, refs) {
 
 ```typescript
 class CustomObjectParser extends ObjectParser {
-  protected applyPreProcessors(schema: JsonSchema): JsonSchema {
+  protected applyTransformers(schema: JsonSchema): JsonSchema {
     // Custom preprocessing
     const modified = transformSchema(schema);
-    return super.applyPreProcessors(modified);
+    return super.applyTransformers(modified);
   }
 
   protected applyPostProcessors(builder: ZodBuilder, schema: JsonSchema): ZodBuilder {
@@ -206,7 +206,7 @@ Read the [Template Method Pattern](./parser-architecture.md#template-method-patt
 
 Determine which method to override:
 
-- **Before parsing**: Override `applyPreProcessors()`
+- **Before parsing**: Override `applyTransformers()`
 - **Custom parsing**: Override `parseImpl()`
 - **After parsing**: Override `applyPostProcessors()`
 - **Metadata handling**: Override `applyMetadata()`
@@ -216,7 +216,7 @@ Note: `typeFilter` matching uses parser `typeKind` values directly.
 ### Step 3: Create Your Parser Class
 
 ```typescript
-class MyCustomParser extends BaseParser<'custom'> {
+class MyCustomParser extends AbstractParser<'custom'> {
   readonly typeKind = 'custom' as const;
 
   // Override the methods you need
@@ -261,7 +261,7 @@ export function parseCustom(schema, refs) {
 }
 
 // New: src/JsonSchema/parsers/CustomParser.ts
-export class CustomParser extends BaseParser<'custom'> {
+export class CustomParser extends AbstractParser<'custom'> {
   readonly typeKind = 'custom' as const;
 
   protected parseImpl(schema: JsonSchema): ZodBuilder {
@@ -274,12 +274,12 @@ export class CustomParser extends BaseParser<'custom'> {
 
 ```typescript
 class PreprocessingParser extends ObjectParser {
-  protected applyPreProcessors(schema: JsonSchema): JsonSchema {
+  protected applyTransformers(schema: JsonSchema): JsonSchema {
     // Custom preprocessing
     const modified = { ...schema, additionalProperties: false };
 
     // Continue with standard preprocessing
-    return super.applyPreProcessors(modified);
+    return super.applyTransformers(modified);
   }
 }
 ```
@@ -305,7 +305,7 @@ class PostprocessingParser extends ObjectParser {
 ### Pattern 4: Conditional Parsing
 
 ```typescript
-class ConditionalParser extends BaseParser<'conditional'> {
+class ConditionalParser extends AbstractParser<'conditional'> {
   readonly typeKind = 'conditional' as const;
 
   protected parseImpl(schema: JsonSchema): ZodBuilder {

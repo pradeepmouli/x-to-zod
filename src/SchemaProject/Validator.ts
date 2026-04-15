@@ -30,8 +30,8 @@ export class Validator {
 		// Check export name conflicts
 		errors.push(...this.detectExportConflicts());
 
-		// Check for missing refs (warnings, not errors)
-		warnings.push(...this.detectMissingRefs());
+		// Check for unresolved external refs
+		errors.push(...this.detectMissingRefs());
 
 		// Check for cycles (warnings, not errors; handled via lazy builders)
 		warnings.push(...this.detectCycles());
@@ -82,8 +82,8 @@ export class Validator {
 	/**
 	 * Detect missing refs: $refs that cannot be resolved
 	 */
-	private detectMissingRefs(): ValidationWarning[] {
-		const warnings: ValidationWarning[] = [];
+	private detectMissingRefs(): ValidationError[] {
+		const errors: ValidationError[] = [];
 		const visitedRefs = new Set<string>();
 
 		for (const entry of this.registry.getAllEntries()) {
@@ -99,8 +99,8 @@ export class Validator {
 				// Try to resolve
 				const resolution = this.refResolver.resolve(ref, entry.id);
 				if (!resolution) {
-					warnings.push({
-						code: 'MISSING_REF',
+					errors.push({
+						code: 'UNRESOLVED_REF',
 						message: `Unresolved $ref: "${ref}" in schema "${entry.id}"`,
 						schemaId: entry.id,
 						details: {
@@ -112,7 +112,7 @@ export class Validator {
 			}
 		}
 
-		return warnings;
+		return errors;
 	}
 
 	/**

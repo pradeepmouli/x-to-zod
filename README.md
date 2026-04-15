@@ -60,16 +60,16 @@ This fork includes several architectural improvements and new features:
 
 ### 8. **Zod v3/v4 Dual-Mode Support**
 - Generate schemas compatible with either Zod v3 or v4 via `zodVersion` option
-- Defaults to `'v3'` for backward compatibility
+- Defaults to `'v4'`
 - v4 mode generates new syntax: `z.strictObject()`, `z.looseObject()`, `.extend()` instead of `.merge()`
-- Fully backward compatible - existing code continues to work without changes
+- Use `zodVersion: 'v3'` when targeting legacy Zod v3 consumers
 
 ### 9. **Post-Processing System**
 - Transform Zod builders after parsing with custom post-processors
 - Type-based filtering to target specific builder types (objects, arrays, strings, etc.)
 - Path-based filtering for granular control
 - Use cases: add organization-wide validation rules, security constraints, custom transformations
-- See [Post-Processing Guide](./docs/post-processing.md) for details
+- See [Post-Processing Guide](./reference/post-processing.md) for details
 
 ## Installation
 
@@ -112,10 +112,10 @@ const objectSchema = build.object({ name: build.string() });
 - **Explicit Intent:** Makes your Zod version dependency clear in code
 - **Future-Proof:** Easier migration when Zod releases new versions
 
-**Default Import:** The main package export includes all features (v4-compatible):
+**Default Builder Import:** Use the published builders subpath for the unconstrained builder API:
 ```typescript
-import { build } from 'x-to-zod';
-// Same as 'x-to-zod/v4'
+import { build } from 'x-to-zod/builders';
+// Same runtime builder surface as 'x-to-zod/v4', without the v4-only type constraint wrapper
 ```
 
 ### CLI
@@ -129,8 +129,6 @@ x-to-zod -i mySchema.json -o mySchema.ts
 
 ```console
 npm i -g x-to-zod json-refs prettier
-
-```console
 json-refs resolve mySchema.json | x-to-zod | prettier --parser typescript > mySchema.ts
 ```
 #### Options
@@ -148,9 +146,10 @@ json-refs resolve mySchema.json | x-to-zod | prettier --parser typescript > mySc
 
 #### Simple example
 ```typescript
-import { jsonSchemaToZod } from "x-to-zod";
+import { jsonSchemaToZod } from 'x-to-zod';
 const myObject = {
   type: "object",
+  properties: {
     hello: {
       type: "string",
     },
@@ -180,8 +179,7 @@ Transform Zod builders after parsing with post-processors:
 It does not match builder class names such as `ObjectBuilder`.
 
 ```typescript
-import { jsonSchemaToZod } from "x-to-zod";
-import { is } from "x-to-zod/utils";
+import { jsonSchemaToZod } from 'x-to-zod';
 
 const schema = {
   type: "object",
@@ -196,7 +194,7 @@ const result = jsonSchemaToZod(schema, {
   postProcessors: [
     {
       processor: (builder) => {
-        if (is.objectBuilder(builder)) {
+        if (builder.typeKind === 'object') {
           return builder.strict();
         }
         return builder;
@@ -211,19 +209,19 @@ const enhanced = jsonSchemaToZod(schema, {
   postProcessors: [
     // Make objects strict
     {
-      processor: (builder) => is.objectBuilder(builder) ? builder.strict() : builder,
+      processor: (builder) => builder.typeKind === 'object' ? builder.strict() : builder,
       typeFilter: 'object'
     },
     // Require non-empty arrays
     {
-      processor: (builder) => is.arrayBuilder(builder) ? builder.min(1) : builder,
+      processor: (builder) => builder.typeKind === 'array' ? builder.min(1) : builder,
       typeFilter: 'array'
     }
   ]
 });
 ```
 
-**See [Post-Processing Guide](./docs/post-processing.md) for more examples and use cases.**
+**See [Post-Processing Guide](./reference/post-processing.md) for more examples and use cases.**
 
 ## Multi-Schema Projects
 
@@ -282,12 +280,12 @@ x-to-zod --project \
   --schemas "./schemas/users/*.json" \
   --schemas "./schemas/posts/*.json" \
   --out ./generated \
-  --module-format both \
-  --zod-version v4 \
-  --generate-index
+  --moduleFormat both \
+  --zodVersion v4 \
+  --generateIndex
 ```
 
-**See [Multi-Schema Projects Guide](./docs/multi-schema-projects.md) for complete documentation, API reference, and examples.**
+**See [Multi-Schema Projects Guide](./reference/multi-schema-projects.md) for complete documentation, API reference, and examples.**
 
 ## Builder API
 
@@ -427,13 +425,11 @@ This library supports generating schemas compatible with both Zod v3 and v4 thro
 ```typescript
 import { jsonSchemaToZod } from "x-to-zod";
 
-// Generate Zod v3 code (default - backward compatible)
-const schemaV3 = jsonSchemaToZod(mySchema);
-// or explicitly
-const schemaV3Explicit = jsonSchemaToZod(mySchema, { zodVersion: 'v3' });
+// Generate Zod v4 code (default)
+const schemaV4 = jsonSchemaToZod(mySchema);
 
-// Generate Zod v4 code (opt-in for new features)
-const schemaV4 = jsonSchemaToZod(mySchema, { zodVersion: 'v4' });
+// Or target Zod v3 explicitly
+const schemaV3 = jsonSchemaToZod(mySchema, { zodVersion: 'v3' });
 ```
 
 ### Key Differences
@@ -442,7 +438,7 @@ The `zodVersion` option affects how certain Zod constructs are generated:
 
 #### Object Strict/Loose Modes
 
-**v3 mode (default):**
+**v3 mode:**
 ```typescript
 // additionalProperties: false
 z.object({ name: z.string() }).strict()
@@ -462,7 +458,7 @@ z.looseObject({ name: z.string() })
 
 #### Object Merge
 
-**v3 mode (default):**
+**v3 mode:**
 ```typescript
 baseObject.merge(otherObject)
 ```
@@ -481,23 +477,24 @@ When implemented, error messages will use different parameter names:
 
 ### Builder API with Version Support
 
-The builder API also respects the `zodVersion` option:
+Use the version-specific builder entry points to pick the appropriate fluent API:
 
 ```typescript
-import { build } from "x-to-zod/builders";
+import { build as buildV4 } from 'x-to-zod/v4';
+import { build as buildV3 } from 'x-to-zod/v3';
 
-// v4 mode
-build.object({ name: build.string() }, { zodVersion: 'v4' }).strict().text()
+// v4 builder API
+buildV4.object({ name: buildV4.string() }).strict().text()
 // => 'z.strictObject({ "name": z.string() })'
 
-// v3 mode (default)
-build.object({ name: build.string() }).strict().text()
+// v3 builder API
+buildV3.object({ name: buildV3.string() }).strict().text()
 // => 'z.object({ "name": z.string() }).strict()'
 ```
 
 ### Migration Guide
 
-#### When to use v3 mode (default)
+#### When to use v3 mode
 - Existing projects using Zod v3
 - Want to avoid any breaking changes
 - Gradual migration to Zod v4
@@ -509,7 +506,7 @@ build.object({ name: build.string() }).strict().text()
 
 #### Migration Steps
 
-1. **Start with v3 mode** (default) - your existing code continues to work
+1. **Start by choosing a target** - v4 is the default, use `zodVersion: 'v3'` only when you need v3 output
 2. **Test thoroughly** - ensure all generated schemas work as expected
 3. **Switch to v4 mode** - set `zodVersion: 'v4'` when ready
 4. **Update consuming code** - adjust for any Zod v4 API changes
@@ -517,7 +514,7 @@ build.object({ name: build.string() }).strict().text()
 
 ### Compatibility Notes
 
-- **Default is v3** for backward compatibility
+- **Default is v4**
 - **Both modes are fully tested** and production-ready
 - **No runtime dependencies** on specific Zod versions - generates code strings only
 - **Mix and match** - you can generate different schemas with different versions as needed
@@ -695,26 +692,26 @@ If you were using `parserOverride` or `preprocessors`, update your code:
 
 ### Comprehensive Guides
 
-- **[Parser Architecture](./docs/parser-architecture.md)** - Understanding the class-based parser system
+- **[Parser Architecture](./reference/parser-architecture.md)** - Understanding the class-based parser system
   - Class hierarchy and template method pattern
   - Parser selection algorithm
   - Type guards and symmetric parse API
   - How to add new parser classes
 
-- **[Post-Processing Guide](./docs/post-processing.md)** - Transform builders after parsing
+- **[Post-Processing Guide](./reference/post-processing.md)** - Transform builders after parsing
   - Post-processor concepts and use cases
   - Type and path filtering
   - Practical examples (strict objects, non-empty arrays, custom validations)
   - Best practices and debugging tips
 
-- **[Migration Guide](./docs/migration-parser-classes.md)** - For contributors extending parsers
+- **[Migration Guide](./reference/migration-parser-classes.md)** - For contributors extending parsers
   - Functional vs class-based comparison
   - Migration steps and patterns
   - Testing strategies
   - FAQs
 
-- **[API Reference](./docs/API.md)** - Complete API documentation
-  - BaseParser and all parser classes
+- **[API Reference](./reference/API.md)** - Complete API documentation
+  - AbstractParser and all parser classes
   - Registry functions and parse API
   - Type definitions and type guards
   - Usage examples

@@ -1,4 +1,3 @@
-import type { JSONSchema as JSONSchema07 } from 'json-schema-typed/draft-07';
 import type { JSONSchemaAny as JSONSchema } from '../JsonSchema/types/index.js';
 import type { Builder } from '../Builder/index.js';
 
@@ -13,9 +12,9 @@ export interface ProcessorConfig {
  */
 export interface SchemaTransformer extends ProcessorConfig {
 	(
-		schema: JSONSchema07.Interface,
+		schema: JSONSchema,
 		refs: import('../context.js').Context,
-	): JSONSchema07.Interface | undefined;
+	): JSONSchema | undefined;
 }
 
 export interface PostProcessorContext {

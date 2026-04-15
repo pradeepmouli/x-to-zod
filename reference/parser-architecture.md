@@ -5,7 +5,7 @@
 ## Overview
 
 The parser architecture consists of:
-- **BaseParser**: Abstract base class defining the parsing template
+- **AbstractParser**: Abstract base class defining the parsing template
 - **Concrete Parsers**: Specialized parser classes for each JSON Schema type
 - **Registry System**: Dynamic parser selection based on schema characteristics
 - **Symmetric API**: `parse.*` methods mirroring the `build.*` API
@@ -13,7 +13,7 @@ The parser architecture consists of:
 ## Class Hierarchy
 
 ```
-BaseParser<TypeKind>
+AbstractParser<TypeKind>
 ├── ObjectParser
 ├── ArrayParser
 ├── StringParser
@@ -29,7 +29,7 @@ BaseParser<TypeKind>
 
 Each parser class specifies its `TypeKind` as a const type:
 ```typescript
-class ObjectParser extends BaseParser<'object'> {
+class ObjectParser extends AbstractParser<'object'> {
   readonly typeKind = 'object' as const;
 }
 ```
@@ -41,14 +41,14 @@ This enables:
 
 ## Template Method Pattern
 
-The `BaseParser` class implements the Template Method pattern, defining the overall parsing algorithm while allowing subclasses to customize specific steps.
+The `AbstractParser` class implements the Template Method pattern, defining the overall parsing algorithm while allowing subclasses to customize specific steps.
 
 ### Parse Flow
 
 ```typescript
 parse(): ZodBuilder {
-  // 1. Apply pre-processors
-  const processedSchema = this.applyPreProcessors(this.schema);
+  // 1. Apply transformers
+  const processedSchema = this.applyTransformers(this.schema);
 
   // 2. Parse the schema (subclass-specific)
   let builder = this.parseImpl(processedSchema);
@@ -68,7 +68,7 @@ parse(): ZodBuilder {
 - `readonly typeKind`: Type identifier (e.g., 'object', 'string')
 
 **Protected Methods** (available to subclasses):
-- `applyPreProcessors(schema)`: Transform schema before parsing
+- `applyTransformers(schema)`: Transform schema before parsing
 - `applyPostProcessors(builder, schema)`: Transform builder after parsing
 - `applyMetadata(builder, schema)`: Add description and default values
 - `parseChild(schema, ...pathSegments)`: Parse nested schemas
@@ -126,57 +126,49 @@ Type guards replace `instanceof` checks for safer type identification:
 // Old approach (not recommended)
 if (builder instanceof ObjectBuilder) { ... }
 
-// New approach (recommended)
-import { is } from 'x-to-zod/utils';
-
-if (is.objectBuilder(builder)) {
-  // TypeScript now knows builder is ObjectBuilder
+// Recommended approach
+if (builder.typeKind === 'object') {
   builder.strict();
 }
 ```
 
 ### Available Type Guards
 
-- `is.objectBuilder(value)`
-- `is.arrayBuilder(value)`
-- `is.stringBuilder(value)`
-- `is.numberBuilder(value)`
-- `is.booleanBuilder(value)`
-- `is.zodBuilder(value)` - Any ZodBuilder
+- Prefer `builder.typeKind` checks for parser/builder routing in extension code
 
 ## Symmetric Parse API
 
 The `parse` object provides a symmetric API that mirrors the `build` API:
 
 ```typescript
-import { parse } from 'x-to-zod/parsers';
-import { buildV4 } from 'x-to-zod/v4';
+import { JSONSchema } from 'x-to-zod';
+import { build } from 'x-to-zod/v4';
 
-const context = { seen: new Map(), path: [], build: buildV4 };
+const context = { seen: new Map(), path: [], build };
 
 // Direct parser instantiation
-const stringBuilder = parse.string({ type: 'string' }, context);
-const objectBuilder = parse.object({
+const stringBuilder = JSONSchema.parse.string({ type: 'string' }, context);
+const objectBuilder = JSONSchema.parse.object({
   type: 'object',
   properties: { name: { type: 'string' } }
 }, context);
 
 // Main entry point (with full features)
-const builder = parse.schema(schema, context);
+const builder = JSONSchema.parse.schema(schema, context);
 ```
 
 ### Parse Methods
 
-- `parse.schema(schema, refs)` - Main entry point with full feature support
-- `parse.object(schema, refs)` - Parse as object
-- `parse.array(schema, refs)` - Parse as array
-- `parse.string(schema, refs)` - Parse as string
-- `parse.number(schema, refs)` - Parse as number
-- `parse.boolean(schema, refs)` - Parse as boolean
-- `parse.null(schema, refs)` - Parse as null
-- `parse.anyOf(schema, refs)` - Parse as union
-- `parse.allOf(schema, refs)` - Parse as intersection
-- `parse.oneOf(schema, refs)` - Parse as discriminated union
+- `JSONSchema.parse.schema(schema, refs)` - Main entry point with full feature support
+- `JSONSchema.parse.object(schema, refs)` - Parse as object
+- `JSONSchema.parse.array(schema, refs)` - Parse as array
+- `JSONSchema.parse.string(schema, refs)` - Parse as string
+- `JSONSchema.parse.number(schema, refs)` - Parse as number
+- `JSONSchema.parse.boolean(schema, refs)` - Parse as boolean
+- `JSONSchema.parse.null(schema, refs)` - Parse as null
+- `JSONSchema.parse.anyOf(schema, refs)` - Parse as union
+- `JSONSchema.parse.allOf(schema, refs)` - Parse as intersection
+- `JSONSchema.parse.oneOf(schema, refs)` - Parse as discriminated union
 
 ## Adding a New Parser Class
 
@@ -188,10 +180,10 @@ Follow these steps to add a new parser class:
 // src/JsonSchema/parsers/CustomParser.ts
 import type { Context, JsonSchema } from '../../Types.js';
 import type { ZodBuilder } from '../../ZodBuilder/BaseBuilder.js';
-import { BaseParser } from './BaseParser.js';
+import { AbstractParser } from '../../src/Parser/AbstractParser.js';
 import { parseCustom } from './parseCustom.js'; // Your functional parser
 
-export class CustomParser extends BaseParser<'custom'> {
+export class CustomParser extends AbstractParser<'custom'> {
   readonly typeKind = 'custom' as const;
 
   constructor(
@@ -273,7 +265,7 @@ describe('CustomParser', () => {
 ### Example 1: Basic Parser Usage
 
 ```typescript
-import { ObjectParser } from 'x-to-zod/parsers';
+import { ObjectParser } from 'x-to-zod/parsers/json';
 import { buildV4 } from 'x-to-zod/v4';
 
 const schema = {
@@ -301,7 +293,7 @@ console.log(builder.text());
 ### Example 2: Using Parse API
 
 ```typescript
-import { parse } from 'x-to-zod/parsers';
+import { JSONSchema } from 'x-to-zod';
 import { buildV4 } from 'x-to-zod/v4';
 
 const schema = {
@@ -337,8 +329,7 @@ class EnhancedObjectParser extends ObjectParser {
 ### Example 4: Type Guard Usage
 
 ```typescript
-import { is } from 'x-to-zod/utils';
-import { parse } from 'x-to-zod/parsers';
+import { JSONSchema } from 'x-to-zod';
 
 function processBuilder(builder: ZodBuilder): ZodBuilder {
   if (is.objectBuilder(builder)) {
@@ -360,7 +351,7 @@ function processBuilder(builder: ZodBuilder): ZodBuilder {
 3. **Maintainability**: Clear separation of concerns
 4. **Flexibility**: Hook methods allow customization without modification
 5. **Type Safety**: Strong typing with TypeScript generics
-6. **Reusability**: Common logic in BaseParser reduces duplication
+6. **Reusability**: Common logic in AbstractParser reduces duplication
 
 ## Migration Notes
 

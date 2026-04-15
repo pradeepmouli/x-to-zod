@@ -22,12 +22,12 @@ export class FileBuilder
 		_types: string | string[],
 		_params?: string | Record<string, unknown>,
 	): this {
-		throw new Error('Method not implemented.');
+		throw new Error('FileBuilder.mime() is not implemented yet.');
 	}
 	min(_size: number, _params?: string | Record<string, unknown>): this {
-		throw new Error('Method not implemented.');
+		throw new Error('FileBuilder.min() is not implemented yet.');
 	}
 	max(_size: number, _params?: string | Record<string, unknown>): this {
-		throw new Error('Method not implemented.');
+		throw new Error('FileBuilder.max() is not implemented yet.');
 	}
 }
