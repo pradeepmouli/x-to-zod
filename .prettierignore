@@ -1,3 +1,29 @@
 *.md
 *.yml
 *.json
+
+# Build outputs / generated
+**/dist/**
+**/build/**
+**/node_modules/**
+**/coverage/**
+**/.turbo/**
+**/.cache/**
+
+# Generated test outputs
+test/output/**
+packages/*/test/output/**
+
+# Docs and specs
+docs/**
+specs/**
+
+# Agent tooling
+.agents/**
+.claude/**
+.codex/**
+.gemini/**
+.specify/**
+.github/agents/**
+.github/skills/**
+.vscode/**
