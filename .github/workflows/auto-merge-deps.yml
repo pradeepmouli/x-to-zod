@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Get PR information
         id: pr-info
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -50,7 +50,7 @@ jobs:
       - name: Check if PR is eligible for auto-merge
         id: check-eligible
         if: steps.pr-info.outputs.pr_number
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -99,7 +99,7 @@ jobs:
         if: |
           steps.pr-info.outputs.pr_number &&
           steps.check-eligible.outputs.is_eligible == 'true'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
