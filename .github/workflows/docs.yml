@@ -30,8 +30,6 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: apps/docs/pnpm-lock.yaml
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm build
       - uses: actions/configure-pages@v5
