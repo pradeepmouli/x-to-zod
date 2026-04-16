@@ -8,6 +8,38 @@ export default defineConfig({
 	base: '/x-to-zod/',
 	lastUpdated: true,
 	cleanUrls: true,
+	head: [
+		['meta', { property: 'og:title', content: 'x-to-zod' }],
+		[
+			'meta',
+			{
+				property: 'og:description',
+				content:
+					'Converts JSON Schema into Zod schemas with a fluent builder pattern',
+			},
+		],
+		['meta', { property: 'og:type', content: 'website' }],
+		[
+			'meta',
+			{
+				property: 'og:url',
+				content: 'https://pradeepmouli.github.io/x-to-zod/',
+			},
+		],
+		['meta', { name: 'twitter:card', content: 'summary' }],
+		['meta', { name: 'twitter:title', content: 'x-to-zod' }],
+		[
+			'meta',
+			{
+				name: 'twitter:description',
+				content:
+					'Converts JSON Schema into Zod schemas with a fluent builder pattern',
+			},
+		],
+	],
+	sitemap: {
+		hostname: 'https://pradeepmouli.github.io/x-to-zod',
+	},
 	themeConfig: {
 		nav: [
 			{ text: 'Guide', link: '/guide/getting-started' },

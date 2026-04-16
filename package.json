@@ -101,7 +101,13 @@
     "json",
     "schema",
     "converter",
-    "cli"
+    "cli",
+    "json-schema-to-zod",
+    "zod-codegen",
+    "schema-converter",
+    "json-schema",
+    "validation",
+    "typescript-codegen"
   ],
   "author": "Pradeep Mouli <pmouli@mac.com> (https://github.com/pradeepmouli)",
   "contributors": [
@@ -125,6 +131,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/pradeepmouli/x-to-zod"
+  },
+  "homepage": "https://pradeepmouli.github.io/x-to-zod/",
+  "bugs": {
+    "url": "https://github.com/pradeepmouli/x-to-zod/issues"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
