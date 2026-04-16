@@ -94,8 +94,8 @@ describe('AbstractParser', () => {
 	});
 
 	it('filters post-processors by typeFilter', () => {
-		const postHit = vi.fn((builder) => builder.min(1));
-		const postSkip = vi.fn((builder) => builder.max(2));
+		const postHit = vi.fn<(builder: any) => any>((builder) => builder.min(1));
+		const postSkip = vi.fn<(builder: any) => any>((builder) => builder.max(2));
 
 		const parser = new StringTestParser(
 			{ type: 'string' } as JSONSchema,

@@ -125,16 +125,12 @@ describe('Post-Processor Integration (T081-T083)', () => {
 		}
 	});
 
-	it('should handle invalid post-processor names gracefully', async () => {
+	it('should fail build for invalid post-processor names', async () => {
 		const tempDir = mkdtempSync(
 			path.join(process.env.TMPDIR || '/tmp', 'postproc-'),
 		);
 
 		try {
-			const consoleWarnSpy = vi
-				.spyOn(console, 'warn')
-				.mockImplementation(() => {});
-
 			const project = new SchemaProject({
 				outDir: tempDir,
 				zodVersion: 'v4',
@@ -156,18 +152,11 @@ describe('Post-Processor Integration (T081-T083)', () => {
 
 			const result = await project.build();
 
-			expect(result.success).toBe(true); // Should still succeed
-			expect(consoleWarnSpy).toHaveBeenCalledWith(
-				expect.stringContaining(
-					'Post-processor "nonExistentProcessor" not found',
-				),
+			expect(result.success).toBe(false);
+			expect(result.errors).toBeDefined();
+			expect(result.errors?.[0]?.message).toContain(
+				'Post-processor "nonExistentProcessor" not found in presets.',
 			);
-
-			// Verify valid processor was still applied
-			const userFile = readFileSync(path.join(tempDir, 'user.ts'), 'utf8');
-			expect(userFile).toContain('.strict()');
-
-			consoleWarnSpy.mockRestore();
 		} finally {
 			rmSync(tempDir, { recursive: true });
 		}

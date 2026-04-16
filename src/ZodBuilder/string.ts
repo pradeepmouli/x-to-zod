@@ -469,7 +469,7 @@ function buildTopLevelFormatCall(method: string, params?: unknown): string {
 		typeof params === 'string' ? { error: params } : params;
 	return normalizedParams === undefined
 		? `z.${method}()`
-		: `z.${method}(${JSON.stringify(normalizedParams)})`;
+		: `z.${method}(${serializeInlineArgument(normalizedParams)})`;
 }
 
 function buildChainedFormatCall(
@@ -480,6 +480,21 @@ function buildChainedFormatCall(
 	return params === undefined
 		? `${zodStr}.${method}()`
 		: `${zodStr}.${method}(${JSON.stringify(params)})`;
+}
+
+function serializeInlineArgument(value: unknown): string {
+	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+		return JSON.stringify(value);
+	}
+
+	const entries = Object.entries(value);
+	if (entries.length === 0) {
+		return '{}';
+	}
+
+	return `{ ${entries
+		.map(([key, entryValue]) => `${key}: ${JSON.stringify(entryValue)}`)
+		.join(', ')} }`;
 }
 
 /**

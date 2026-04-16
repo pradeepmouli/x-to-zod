@@ -185,18 +185,17 @@ describe('SourceFileGenerator', () => {
 			expect(sourceFile?.getFilePath()).toContain('api/v1/user.ts');
 		});
 
-		it('should return null on error', () => {
-			// Pass null builder to trigger error
+		it('should throw on invalid builder input', () => {
 			const imports = new ImportManager('esm');
 
-			const sourceFile = generator.generateFile(
-				'invalid',
-				null as any,
-				imports,
-				'InvalidSchema',
-			);
-
-			expect(sourceFile).toBeNull();
+			expect(() =>
+				generator.generateFile(
+					'invalid',
+					null as any,
+					imports,
+					'InvalidSchema',
+				),
+			).toThrow();
 		});
 	});
 
