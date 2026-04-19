@@ -21,9 +21,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/docs
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v5
@@ -31,9 +28,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
-          cache-dependency-path: apps/docs/pnpm-lock.yaml
-      - run: pnpm install --no-frozen-lockfile
-      - run: pnpm build
+      - run: pnpm install --frozen-lockfile
+      - name: Build docs
+        run: pnpm --filter x-to-zod-docs build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
