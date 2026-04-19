@@ -741,6 +741,13 @@ const zodSchema = eval(jsonSchemaToZod({ type: "string" }, { module: "cjs" }));
 zodSchema.safeParse("Please just use Ajv instead");
 ```
 
+## Related Projects
+
+| Library | Relationship | npm |
+|---|---|---|
+| [langium-zod](https://github.com/pradeepmouli/langium-zod) | Uses x-to-zod for JSON Schema → Zod bridging in grammar-to-schema pipelines | [![npm](https://img.shields.io/npm/v/langium-zod?style=flat-square)](https://www.npmjs.com/package/langium-zod) |
+| [zod-to-form](https://github.com/pradeepmouli/zod-to-form) | Takes Zod schemas (from x-to-zod or other sources) and generates React forms | [![npm](https://img.shields.io/npm/v/@zod-to-form/core?style=flat-square)](https://www.npmjs.com/package/@zod-to-form/core) |
+
 ## Credits
 
 This is a fork of [json-schema-to-zod](https://github.com/StefanTerdell/json-schema-to-zod) by [Stefan Terdell](https://github.com/StefanTerdell).
