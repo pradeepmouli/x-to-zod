@@ -26,31 +26,31 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0
       '@changesets/cli':
-        specifier: ^2.31.0
+        specifier: ^2.29.8
         version: 2.31.0(@types/node@25.6.0)
       '@to-skills/vitepress':
-        specifier: ^0.2.18
+        specifier: ^0.2.0
         version: 0.2.18
       '@types/json-schema':
         specifier: ^7.0.15
         version: 7.0.15
       '@types/node':
-        specifier: ^25.6.0
+        specifier: ^25.2.3
         version: 25.6.0
       '@typescript/native-preview':
         specifier: 7.0.0-dev.20260415.1
         version: 7.0.0-dev.20260415.1
       '@vitest/coverage-v8':
-        specifier: ^4.1.5
+        specifier: ^4.1.4
         version: 4.1.5(vitest@4.1.5)
       '@vitest/ui':
-        specifier: ^4.1.5
+        specifier: ^4.1.4
         version: 4.1.5(vitest@4.1.5)
       fast-diff:
         specifier: ^1.3.0
         version: 1.3.0
       lint-staged:
-        specifier: ^16.4.0
+        specifier: ^16.2.7
         version: 16.4.0
       openapi-types:
         specifier: ^12.1.3
@@ -59,10 +59,10 @@ importers:
         specifier: ^0.44.0
         version: 0.44.0
       oxlint:
-        specifier: ^1.61.0
+        specifier: ^1.47.0
         version: 1.61.0
       rimraf:
-        specifier: ^6.1.3
+        specifier: ^6.1.2
         version: 6.1.3
       simple-git-hooks:
         specifier: ^2.13.1
@@ -74,22 +74,22 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
       type-fest:
-        specifier: ^5.6.0
+        specifier: ^5.4.4
         version: 5.6.0
       typedoc:
-        specifier: ^0.28.19
+        specifier: ^0.28.17
         version: 0.28.19(typescript@6.0.3)
       typedoc-plugin-markdown:
         specifier: ^4.11.0
         version: 4.11.0(typedoc@0.28.19(typescript@6.0.3))
       typedoc-plugin-to-skills:
-        specifier: ^0.6.6
+        specifier: ^0.6.0
         version: 0.6.6(typedoc@0.28.19(typescript@6.0.3))
       typescript:
-        specifier: ^6.0.3
+        specifier: ^6.0.2
         version: 6.0.3
       vitest:
-        specifier: ^4.1.5
+        specifier: ^4.1.4
         version: 4.1.5(@types/node@25.6.0)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(vite@7.3.2(@types/node@25.6.0)(tsx@4.21.0)(yaml@2.8.3))
       zod:
         specifier: ^4.3.6
@@ -105,7 +105,7 @@ importers:
         version: 4.11.0(typedoc@0.28.19(typescript@6.0.3))
       typedoc-plugin-to-skills:
         specifier: ^0.6.0
-        version: 0.6.1(typedoc@0.28.19(typescript@6.0.3))
+        version: 0.6.6(typedoc@0.28.19(typescript@6.0.3))
       typedoc-vitepress-theme:
         specifier: ^1.1.2
         version: 1.1.2(typedoc-plugin-markdown@4.11.0(typedoc@0.28.19(typescript@6.0.3)))
@@ -833,16 +833,8 @@ packages:
   '@to-skills/core@0.10.3':
     resolution: {integrity: sha512-xPQsfY30rrIZThu13d/AFzUnXNySPC1hG+6xbnvEe3Z1ZZZgHc4u8KP+IcrAa/YX1gKbkr4x9Bog2tZTDrYYxw==}
 
-  '@to-skills/core@0.9.0':
-    resolution: {integrity: sha512-Qo61VLPO+hNURN2zKsGYUmcx3XbqMcJ1v/rbkovbB5UtSHnolS9xVLzfHBGKjmQhGj8Mmp6+9gMO+rSJOCPTyA==}
-
   '@to-skills/core@1.0.1':
     resolution: {integrity: sha512-+ThSJwQVJB0Hf/97VFBfqxQXlVO305pZorcMY5j6GzRtGFxs1w85Iwjdm+bQTeZnAiUjVh8o2zhmX3Miv544Yw==}
-
-  '@to-skills/typedoc@0.10.0':
-    resolution: {integrity: sha512-QR7TUr5qPErP951E0RaQ9+8jEkcTkAUR3dS8rju6HJx6g1VtLNy+r8y1VDgWKQlTQuyEz+WLz66OyTOM5LpWIA==}
-    peerDependencies:
-      typedoc: '>=0.28.0'
 
   '@to-skills/typedoc@0.11.4':
     resolution: {integrity: sha512-FFGhyx/tEtzbQQxNFGGdbLO8tNXtwwL1O9izTBaElwrzDPJHa12SsLIakD5NlyeKn+YOOKLGnKFKjxy+5eNVPw==}
@@ -1310,8 +1302,8 @@ packages:
     resolution: {integrity: sha512-CQ+bEO+Tva/qlmw24dCejulK5pMzVnUOFOijVogd3KQs07HnRIgp8TGipvCCRT06xeYEbpbgwaCxglFyiuIcmA==}
     engines: {node: '>=18'}
 
-  get-tsconfig@4.14.0:
-    resolution: {integrity: sha512-yTb+8DXzDREzgvYmh6s9vHsSVCHeC0G3PI5bEXNBHtmshPnO+S5O7qgLEOn0I5QvMy6kpZN8K1NKGyilLb93wA==}
+  get-tsconfig@4.13.7:
+    resolution: {integrity: sha512-7tN6rFgBlMgpBML5j8typ92BKFi2sFQvIdpAqLA2beia5avZDrMs0FLZiM5etShWq5irVyGcGMEA1jcDaK7A/Q==}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -1847,11 +1839,6 @@ packages:
     engines: {node: '>= 18'}
     peerDependencies:
       typedoc: 0.28.x
-
-  typedoc-plugin-to-skills@0.6.1:
-    resolution: {integrity: sha512-pkyEEGna9O0YgYhj8bBynwjVnq62NpSfJrvOR2dWbjljIFtNbOXPX7Jls6srfW6pfBCW8mhsv2Ro8Yk6wSiTpQ==}
-    peerDependencies:
-      typedoc: '>=0.28.0'
 
   typedoc-plugin-to-skills@0.6.6:
     resolution: {integrity: sha512-iusBTiIW4HuSq3qhDSVZGc9feNq1N7cI4L03n8g63JRG4pJQdg9ZRWe/ZE4OnSLt/m2+Mn2+jHayAr+ArxHzwQ==}
@@ -2595,14 +2582,7 @@ snapshots:
 
   '@to-skills/core@0.10.3': {}
 
-  '@to-skills/core@0.9.0': {}
-
   '@to-skills/core@1.0.1': {}
-
-  '@to-skills/typedoc@0.10.0(typedoc@0.28.19(typescript@6.0.3))':
-    dependencies:
-      '@to-skills/core': 0.9.0
-      typedoc: 0.28.19(typescript@6.0.3)
 
   '@to-skills/typedoc@0.11.4(typedoc@0.28.19(typescript@6.0.3))':
     dependencies:
@@ -3057,7 +3037,7 @@ snapshots:
 
   get-east-asian-width@1.5.0: {}
 
-  get-tsconfig@4.14.0:
+  get-tsconfig@4.13.7:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
@@ -3613,7 +3593,7 @@ snapshots:
   tsx@4.21.0:
     dependencies:
       esbuild: 0.27.7
-      get-tsconfig: 4.14.0
+      get-tsconfig: 4.13.7
     optionalDependencies:
       fsevents: 2.3.3
 
@@ -3623,11 +3603,6 @@ snapshots:
 
   typedoc-plugin-markdown@4.11.0(typedoc@0.28.19(typescript@6.0.3)):
     dependencies:
-      typedoc: 0.28.19(typescript@6.0.3)
-
-  typedoc-plugin-to-skills@0.6.1(typedoc@0.28.19(typescript@6.0.3)):
-    dependencies:
-      '@to-skills/typedoc': 0.10.0(typedoc@0.28.19(typescript@6.0.3))
       typedoc: 0.28.19(typescript@6.0.3)
 
   typedoc-plugin-to-skills@0.6.6(typedoc@0.28.19(typescript@6.0.3)):
