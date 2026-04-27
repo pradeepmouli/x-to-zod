@@ -30,7 +30,7 @@ importers:
         version: 2.31.0(@types/node@25.6.0)
       '@to-skills/vitepress':
         specifier: ^0.2.0
-        version: 0.2.18
+        version: 0.2.25
       '@types/json-schema':
         specifier: ^7.0.15
         version: 7.0.15
@@ -833,16 +833,16 @@ packages:
   '@to-skills/core@0.10.3':
     resolution: {integrity: sha512-xPQsfY30rrIZThu13d/AFzUnXNySPC1hG+6xbnvEe3Z1ZZZgHc4u8KP+IcrAa/YX1gKbkr4x9Bog2tZTDrYYxw==}
 
-  '@to-skills/core@1.0.1':
-    resolution: {integrity: sha512-+ThSJwQVJB0Hf/97VFBfqxQXlVO305pZorcMY5j6GzRtGFxs1w85Iwjdm+bQTeZnAiUjVh8o2zhmX3Miv544Yw==}
+  '@to-skills/core@1.3.0':
+    resolution: {integrity: sha512-rK0NPuUJAKhja6PZ7o1WRVCeqgJIg9jooiWhWPy6KYVTnMRgDkOvvFFSB5WmprdWqMgewp5I2weSbB9d8A3khg==}
 
   '@to-skills/typedoc@0.11.4':
     resolution: {integrity: sha512-FFGhyx/tEtzbQQxNFGGdbLO8tNXtwwL1O9izTBaElwrzDPJHa12SsLIakD5NlyeKn+YOOKLGnKFKjxy+5eNVPw==}
     peerDependencies:
       typedoc: '>=0.28.0'
 
-  '@to-skills/vitepress@0.2.18':
-    resolution: {integrity: sha512-JvPjXiLyy7Jb78A3MwMzU4+E8VGRDEYnvvvGfkgpHjk/L2E2g58q+MFM/ZgAG4uwwLA5G3ybizSWV1pppB8hGw==}
+  '@to-skills/vitepress@0.2.25':
+    resolution: {integrity: sha512-dKdl041eJoJYF7bl/Mrp+kvky/xadlVRgv8ORz8KjQMU7LrLPj4ArkaTOPS9LvihxGLpZjlhLiIFN2QhaQnzdg==}
     peerDependencies:
       vitepress: '>=1.0.0'
     peerDependenciesMeta:
@@ -2582,16 +2582,16 @@ snapshots:
 
   '@to-skills/core@0.10.3': {}
 
-  '@to-skills/core@1.0.1': {}
+  '@to-skills/core@1.3.0': {}
 
   '@to-skills/typedoc@0.11.4(typedoc@0.28.19(typescript@6.0.3))':
     dependencies:
       '@to-skills/core': 0.10.3
       typedoc: 0.28.19(typescript@6.0.3)
 
-  '@to-skills/vitepress@0.2.18':
+  '@to-skills/vitepress@0.2.25':
     dependencies:
-      '@to-skills/core': 1.0.1
+      '@to-skills/core': 1.3.0
 
   '@ts-morph/common@0.29.0':
     dependencies:
