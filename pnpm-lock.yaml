@@ -83,8 +83,8 @@ importers:
         specifier: ^4.11.0
         version: 4.11.0(typedoc@0.28.19(typescript@6.0.3))
       typedoc-plugin-to-skills:
-        specifier: ^0.6.0
-        version: 0.6.6(typedoc@0.28.19(typescript@6.0.3))
+        specifier: ^1.3.0
+        version: 1.3.0(typedoc@0.28.19(typescript@6.0.3))
       typescript:
         specifier: ^6.0.2
         version: 6.0.3
@@ -104,8 +104,8 @@ importers:
         specifier: ^4.11.0
         version: 4.11.0(typedoc@0.28.19(typescript@6.0.3))
       typedoc-plugin-to-skills:
-        specifier: ^0.6.0
-        version: 0.6.6(typedoc@0.28.19(typescript@6.0.3))
+        specifier: ^1.3.0
+        version: 1.3.0(typedoc@0.28.19(typescript@6.0.3))
       typedoc-vitepress-theme:
         specifier: ^1.1.2
         version: 1.1.2(typedoc-plugin-markdown@4.11.0(typedoc@0.28.19(typescript@6.0.3)))
@@ -830,14 +830,14 @@ packages:
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
-  '@to-skills/core@0.10.3':
-    resolution: {integrity: sha512-xPQsfY30rrIZThu13d/AFzUnXNySPC1hG+6xbnvEe3Z1ZZZgHc4u8KP+IcrAa/YX1gKbkr4x9Bog2tZTDrYYxw==}
-
   '@to-skills/core@1.0.1':
     resolution: {integrity: sha512-+ThSJwQVJB0Hf/97VFBfqxQXlVO305pZorcMY5j6GzRtGFxs1w85Iwjdm+bQTeZnAiUjVh8o2zhmX3Miv544Yw==}
 
-  '@to-skills/typedoc@0.11.4':
-    resolution: {integrity: sha512-FFGhyx/tEtzbQQxNFGGdbLO8tNXtwwL1O9izTBaElwrzDPJHa12SsLIakD5NlyeKn+YOOKLGnKFKjxy+5eNVPw==}
+  '@to-skills/core@1.3.0':
+    resolution: {integrity: sha512-rK0NPuUJAKhja6PZ7o1WRVCeqgJIg9jooiWhWPy6KYVTnMRgDkOvvFFSB5WmprdWqMgewp5I2weSbB9d8A3khg==}
+
+  '@to-skills/typedoc@1.0.8':
+    resolution: {integrity: sha512-0c3/7Hzse5/1InGXT0DGObsJjs9F+Zj8lWPSI6xI5AAMGlKAkKxbOSK/XM4tsdIIFSt7lTa8UriAnpcxKZZ0GA==}
     peerDependencies:
       typedoc: '>=0.28.0'
 
@@ -1840,8 +1840,8 @@ packages:
     peerDependencies:
       typedoc: 0.28.x
 
-  typedoc-plugin-to-skills@0.6.6:
-    resolution: {integrity: sha512-iusBTiIW4HuSq3qhDSVZGc9feNq1N7cI4L03n8g63JRG4pJQdg9ZRWe/ZE4OnSLt/m2+Mn2+jHayAr+ArxHzwQ==}
+  typedoc-plugin-to-skills@1.3.0:
+    resolution: {integrity: sha512-SULAFaFt1FVfYoCuzZa11CEmenairdDExTwoEDRWOC6DE7a8uTnd0h5PBgwegEkVq1A8g4D256Uxk9DrgcCt6w==}
     peerDependencies:
       typedoc: '>=0.28.0'
 
@@ -2580,13 +2580,13 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@to-skills/core@0.10.3': {}
-
   '@to-skills/core@1.0.1': {}
 
-  '@to-skills/typedoc@0.11.4(typedoc@0.28.19(typescript@6.0.3))':
+  '@to-skills/core@1.3.0': {}
+
+  '@to-skills/typedoc@1.0.8(typedoc@0.28.19(typescript@6.0.3))':
     dependencies:
-      '@to-skills/core': 0.10.3
+      '@to-skills/core': 1.3.0
       typedoc: 0.28.19(typescript@6.0.3)
 
   '@to-skills/vitepress@0.2.18':
@@ -3605,9 +3605,9 @@ snapshots:
     dependencies:
       typedoc: 0.28.19(typescript@6.0.3)
 
-  typedoc-plugin-to-skills@0.6.6(typedoc@0.28.19(typescript@6.0.3)):
+  typedoc-plugin-to-skills@1.3.0(typedoc@0.28.19(typescript@6.0.3)):
     dependencies:
-      '@to-skills/typedoc': 0.11.4(typedoc@0.28.19(typescript@6.0.3))
+      '@to-skills/typedoc': 1.0.8(typedoc@0.28.19(typescript@6.0.3))
       typedoc: 0.28.19(typescript@6.0.3)
 
   typedoc-vitepress-theme@1.1.2(typedoc-plugin-markdown@4.11.0(typedoc@0.28.19(typescript@6.0.3))):
