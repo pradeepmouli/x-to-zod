@@ -1,0 +1,117 @@
+# x-to-zod-docs
+
+> Documentation site for x-to-zod
+
+### API
+
+- `select`: Selects the most specific parser for a given JSON Schema node.
+- `parseRef`: Detects and parses external $ref entries in a JSON schema.
+Returns ReferenceBuilder for external refs or null for non-refs/internal refs.
+- `extractRefs`: Extract all $refs from a schema recursively.
+Accepts any value and safely narrows internally.
+Useful for dependency analysis.
+- `parsePathPattern`: Parse a JSONPath-inspired pattern into compiled segments.
+- `matchPath`: Tests whether a resolved schema path matches a glob-style path pattern.
+- `clearPathPatternCache`: Clears the internal compiled-pattern cache.
+- `SchemaProject`: SchemaProject: Main API for multi-schema projects.
+Manages schema registration, validation, dependency analysis, and code generation.
+- `BaseBuilder`: BaseBuilder: Abstract base class for all Zod schema builders.
+- `BooleanBuilder`: Fluent BooleanBuilder: wraps a Zod boolean schema string and provides chainable methods.
+- `NullBuilder`: Fluent NullBuilder: wraps a Zod null schema string and provides chainable methods.
+- `ConstBuilder`: Fluent ConstBuilder: wraps a Zod literal schema string and provides chainable methods.
+- `EnumBuilder`: Fluent EnumBuilder: wraps a Zod enum schema string and provides chainable methods.
+- `NumberBuilder`: Fluent NumberBuilder: wraps a Zod number schema string and provides chainable methods
+that delegate to the existing apply* functions.
+- `StringBuilder`: Fluent StringBuilder: wraps a Zod string schema string and provides chainable methods.
+- `ArrayBuilder`: Fluent ArrayBuilder: wraps a Zod array schema string and provides chainable methods.
+- `ObjectBuilder`: Fluent ObjectBuilder: wraps a Zod object schema string and provides chainable methods.
+- `AnyBuilder`: Fluent AnyBuilder: represents z.any() schema.
+- `NeverBuilder`: Fluent NeverBuilder: represents z.never() schema.
+- `UnknownBuilder`: Fluent UnknownBuilder: represents z.unknown() schema.
+- `LiteralBuilder`: Fluent LiteralBuilder: represents z.literal() schema.
+- `UnionBuilder`: Fluent UnionBuilder: represents z.union() schema.
+Accepts multiple schemas and creates a union type.
+- `IntersectionBuilder`: Fluent IntersectionBuilder: represents z.intersection() schema.
+Accepts two schemas and creates an intersection type.
+- `DiscriminatedUnionBuilder`: Fluent DiscriminatedUnionBuilder: represents z.discriminatedUnion() schema.
+Accepts a discriminator key and an array of object schemas.
+- `TupleBuilder`: Fluent TupleBuilder: represents z.tuple() schema.
+Accepts an array of schemas representing tuple items.
+- `RecordBuilder`: Fluent RecordBuilder: represents z.
+- `ReferenceBuilder`: ReferenceBuilder represents a reference to an external schema in a multi-schema project.
+- `VoidBuilder`: VoidBuilder: represents z.void()
+- `UndefinedBuilder`: UndefinedBuilder: represents z.undefined()
+- `DateBuilder`: DateBuilder: represents z.date() with optional constraints
+- `BigIntBuilder`: BigIntBuilder: represents z.bigint() with optional constraints
+- `SymbolBuilder`: SymbolBuilder: represents z.symbol()
+- `NaNBuilder`: NaNBuilder: represents z.nan()
+- `SetBuilder`: SetBuilder: represents z.set() with optional constraints
+- `MapBuilder`: MapBuilder: represents z.map() with optional constraints
+- `CustomBuilder`: CustomBuilder: represents z.custom() for custom validation
+- `PromiseBuilder`: PromiseBuilder: represents z.promise(innerType)
+Wraps an inner schema for async value validation
+- `LazyBuilder`: LazyBuilder: represents z.lazy(() => schema)
+Enables recursive schema definitions
+- `FunctionBuilder`: FunctionBuilder: represents z.function()
+Supports function signature validation with args and returns
+- `CodecBuilder`: CodecBuilder: represents z.codec(inSchema, outSchema)
+Enables bidirectional data transformations
+- `PreprocessBuilder`: PreprocessBuilder: represents z.preprocess(transformFn, schema)
+Transforms data before validation
+- `PipeBuilder`: PipeBuilder: represents schema.
+- `JsonBuilder`: JsonBuilder: represents z.json()
+Validates JSON-encoded strings
+- `FileBuilder`: FileBuilder: represents z.file()
+Validates file uploads
+- `NativeEnumBuilder`: NativeEnumBuilder: represents z.
+- `TemplateLiteralBuilder`: TemplateLiteralBuilder: represents z.templateLiteral(parts)
+Validates template literal string types
+- `XorBuilder`: XorBuilder: represents z.xor(schemas)
+Validates exclusive OR - exactly one schema must match
+- `KeyofBuilder`: KeyofBuilder: represents z.keyof(objectSchema)
+Extracts keys from an object schema as an enum
+- `EmailBuilder`: EmailBuilder: represents z.
+- `UrlBuilder`: UrlBuilder: represents z.
+- `UuidBuilder`: UuidBuilder: represents z.
+- `DatetimeBuilder`: DatetimeBuilder: represents z.
+- `TimeBuilder`: TimeBuilder: represents z.
+- `DurationBuilder`: DurationBuilder: represents z.
+- `IpBuilder`: IpBuilder: represents z.
+- `Base64Builder`: Base64Builder: represents z.
+- `EmojiBuilder`: EmojiBuilder: represents z.
+- `CuidBuilder`: CuidBuilder: represents z.
+- `UlidBuilder`: UlidBuilder: represents z.
+- `NanoidBuilder`: NanoidBuilder: represents z.
+- `parse`: Namespace of JSON Schema parser constructors, one per schema kind.
+- `build`: The default Zod v4 builder API.
+- `buildV3`: Zod v3-compatible builder factory object.
+- `buildV4`: Full Zod v4 builder factory object.
+- `postProcessors`: A collection of reusable post-processor factory functions.
+
+## Optional
+
+### Types
+
+- `JSONSchema`: Versioned JSON Schema type that resolves to the correct draft or OpenAPI schema
+definition based on `Version`.
+- `SchemaVersion`: Supported JSON Schema dialect versions and OpenAPI specification versions.
+- `TypeValue`: The set of JSON Schema primitive type names recognised by `x-to-zod`.
+- `transformer`: A function that transforms or augments a JSON Schema node before it is
+handed to a parser.
+- `SchemaEntry`: Single schema entry in the registry
+- `ProjectSchemaMetadata`: Metadata associated with a schema
+- `RefResolution`: Result of resolving a $ref
+- `ImportInfo`: Information needed to import an external schema reference
+- `DependencyGraph`: Dependency Graph for schema resolution and build ordering
+- `BuildResult`: Result of a build operation
+- `BuildError`: Build-time error
+- `BuildWarning`: Build-time warning
+- `ValidationResult`: Validation result for schema project
+- `ValidationError`: Validation error
+- `ValidationWarning`: Validation warning
+- `NameResolver`: Contract for schema name resolution strategy
+- `RefResolver`: Contract for reference resolution
+- `TypeKind`: Mapped type from builder-factory key to the `Builder` instance it produces.
+- `TypeKindOf`: Extracts the concrete `Builder` type for a given `TypeKind` key.
+- `V3BuildAPI`: Explicit type for the complete Zod v3 builder factory.
+- `V4BuildAPI`: Explicit type for the complete Zod v4 builder factory.
