@@ -8,7 +8,6 @@ import type {
 	JSONSchema,
 	SchemaVersion,
 	TypeValue,
-	transformer,
 } from './types/index.js';
 
 export type {

@@ -195,7 +195,7 @@ describe('SourceFileGenerator', () => {
 					imports,
 					'InvalidSchema',
 				),
-			).toThrow();
+			).toThrow(Error);
 		});
 	});
 
@@ -306,7 +306,7 @@ describe('SourceFileGenerator', () => {
 			expect(result.length).toBeGreaterThan(0);
 		});
 
-		it('should return errors if save fails', async () => {
+		it('should throw when saving to an invalid path', async () => {
 			// Create generator with invalid path
 			const badGenerator = new SourceFileGenerator(
 				'/nonexistent/path/that/does/not/exist',
@@ -318,15 +318,7 @@ describe('SourceFileGenerator', () => {
 
 			badGenerator.generateFile('test', builder, imports, 'TestSchema');
 
-			// This should throw or return empty array based on error handling
-			try {
-				const result = await badGenerator.saveAll();
-				// If it succeeds unexpectedly, that's also ok - just check type
-				expect(Array.isArray(result)).toBe(true);
-			} catch (error) {
-				// Expected to fail with invalid path
-				expect(error).toBeDefined();
-			}
+			await expect(badGenerator.saveAll()).rejects.toBeInstanceOf(Error);
 
 			badGenerator.dispose();
 		});

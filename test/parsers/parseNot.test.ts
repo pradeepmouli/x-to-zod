@@ -15,7 +15,7 @@ const parseNot = (
 ) => parseSchema(schema, refs);
 
 describe('parseNot', () => {
-	it('', () => {
+	it('should parse "not" schema into a refine with negated safeParse', () => {
 		expect(
 			parseNot({
 				not: {

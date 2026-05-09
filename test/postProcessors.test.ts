@@ -369,6 +369,7 @@ describe('Post-Processor Integration', () => {
 	});
 
 	describe('Path-based filtering', () => {
+		// oxlint-disable-next-line vitest/no-disabled-tests
 		it.skip('should filter by path pattern', () => {
 			const schema = {
 				type: 'object' as const,

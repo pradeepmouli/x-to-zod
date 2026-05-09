@@ -92,6 +92,7 @@ describe('Zod Version Support', () => {
 
 	describe('Error Message Parameters (Future)', () => {
 		// TODO: Implement once error message handling is version-aware
+		// oxlint-disable-next-line vitest/no-disabled-tests
 		it.skip('should use error parameter in v4 mode', () => {
 			const schema = {
 				type: 'string' as const,
@@ -103,6 +104,7 @@ describe('Zod Version Support', () => {
 			expect(result).not.toContain('message:');
 		});
 
+		// oxlint-disable-next-line vitest/no-disabled-tests
 		it.skip('should use message parameter in v3 mode', () => {
 			const schema = {
 				type: 'string' as const,

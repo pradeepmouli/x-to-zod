@@ -64,47 +64,6 @@ export { CuidBuilder } from './cuid.js';
 export { UlidBuilder } from './ulid.js';
 export { NanoidBuilder } from './nanoid.js';
 
-// Import builder classes for the factory
-import { NumberBuilder } from './number.js';
-import { StringBuilder } from './string.js';
-import { BooleanBuilder } from './boolean.js';
-import { NullBuilder } from './null.js';
-import { ArrayBuilder } from './array.js';
-import { ObjectBuilder } from './object.js';
-import { EnumBuilder } from './enum.js';
-import { ConstBuilder } from './const.js';
-import { AnyBuilder } from './any.js';
-import { NeverBuilder } from './never.js';
-import { UnknownBuilder } from './unknown.js';
-import { LiteralBuilder } from './literal.js';
-import { UnionBuilder } from './union.js';
-import { IntersectionBuilder } from './intersection.js';
-import { TupleBuilder } from './tuple.js';
-import { RecordBuilder } from './record.js';
-// Note: GenericBuilder is no longer used here (escape hatch lives in builders directly)
-import { VoidBuilder } from './void.js';
-import { UndefinedBuilder } from './undefined.js';
-import { DateBuilder } from './date.js';
-import { BigIntBuilder } from './bigint.js';
-import { SymbolBuilder } from './symbol.js';
-import { NaNBuilder } from './nan.js';
-import { SetBuilder } from './set.js';
-import { MapBuilder } from './map.js';
-import { CustomBuilder } from './custom.js';
-import { PromiseBuilder } from './promise.js';
-import { LazyBuilder } from './lazy.js';
-import { FunctionBuilder } from './function.js';
-import { CodecBuilder } from './codec.js';
-import { PreprocessBuilder } from './preprocess.js';
-import { PipeBuilder } from './pipe.js';
-import { JsonBuilder } from './json.js';
-import { FileBuilder } from './file.js';
-import { NativeEnumBuilder } from './nativeEnum.js';
-import { TemplateLiteralBuilder } from './templateLiteral.js';
-import { XorBuilder } from './xor.js';
-import { KeyofBuilder } from './keyof.js';
-import { DiscriminatedUnionBuilder } from './discriminatedUnion.js';
-
 // Builder factories
 import { buildV4 } from './v4.js';
 import type { BuildV4 } from './v4.js';

@@ -93,12 +93,11 @@ describe('SchemaProject Build Integration', () => {
 
 		// Verify index file content includes all schemas
 		const indexPath = path.join(tempDir, 'index.ts');
-		if (existsSync(indexPath)) {
-			const indexContent = readFileSync(indexPath, 'utf8');
-			expect(indexContent).toContain('User');
-			expect(indexContent).toContain('Post');
-			expect(indexContent).toContain('Comment');
-		}
+		expect(existsSync(indexPath)).toBe(true);
+		const indexContent = readFileSync(indexPath, 'utf8');
+		expect(indexContent).toContain('User');
+		expect(indexContent).toContain('Post');
+		expect(indexContent).toContain('Comment');
 	});
 
 	it('should handle build with schema-specific options', async () => {
