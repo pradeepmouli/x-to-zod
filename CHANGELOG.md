@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.3
+
+### Patch Changes
+
+- [#108](https://github.com/pradeepmouli/x-to-zod/pull/108) [`fd4f1e0`](https://github.com/pradeepmouli/x-to-zod/commit/fd4f1e0642c83c2947d6e210f361be70150683d0) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - - chore: bump typedoc-plugin-to-skills to ^1.3.0
+
 ## 0.10.2
 
 ### Patch Changes
