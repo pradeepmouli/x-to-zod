@@ -145,7 +145,7 @@
     "@changesets/cli": "^2.31.0",
     "@to-skills/vitepress": "^0.2.26",
     "@types/json-schema": "^7.0.15",
-    "@types/node": "^25.9.1",
+    "@types/node": "^26.0.1",
     "@typescript/native-preview": "beta",
     "@vitest/coverage-v8": "^4.1.7",
     "@vitest/ui": "^4.1.7",
