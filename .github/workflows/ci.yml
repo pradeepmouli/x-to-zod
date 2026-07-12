@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x, 24.x]
+        node-version: [24.x, 26.x]
 
     steps:
       - name: Checkout code
@@ -50,22 +50,22 @@ jobs:
         run: pnpm run test
 
       - name: Test with coverage
-        if: matrix.node-version == '22.x'
+        if: matrix.node-version == '24.x'
         run: pnpm run test -- --coverage
 
       - name: Upload coverage reports
-        if: matrix.node-version == '22.x'
+        if: matrix.node-version == '24.x'
         uses: codecov/codecov-action@v6
         with:
           files: ./coverage/lcov.info
           fail_ci_if_error: false
 
       - name: Security audit (non-blocking)
-        if: matrix.node-version == '22.x'
+        if: matrix.node-version == '24.x'
         run: pnpm audit --audit-level moderate
         continue-on-error: true
 
       - name: Bundle size
-        if: matrix.node-version == '22.x'
+        if: matrix.node-version == '24.x'
         run: pnpm dlx size-limit
         continue-on-error: true
