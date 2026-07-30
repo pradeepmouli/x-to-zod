@@ -78,13 +78,4 @@ This will generate the CommonJS, ESM, and TypeScript declaration files in the `d
 
 ### Versioning and Publishing
 
-This project uses [Changesets](https://github.com/changesets/changesets) for version management and publishing:
-
-1. Create a changeset to describe your changes:
-   ```zsh
-   pnpm changeset
-   ```
-
-2. The CI/CD will automatically create a version PR when changesets are merged to master.
-
-3. When the version PR is merged, the package will be automatically published to npm.
+This project uses [Changesets](https://github.com/changesets/changesets) for version management and publishing. See [DEVELOPMENT.md](./DEVELOPMENT.md) for the full branch model and release process.
