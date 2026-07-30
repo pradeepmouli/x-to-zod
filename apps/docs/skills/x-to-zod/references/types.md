@@ -1,32 +1,34 @@
 # Types & Enums
 
-## `JSONSchema`
+## JsonSchema/types
+
+### `JSONSchema`
 Versioned JSON Schema type that resolves to the correct draft or OpenAPI schema
 definition based on `Version`.
 ```ts
 JSONSchemaMap<T, V>[Version]
 ```
 
-## `SchemaVersion`
+### `SchemaVersion`
 Supported JSON Schema dialect versions and OpenAPI specification versions.
 
-Pass this as the `S` type parameter to `JSONSchema<S>` to narrow the schema
+Pass this as the `S` type parameter to `JSONSchema&lt;S&gt;` to narrow the schema
 type to the keywords supported by that dialect.
 ```ts
 "2020-12" | "2019-09" | "07" | "OpenAPI3.0" | "OpenAPI3.1"
 ```
 
-## `TypeValue`
+### `TypeValue`
 The set of JSON Schema primitive type names recognised by `x-to-zod`.
 
 These correspond to the values allowed in the JSON Schema `"type"` keyword.
-Use as the `V` type parameter on `JSONSchema<S, T, V>` to constrain which
+Use as the `V` type parameter on `JSONSchema&lt;S, T, V&gt;` to constrain which
 primitive the schema represents.
 ```ts
 "object" | "array" | "string" | "number" | "integer" | "boolean" | "null" | "any"
 ```
 
-## `transformer`
+### `transformer`
 A function that transforms or augments a JSON Schema node before it is
 handed to a parser.
 
@@ -37,27 +39,7 @@ Transformers receive the schema and a `refs` bag (containing resolved
 (schema: JSONSchema<Version, T, V>, refs: any) => JSONSchema<Version, T, TypeValue> | undefined
 ```
 
-## `TypeKind`
-Mapped type from builder-factory key to the `Builder` instance it produces.
-
-`TypeKind['string']` resolves to the `Builder` returned by `build.string()`,
-`TypeKind['object']` to the one returned by `build.object()`, and so on.
-Use this as a discriminated registry for type-narrowing inside parsers.
-```ts
-{ [T in keyof typeof buildV4 as typeof buildV4[T] extends (args: unknown[]) => unknown ? T : never]: ReturnType<Extract<typeof buildV4[T], (args: unknown[]) => unknown>> }
-```
-
-## `TypeKindOf`
-Extracts the concrete `Builder` type for a given `TypeKind` key.
-
-Equivalent to `TypeKind[T]` with the key constrained to the known set of
-builder-factory names. Use in generic parser helpers where you need to
-reference the builder produced by a specific factory:
-```ts
-TypeKind[T]
-```
-
-## types
+## SchemaProject
 
 ### `SchemaEntry`
 Single schema entry in the registry
@@ -155,12 +137,30 @@ Contract for schema name resolution strategy
 ### `RefResolver`
 Contract for reference resolution
 
-## v3
+## ZodBuilder
+
+### `TypeKind`
+Mapped type from builder-factory key to the `Builder` instance it produces.
+
+`TypeKind['string']` resolves to the `Builder` returned by `build.string()`,
+`TypeKind['object']` to the one returned by `build.object()`, and so on.
+Use this as a discriminated registry for type-narrowing inside parsers.
+```ts
+{ [T in keyof typeof buildV4 as typeof buildV4[T] extends (args: unknown[]) => unknown ? T : never]: ReturnType<Extract<typeof buildV4[T], (args: unknown[]) => unknown>> }
+```
+
+### `TypeKindOf`
+Extracts the concrete `Builder` type for a given `TypeKind` key.
+
+Equivalent to `TypeKind[T]` with the key constrained to the known set of
+builder-factory names. Use in generic parser helpers where you need to
+reference the builder produced by a specific factory:
+```ts
+TypeKind[T]
+```
 
 ### `V3BuildAPI`
 Explicit type for the complete Zod v3 builder factory.
-
-## v4
 
 ### `V4BuildAPI`
 Explicit type for the complete Zod v4 builder factory.

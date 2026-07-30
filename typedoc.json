@@ -2,7 +2,7 @@
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["./src/index.ts"],
   "out": "./docs",
-  "plugin": ["typedoc-plugin-to-skills"],
+  "plugin": ["typedoc-plugin-skillit"],
   "skipErrorChecking": true,
   "excludePrivate": true,
   "excludeProtected": true,

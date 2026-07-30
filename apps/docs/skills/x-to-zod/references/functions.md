@@ -1,6 +1,8 @@
 # Functions
 
-## `select`
+## JsonSchema
+
+### `select`
 Selects the most specific parser for a given JSON Schema node.
 
 Inspects the schema's structural properties — `type`, keyword presence —
@@ -18,7 +20,7 @@ import { JSONSchema, select } from 'x-to-zod';
 const parser = select({ type: 'string', minLength: 1 });
 ```
 
-## parseRef
+## SchemaProject
 
 ### `parseRef`
 Detects and parses external $ref entries in a JSON schema.
@@ -47,7 +49,7 @@ extractRefs(schema: unknown, refs: Set<string>, depth: number): Set<string>
 - `depth: number` — default: `0`
 **Returns:** `Set<string>`
 
-## pathParser
+## PostProcessing
 
 ### `parsePathPattern`
 Parse a JSONPath-inspired pattern into compiled segments.
@@ -63,8 +65,6 @@ parsePathPattern(pattern: string): CompiledSegment[]
 **Parameters:**
 - `pattern: string`
 **Returns:** `CompiledSegment[]`
-
-## pathMatcher
 
 ### `matchPath`
 Tests whether a resolved schema path matches a glob-style path pattern.

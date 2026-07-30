@@ -39,7 +39,6 @@ export * as JSONSchema from './JsonSchema/index.js';
  * Multi-schema project support.
  *
  * Use `SchemaProject` to manage multiple JSON Schemas with cross-schema references.
- * See [quickstart guide](../specs/004-multi-schema-projects/quickstart.md) for usage examples.
  *
  * @example
  * ```ts
