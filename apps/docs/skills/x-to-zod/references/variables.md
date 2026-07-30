@@ -1,6 +1,8 @@
 # Variables & Constants
 
-## `parse`
+## JsonSchema
+
+### `parse`
 Namespace of JSON Schema parser constructors, one per schema kind.
 
 Each member is a parser class or factory that accepts a JSON Schema node and
@@ -16,7 +18,9 @@ Special members:
 const parse: { array: (schema: SchemaNode & { type?: string }, refs: Context) => Builder; object: (schema: SchemaNode & { type?: string }, refs: Context) => Builder; boolean: (schema: SchemaNode & { type?: string }, refs: Context) => Builder; string: (schema: SchemaNode & { type?: string }, refs: Context) => Builder; number: (schema: SchemaNode & { type?: string }, refs: Context) => Builder; null: (schema: SchemaNode & { type?: string }, refs: Context) => Builder; anyOf: (schema: SchemaNode & { anyOf: JSONSchemaAny[] }, refs: Context) => Builder; allOf: (schema: SchemaNode & { allOf: JSONSchemaAny[] }, refs: Context) => Builder; oneOf: (schema: SchemaNode & { oneOf: JSONSchemaAny[] }, refs: Context) => Builder; enum: (schema: SchemaNode & { enum: unknown[] }, refs: Context) => Builder; const: (schema: SchemaNode & { const: unknown }, refs: Context) => Builder; tuple: (schema: SchemaNode, refs: Context) => Builder; record: (schema: SchemaNode, refs: Context) => Builder; union: (schema: SchemaNode & { anyOf: JSONSchemaAny[] }, refs: Context) => Builder; intersection: (schema: SchemaNode & { allOf: JSONSchemaAny[] }, refs: Context) => Builder; discriminatedUnion: (schema: SchemaNode & { oneOf: JSONSchemaAny[] }, refs: Context) => Builder; any: (_schema: SchemaNode | undefined, refs: Context) => Builder; unknown: (_schema: SchemaNode | undefined, refs: Context) => Builder; never: (_schema: SchemaNode | undefined, refs: Context) => Builder; default: (_schema: SchemaNode, refs: Context) => AnyBuilder; discriminator: undefined; schema: (schema: JSONSchemaAny<Version>, refs: Context, blockMeta?: boolean) => Builder; ref: (schema: JSONSchemaAny | undefined, refResolver: DefaultRefResolver, fromSchemaId: string, dependencyGraph?: DependencyGraph, depth: number) => ReferenceBuilder | null; Schema: (schema: JSONSchemaAny<Version>, refs: Context, blockMeta?: boolean) => Builder; Ref: (schema: JSONSchemaAny | undefined, refResolver: DefaultRefResolver, fromSchemaId: string, dependencyGraph?: DependencyGraph, depth: number) => ReferenceBuilder | null }
 ```
 
-## `build`
+## ZodBuilder
+
+### `build`
 The default Zod v4 builder API.
 
 A collection of factory methods — `build.string()`, `build.object()`, etc. —
@@ -27,8 +31,6 @@ version-constrained variant of the API.
 ```ts
 const build: V4BuildAPI
 ```
-
-## v3
 
 ### `buildV3`
 Zod v3-compatible builder factory object.
@@ -43,8 +45,6 @@ Prefer importing `build` from `'x-to-zod/v3'` for type-safe v3 usage.
 const buildV3: V3BuildAPI
 ```
 
-## v4
-
 ### `buildV4`
 Full Zod v4 builder factory object.
 
@@ -58,7 +58,7 @@ Prefer importing `build` from `'x-to-zod/v4'` for type-safe v4 usage.
 const buildV4: V4BuildAPI
 ```
 
-## presets
+## PostProcessing
 
 ### `postProcessors`
 A collection of reusable post-processor factory functions.

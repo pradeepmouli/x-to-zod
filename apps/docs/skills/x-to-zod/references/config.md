@@ -8,75 +8,51 @@ Multi-Schema Project Configuration Options
 
 #### outDir
 
-
-
 **Type:** `string`
 
 **Required:** yes
 
 #### moduleFormat
 
-
-
 **Type:** `"esm" | "cjs" | "both"`
 
 #### zodVersion
-
-
 
 **Type:** `"v3" | "v4"`
 
 #### generateIndex
 
-
-
 **Type:** `boolean`
 
 #### generateDeclarations
-
-
 
 **Type:** `boolean`
 
 #### tsconfig
 
-
-
 **Type:** `string | CompilerOptions`
 
 #### nameResolver
-
-
 
 **Type:** `NameResolver`
 
 #### refResolver
 
-
-
 **Type:** `RefResolver`
 
 #### globalPostProcessors
-
-
 
 **Type:** `ProjectPostProcessorConfig[]`
 
 #### prettier
 
-
-
 **Type:** `boolean | PrettierOptions`
 
 #### importPathTransformer
 
-
-
 **Type:** `(from: string, to: string) => string`
 
 #### extractDefinitions
-
-
 
 **Type:** `boolean | ExtractDefinitionsOptions`
 
@@ -88,21 +64,15 @@ Options for extracting definitions into separate files
 
 #### enabled
 
-
-
 **Type:** `boolean`
 
 **Required:** yes
 
 #### subdir
 
-
-
 **Type:** `string`
 
 #### namePattern
-
-
 
 **Type:** `(schemaId: string, defName: string) => string`
 
@@ -114,19 +84,13 @@ Options for individual schema when added to project
 
 #### postProcessors
 
-
-
 **Type:** `ProjectPostProcessorConfig[]`
 
 #### moduleFormatOverride
 
-
-
 **Type:** `"esm" | "cjs" | "both"`
 
 #### extractDefinitions
-
-
 
 **Type:** `boolean`
 
@@ -138,31 +102,21 @@ Options for adding schema from file
 
 #### id
 
-
-
 **Type:** `string`
 
 #### encoding
-
-
 
 **Type:** `BufferEncoding`
 
 #### postProcessors
 
-
-
 **Type:** `ProjectPostProcessorConfig[]`
 
 #### moduleFormatOverride
 
-
-
 **Type:** `"esm" | "cjs" | "both"`
 
 #### extractDefinitions
-
-
 
 **Type:** `boolean`
 
@@ -174,15 +128,11 @@ Configuration for post-processor application
 
 #### name
 
-
-
 **Type:** `string`
 
 **Required:** yes
 
 #### options
-
-
 
 **Type:** `Record<string, any>`
 
@@ -194,36 +144,24 @@ Prettier configuration options
 
 #### semi
 
-
-
 **Type:** `boolean`
 
 #### singleQuote
-
-
 
 **Type:** `boolean`
 
 #### trailingComma
 
-
-
 **Type:** `"es5" | "none" | "all"`
 
 #### printWidth
-
-
 
 **Type:** `number`
 
 #### tabWidth
 
-
-
 **Type:** `number`
 
 #### useTabs
-
-
 
 **Type:** `boolean`
