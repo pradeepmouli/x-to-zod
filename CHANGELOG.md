@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.5
+
+### Patch Changes
+
+- [#153](https://github.com/pradeepmouli/x-to-zod/pull/153) [`0c93037`](https://github.com/pradeepmouli/x-to-zod/commit/0c930376f0ce087bc8f0147ba8c36f218898d172) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - - chore: upgrade to TypeScript 7, pin docs app to TS6 for typedoc compat
+  - chore: rename @to-skills/_ -> @skillit/_, pin apps/docs to TS6
+  - chore: pnpm update --latest across the workspace
+
 ## 0.10.4
 
 ### Patch Changes
