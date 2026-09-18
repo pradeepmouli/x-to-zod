@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.10.5
+
+### Patch Changes
+
+- [#153](https://github.com/pradeepmouli/x-to-zod/pull/153) [`0c93037`](https://github.com/pradeepmouli/x-to-zod/commit/0c930376f0ce087bc8f0147ba8c36f218898d172) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - - chore: upgrade to TypeScript 7, pin docs app to TS6 for typedoc compat
+  - chore: rename @to-skills/_ -> @skillit/_, pin apps/docs to TS6
+  - chore: pnpm update --latest across the workspace
+
+## 0.10.4
+
+### Patch Changes
+
+- [#138](https://github.com/pradeepmouli/x-to-zod/pull/138) [`620d1dd`](https://github.com/pradeepmouli/x-to-zod/commit/620d1dd2fe4a4309c1e7e8ed145fdfda2c80c1b2) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - - chore: also drop .github/agents, prompts, skills, copilot from master
+  - chore: drop AI tooling files from master
+
 ## 0.10.3
 
 ### Patch Changes
