@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.6
+
+### Patch Changes
+
+- [#169](https://github.com/pradeepmouli/x-to-zod/pull/169) [`e968465`](https://github.com/pradeepmouli/x-to-zod/commit/e9684659abb6cd1b17265aa9c378015aa0cc8c72) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - - fix(ci): skip simple-git-hooks install in dep-update workflow
+
 ## 0.10.5
 
 ### Patch Changes
