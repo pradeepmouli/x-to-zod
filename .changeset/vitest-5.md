@@ -1,5 +1,0 @@
----
-"x-to-zod": patch
----
-
-Bump vitest and @vitest/* to ^5.0.1.
