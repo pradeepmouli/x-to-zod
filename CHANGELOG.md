@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.7
+
+### Patch Changes
+
+- [#191](https://github.com/pradeepmouli/x-to-zod/pull/191) [`7426fee`](https://github.com/pradeepmouli/x-to-zod/commit/7426fee836ba72b7f5add64e7810c82e61217702) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - Bump vitest and @vitest/* to ^5.0.1.
+
 ## 0.10.6
 
 ### Patch Changes
