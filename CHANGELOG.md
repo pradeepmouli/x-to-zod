@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.8
+
+### Patch Changes
+
+- [#190](https://github.com/pradeepmouli/x-to-zod/pull/190) [`29e2a67`](https://github.com/pradeepmouli/x-to-zod/commit/29e2a678830a4212eb471964b4323a7dcd22e879) Thanks [@github-actions](https://github.com/apps/github-actions)! - - chore(deps): update dependencies to latest
+
 ## 0.10.7
 
 ### Patch Changes
