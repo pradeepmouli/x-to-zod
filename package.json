@@ -162,7 +162,7 @@
     "zod": "^4.4.3"
   },
   "dependencies": {
-    "json-schema-typed": "^8.0.2",
+    "json-schema-typed": "^9.0.0",
     "tinyglobby": "^0.2.17"
   }
 }
