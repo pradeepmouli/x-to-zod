@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.10.9
+
+### Patch Changes
+
+- [#195](https://github.com/pradeepmouli/x-to-zod/pull/195) [`2872ccd`](https://github.com/pradeepmouli/x-to-zod/commit/2872ccd58c5d922a12c3a52a317e993146243afd) Thanks [@github-actions](https://github.com/apps/github-actions)! - - chore(deps): update dependencies to latest
+
+## 0.10.8
+
+### Patch Changes
+
+- [#190](https://github.com/pradeepmouli/x-to-zod/pull/190) [`29e2a67`](https://github.com/pradeepmouli/x-to-zod/commit/29e2a678830a4212eb471964b4323a7dcd22e879) Thanks [@github-actions](https://github.com/apps/github-actions)! - - chore(deps): update dependencies to latest
+
+## 0.10.7
+
+### Patch Changes
+
+- [#191](https://github.com/pradeepmouli/x-to-zod/pull/191) [`7426fee`](https://github.com/pradeepmouli/x-to-zod/commit/7426fee836ba72b7f5add64e7810c82e61217702) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - Bump vitest and @vitest/* to ^5.0.1.
+
 ## 0.10.6
 
 ### Patch Changes

@@ -94,13 +94,13 @@ export const build: BuildV4 = buildV4;
  * Use this as a discriminated registry for type-narrowing inside parsers.
  */
 export type TypeKind = {
-	[T in keyof typeof buildV4 as (typeof buildV4)[T] extends (
-		...args: unknown[]
-	) => unknown
-		? T
-		: never]: ReturnType<
-		Extract<(typeof buildV4)[T], (...args: unknown[]) => unknown>
-	>;
+	[
+		T in keyof typeof buildV4 as (typeof buildV4)[T] extends (
+			...args: unknown[]
+		) => unknown
+			? T
+			: never
+	]: ReturnType<Extract<(typeof buildV4)[T], (...args: unknown[]) => unknown>>;
 };
 
 /**
