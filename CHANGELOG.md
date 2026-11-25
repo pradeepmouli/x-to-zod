@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.10
+
+### Patch Changes
+
+- [#237](https://github.com/pradeepmouli/x-to-zod/pull/237) [`d5f896d`](https://github.com/pradeepmouli/x-to-zod/commit/d5f896d7f8e6df5ae3fe5261f57c9af2fac809f6) Thanks [@pradeepmouli](https://github.com/pradeepmouli)! - Update the json-schema-typed dependency to version 9 and refresh the build and test dependencies.
+
+- - chore(deps): update runtime dependencies
+
 ## 0.10.9
 
 ### Patch Changes
