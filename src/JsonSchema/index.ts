@@ -4,11 +4,7 @@ import { parseDefault } from './parsers/parseDefault.js';
 import { parseSchema } from './parsers/parseSchema.js';
 import { parseRef } from '../SchemaProject/parseRef.js';
 import { is } from './is.js';
-import type {
-	JSONSchema,
-	SchemaVersion,
-	TypeValue,
-} from './types/index.js';
+import type { JSONSchema, SchemaVersion, TypeValue } from './types/index.js';
 
 export type {
 	JSONSchema,
